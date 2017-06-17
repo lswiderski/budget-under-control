@@ -7,12 +7,15 @@ using System.Threading.Tasks;
 
 namespace BudgetUnderControl.Domain
 {
-    class ExchangeRate
+    public class ExchangeRate
     {
         [Key]
         public int Id { get; set; }
         public int FromCurrencyId { get; set; }
         public int ToCurrencyId { get; set; }
         public double Rate { get; set; }
+
+        public Currency FromCurrency { get; set; }
+        public Currency ToCurrency { get; set; }
     }
 }

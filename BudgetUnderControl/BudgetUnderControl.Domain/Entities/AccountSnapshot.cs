@@ -16,5 +16,9 @@ namespace BudgetUnderControl.Domain
         public DateTime CreatedOn { get; set; }
         public int? PreviousAccountSnapshotId { get; set; }
         public int LastTransactionId { get; set; }
+
+        public Account Account { get; set; }
+        public Transaction LastTransaction { get; set; }
+        public AccountSnapshot PreviousAccountSnapshot { get; set; }
     }
 }

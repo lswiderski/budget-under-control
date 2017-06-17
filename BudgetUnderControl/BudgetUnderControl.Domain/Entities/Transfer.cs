@@ -14,5 +14,8 @@ namespace BudgetUnderControl.Domain
         public int FromTransactionId { get; set; }
         public int ToTransactionId { get; set; }
         public decimal Rate { get; set; }
+
+        public Transaction FromTransaction { get; set; }
+        public Transaction ToTransaction { get; set; }
     }
 }

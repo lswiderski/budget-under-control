@@ -29,11 +29,6 @@ namespace BudgetUnderControl.Domain
 
         }
 
-        public Context(IContextConfig contextConfig)
-        {
-            this.databasePath = contextConfig.DBPath;
-        }
-
         public Context(string databasePath)
         {
             this.databasePath = databasePath;

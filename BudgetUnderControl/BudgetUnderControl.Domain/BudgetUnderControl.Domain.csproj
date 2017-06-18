@@ -36,7 +36,6 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="Context.cs" />
-    <Compile Include="ContextConfig.cs" />
     <Compile Include="Entities\Account.cs" />
     <Compile Include="Entities\AccountGroup.cs" />
     <Compile Include="Entities\AccountSnapshot.cs" />
@@ -49,7 +48,6 @@
     <Compile Include="Entities\TagToTransaction.cs" />
     <Compile Include="Entities\Transaction.cs" />
     <Compile Include="Entities\Transfer.cs" />
-    <Compile Include="IContextConfig.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

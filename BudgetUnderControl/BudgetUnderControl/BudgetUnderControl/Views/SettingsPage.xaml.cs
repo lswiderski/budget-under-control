@@ -10,9 +10,9 @@ using Xamarin.Forms.Xaml;
 namespace BudgetUnderControl.Views
 {
     [XamlCompilation(XamlCompilationOptions.Compile)]
-    public partial class StartScreen : ContentPage
+    public partial class SettingsPage : ContentPage
     {
-        public StartScreen()
+        public SettingsPage()
         {
             InitializeComponent();
         }

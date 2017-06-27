@@ -47,6 +47,21 @@ namespace BudgetUnderControl.Domain
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+            modelBuilder.Entity<Account>().ToTable("Account");
+            modelBuilder.Entity<AccountGroup>().ToTable("AccountGroup");
+            modelBuilder.Entity<AccountSnapshot>().ToTable("AccountSnapshot");
+            modelBuilder.Entity<Category>().ToTable("Category");
+            modelBuilder.Entity<Currency>().ToTable("Currency");
+            modelBuilder.Entity<ExchangeRate>().ToTable("ExchangeRate");
+            modelBuilder.Entity<File>().ToTable("File");
+            modelBuilder.Entity<Icon>().ToTable("Icon");
+            modelBuilder.Entity<Tag>().ToTable("Tag");
+            modelBuilder.Entity<TagToTransaction>().ToTable("TagToTransaction");
+            modelBuilder.Entity<Transaction>().ToTable("Transaction");
+            modelBuilder.Entity<Transfer>().ToTable("Transfer");
+
+
+
             modelBuilder.Entity<Account>()
                 .HasOne(x => x.AccountGroup)
                 .WithMany(y => y.Accounts)
@@ -131,23 +146,6 @@ namespace BudgetUnderControl.Domain
                 .HasForeignKey(e => e.PreviousAccountSnapshotId);
 
             
-        }
-
-        public static Context Create(string databasePath)
-        {
-            var dbContext = new Context(databasePath);
-            dbContext.Database.EnsureCreated();
-            dbContext.Database.Migrate();
-            var currency1 = new Currency() { Code = "PLN", FullName = "Polski Złoty", Number = 985, Symbol = "zł" };
-            var currency2 = new Currency() { Code = "USD", FullName = "United States dollar", Number = 840, Symbol = "$" };
-            var currency3 = new Currency() { Code = "EUR", FullName = "Euro", Number = 978, Symbol = "€" };
-
-            var currencyList = new List<Currency>() { currency1, currency2, currency3 };
-
-                dbContext.Currencies.AddRangeAsync(currencyList);
-                dbContext.SaveChangesAsync();
-
-            return dbContext;
         }
 
     }

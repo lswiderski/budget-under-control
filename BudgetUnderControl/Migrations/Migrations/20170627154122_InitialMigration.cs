@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using Microsoft.EntityFrameworkCore.Migrations;
 
-namespace BudgetUnderControl.Domain
+namespace Migrations.Migrations
 {
     public partial class InitialMigration : Migration
     {
@@ -22,7 +22,7 @@ namespace BudgetUnderControl.Domain
                 });
 
             migrationBuilder.CreateTable(
-                name: "Categories",
+                name: "Category",
                 columns: table => new
                 {
                     Id = table.Column<int>(nullable: false)
@@ -32,11 +32,11 @@ namespace BudgetUnderControl.Domain
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Categories", x => x.Id);
+                    table.PrimaryKey("PK_Category", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
-                name: "Currencies",
+                name: "Currency",
                 columns: table => new
                 {
                     Id = table.Column<int>(nullable: false)
@@ -48,11 +48,11 @@ namespace BudgetUnderControl.Domain
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Currencies", x => x.Id);
+                    table.PrimaryKey("PK_Currency", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
-                name: "Fiiles",
+                name: "File",
                 columns: table => new
                 {
                     Id = table.Column<int>(nullable: false)
@@ -61,11 +61,11 @@ namespace BudgetUnderControl.Domain
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Fiiles", x => x.Id);
+                    table.PrimaryKey("PK_File", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
-                name: "Icons",
+                name: "Icon",
                 columns: table => new
                 {
                     Id = table.Column<int>(nullable: false)
@@ -74,11 +74,11 @@ namespace BudgetUnderControl.Domain
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Icons", x => x.Id);
+                    table.PrimaryKey("PK_Icon", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
-                name: "Tags",
+                name: "Tag",
                 columns: table => new
                 {
                     Id = table.Column<int>(nullable: false)
@@ -87,11 +87,11 @@ namespace BudgetUnderControl.Domain
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Tags", x => x.Id);
+                    table.PrimaryKey("PK_Tag", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
-                name: "Accounts",
+                name: "Account",
                 columns: table => new
                 {
                     Id = table.Column<int>(nullable: false)
@@ -104,7 +104,7 @@ namespace BudgetUnderControl.Domain
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Accounts", x => x.Id);
+                    table.PrimaryKey("PK_Account", x => x.Id);
                     table.ForeignKey(
                         name: "ForeignKey_Account_AccountGroup",
                         column: x => x.AccountGroupId,
@@ -114,13 +114,13 @@ namespace BudgetUnderControl.Domain
                     table.ForeignKey(
                         name: "ForeignKey_Account_Currency",
                         column: x => x.CurrencyId,
-                        principalTable: "Currencies",
+                        principalTable: "Currency",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
-                name: "ExchangeRates",
+                name: "ExchangeRate",
                 columns: table => new
                 {
                     Id = table.Column<int>(nullable: false)
@@ -131,23 +131,23 @@ namespace BudgetUnderControl.Domain
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_ExchangeRates", x => x.Id);
+                    table.PrimaryKey("PK_ExchangeRate", x => x.Id);
                     table.ForeignKey(
                         name: "ForeignKey_ExchangeRate_FromCurrency",
                         column: x => x.FromCurrencyId,
-                        principalTable: "Currencies",
+                        principalTable: "Currency",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
                         name: "ForeignKey_ExchangeRate_ToCurrency",
                         column: x => x.ToCurrencyId,
-                        principalTable: "Currencies",
+                        principalTable: "Currency",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
-                name: "Transactions",
+                name: "Transaction",
                 columns: table => new
                 {
                     Id = table.Column<int>(nullable: false)
@@ -162,17 +162,17 @@ namespace BudgetUnderControl.Domain
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Transactions", x => x.Id);
+                    table.PrimaryKey("PK_Transaction", x => x.Id);
                     table.ForeignKey(
                         name: "ForeignKey_Transaction_Account",
                         column: x => x.AccountId,
-                        principalTable: "Accounts",
+                        principalTable: "Account",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
                         name: "ForeignKey_Transaction_Category",
                         column: x => x.CategoryId,
-                        principalTable: "Categories",
+                        principalTable: "Category",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
@@ -195,13 +195,13 @@ namespace BudgetUnderControl.Domain
                     table.ForeignKey(
                         name: "ForeignKey_AccountSnapshot_Account",
                         column: x => x.AccountId,
-                        principalTable: "Accounts",
+                        principalTable: "Account",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
                         name: "ForeignKey_AccountSnapshot_LastTransaction",
                         column: x => x.LastTransactionId,
-                        principalTable: "Transactions",
+                        principalTable: "Transaction",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
@@ -213,7 +213,7 @@ namespace BudgetUnderControl.Domain
                 });
 
             migrationBuilder.CreateTable(
-                name: "TagsToTransactions",
+                name: "TagToTransaction",
                 columns: table => new
                 {
                     Id = table.Column<int>(nullable: false)
@@ -223,23 +223,23 @@ namespace BudgetUnderControl.Domain
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_TagsToTransactions", x => x.Id);
+                    table.PrimaryKey("PK_TagToTransaction", x => x.Id);
                     table.ForeignKey(
                         name: "ForeignKey_TagToTransaction_Tag",
                         column: x => x.TagId,
-                        principalTable: "Tags",
+                        principalTable: "Tag",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
                         name: "ForeignKey_TagToTransaction_Transaction",
                         column: x => x.TransactionId,
-                        principalTable: "Transactions",
+                        principalTable: "Transaction",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
-                name: "Transefres",
+                name: "Transfer",
                 columns: table => new
                 {
                     Id = table.Column<int>(nullable: false)
@@ -250,29 +250,29 @@ namespace BudgetUnderControl.Domain
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Transefres", x => x.Id);
+                    table.PrimaryKey("PK_Transfer", x => x.Id);
                     table.ForeignKey(
                         name: "ForeignKey_Transfer_FromTransaction",
                         column: x => x.FromTransactionId,
-                        principalTable: "Transactions",
+                        principalTable: "Transaction",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
                         name: "ForeignKey_Transfer_ToTransaction",
                         column: x => x.ToTransactionId,
-                        principalTable: "Transactions",
+                        principalTable: "Transaction",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateIndex(
-                name: "IX_Accounts_AccountGroupId",
-                table: "Accounts",
+                name: "IX_Account_AccountGroupId",
+                table: "Account",
                 column: "AccountGroupId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Accounts_CurrencyId",
-                table: "Accounts",
+                name: "IX_Account_CurrencyId",
+                table: "Account",
                 column: "CurrencyId");
 
             migrationBuilder.CreateIndex(
@@ -291,43 +291,43 @@ namespace BudgetUnderControl.Domain
                 column: "PreviousAccountSnapshotId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_ExchangeRates_FromCurrencyId",
-                table: "ExchangeRates",
+                name: "IX_ExchangeRate_FromCurrencyId",
+                table: "ExchangeRate",
                 column: "FromCurrencyId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_ExchangeRates_ToCurrencyId",
-                table: "ExchangeRates",
+                name: "IX_ExchangeRate_ToCurrencyId",
+                table: "ExchangeRate",
                 column: "ToCurrencyId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_TagsToTransactions_TagId",
-                table: "TagsToTransactions",
+                name: "IX_TagToTransaction_TagId",
+                table: "TagToTransaction",
                 column: "TagId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_TagsToTransactions_TransactionId",
-                table: "TagsToTransactions",
+                name: "IX_TagToTransaction_TransactionId",
+                table: "TagToTransaction",
                 column: "TransactionId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Transactions_AccountId",
-                table: "Transactions",
+                name: "IX_Transaction_AccountId",
+                table: "Transaction",
                 column: "AccountId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Transactions_CategoryId",
-                table: "Transactions",
+                name: "IX_Transaction_CategoryId",
+                table: "Transaction",
                 column: "CategoryId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Transefres_FromTransactionId",
-                table: "Transefres",
+                name: "IX_Transfer_FromTransactionId",
+                table: "Transfer",
                 column: "FromTransactionId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Transefres_ToTransactionId",
-                table: "Transefres",
+                name: "IX_Transfer_ToTransactionId",
+                table: "Transfer",
                 column: "ToTransactionId");
         }
 
@@ -337,37 +337,37 @@ namespace BudgetUnderControl.Domain
                 name: "AccountSnapshot");
 
             migrationBuilder.DropTable(
-                name: "ExchangeRates");
+                name: "ExchangeRate");
 
             migrationBuilder.DropTable(
-                name: "Fiiles");
+                name: "File");
 
             migrationBuilder.DropTable(
-                name: "Icons");
+                name: "Icon");
 
             migrationBuilder.DropTable(
-                name: "TagsToTransactions");
+                name: "TagToTransaction");
 
             migrationBuilder.DropTable(
-                name: "Transefres");
+                name: "Transfer");
 
             migrationBuilder.DropTable(
-                name: "Tags");
+                name: "Tag");
 
             migrationBuilder.DropTable(
-                name: "Transactions");
+                name: "Transaction");
 
             migrationBuilder.DropTable(
-                name: "Accounts");
+                name: "Account");
 
             migrationBuilder.DropTable(
-                name: "Categories");
+                name: "Category");
 
             migrationBuilder.DropTable(
                 name: "AccountGroup");
 
             migrationBuilder.DropTable(
-                name: "Currencies");
+                name: "Currency");
         }
     }
 }

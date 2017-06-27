@@ -9,8 +9,8 @@ using BudgetUnderControl.Common.Enums;
 namespace Migrations.Migrations
 {
     [DbContext(typeof(Context))]
-    [Migration("20170627145521_SeedMigration")]
-    partial class SeedMigration
+    [Migration("20170627154122_InitialMigration")]
+    partial class InitialMigration
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -39,7 +39,7 @@ namespace Migrations.Migrations
 
                     b.HasIndex("CurrencyId");
 
-                    b.ToTable("Accounts");
+                    b.ToTable("Account");
                 });
 
             modelBuilder.Entity("BudgetUnderControl.Domain.AccountGroup", b =>
@@ -93,7 +93,7 @@ namespace Migrations.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Categories");
+                    b.ToTable("Category");
                 });
 
             modelBuilder.Entity("BudgetUnderControl.Domain.Currency", b =>
@@ -114,7 +114,7 @@ namespace Migrations.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Currencies");
+                    b.ToTable("Currency");
                 });
 
             modelBuilder.Entity("BudgetUnderControl.Domain.ExchangeRate", b =>
@@ -134,7 +134,7 @@ namespace Migrations.Migrations
 
                     b.HasIndex("ToCurrencyId");
 
-                    b.ToTable("ExchangeRates");
+                    b.ToTable("ExchangeRate");
                 });
 
             modelBuilder.Entity("BudgetUnderControl.Domain.File", b =>
@@ -146,7 +146,7 @@ namespace Migrations.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Fiiles");
+                    b.ToTable("File");
                 });
 
             modelBuilder.Entity("BudgetUnderControl.Domain.Icon", b =>
@@ -158,7 +158,7 @@ namespace Migrations.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Icons");
+                    b.ToTable("Icon");
                 });
 
             modelBuilder.Entity("BudgetUnderControl.Domain.Tag", b =>
@@ -171,7 +171,7 @@ namespace Migrations.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Tags");
+                    b.ToTable("Tag");
                 });
 
             modelBuilder.Entity("BudgetUnderControl.Domain.TagToTransaction", b =>
@@ -189,7 +189,7 @@ namespace Migrations.Migrations
 
                     b.HasIndex("TransactionId");
 
-                    b.ToTable("TagsToTransactions");
+                    b.ToTable("TagToTransaction");
                 });
 
             modelBuilder.Entity("BudgetUnderControl.Domain.Transaction", b =>
@@ -217,7 +217,7 @@ namespace Migrations.Migrations
 
                     b.HasIndex("CategoryId");
 
-                    b.ToTable("Transactions");
+                    b.ToTable("Transaction");
                 });
 
             modelBuilder.Entity("BudgetUnderControl.Domain.Transfer", b =>
@@ -237,7 +237,7 @@ namespace Migrations.Migrations
 
                     b.HasIndex("ToTransactionId");
 
-                    b.ToTable("Transefres");
+                    b.ToTable("Transfer");
                 });
 
             modelBuilder.Entity("BudgetUnderControl.Domain.Account", b =>

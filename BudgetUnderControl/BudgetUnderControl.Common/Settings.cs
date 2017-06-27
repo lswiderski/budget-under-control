@@ -8,6 +8,6 @@ namespace BudgetUnderControl.Common
 {
     public static class Settings
     {
-        public static string DB_NAME = "buc.db3";
+        public static string DB_NAME = "buc2.db3";
     }
 }

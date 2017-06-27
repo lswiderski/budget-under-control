@@ -5,14 +5,17 @@ using System.Diagnostics;
 using BudgetUnderControl.Domain;
 using Autofac;
 using BudgetUnderControl.Views;
+using BudgetUnderControl.Common;
+using BudgetUnderControl.Model;
+using Microsoft.Practices.ServiceLocation;
+using Autofac.Extras.CommonServiceLocator;
 
 [assembly: XamlCompilation(XamlCompilationOptions.Compile)]
 namespace BudgetUnderControl
 {
     public class App : Application
     {
-        static Context context;
-        static IContainer Container;
+        public static IContainer Container;
 
         public App()
         {
@@ -25,19 +28,8 @@ namespace BudgetUnderControl
             //nav.BarTextColor = Color.White;
 
             //MainPage = nav;
-            MainPage = new BudgetUnderControl.Views.MasterPage();
-        }
 
-        public static Context Context
-        {
-            get
-            {
-                if (context == null)
-                {
-                    context = new Context(DependencyService.Get<IFileHelper>().GetLocalFilePath("buc.db3"));
-                }
-                return context;
-            }
+            MainPage = new BudgetUnderControl.Views.MasterPage();
         }
 
         protected override void OnStart()
@@ -100,16 +92,18 @@ namespace BudgetUnderControl
 
         protected void AutoFacInit()
         {
+            var dbPath = DependencyService.Get<IFileHelper>().GetLocalFilePath(Settings.DB_NAME);
+
             // Initialize Autofac builder
             var builder = new ContainerBuilder();
 
             // Register services
-            // builder.RegisterType<NavigationService>().As<INavigationService>().SingleInstance();
-            //builder.RegisterInstance(new ApplePlatform()).As<IPlatform>();
-            // TODO add your services or load modules
-
-            builder.RegisterType<Context>();
+            builder.RegisterInstance(new ContextConfig() { DbName = Settings.DB_NAME, DbPath = dbPath }).As<IContextConfig>();
+            builder.RegisterType<BaseModel>().As<IBaseModel>().SingleInstance();
+            builder.RegisterType<CurrencyModel>().As<ICurrencyModel>().SingleInstance();
             App.Container = builder.Build();
+            ServiceLocator.SetLocatorProvider(() => new AutofacServiceLocator(App.Container));
+
         }
     }
 }

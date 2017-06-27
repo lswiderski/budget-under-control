@@ -1,7 +1,9 @@
-﻿using System;
+﻿using BudgetUnderControl.Common;
+using BudgetUnderControl.Droid;
+using System;
 using System.IO;
 using Xamarin.Forms;
-
+[assembly: Dependency(typeof(FileHelper))]
 namespace BudgetUnderControl.Droid
 {
     public class FileHelper : IFileHelper

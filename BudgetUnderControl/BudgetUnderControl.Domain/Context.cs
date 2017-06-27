@@ -3,6 +3,7 @@ using System.IO;
 using Microsoft.EntityFrameworkCore;
 using System.Diagnostics;
 using System.Collections.Generic;
+using BudgetUnderControl.Common;
 
 namespace BudgetUnderControl.Domain
 {
@@ -29,9 +30,14 @@ namespace BudgetUnderControl.Domain
 
         }
 
-        public Context(string databasePath)
+        public Context(string dbPath)
         {
-            this.databasePath = databasePath;
+            this.databasePath = dbPath;
+        }
+        public Context(IContextConfig config)
+        {
+            var dbPath = config.DbPath;
+            this.databasePath = dbPath;
         }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)

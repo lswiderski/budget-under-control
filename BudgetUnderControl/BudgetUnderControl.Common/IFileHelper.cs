@@ -1,5 +1,5 @@
 ﻿
-namespace BudgetUnderControl
+namespace BudgetUnderControl.Common
 {
     public interface IFileHelper
     {

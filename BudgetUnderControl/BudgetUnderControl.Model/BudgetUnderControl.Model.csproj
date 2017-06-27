@@ -38,6 +38,11 @@
     <None Include="project.json" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="BaseModel.cs" />
+    <Compile Include="IBaseModel.cs" />
+    <Compile Include="Models\Currency\CurrencyModel.cs" />
+    <Compile Include="Models\Currency\ICurrencyModel.cs" />
+    <Compile Include="Models\Currency\ViewModels\CurrencyViewModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -49,6 +54,9 @@
       <Project>{298a3723-97db-436c-a016-f8d00228dfb4}</Project>
       <Name>BudgetUnderControl.Domain</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Migrations\" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\Portable\$(TargetFrameworkVersion)\Microsoft.Portable.CSharp.targets" />
 </Project>

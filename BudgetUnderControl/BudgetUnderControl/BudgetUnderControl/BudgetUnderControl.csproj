@@ -39,7 +39,16 @@
     <Compile Include="App.cs" />
     <Compile Include="MasterPageItem.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Templates\AccountListItem.cs" />
     <Compile Include="Templates\CurrencyListItem.cs" />
+    <Compile Include="Templates\FAB\FloatingActionButtonSize.cs" />
+    <Compile Include="Templates\FAB\FloatingActionButtonView.cs" />
+    <Compile Include="Views\Accounts.xaml.cs">
+      <DependentUpon>Accounts.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Categories.xaml.cs">
+      <DependentUpon>Categories.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\Currencies.xaml.cs">
       <DependentUpon>Currencies.xaml</DependentUpon>
     </Compile>
@@ -99,6 +108,18 @@
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Views\Currencies.xaml">
+      <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Views\Categories.xaml">
+      <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Views\Accounts.xaml">
       <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
       <SubType>Designer</SubType>
     </EmbeddedResource>

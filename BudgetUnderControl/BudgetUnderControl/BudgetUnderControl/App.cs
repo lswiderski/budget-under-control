@@ -101,6 +101,7 @@ namespace BudgetUnderControl
             builder.RegisterInstance(new ContextConfig() { DbName = Settings.DB_NAME, DbPath = dbPath }).As<IContextConfig>();
             builder.RegisterType<BaseModel>().As<IBaseModel>().SingleInstance();
             builder.RegisterType<CurrencyModel>().As<ICurrencyModel>().SingleInstance();
+            builder.RegisterType<AccountModel>().As<IAccountModel>().SingleInstance();
             App.Container = builder.Build();
             ServiceLocator.SetLocatorProvider(() => new AutofacServiceLocator(App.Container));
 

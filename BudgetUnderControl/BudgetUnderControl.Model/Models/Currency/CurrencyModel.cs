@@ -1,5 +1,6 @@
 ﻿using BudgetUnderControl.Domain;
 using BudgetUnderControl.Model;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -17,16 +18,16 @@ namespace BudgetUnderControl.Model
             this.contextConfig = contextConfig;
         }
 
-        public ICollection<CurrencyViewModel> GetCurriences()
+        public async Task<ICollection<CurrencyViewModel>> GetCurriences()
         {
             var list = this.Context.Currencies.Select(x => new CurrencyViewModel
             {
                 Code = x.Code,
                 Id = x.Id,
                 Name = x.FullName,
-            }).ToList();
+            }).ToListAsync();
 
-            return list;
+            return await list;
         }
     }
 }

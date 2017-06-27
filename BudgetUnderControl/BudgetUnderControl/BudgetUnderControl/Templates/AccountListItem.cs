@@ -7,12 +7,13 @@ using Xamarin.Forms;
 
 namespace BudgetUnderControl.Views
 {
-    public class CurrencyListItem : ViewCell
+    public class AccountListItem : ViewCell
     {
-        Label nameLabel, codeLabel;
-
         public static readonly BindableProperty NameProperty = BindableProperty.Create("Name", typeof(string), typeof(CurrencyListItem), "Name");
-        public static readonly BindableProperty CodeProperty = BindableProperty.Create("Code", typeof(string), typeof(CurrencyListItem), "");
+        public static readonly BindableProperty CurrencyProperty = BindableProperty.Create("Currency", typeof(string), typeof(CurrencyListItem), "Currency");
+        public static readonly BindableProperty AmountProperty = BindableProperty.Create("Amount", typeof(string), typeof(CurrencyListItem), "Amount");
+
+        Label nameLabel, currencyLabel, amountLabel;
 
         public string Name
         {
@@ -20,26 +21,32 @@ namespace BudgetUnderControl.Views
             set { SetValue(NameProperty, value); }
         }
 
-        public string Code
+        public string Currency
         {
-            get { return (string)GetValue(CodeProperty); }
-            set { SetValue(CodeProperty, value); }
+            get { return (string)GetValue(CurrencyProperty); }
+            set { SetValue(CurrencyProperty, value); }
         }
 
+        public string Amount
+        {
+            get { return (string)GetValue(AmountProperty); }
+            set { SetValue(AmountProperty, value); }
+        }
 
-
-        public CurrencyListItem()
+        public AccountListItem()
         {
             var grid = new Grid { Padding = new Thickness(10) };
             grid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(0.5, GridUnitType.Star) });
             grid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(0.2, GridUnitType.Star) });
+            grid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(0.3, GridUnitType.Star) });
 
             nameLabel = new Label { FontAttributes = FontAttributes.Bold };
-            codeLabel = new Label();
+            currencyLabel = new Label();
+            amountLabel = new Label();
 
             grid.Children.Add(nameLabel);
-            grid.Children.Add(codeLabel, 1, 0);
-
+            grid.Children.Add(currencyLabel, 1, 0);
+            grid.Children.Add(amountLabel, 2, 0);
             View = grid;
         }
 
@@ -50,7 +57,8 @@ namespace BudgetUnderControl.Views
             if (BindingContext != null)
             {
                 nameLabel.Text = Name;
-                codeLabel.Text = Code.ToString();
+                currencyLabel.Text = Currency;
+                amountLabel.Text = Amount;
             }
         }
     }

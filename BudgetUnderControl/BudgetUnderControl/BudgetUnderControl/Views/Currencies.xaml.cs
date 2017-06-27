@@ -26,11 +26,18 @@ namespace BudgetUnderControl.Views
                
         }
 
-        void OnButtonClicked(object sender, EventArgs e)
+        async void OnButtonClicked(object sender, EventArgs e)
         {
-            var model= currencyModel.GetCurriences();
+            var model = currencyModel.GetCurriences();
 
-            curriences.ItemsSource = model;
+            curriences.ItemsSource = await model;
+        }
+
+        protected override async void OnAppearing()
+        {
+            var model = currencyModel.GetCurriences();
+
+            curriences.ItemsSource = await model;
         }
     }
 }

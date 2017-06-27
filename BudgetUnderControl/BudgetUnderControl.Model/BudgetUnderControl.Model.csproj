@@ -40,6 +40,11 @@
   <ItemGroup>
     <Compile Include="BaseModel.cs" />
     <Compile Include="IBaseModel.cs" />
+    <Compile Include="Models\Account\AccountModel.cs" />
+    <Compile Include="Models\Account\IAccountModel.cs" />
+    <Compile Include="Models\Account\ViewModels\AccountListItemViewModel.cs" />
+    <Compile Include="Models\Account\ViewModels\AddAccountViewModel.cs" />
+    <Compile Include="Models\Account\ViewModels\EditAccountViewModel.cs" />
     <Compile Include="Models\Currency\CurrencyModel.cs" />
     <Compile Include="Models\Currency\ICurrencyModel.cs" />
     <Compile Include="Models\Currency\ViewModels\CurrencyViewModel.cs" />

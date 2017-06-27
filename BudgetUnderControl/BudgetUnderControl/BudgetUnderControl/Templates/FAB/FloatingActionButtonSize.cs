@@ -4,10 +4,11 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace BudgetUnderControl.Model
+namespace BudgetUnderControl.Views
 {
-    public interface ICurrencyModel
+    public enum  FloatingActionButtonSize
     {
-        Task<ICollection<CurrencyViewModel>> GetCurriences();
+        Normal,
+        Mini
     }
 }

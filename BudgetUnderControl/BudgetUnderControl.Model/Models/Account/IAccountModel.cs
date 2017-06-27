@@ -6,8 +6,8 @@ using System.Threading.Tasks;
 
 namespace BudgetUnderControl.Model
 {
-    public interface ICurrencyModel
+   public interface IAccountModel
     {
-        Task<ICollection<CurrencyViewModel>> GetCurriences();
+        Task<ICollection<AccountListItemViewModel>> GetAccounts();
     }
 }

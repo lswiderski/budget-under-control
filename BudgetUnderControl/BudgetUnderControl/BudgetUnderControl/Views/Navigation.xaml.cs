@@ -28,6 +28,12 @@ namespace BudgetUnderControl.Views
             });
             masterPageItems.Add(new MasterPageItem
             {
+                Title = "Accounts",
+                IconSource = "Overview.png",
+                TargetType = typeof(Accounts)
+            });
+            masterPageItems.Add(new MasterPageItem
+            {
                 Title = "Settings",
                 IconSource = "Settings.png",
                 TargetType = typeof(SettingsPage)

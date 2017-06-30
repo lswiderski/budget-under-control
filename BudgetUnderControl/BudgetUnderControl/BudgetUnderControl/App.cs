@@ -9,6 +9,8 @@ using BudgetUnderControl.Common;
 using BudgetUnderControl.Model;
 using Microsoft.Practices.ServiceLocation;
 using Autofac.Extras.CommonServiceLocator;
+using BudgetUnderControl.ViewModel;
+using System.ComponentModel;
 
 [assembly: XamlCompilation(XamlCompilationOptions.Compile)]
 namespace BudgetUnderControl
@@ -16,6 +18,11 @@ namespace BudgetUnderControl
     public class App : Application
     {
         public static IContainer Container;
+        public static MasterPage MasterPage
+        {
+            get;
+            private set;
+        }
 
         public App()
         {
@@ -29,7 +36,7 @@ namespace BudgetUnderControl
 
             //MainPage = nav;
 
-            MainPage = new BudgetUnderControl.Views.MasterPage();
+            MainPage = MasterPage = new BudgetUnderControl.Views.MasterPage();
         }
 
         protected override void OnStart()
@@ -99,9 +106,19 @@ namespace BudgetUnderControl
 
             // Register services
             builder.RegisterInstance(new ContextConfig() { DbName = Settings.DB_NAME, DbPath = dbPath }).As<IContextConfig>();
-            builder.RegisterType<BaseModel>().As<IBaseModel>().SingleInstance();
+            //builder.RegisterInstance(new Context(new ContextConfig() { DbName = Settings.DB_NAME, DbPath = dbPath }));
+            builder.RegisterType<BaseModel>().As<IBaseModel>().InstancePerLifetimeScope();
             builder.RegisterType<CurrencyModel>().As<ICurrencyModel>().SingleInstance();
             builder.RegisterType<AccountModel>().As<IAccountModel>().SingleInstance();
+            builder.RegisterType<AccountGroupModel>().As<IAccountGroupModel>().SingleInstance();
+            builder.RegisterType<TransactionModel>().As<ITransactionModel>().SingleInstance();
+
+            builder.RegisterType<EditAccountViewModel>().As<IEditAccountViewModel>().InstancePerDependency();
+            builder.RegisterType<AddAccountViewModel>().As<IAddAccountViewModel>().InstancePerDependency();
+            builder.RegisterType<AccountsViewModel>().As<IAccountsViewModel>().InstancePerDependency();
+            builder.RegisterType<AccountDetailsViewModel>().As<IAccountDetailsViewModel>().InstancePerDependency();
+
+
             App.Container = builder.Build();
             ServiceLocator.SetLocatorProvider(() => new AutofacServiceLocator(App.Container));
 

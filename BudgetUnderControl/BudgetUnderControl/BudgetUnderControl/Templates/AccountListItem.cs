@@ -11,9 +11,9 @@ namespace BudgetUnderControl.Views
     {
         public static readonly BindableProperty NameProperty = BindableProperty.Create("Name", typeof(string), typeof(CurrencyListItem), "Name");
         public static readonly BindableProperty CurrencyProperty = BindableProperty.Create("Currency", typeof(string), typeof(CurrencyListItem), "Currency");
-        public static readonly BindableProperty AmountProperty = BindableProperty.Create("Amount", typeof(string), typeof(CurrencyListItem), "Amount");
+        public static readonly BindableProperty BalanceProperty = BindableProperty.Create("Balance", typeof(string), typeof(CurrencyListItem), "Balance");
 
-        Label nameLabel, currencyLabel, amountLabel;
+        Label nameLabel, currencyLabel, balance;
 
         public string Name
         {
@@ -29,8 +29,8 @@ namespace BudgetUnderControl.Views
 
         public string Amount
         {
-            get { return (string)GetValue(AmountProperty); }
-            set { SetValue(AmountProperty, value); }
+            get { return (string)GetValue(BalanceProperty); }
+            set { SetValue(BalanceProperty, value); }
         }
 
         public AccountListItem()
@@ -42,11 +42,11 @@ namespace BudgetUnderControl.Views
 
             nameLabel = new Label { FontAttributes = FontAttributes.Bold };
             currencyLabel = new Label();
-            amountLabel = new Label();
+            balance = new Label();
 
             grid.Children.Add(nameLabel);
             grid.Children.Add(currencyLabel, 1, 0);
-            grid.Children.Add(amountLabel, 2, 0);
+            grid.Children.Add(balance, 2, 0);
             View = grid;
         }
 
@@ -58,7 +58,7 @@ namespace BudgetUnderControl.Views
             {
                 nameLabel.Text = Name;
                 currencyLabel.Text = Currency;
-                amountLabel.Text = Amount;
+                balance.Text = Amount;
             }
         }
     }

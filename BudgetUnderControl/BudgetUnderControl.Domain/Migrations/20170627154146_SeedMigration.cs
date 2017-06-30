@@ -26,13 +26,10 @@ namespace Migrations.Migrations
 
             migrationBuilder.Sql("INSERT INTO CATEGORY (Name)" +
                                                 "VALUES ('Salary' )");
-
             migrationBuilder.Sql("INSERT INTO CATEGORY (Name)" +
                                                 "VALUES ('Taxes' )");
-
             migrationBuilder.Sql("INSERT INTO ACCOUNTGROUP (Name)" +
                                                 "VALUES ('Cash' )");
-
             migrationBuilder.Sql("INSERT INTO ACCOUNTGROUP (Name)" +
                                                 "VALUES ('Account' )");
         }

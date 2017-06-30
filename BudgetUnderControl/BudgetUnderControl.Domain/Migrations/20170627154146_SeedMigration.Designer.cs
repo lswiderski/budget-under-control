@@ -62,7 +62,7 @@ namespace Migrations.Migrations
 
                     b.Property<int>("AccountId");
 
-                    b.Property<decimal>("Amount");
+                    b.Property<decimal>("Balance");
 
                     b.Property<DateTime>("CreatedOn");
 
@@ -201,7 +201,7 @@ namespace Migrations.Migrations
 
                     b.Property<decimal>("Amount");
 
-                    b.Property<int>("CategoryId");
+                    b.Property<int?>("CategoryId");
 
                     b.Property<string>("Comment");
 

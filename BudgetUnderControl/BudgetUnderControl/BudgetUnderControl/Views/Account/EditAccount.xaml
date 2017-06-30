@@ -1,0 +1,25 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="BudgetUnderControl.Views.EditAccount"
+             xmlns:local="clr-namespace:BudgetUnderControl.Views;assembly=BudgetUnderControl"
+             xmlns:behaviors="clr-namespace:BudgetUnderControl.Behaviors;assembly=BudgetUnderControl">
+    <ContentPage.Content>
+        <StackLayout>
+            <Label Text="Edit Account" />
+            <Picker x:Name="group" ItemsSource="{Binding AccountGroups}" ItemDisplayBinding="{Binding Name}" SelectedIndex="{Binding  SelectedAccountGroupIndex, Mode=TwoWay}" Title="Type"/>
+            <Entry x:Name="name" Text="{Binding Name}" Placeholder="Name"></Entry>
+            <Picker x:Name="currency" ItemsSource="{Binding Currencies}" ItemDisplayBinding="{Binding Code}"  SelectedIndex="{Binding  SelectedCurrencyIndex, Mode=TwoWay}" Title="Currency" />
+            <Entry x:Name="amount" Text="{Binding Amount}" Placeholder="Amount" >
+                <Entry.Behaviors>
+                    <behaviors:NumericValidationBehavior />
+                </Entry.Behaviors>
+            </Entry>
+            <Label x:Name="switchLabel" Text="Is Counted in Total"></Label>
+            <Switch x:Name="isTotal" IsToggled="{Binding IsInTotal}"></Switch>
+            <Label x:Name="commentLabel" Text="Comment"></Label>
+            <Editor x:Name="comment"  Text="{Binding Comment}" ></Editor>
+            <Button x:Name="addButton" Text="Save" Clicked="OnEditButtonClicked" />
+        </StackLayout>
+    </ContentPage.Content>
+</ContentPage>

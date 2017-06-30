@@ -40,14 +40,20 @@
   <ItemGroup>
     <Compile Include="BaseModel.cs" />
     <Compile Include="IBaseModel.cs" />
+    <Compile Include="Models\AccountGroup\AccountGroupModel.cs" />
+    <Compile Include="Models\AccountGroup\IAccountGroupModel.cs" />
+    <Compile Include="Models\AccountGroup\Contracts\AccountGroupItemViewModel.cs" />
     <Compile Include="Models\Account\AccountModel.cs" />
     <Compile Include="Models\Account\IAccountModel.cs" />
-    <Compile Include="Models\Account\ViewModels\AccountListItemViewModel.cs" />
-    <Compile Include="Models\Account\ViewModels\AddAccountViewModel.cs" />
-    <Compile Include="Models\Account\ViewModels\EditAccountViewModel.cs" />
+    <Compile Include="Models\Account\Contracts\AccountListItemDTO.cs" />
+    <Compile Include="Models\Account\Contracts\AddAccountDTO.cs" />
+    <Compile Include="Models\Account\Contracts\EditAccountDTO.cs" />
     <Compile Include="Models\Currency\CurrencyModel.cs" />
     <Compile Include="Models\Currency\ICurrencyModel.cs" />
-    <Compile Include="Models\Currency\ViewModels\CurrencyViewModel.cs" />
+    <Compile Include="Models\Currency\Contracts\CurrencyViewModel.cs" />
+    <Compile Include="Models\Transaction\Contracts\AddTransactionDTO.cs" />
+    <Compile Include="Models\Transaction\ITransactionModel.cs" />
+    <Compile Include="Models\Transaction\TransactionModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

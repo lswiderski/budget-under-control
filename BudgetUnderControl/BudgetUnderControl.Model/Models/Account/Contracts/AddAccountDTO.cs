@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace BudgetUnderControl.Model
 {
-    public class AddAccountViewModel
+    public class AddAccountDTO
     {
         public int CurrencyId { get; set; }
         public int AccountGroupId { get; set; }

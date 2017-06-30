@@ -21,7 +21,7 @@ namespace BudgetUnderControl.Model
             }
         }
         public BaseModel(IContextConfig contextConfig)
-        {
+        {            
             _context = new Context(contextConfig);
             //Context.Database.EnsureCreated();
             Context.Database.Migrate();

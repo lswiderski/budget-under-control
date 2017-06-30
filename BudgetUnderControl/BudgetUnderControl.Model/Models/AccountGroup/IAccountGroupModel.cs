@@ -6,10 +6,8 @@ using System.Threading.Tasks;
 
 namespace BudgetUnderControl.Model
 {
-    public class CurrencyViewModel
+    public interface IAccountGroupModel
     {
-        public int Id { get; set; }
-        public string Code { get; set; }
-        public string Name { get; set; }
+        Task<ICollection<AccountGroupItemDTO>> GetAccountGroups();
     }
 }

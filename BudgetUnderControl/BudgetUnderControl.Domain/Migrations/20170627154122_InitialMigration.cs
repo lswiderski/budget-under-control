@@ -153,7 +153,7 @@ namespace Migrations.Migrations
                         .Annotation("Sqlite:Autoincrement", true),
                     AccountId = table.Column<int>(nullable: false),
                     Amount = table.Column<decimal>(nullable: false),
-                    CategoryId = table.Column<int>(nullable: false),
+                    CategoryId = table.Column<int>(nullable: true),
                     Comment = table.Column<string>(nullable: true),
                     CreatedOn = table.Column<DateTime>(nullable: false),
                     Name = table.Column<string>(nullable: true),
@@ -173,7 +173,7 @@ namespace Migrations.Migrations
                         column: x => x.CategoryId,
                         principalTable: "Category",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.Restrict);
                 });
 
             migrationBuilder.CreateTable(
@@ -183,7 +183,7 @@ namespace Migrations.Migrations
                     Id = table.Column<int>(nullable: false)
                         .Annotation("Sqlite:Autoincrement", true),
                     AccountId = table.Column<int>(nullable: false),
-                    Amount = table.Column<decimal>(nullable: false),
+                    Balance = table.Column<decimal>(nullable: false),
                     CreatedOn = table.Column<DateTime>(nullable: false),
                     LastTransactionId = table.Column<int>(nullable: false),
                     PreviousAccountSnapshotId = table.Column<int>(nullable: true)

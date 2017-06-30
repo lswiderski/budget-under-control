@@ -25,10 +25,20 @@ namespace BudgetUnderControl.Views
             var item = e.SelectedItem as MasterPageItem;
             if (item != null)
             {
-                Detail = new NavigationPage((Page)Activator.CreateInstance(item.TargetType));
+                NavigateTo(item.TargetType);
                 navigation.ListView.SelectedItem = null;
                 IsPresented = false;
             }
+        }
+
+        public void NavigateTo(Type targetType, params object[] args)
+        {
+            Detail = new NavigationPage((Page)Activator.CreateInstance(targetType, args));
+        }
+
+        public void NavigateTo(Type targetType)
+        {
+            Detail = new NavigationPage((Page)Activator.CreateInstance(targetType));
         }
     }
 }

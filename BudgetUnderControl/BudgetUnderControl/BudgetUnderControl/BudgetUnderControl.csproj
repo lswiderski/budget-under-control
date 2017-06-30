@@ -37,14 +37,24 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="App.cs" />
+    <Compile Include="Behaviors\NumericValidationBehavior.cs" />
     <Compile Include="MasterPageItem.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Templates\AccountListItem.cs" />
     <Compile Include="Templates\CurrencyListItem.cs" />
     <Compile Include="Templates\FAB\FloatingActionButtonSize.cs" />
     <Compile Include="Templates\FAB\FloatingActionButtonView.cs" />
-    <Compile Include="Views\Accounts.xaml.cs">
+    <Compile Include="Views\Account\AccountDetails.xaml.cs">
+      <DependentUpon>AccountDetails.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Account\Accounts.xaml.cs">
       <DependentUpon>Accounts.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Account\AddAccount.xaml.cs">
+      <DependentUpon>AddAccount.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Account\EditAccount.xaml.cs">
+      <DependentUpon>EditAccount.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\Categories.xaml.cs">
       <DependentUpon>Categories.xaml</DependentUpon>
@@ -87,6 +97,10 @@
       <Project>{87755b9f-917a-43d7-80e4-1ce9e813b660}</Project>
       <Name>BudgetUnderControl.Model</Name>
     </ProjectReference>
+    <ProjectReference Include="..\..\BudgetUnderControl.ViewModel\BudgetUnderControl.ViewModel.csproj">
+      <Project>{67f9d3a8-f71e-4428-913f-c37ae82cdb24}</Project>
+      <Name>BudgetUnderControl.ViewModel</Name>
+    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Views\Navigation.xaml">
@@ -119,7 +133,25 @@
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Views\Accounts.xaml">
+    <EmbeddedResource Include="Views\Account\Accounts.xaml">
+      <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Views\Account\AddAccount.xaml">
+      <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Views\Account\AccountDetails.xaml">
+      <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Views\Account\EditAccount.xaml">
       <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
       <SubType>Designer</SubType>
     </EmbeddedResource>

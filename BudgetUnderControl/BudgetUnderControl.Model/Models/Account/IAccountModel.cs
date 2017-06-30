@@ -8,6 +8,10 @@ namespace BudgetUnderControl.Model
 {
    public interface IAccountModel
     {
-        Task<ICollection<AccountListItemViewModel>> GetAccounts();
+        Task<ICollection<AccountListItemDTO>> GetAccounts();
+        void AddAccount(AddAccountDTO vm);
+        Task<EditAccountDTO> GetAccount(int id);
+        void EditAccount(EditAccountDTO vm);
+        void RemoveAccount(int id);
     }
 }

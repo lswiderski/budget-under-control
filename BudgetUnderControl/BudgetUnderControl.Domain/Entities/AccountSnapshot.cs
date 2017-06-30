@@ -12,7 +12,7 @@ namespace BudgetUnderControl.Domain
         [Key]
         public int Id { get; set; }
         public int AccountId { get; set; }
-        public decimal Amount { get; set; }
+        public decimal Balance { get; set; }
         public DateTime CreatedOn { get; set; }
         public int? PreviousAccountSnapshotId { get; set; }
         public int LastTransactionId { get; set; }

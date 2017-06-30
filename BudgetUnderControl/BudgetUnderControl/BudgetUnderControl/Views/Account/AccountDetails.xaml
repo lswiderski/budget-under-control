@@ -1,0 +1,14 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="BudgetUnderControl.Views.AccountDetails"
+              xmlns:local="clr-namespace:BudgetUnderControl.Views;assembly=BudgetUnderControl">
+    <ContentPage.Content>
+        <StackLayout>
+            <Label Text="Account Details Page" />
+            <Button Clicked="Button_Edit_Clicked" Text="Edit" />
+            <Label Text="{Binding Name, Mode=TwoWay}" />
+            <Button Clicked="Button_Remove_Clicked" Text="Remove" />
+        </StackLayout>
+    </ContentPage.Content>
+</ContentPage>

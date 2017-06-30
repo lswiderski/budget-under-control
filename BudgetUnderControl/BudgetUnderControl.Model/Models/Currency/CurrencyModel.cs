@@ -18,9 +18,9 @@ namespace BudgetUnderControl.Model
             this.contextConfig = contextConfig;
         }
 
-        public async Task<ICollection<CurrencyViewModel>> GetCurriences()
+        public async Task<ICollection<CurrencyDTO>> GetCurriences()
         {
-            var list = this.Context.Currencies.Select(x => new CurrencyViewModel
+            var list = this.Context.Currencies.Select(x => new CurrencyDTO
             {
                 Code = x.Code,
                 Id = x.Id,

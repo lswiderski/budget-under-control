@@ -117,6 +117,8 @@ namespace BudgetUnderControl
             builder.RegisterType<AddAccountViewModel>().As<IAddAccountViewModel>().InstancePerDependency();
             builder.RegisterType<AccountsViewModel>().As<IAccountsViewModel>().InstancePerDependency();
             builder.RegisterType<AccountDetailsViewModel>().As<IAccountDetailsViewModel>().InstancePerDependency();
+            builder.RegisterType<TransactionsViewModel>().As<ITransactionsViewModel>().InstancePerDependency();
+            
 
 
             App.Container = builder.Build();

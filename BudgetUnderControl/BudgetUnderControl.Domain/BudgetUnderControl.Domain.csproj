@@ -50,13 +50,13 @@
     <Compile Include="Entities\Transaction.cs" />
     <Compile Include="Entities\Transfer.cs" />
     <Compile Include="IContextConfig.cs" />
-    <Compile Include="Migrations\20170627154122_InitialMigration.cs" />
-    <Compile Include="Migrations\20170627154122_InitialMigration.Designer.cs">
-      <DependentUpon>20170627154122_InitialMigration.cs</DependentUpon>
+    <Compile Include="Migrations\20170701091117_Initial.cs" />
+    <Compile Include="Migrations\20170701091117_Initial.Designer.cs">
+      <DependentUpon>20170701091117_Initial.cs</DependentUpon>
     </Compile>
-    <Compile Include="Migrations\20170627154146_SeedMigration.cs" />
-    <Compile Include="Migrations\20170627154146_SeedMigration.Designer.cs">
-      <DependentUpon>20170627154146_SeedMigration.cs</DependentUpon>
+    <Compile Include="Migrations\20170701091129_Seed.cs" />
+    <Compile Include="Migrations\20170701091129_Seed.Designer.cs">
+      <DependentUpon>20170701091129_Seed.cs</DependentUpon>
     </Compile>
     <Compile Include="Migrations\ContextModelSnapshot.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

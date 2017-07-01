@@ -52,6 +52,7 @@
     <Compile Include="Models\Currency\ICurrencyModel.cs" />
     <Compile Include="Models\Currency\Contracts\CurrencyViewModel.cs" />
     <Compile Include="Models\Transaction\Contracts\AddTransactionDTO.cs" />
+    <Compile Include="Models\Transaction\Contracts\TransactionListItemDTO.cs" />
     <Compile Include="Models\Transaction\ITransactionModel.cs" />
     <Compile Include="Models\Transaction\TransactionModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

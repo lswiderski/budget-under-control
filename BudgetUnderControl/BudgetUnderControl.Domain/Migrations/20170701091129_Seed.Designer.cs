@@ -9,8 +9,8 @@ using BudgetUnderControl.Common.Enums;
 namespace Migrations.Migrations
 {
     [DbContext(typeof(Context))]
-    [Migration("20170627154146_SeedMigration")]
-    partial class SeedMigration
+    [Migration("20170701091129_Seed")]
+    partial class Seed
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -62,7 +62,7 @@ namespace Migrations.Migrations
 
                     b.Property<int>("AccountId");
 
-                    b.Property<decimal>("Amount");
+                    b.Property<decimal>("Balance");
 
                     b.Property<DateTime>("CreatedOn");
 
@@ -85,8 +85,6 @@ namespace Migrations.Migrations
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd();
-
-                    b.Property<int>("IconId");
 
                     b.Property<string>("Name")
                         .HasMaxLength(100);
@@ -201,7 +199,7 @@ namespace Migrations.Migrations
 
                     b.Property<decimal>("Amount");
 
-                    b.Property<int>("CategoryId");
+                    b.Property<int?>("CategoryId");
 
                     b.Property<string>("Comment");
 
@@ -315,8 +313,7 @@ namespace Migrations.Migrations
                     b.HasOne("BudgetUnderControl.Domain.Category", "Category")
                         .WithMany("Transactions")
                         .HasForeignKey("CategoryId")
-                        .HasConstraintName("ForeignKey_Transaction_Category")
-                        .OnDelete(DeleteBehavior.Cascade);
+                        .HasConstraintName("ForeignKey_Transaction_Category");
                 });
 
             modelBuilder.Entity("BudgetUnderControl.Domain.Transfer", b =>

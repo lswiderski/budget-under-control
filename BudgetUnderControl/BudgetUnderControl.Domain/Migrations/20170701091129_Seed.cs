@@ -4,12 +4,12 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace Migrations.Migrations
 {
-    public partial class SeedMigration : Migration
+    public partial class Seed : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.Sql("INSERT INTO CURRENCY (Code,FullName,Number,Symbol)" +
-                                              "VALUES ('PLN', 'Polski Złoty',985, 'zł' )");
+                                             "VALUES ('PLN', 'Polski Złoty',985, 'zł' )");
             migrationBuilder.Sql("INSERT INTO CURRENCY (Code,FullName,Number,Symbol)" +
                                                 "VALUES ('USD', 'United States dollar',840, '$' )");
             migrationBuilder.Sql("INSERT INTO CURRENCY (Code,FullName,Number,Symbol)" +

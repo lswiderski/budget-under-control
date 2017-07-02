@@ -1,0 +1,49 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="BudgetUnderControl.Views.AddTransaction"
+             xmlns:local="clr-namespace:BudgetUnderControl.Views;assembly=BudgetUnderControl"
+             xmlns:behaviors="clr-namespace:BudgetUnderControl.Behaviors;assembly=BudgetUnderControl">
+    <ContentPage.Content>
+        <ScrollView>
+        <StackLayout>
+            <Label Text="Add transaction" />
+            <Entry x:Name="name" Text="{Binding Name}" Placeholder="Name"></Entry>
+            <Picker x:Name="type" ItemsSource="{Binding Types}" SelectedIndex="{Binding  SelectedTypeIndex, Mode=TwoWay}" Title="Type" />
+            <Picker x:Name="account" ItemsSource="{Binding Accounts}" ItemDisplayBinding="{Binding Name}"  SelectedIndex="{Binding  selectedAccountIndex, Mode=TwoWay}" Title="Account" />
+            <Picker x:Name="categories" ItemsSource="{Binding Categories}" ItemDisplayBinding="{Binding Name}"  SelectedIndex="{Binding  selectedCategoryIndex, Mode=TwoWay}" Title="Category" />
+            <Entry x:Name="amount" Text="{Binding Amount}" Placeholder="Amount" >
+                <Entry.Behaviors>
+                    <behaviors:NumericValidationBehavior />
+                </Entry.Behaviors>
+            </Entry>
+            
+            <StackLayout Orientation="Horizontal">
+                <DatePicker Date="{Binding Date}" Format="d"></DatePicker>
+                <TimePicker Time="{Binding Time}"></TimePicker>
+            </StackLayout>
+            <StackLayout Orientation="Vertical" IsVisible="{Binding IsTransferOptionsVisible, Mode=TwoWay}">
+                <Label Text="Transfer" />
+                <Picker x:Name="transferAccount" ItemsSource="{Binding Accounts}" ItemDisplayBinding="{Binding Name}"  SelectedIndex="{Binding  selectedTransferAccountIndex, Mode=TwoWay}" Title="Account" />
+                <Entry x:Name="transferAmount" Text="{Binding TransferAmount}" Placeholder="Amount" >
+                    <Entry.Behaviors>
+                        <behaviors:NumericValidationBehavior />
+                    </Entry.Behaviors>
+                </Entry>
+                <Entry x:Name="transferRate" Text="{Binding TransferRate}" Placeholder="Rate" >
+                    <Entry.Behaviors>
+                        <behaviors:NumericValidationBehavior />
+                    </Entry.Behaviors>
+                </Entry>
+                <StackLayout Orientation="Horizontal">
+                    <DatePicker Date="{Binding TransferDate}" Format="d"></DatePicker>
+                    <TimePicker Time="{Binding TransferTime}"></TimePicker>
+                </StackLayout>
+            </StackLayout>
+            <Label x:Name="commentLabel" Text="Comment"></Label>
+            <Editor x:Name="comment"  Text="{Binding Comment}" ></Editor>
+            <Button x:Name="addButton" Text="Add" Clicked="OnAddButtonClicked" />
+        </StackLayout>
+            </ScrollView>
+    </ContentPage.Content>
+</ContentPage>

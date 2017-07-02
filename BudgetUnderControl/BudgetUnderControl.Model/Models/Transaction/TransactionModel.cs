@@ -77,5 +77,43 @@ namespace BudgetUnderControl.Model
 
             return await transactions;
         }
+
+        public void AddTransfer(AddTransferDTO arg)
+        {
+            var transactionExpense = new Transaction
+            {
+                AccountId = arg.AccountId,
+                Amount = arg.Amount,
+                CategoryId = arg.CategoryId,
+                Comment = arg.Comment,
+                Name = arg.Name,
+                Type =  Common.Enums.TransactionType.Expense,
+                CreatedOn = arg.Date,
+            };
+
+            var transactionIncome = new Transaction
+            {
+                AccountId = arg.AccountId,
+                Amount = arg.TransferAmount,
+                CategoryId = arg.CategoryId,
+                Comment = arg.Comment,
+                Name = arg.Name,
+                Type = Common.Enums.TransactionType.Income,
+                CreatedOn = arg.TransferDate,
+            };
+
+            this.Context.Transactions.Add(transactionExpense);
+            this.Context.Transactions.Add(transactionIncome);
+            this.Context.SaveChanges();
+
+            var transfer = new Transfer
+            {
+                FromTransactionId = transactionExpense.Id,
+                ToTransactionId = transactionIncome.Id,
+                Rate = arg.Rate
+            };
+            this.Context.Transefres.Add(transfer);
+            this.Context.SaveChanges();
+        }
     }
 }

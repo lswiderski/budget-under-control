@@ -1,0 +1,360 @@
+﻿using BudgetUnderControl.Common.Enums;
+using BudgetUnderControl.Model;
+using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Globalization;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace BudgetUnderControl.ViewModel
+{
+    public class AddTransactionViewModel : IAddTransactionViewModel, INotifyPropertyChanged
+    {
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        public int AccountId { get; set; }
+        public int? CategoryId { get; set; }
+        public TransactionType Type
+        {
+            get
+            {
+                if(types.ElementAt(selectedTypeIndex) == "Income")
+                {
+                    return TransactionType.Income;
+                }
+                else if (types.ElementAt(selectedTypeIndex) == "Expense")
+                {
+                    return TransactionType.Expense;
+                }
+                else
+                {
+                    return TransactionType.Expense;
+                }
+
+            }
+        }
+
+        public DateTime Date { get; set; }
+        public TimeSpan Time { get; set; }
+
+        private string name;
+        public string Name
+        {
+            get => name;
+            set
+            {
+                if (name != value)
+                {
+                    name = value;
+                    PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(Name)));
+                }
+            }
+        }
+
+        private string comment;
+        public string Comment
+        {
+            get => comment;
+            set
+            {
+                if (comment != value)
+                {
+                    comment = value;
+                    PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(Comment)));
+                }
+            }
+        }
+
+        private string amount;
+        public string Amount
+        {
+            get => amount;
+            set
+            {
+                if (amount != value)
+                {
+                    amount = value;
+                    PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(Amount)));
+                }
+            }
+        }
+
+        int? selectedCategoryIndex;
+        public int? SelectedCategoryIndex
+        {
+            get
+            {
+                return selectedCategoryIndex;
+            }
+            set
+            {
+                if (selectedCategoryIndex != value)
+                {
+                    selectedCategoryIndex = value;
+                    PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(SelectedCategoryIndex)));
+                }
+
+            }
+        }
+
+        int selectedAccountIndex;
+        public int SelectedAccountIndex
+        {
+            get
+            {
+                return selectedAccountIndex;
+            }
+            set
+            {
+                if (selectedAccountIndex != value)
+                {
+                    selectedAccountIndex = value;
+                    PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(SelectedAccountIndex)));
+                }
+
+            }
+        }
+
+        int selectedTransferAccountIndex;
+        public int SelectedTransferAccountIndex
+        {
+            get
+            {
+                return selectedTransferAccountIndex;
+            }
+            set
+            {
+                if (selectedTransferAccountIndex != value)
+                {
+                    selectedTransferAccountIndex = value;
+                    PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(SelectedTransferAccountIndex)));
+                }
+
+            }
+        }
+
+        public bool IsTransferOptionsVisible
+        {
+            get
+            {
+                return IsItTransfer;
+            }
+        }
+
+        public bool IsItTransfer
+        {
+            get
+            {
+                return types.ElementAt(selectedTypeIndex) == "Transfer";
+            }
+        }
+
+        private string transferAmount;
+        public string TransferAmount
+        {
+            get => transferAmount;
+            set
+            {
+                if (transferAmount != value)
+                {
+                    transferAmount = value;
+                    PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(TransferAmount)));
+                    if (!string.IsNullOrEmpty(Amount) && !string.IsNullOrEmpty(TransferAmount) && (decimal.Parse(TransferAmount.Replace(',', '.'), NumberStyles.AllowDecimalPoint, CultureInfo.InvariantCulture) != 0))
+                    {
+                        transferRate = string.Format("{0}",
+                            decimal.Parse(Amount.Replace(',', '.'), NumberStyles.AllowDecimalPoint, CultureInfo.InvariantCulture) 
+                            / decimal.Parse(TransferAmount.Replace(',', '.'), NumberStyles.AllowDecimalPoint, CultureInfo.InvariantCulture));
+                        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(TransferRate)));
+                    }
+                    
+                }
+            }
+        }
+
+        private string transferRate;
+        public string TransferRate
+        {
+            get => transferRate;
+            set
+            {
+                if (transferRate != value)
+                {
+                    transferRate = value;
+                    PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(TransferRate)));
+                    if(!string.IsNullOrEmpty(Amount) && !string.IsNullOrEmpty(TransferRate))
+                    {
+                        transferAmount = string.Format("{0}",
+                            decimal.Parse(Amount.Replace(',', '.'), NumberStyles.AllowDecimalPoint, CultureInfo.InvariantCulture) 
+                            * decimal.Parse(TransferRate.Replace(',', '.'), NumberStyles.AllowDecimalPoint, CultureInfo.InvariantCulture));
+                        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(TransferAmount)));
+                    }
+                    
+                }
+            }
+        }
+        public int TransferAccountId { get; set; }
+
+        public DateTime transferDate;
+        public DateTime TransferDate
+        {
+            get => transferDate;
+            set
+            {
+                if (transferDate != value)
+                {
+                    transferDate = value;
+                    PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(TransferDate)));
+                }
+            }
+        }
+
+        public TimeSpan transferTime;
+        public TimeSpan TransferTime
+        {
+            get => transferTime;
+            set
+            {
+                if (transferTime != value)
+                {
+                    transferTime = value;
+                    PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(TransferTime)));
+                }
+            }
+        }
+
+
+        ICollection<string> types = new List<string>
+        {
+           "Expense", "Income","Transfer"
+        };
+
+        public ICollection<string> Types => types;
+        int selectedTypeIndex;
+        public int SelectedTypeIndex 
+        {
+            get
+            {
+                return selectedTypeIndex;
+            }
+            set
+            {
+                if (selectedTypeIndex != value)
+                {
+                    selectedTypeIndex = value;
+                    PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(SelectedTypeIndex)));
+                    PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(IsTransferOptionsVisible)));
+
+                    if(types.ElementAt(value) == "Transfer")
+                    {
+                        SetTransfer();
+                    }
+                }
+
+            }
+        }
+
+        List<AccountListItemDTO> accounts;
+        public List<AccountListItemDTO> Accounts => accounts;
+
+        List<CategoryListItemDTO> categories;
+        public List<CategoryListItemDTO> Categories => categories;
+
+        ITransactionModel transactionModel;
+        IAccountModel accountModel;
+        ICategoryModel categoryModel;
+        public AddTransactionViewModel(ITransactionModel transactionModel, IAccountModel accountModel, ICategoryModel categoryModel)
+        {
+            this.transactionModel = transactionModel;
+            this.accountModel = accountModel;
+            this.categoryModel = categoryModel;
+            SelectedTypeIndex = 0;
+            Date = DateTime.UtcNow;
+            Time = DateTime.UtcNow.TimeOfDay;
+            
+
+            GetDropdowns();
+        }
+
+        async void GetDropdowns()
+        {
+            accounts = (await accountModel.GetAccounts()).ToList();
+            categories = (await categoryModel.GetCategories()).ToList();
+        }
+
+        void SetTransfer()
+        {
+            TransferDate = Date;
+            TransferTime = Time;
+            TransferRate = 1.ToString();
+            TransferAmount = Amount;
+        }
+
+        public void AddTransacion()
+        {
+            if(IsItTransfer)
+            {
+                AddTransfer();
+            }
+            else
+            {
+                var date = new DateTime(Date.Year, Date.Month, Date.Day, Time.Hours, Time.Minutes, Time.Seconds, Time.Milliseconds, DateTimeKind.Utc);
+                var amount = decimal.Parse(Amount.Replace(',', '.'), NumberStyles.AllowDecimalPoint, CultureInfo.InvariantCulture);
+                if(Type == TransactionType.Expense && amount > 0)
+                {
+                    amount *= (-1);
+                }
+                else if(Type == TransactionType.Income && amount <0)
+                {
+                    amount *= (-1);
+                }
+                var transaction = new AddTransactionDTO
+                {
+                    Name = Name,
+                    Comment = Comment,
+                    CreatedOn = date,
+                    Amount = amount,
+                    CategoryId = SelectedCategoryIndex.HasValue ? Categories[SelectedCategoryIndex.Value].Id : (int?)null,
+                    AccountId = Accounts[selectedAccountIndex].Id,
+                    Type = Type,
+                };
+
+                transactionModel.AddTransaction(transaction);
+            }
+        }
+
+        private void AddTransfer()
+        {
+            var date = new DateTime(Date.Year, Date.Month, Date.Day, Time.Hours, Time.Minutes, Time.Seconds, Time.Milliseconds, DateTimeKind.Utc);
+            var transferDate = new DateTime(TransferDate.Year, TransferDate.Month, TransferDate.Day, TransferTime.Hours, TransferTime.Minutes, TransferTime.Seconds, TransferTime.Milliseconds, DateTimeKind.Utc);
+
+            var amount = decimal.Parse(Amount.Replace(',', '.'), NumberStyles.AllowDecimalPoint, CultureInfo.InvariantCulture);
+            if (amount > 0)
+            {
+                amount *= (-1);
+            }
+
+            var transferAmount = decimal.Parse(TransferAmount.Replace(',', '.'), NumberStyles.AllowDecimalPoint, CultureInfo.InvariantCulture);
+            if (transferAmount < 0)
+            {
+                transferAmount *= (-1);
+            }
+
+            var transfer = new AddTransferDTO
+            {
+                Name = Name,
+                Comment = Comment,
+                Date = date,
+                Amount = amount,
+                CategoryId = SelectedCategoryIndex.HasValue ? Categories[SelectedCategoryIndex.Value].Id : (int?)null,
+                AccountId = Accounts[selectedAccountIndex].Id,
+                TransferDate = transferDate,
+                TransferAmount = transferAmount,
+                Rate = decimal.Parse(TransferRate.Replace(',', '.'), NumberStyles.AllowDecimalPoint, CultureInfo.InvariantCulture),
+            };
+
+            transactionModel.AddTransfer(transfer);
+        }
+    }
+}

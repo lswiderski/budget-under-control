@@ -12,25 +12,22 @@ using Xamarin.Forms.Xaml;
 namespace BudgetUnderControl.Views
 {
     [XamlCompilation(XamlCompilationOptions.Compile)]
-    public partial class Transactions : ContentPage
+    public partial class AddTransaction : ContentPage
     {
-        ITransactionsViewModel vm;
-        public Transactions()
+        IAddTransactionViewModel vm;
+        public AddTransaction()
         {
-            InitializeComponent();
             using (var scope = App.Container.BeginLifetimeScope())
             {
-                 this.BindingContext = vm = scope.Resolve<ITransactionsViewModel>();
+                this.BindingContext = vm = scope.Resolve<IAddTransactionViewModel>();
             }
+            InitializeComponent();
+        }
 
-             
-    }
-
-        protected override void OnAppearing()
+        async void OnAddButtonClicked(object sender, EventArgs args)
         {
-            base.OnAppearing();
-
-            vm.LoadTransactions();
+            vm.AddTransacion();
+            await Navigation.PopModalAsync();
         }
     }
 }

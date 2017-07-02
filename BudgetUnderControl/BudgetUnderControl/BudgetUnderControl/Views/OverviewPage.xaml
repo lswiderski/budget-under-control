@@ -2,10 +2,13 @@
 <ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="BudgetUnderControl.Views.OverviewPage"
+             xmlns:local="clr-namespace:BudgetUnderControl.Views;assembly=BudgetUnderControl"
              Title="Overview Page">
     <ContentPage.Content>
-        <StackLayout>
-            <Label Text="Welcome to Xamarin Forms!" />
-        </StackLayout>
+        <AbsoluteLayout x:Name="absoluteLayout" VerticalOptions="FillAndExpand" HorizontalOptions="FillAndExpand">
+            <StackLayout Padding="0,20,0,0" AbsoluteLayout.LayoutFlags="All" AbsoluteLayout.LayoutBounds="0,0,1,1">
+                <Label Text="Overview" />
+            </StackLayout>
+        </AbsoluteLayout>
     </ContentPage.Content>
 </ContentPage>

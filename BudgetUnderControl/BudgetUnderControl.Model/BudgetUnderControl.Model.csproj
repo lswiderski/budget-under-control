@@ -48,10 +48,14 @@
     <Compile Include="Models\Account\Contracts\AccountListItemDTO.cs" />
     <Compile Include="Models\Account\Contracts\AddAccountDTO.cs" />
     <Compile Include="Models\Account\Contracts\EditAccountDTO.cs" />
+    <Compile Include="Models\Category\CategoryModel.cs" />
+    <Compile Include="Models\Category\Contracts\CategoryListItemDTO.cs" />
+    <Compile Include="Models\Category\ICategoryModel.cs" />
     <Compile Include="Models\Currency\CurrencyModel.cs" />
     <Compile Include="Models\Currency\ICurrencyModel.cs" />
     <Compile Include="Models\Currency\Contracts\CurrencyViewModel.cs" />
     <Compile Include="Models\Transaction\Contracts\AddTransactionDTO.cs" />
+    <Compile Include="Models\Transaction\Contracts\AddTransferDTO.cs" />
     <Compile Include="Models\Transaction\Contracts\TransactionListItemDTO.cs" />
     <Compile Include="Models\Transaction\ITransactionModel.cs" />
     <Compile Include="Models\Transaction\TransactionModel.cs" />

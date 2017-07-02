@@ -24,7 +24,6 @@ namespace BudgetUnderControl.ViewModel
         public List<CurrencyDTO> Currencies => currencies;
 
         int selectedCurrencyIndex;
-
         public int SelectedCurrencyIndex
         {
             get

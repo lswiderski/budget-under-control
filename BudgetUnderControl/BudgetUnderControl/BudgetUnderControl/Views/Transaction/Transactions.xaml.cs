@@ -1,8 +1,6 @@
 ﻿using Autofac;
-using BudgetUnderControl.Model;
 using BudgetUnderControl.ViewModel;
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -14,22 +12,27 @@ using Xamarin.Forms.Xaml;
 namespace BudgetUnderControl.Views
 {
     [XamlCompilation(XamlCompilationOptions.Compile)]
-    public partial class Accounts : ContentPage
+    public partial class Transactions : ContentPage
     {
         private FloatingActionButtonView fab;
 
-        IAccountsViewModel vm;
-        public Accounts()
+        ITransactionsViewModel vm;
+        public Transactions()
         {
             InitializeComponent();
             using (var scope = App.Container.BeginLifetimeScope())
             {
-                this.BindingContext = vm = scope.Resolve<IAccountsViewModel>();
+                 this.BindingContext = vm = scope.Resolve<ITransactionsViewModel>();
             }
 
             InitFAB();
+    }
 
+        protected override void OnAppearing()
+        {
+            base.OnAppearing();
 
+            vm.LoadTransactions();
         }
 
         private void InitFAB()
@@ -51,27 +54,8 @@ namespace BudgetUnderControl.Views
 
         protected async void OnAddButtonClicked(object sender, EventArgs args)
         {
-            var addAccount = new AddAccount();
+            var addAccount = new AddTransaction();
             await Navigation.PushModalAsync(addAccount);
         }
-
-        protected override async void OnAppearing()
-        {
-            base.OnAppearing();
-
-            vm.LoadAccounts();
-        }
-
-        protected override void OnDisappearing()
-        {
-            base.OnDisappearing();
-        }
-
-        void OnItemSelected(object sender, SelectedItemChangedEventArgs e)
-        {
-            var accountId = vm.SelectedAccount.Id;
-            App.MasterPage.NavigateTo(typeof(AccountDetails), accountId);
-        }
-
     }
 }

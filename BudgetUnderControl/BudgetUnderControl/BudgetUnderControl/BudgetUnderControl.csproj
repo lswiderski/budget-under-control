@@ -75,7 +75,10 @@
     <Compile Include="Views\SettingsPage.xaml.cs">
       <DependentUpon>SettingsPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\Transactions.xaml.cs">
+    <Compile Include="Views\Transaction\AddTransaction.xaml.cs">
+      <DependentUpon>AddTransaction.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Transaction\Transactions.xaml.cs">
       <DependentUpon>Transactions.xaml</DependentUpon>
     </Compile>
   </ItemGroup>
@@ -160,11 +163,15 @@
       <SubType>Designer</SubType>
     </EmbeddedResource>
   </ItemGroup>
+  <ItemGroup />
   <ItemGroup>
-    <Folder Include="Views\Transaction\" />
+    <EmbeddedResource Include="Views\Transaction\Transactions.xaml">
+      <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Views\Transactions.xaml">
+    <EmbeddedResource Include="Views\Transaction\AddTransaction.xaml">
       <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
       <SubType>Designer</SubType>
     </EmbeddedResource>

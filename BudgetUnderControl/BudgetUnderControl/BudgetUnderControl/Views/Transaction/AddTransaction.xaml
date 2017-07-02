@@ -6,31 +6,38 @@
              xmlns:behaviors="clr-namespace:BudgetUnderControl.Behaviors;assembly=BudgetUnderControl">
     <ContentPage.Content>
         <ScrollView>
-        <StackLayout>
-            <Label Text="Add transaction" />
-            <Entry x:Name="name" Text="{Binding Name}" Placeholder="Name"></Entry>
-            <Picker x:Name="type" ItemsSource="{Binding Types}" SelectedIndex="{Binding  SelectedTypeIndex, Mode=TwoWay}" Title="Type" />
-            <Picker x:Name="account" ItemsSource="{Binding Accounts}" ItemDisplayBinding="{Binding Name}"  SelectedIndex="{Binding  selectedAccountIndex, Mode=TwoWay}" Title="Account" />
-            <Picker x:Name="categories" ItemsSource="{Binding Categories}" ItemDisplayBinding="{Binding Name}"  SelectedIndex="{Binding  selectedCategoryIndex, Mode=TwoWay}" Title="Category" />
+            <StackLayout>
+                <Label Text="Name"></Label>
+                <Entry x:Name="name" Text="{Binding Name}" Placeholder="Name"></Entry>
+                <Label Text="Type"></Label>
+                <Picker x:Name="type" ItemsSource="{Binding Types}" SelectedIndex="{Binding  SelectedTypeIndex, Mode=TwoWay}" Title="Type" />
+                <Label Text="Account"></Label>
+            <Picker x:Name="account" ItemsSource="{Binding Accounts}" ItemDisplayBinding="{Binding Name}"  SelectedIndex="{Binding  SelectedAccountIndex, Mode=TwoWay}" Title="Account" />
+                <Label Text="Category"></Label>
+            <Picker x:Name="categories" ItemsSource="{Binding Categories}" ItemDisplayBinding="{Binding Name}"  SelectedIndex="{Binding  SelectedCategoryIndex, Mode=TwoWay}" Title="Category" />
+                <Label Text="Amount"></Label>
             <Entry x:Name="amount" Text="{Binding Amount}" Placeholder="Amount" >
                 <Entry.Behaviors>
                     <behaviors:NumericValidationBehavior />
                 </Entry.Behaviors>
             </Entry>
-            
-            <StackLayout Orientation="Horizontal">
+                <Label Text="Date"></Label>
+                <StackLayout Orientation="Horizontal">
                 <DatePicker Date="{Binding Date}" Format="d"></DatePicker>
                 <TimePicker Time="{Binding Time}"></TimePicker>
             </StackLayout>
             <StackLayout Orientation="Vertical" IsVisible="{Binding IsTransferOptionsVisible, Mode=TwoWay}">
                 <Label Text="Transfer" />
-                <Picker x:Name="transferAccount" ItemsSource="{Binding Accounts}" ItemDisplayBinding="{Binding Name}"  SelectedIndex="{Binding  selectedTransferAccountIndex, Mode=TwoWay}" Title="Account" />
-                <Entry x:Name="transferAmount" Text="{Binding TransferAmount}" Placeholder="Amount" >
+                    <Label Text="Account transfer to"></Label>
+                    <Picker x:Name="transferAccount" ItemsSource="{Binding Accounts}" ItemDisplayBinding="{Binding Name}"  SelectedIndex="{Binding  SelectedTransferAccountIndex, Mode=TwoWay}" Title="Account" />
+                    <Label Text="Amount" IsVisible="{Binding IsTransferInOtherCurrency}"></Label>
+                    <Entry x:Name="transferAmount" Text="{Binding TransferAmount}" Placeholder="Amount" IsVisible="{Binding IsTransferInOtherCurrency}" >
                     <Entry.Behaviors>
                         <behaviors:NumericValidationBehavior />
                     </Entry.Behaviors>
                 </Entry>
-                <Entry x:Name="transferRate" Text="{Binding TransferRate}" Placeholder="Rate" >
+                    <Label Text="Exchange Rate" IsVisible="{Binding IsTransferInOtherCurrency}"></Label>
+                    <Entry x:Name="transferRate" Text="{Binding TransferRate}" Placeholder="Rate" IsVisible="{Binding IsTransferInOtherCurrency}">
                     <Entry.Behaviors>
                         <behaviors:NumericValidationBehavior />
                     </Entry.Behaviors>
@@ -40,9 +47,9 @@
                     <TimePicker Time="{Binding TransferTime}"></TimePicker>
                 </StackLayout>
             </StackLayout>
-            <Label x:Name="commentLabel" Text="Comment"></Label>
+            <Label Text="Comment"></Label>
             <Editor x:Name="comment"  Text="{Binding Comment}" ></Editor>
-            <Button x:Name="addButton" Text="Add" Clicked="OnAddButtonClicked" />
+                <Button x:Name="addButton" Text="Add" Clicked="OnAddButtonClicked" IsEnabled="{Binding IsValid}" />
         </StackLayout>
             </ScrollView>
     </ContentPage.Content>

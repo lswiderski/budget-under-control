@@ -14,8 +14,77 @@ namespace BudgetUnderControl.ViewModel
     {
         public event PropertyChangedEventHandler PropertyChanged;
 
-        public int AccountId { get; set; }
-        public int? CategoryId { get; set; }
+        public bool IsValid
+        {
+            get
+            {
+                if(IsItTransfer)
+                {
+                    if (IsTransferInOtherCurrency)
+                    {
+                        var valid = SelectedAccountIndex > -1
+                         && SelectedTransferAccountIndex >-1
+                         && !string.IsNullOrEmpty(Amount)
+                         && !string.IsNullOrEmpty(TransferAmount)
+                         && !string.IsNullOrEmpty(TransferAmount)
+                         && decimal.TryParse(Amount.Replace(',', '.'), NumberStyles.AllowDecimalPoint, CultureInfo.InvariantCulture, out decimal parsed)
+                         && decimal.TryParse(TransferAmount.Replace(',', '.'), NumberStyles.AllowDecimalPoint, CultureInfo.InvariantCulture, out parsed)
+                         && decimal.TryParse(TransferRate.Replace(',', '.'), NumberStyles.AllowDecimalPoint, CultureInfo.InvariantCulture, out parsed)
+                         && !string.IsNullOrEmpty(Name)
+                         && SelectedCategoryIndex > -1;
+                        return valid;
+                    }
+                    else
+                    {
+                        var valid = SelectedAccountIndex > -1
+                                                && SelectedTransferAccountIndex > -1
+                                                && !string.IsNullOrEmpty(Amount)
+                                                 && decimal.TryParse(Amount.Replace(',', '.'), NumberStyles.AllowDecimalPoint, CultureInfo.InvariantCulture, out decimal parsed)
+                                                 && !string.IsNullOrEmpty(Name)
+                                                 && SelectedCategoryIndex > -1;
+                        return valid;
+                    }
+
+                }
+                else
+                {
+                    var valid = SelectedAccountIndex > -1
+                         && !string.IsNullOrEmpty(Amount)
+                         && decimal.TryParse(Amount.Replace(',', '.'), NumberStyles.AllowDecimalPoint, CultureInfo.InvariantCulture, out decimal parsed)
+                         && !string.IsNullOrEmpty(Name)
+                         && SelectedCategoryIndex> -1;
+                    return valid;
+
+                }
+            }
+            set
+            {
+                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(IsValid)));
+            }
+        }
+
+        public bool IsTransferInOtherCurrency
+        {
+            get
+            {
+                if (IsItTransfer)
+                {
+                    if (selectedAccountIndex > -1 
+                        && SelectedTransferAccountIndex > -1
+                        && Accounts[selectedAccountIndex].CurrencyId != Accounts[SelectedTransferAccountIndex].CurrencyId)
+                    {
+                        return true;
+                    }
+                }
+
+                return false;
+            }
+            set
+            {
+                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(IsTransferInOtherCurrency)));
+            }
+        }
+
         public TransactionType Type
         {
             get
@@ -49,6 +118,7 @@ namespace BudgetUnderControl.ViewModel
                 {
                     name = value;
                     PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(Name)));
+                    PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(IsValid)));
                 }
             }
         }
@@ -63,6 +133,7 @@ namespace BudgetUnderControl.ViewModel
                 {
                     comment = value;
                     PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(Comment)));
+                    PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(IsValid)));
                 }
             }
         }
@@ -77,12 +148,14 @@ namespace BudgetUnderControl.ViewModel
                 {
                     amount = value;
                     PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(Amount)));
+                    PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(IsValid)));
+                    TransferAmount = Amount;
                 }
             }
         }
 
-        int? selectedCategoryIndex;
-        public int? SelectedCategoryIndex
+        int selectedCategoryIndex;
+        public int SelectedCategoryIndex
         {
             get
             {
@@ -94,6 +167,7 @@ namespace BudgetUnderControl.ViewModel
                 {
                     selectedCategoryIndex = value;
                     PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(SelectedCategoryIndex)));
+                    PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(IsValid)));
                 }
 
             }
@@ -112,6 +186,8 @@ namespace BudgetUnderControl.ViewModel
                 {
                     selectedAccountIndex = value;
                     PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(SelectedAccountIndex)));
+                    PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(IsTransferInOtherCurrency)));
+                    PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(IsValid)));
                 }
 
             }
@@ -130,6 +206,8 @@ namespace BudgetUnderControl.ViewModel
                 {
                     selectedTransferAccountIndex = value;
                     PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(SelectedTransferAccountIndex)));
+                    PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(IsTransferInOtherCurrency)));
+                    PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(IsValid)));
                 }
 
             }
@@ -168,7 +246,7 @@ namespace BudgetUnderControl.ViewModel
                             / decimal.Parse(TransferAmount.Replace(',', '.'), NumberStyles.AllowDecimalPoint, CultureInfo.InvariantCulture));
                         PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(TransferRate)));
                     }
-                    
+                    PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(IsValid)));
                 }
             }
         }
@@ -190,13 +268,12 @@ namespace BudgetUnderControl.ViewModel
                             * decimal.Parse(TransferRate.Replace(',', '.'), NumberStyles.AllowDecimalPoint, CultureInfo.InvariantCulture));
                         PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(TransferAmount)));
                     }
-                    
+                    PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(IsValid)));
                 }
             }
         }
-        public int TransferAccountId { get; set; }
 
-        public DateTime transferDate;
+        private DateTime transferDate;
         public DateTime TransferDate
         {
             get => transferDate;
@@ -210,7 +287,7 @@ namespace BudgetUnderControl.ViewModel
             }
         }
 
-        public TimeSpan transferTime;
+        private TimeSpan transferTime;
         public TimeSpan TransferTime
         {
             get => transferTime;
@@ -220,6 +297,7 @@ namespace BudgetUnderControl.ViewModel
                 {
                     transferTime = value;
                     PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(TransferTime)));
+                    PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(IsValid)));
                 }
             }
         }
@@ -270,6 +348,9 @@ namespace BudgetUnderControl.ViewModel
             this.accountModel = accountModel;
             this.categoryModel = categoryModel;
             SelectedTypeIndex = 0;
+            SelectedCategoryIndex = -1;
+            SelectedAccountIndex = -1;
+            SelectedTransferAccountIndex = -1;
             Date = DateTime.UtcNow;
             Time = DateTime.UtcNow.TimeOfDay;
             
@@ -315,7 +396,7 @@ namespace BudgetUnderControl.ViewModel
                     Comment = Comment,
                     CreatedOn = date,
                     Amount = amount,
-                    CategoryId = SelectedCategoryIndex.HasValue ? Categories[SelectedCategoryIndex.Value].Id : (int?)null,
+                    CategoryId = SelectedCategoryIndex >0  ? Categories[SelectedCategoryIndex].Id : (int?)null,
                     AccountId = Accounts[selectedAccountIndex].Id,
                     Type = Type,
                 };
@@ -347,7 +428,7 @@ namespace BudgetUnderControl.ViewModel
                 Comment = Comment,
                 Date = date,
                 Amount = amount,
-                CategoryId = SelectedCategoryIndex.HasValue ? Categories[SelectedCategoryIndex.Value].Id : (int?)null,
+                CategoryId = SelectedCategoryIndex > 0 ? Categories[SelectedCategoryIndex].Id : (int?)null,
                 AccountId = Accounts[selectedAccountIndex].Id,
                 TransferDate = transferDate,
                 TransferAmount = transferAmount,

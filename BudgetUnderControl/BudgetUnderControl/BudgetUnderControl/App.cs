@@ -120,8 +120,8 @@ namespace BudgetUnderControl
             builder.RegisterType<AccountDetailsViewModel>().As<IAccountDetailsViewModel>().InstancePerDependency();
             builder.RegisterType<TransactionsViewModel>().As<ITransactionsViewModel>().InstancePerDependency();
             builder.RegisterType<AddTransactionViewModel>().As<IAddTransactionViewModel>().InstancePerDependency();
+            builder.RegisterType<EditTransactionViewModel>().As<IEditTransactionViewModel>().InstancePerDependency();
             
-
 
             App.Container = builder.Build();
             ServiceLocator.SetLocatorProvider(() => new AutofacServiceLocator(App.Container));

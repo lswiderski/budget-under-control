@@ -7,8 +7,23 @@
         <StackLayout>
             <Label Text="Account Details Page" />
             <Button Clicked="Button_Edit_Clicked" Text="Edit" />
-            <Label Text="{Binding Name, Mode=TwoWay}" />
+            <StackLayout Orientation="Horizontal">
+                <Label Text="{Binding Name, Mode=TwoWay}" />
+                <Label Text="{Binding ValueWithCurrency, Mode=TwoWay}" x:Name="valueLabel" PropertyChanged="valueLabel_PropertyChanged"/>
+            </StackLayout>
+           
             <Button Clicked="Button_Remove_Clicked" Text="Remove" />
+            <ListView x:Name="transactions" ItemsSource="{Binding Transactions}"  VerticalOptions="FillAndExpand" HorizontalOptions="FillAndExpand" HasUnevenRows="True" >
+                <ListView.ItemTemplate>
+                    <DataTemplate>
+                        <local:TransactionListItem  Transaction="{Binding}"/>
+                    </DataTemplate>
+                </ListView.ItemTemplate>
+            </ListView>
         </StackLayout>
     </ContentPage.Content>
+    <ContentPage.ToolbarItems>
+        <ToolbarItem Text="Edit" Order="Secondary" Clicked="Button_Edit_Clicked"/>
+        <ToolbarItem Text="Delete" Order="Secondary" Clicked="Button_Remove_Clicked" />
+    </ContentPage.ToolbarItems>
 </ContentPage>

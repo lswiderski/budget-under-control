@@ -8,10 +8,10 @@
         <AbsoluteLayout x:Name="absoluteLayout" VerticalOptions="FillAndExpand" HorizontalOptions="FillAndExpand">
             <StackLayout Padding="0,20,0,0" AbsoluteLayout.LayoutFlags="All" AbsoluteLayout.LayoutBounds="0,0,1,1">
                 <Label Text="Transactions" HorizontalOptions="Center" FontAttributes="Bold" />
-                <ListView x:Name="transactions" ItemsSource="{Binding Transactions}" >
+                <ListView x:Name="transactions" ItemsSource="{Binding Transactions}" SelectedItem="{Binding SelectedTransaction}"   ItemSelected="OnItemSelected" VerticalOptions="FillAndExpand" HorizontalOptions="FillAndExpand" HasUnevenRows="True"  >
                     <ListView.ItemTemplate>
                         <DataTemplate>
-                            <local:TransactionListItem Name="{Binding Name}" Account="{Binding Account}" Value="{Binding  Value}" />
+                            <local:TransactionListItem  Transaction="{Binding}"/>
                         </DataTemplate>
                     </ListView.ItemTemplate>
                 </ListView>

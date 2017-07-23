@@ -42,7 +42,7 @@ namespace BudgetUnderControl.Views
                 ColorRipple = Color.FromHex("ff3498db"),
                 Clicked = OnAddButtonClicked
             };
-
+         
             // Overlay the FAB in the bottom-right corner
             AbsoluteLayout.SetLayoutFlags(fab, AbsoluteLayoutFlags.PositionProportional);
             AbsoluteLayout.SetLayoutBounds(fab, new Rectangle(1f, 1f, AbsoluteLayout.AutoSize, AbsoluteLayout.AutoSize));

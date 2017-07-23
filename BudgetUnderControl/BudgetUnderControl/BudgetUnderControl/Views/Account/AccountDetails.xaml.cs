@@ -48,8 +48,12 @@ namespace BudgetUnderControl.Views
         {
             base.OnAppearing();
             vm.LoadAccount(accountId);
+            vm.LoadTransactions(accountId);
         }
 
-
+        private void valueLabel_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
+        {
+            valueLabel.TextColor = vm.Value < 0 ? Color.Red : Color.Green;
+        }
     }
 }

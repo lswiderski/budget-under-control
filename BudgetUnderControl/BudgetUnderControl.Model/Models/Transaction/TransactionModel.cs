@@ -1,4 +1,5 @@
-﻿using BudgetUnderControl.Domain;
+﻿using BudgetUnderControl.Common.Enums;
+using BudgetUnderControl.Domain;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
@@ -113,6 +114,203 @@ namespace BudgetUnderControl.Model
                 Rate = arg.Rate
             };
             this.Context.Transefres.Add(transfer);
+            this.Context.SaveChanges();
+        }
+
+        public EditTransactionDTO GetEditTransaction(int id)
+        {
+            var transaction = (from t in this.Context.Transactions
+                                join a in this.Context.Accounts on t.AccountId equals a.Id
+                                join c in this.Context.Currencies on a.CurrencyId equals c.Id
+                                where t.Id == id
+                                select new EditTransactionDTO
+                                {
+                                    AccountId = t.AccountId,
+                                    Date = t.CreatedOn,
+                                    Id = t.Id,
+                                    Amount = t.Amount,
+                                    CategoryId = c.Id,
+                                    Comment = t.Comment,
+                                    Name = t.Name,
+                                    Type = t.Type
+                                }
+                               ).FirstOrDefault();
+
+            transaction.ExtendedType = transaction.Type == TransactionType.Income ? ExtendedTransactionType.Income : ExtendedTransactionType.Expense;
+
+            var transfer = this.Context.Transefres.Where(x => x.FromTransactionId == transaction.Id 
+            || x.ToTransactionId == transaction.Id)
+            .Select(x => new
+            {
+                x.FromTransactionId,
+                x.ToTransactionId,
+                x.Rate,
+                x.Id
+            })
+            .FirstOrDefault();
+
+            if(transfer != null)
+            {
+                int transferedTransactionId;
+                if(transaction.Id == transfer.FromTransactionId)
+                {
+                    transferedTransactionId = transfer.ToTransactionId;
+                }
+                else
+                {
+                    transferedTransactionId = transfer.FromTransactionId;
+                }
+
+                var transferedTransaction = (from t in this.Context.Transactions
+                                   join a in this.Context.Accounts on t.AccountId equals a.Id
+                                   join c in this.Context.Currencies on a.CurrencyId equals c.Id
+                                   where t.Id == transferedTransactionId
+                                   select new EditTransactionDTO
+                                   {
+                                       AccountId = t.AccountId,
+                                       Date = t.CreatedOn,
+                                       Id = t.Id,
+                                       Amount = t.Amount,
+                                       CategoryId = c.Id,
+                                       Comment = t.Comment,
+                                       Name = t.Name,
+                                       Type = t.Type
+                                   }
+                              ).FirstOrDefault();
+
+                transaction.Rate = transfer.Rate;
+                transaction.TransferId = transfer.Id;
+
+                if (transaction.Id == transfer.FromTransactionId)
+                {
+                    transaction.TransferAmount = transferedTransaction.TransferAmount;
+                    transaction.TransferDate = transferedTransaction.Date;
+                    transaction.TransferTransactionId = transferedTransaction.Id;
+                    transaction.TransferAccountId = transferedTransaction.AccountId;
+                    
+                }
+                else
+                {
+                    transaction.TransferAmount = transaction.Amount;
+                    transaction.Amount = transferedTransaction.Amount;
+
+                    transaction.TransferDate = transaction.Date;
+                    transaction.Date = transferedTransaction.Date;
+
+                    transaction.TransferTransactionId = transaction.Id;
+                    transaction.Id = transferedTransaction.Id;
+
+
+                    transaction.TransferAccountId = transaction.AccountId;
+                    transaction.AccountId = transferedTransaction.AccountId;
+                }
+                transaction.ExtendedType = ExtendedTransactionType.Transfer;
+
+            }
+
+            return transaction;
+        }
+
+        public void EditTransaction(EditTransactionDTO arg)
+        {
+            var firstTransaction = this.Context.Transactions.Where(x => x.Id == arg.Id).FirstOrDefault();
+            Transaction secondTransaction = null;
+            var transfer = this.Context.Transefres.Where(x => x.FromTransactionId == arg.Id)
+
+           .FirstOrDefault();
+
+            if (transfer != null)
+            {
+                secondTransaction = this.Context.Transactions.Where(x => x.Id == transfer.ToTransactionId).FirstOrDefault();
+            }
+
+
+            //remove transfer, no more transfer
+            if (arg.ExtendedType != Common.Enums.ExtendedTransactionType.Transfer 
+                && transfer != null && secondTransaction != null)
+            {
+                this.Context.Remove<Transfer>(transfer);
+                this.Context.Remove<Transaction>(secondTransaction);
+
+                firstTransaction.AccountId = arg.AccountId;
+                firstTransaction.Amount = arg.Amount;
+                firstTransaction.CategoryId = arg.CategoryId;
+                firstTransaction.Comment = arg.Comment;
+                firstTransaction.Name = arg.Name;
+                firstTransaction.Type = arg.Type;
+                firstTransaction.CreatedOn = arg.Date;
+            }
+            //new Transfer, no transfer before
+            else if(arg.ExtendedType == Common.Enums.ExtendedTransactionType.Transfer
+                && transfer == null && secondTransaction == null)
+            {
+                firstTransaction.AccountId = arg.AccountId;
+                firstTransaction.Amount = arg.Amount;
+                firstTransaction.CategoryId = arg.CategoryId;
+                firstTransaction.Comment = arg.Comment;
+                firstTransaction.Name = arg.Name;
+                firstTransaction.Type = TransactionType.Expense;
+                firstTransaction.CreatedOn = arg.Date;
+
+                var transactionIncome = new Transaction
+                {
+                    AccountId = arg.TransferAccountId.Value,
+                    Amount = arg.TransferAmount.Value,
+                    CategoryId = arg.CategoryId,
+                    Comment = arg.Comment,
+                    Name = arg.Name,
+                    Type = TransactionType.Income,
+                    CreatedOn = arg.TransferDate.Value,
+                };
+
+                this.Context.Transactions.Add(transactionIncome);
+                this.Context.SaveChanges();
+
+                var newTransfer = new Transfer
+                {
+                    FromTransactionId = firstTransaction.Id,
+                    ToTransactionId = transactionIncome.Id,
+                    Rate = arg.Rate.Value
+                };
+                this.Context.Transefres.Add(newTransfer);
+
+            }
+            //edit transfer
+            else if (arg.ExtendedType == Common.Enums.ExtendedTransactionType.Transfer
+                && transfer != null && secondTransaction != null)
+            {
+                firstTransaction.AccountId = arg.AccountId;
+                firstTransaction.Amount = arg.Amount;
+                firstTransaction.CategoryId = arg.CategoryId;
+                firstTransaction.Comment = arg.Comment;
+                firstTransaction.Name = arg.Name;
+                firstTransaction.Type = TransactionType.Expense;
+                firstTransaction.CreatedOn = arg.Date;
+
+
+                secondTransaction.AccountId = arg.TransferAccountId.Value;
+                secondTransaction.Amount = arg.TransferAmount.Value;
+                secondTransaction.CategoryId = arg.CategoryId;
+                secondTransaction.Comment = arg.Comment;
+                secondTransaction.Name = arg.Name;
+                secondTransaction.Type = TransactionType.Income;
+                secondTransaction.CreatedOn = arg.TransferDate.Value;
+
+                transfer.Rate = arg.Rate.Value;
+            }
+            //just edit 1 transaction, no transfer before
+            else if(arg.ExtendedType != Common.Enums.ExtendedTransactionType.Transfer
+                && transfer == null && secondTransaction == null)
+            {
+                firstTransaction.AccountId = arg.AccountId;
+                firstTransaction.Amount = arg.Amount;
+                firstTransaction.CategoryId = arg.CategoryId;
+                firstTransaction.Comment = arg.Comment;
+                firstTransaction.Name = arg.Name;
+                firstTransaction.Type = arg.Type;
+                firstTransaction.CreatedOn = arg.Date;
+            }
+
             this.Context.SaveChanges();
         }
     }

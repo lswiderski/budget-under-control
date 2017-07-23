@@ -10,6 +10,7 @@ namespace BudgetUnderControl.ViewModel
     public interface ITransactionsViewModel
     {
         ICollection<TransactionListItemDTO> Transactions { get; set; }
+        TransactionListItemDTO SelectedTransaction { get; set; }
 
         void LoadTransactions();
     }

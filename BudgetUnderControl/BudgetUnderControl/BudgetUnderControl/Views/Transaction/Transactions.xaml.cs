@@ -57,5 +57,13 @@ namespace BudgetUnderControl.Views
             var addAccount = new AddTransaction();
             await Navigation.PushModalAsync(addAccount);
         }
+
+        async void OnItemSelected(object sender, SelectedItemChangedEventArgs e)
+        {
+            var transactionId = vm.SelectedTransaction.Id;
+            //App.MasterPage.NavigateTo(typeof(EditTransaction), transactionId);
+            var editTransaction = new EditTransaction(transactionId);
+            await Navigation.PushModalAsync(editTransaction);
+        }
     }
 }

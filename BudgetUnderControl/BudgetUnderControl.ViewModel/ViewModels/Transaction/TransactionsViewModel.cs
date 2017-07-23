@@ -12,6 +12,7 @@ namespace BudgetUnderControl.ViewModel
     {
         public event PropertyChangedEventHandler PropertyChanged;
         ITransactionModel transactionModel;
+        public TransactionListItemDTO SelectedTransaction { get; set; }
 
         ICollection<TransactionListItemDTO> transactions;
         public ICollection<TransactionListItemDTO> Transactions

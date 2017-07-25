@@ -29,20 +29,20 @@ namespace BudgetUnderControl.Views
             masterPageItems.Add(new MasterPageItem
             {
                 Title = "Accounts",
-                IconSource = "Overview.png",
+                IconSource = "Accounts.png",
                 TargetType = typeof(Accounts)
             });
             masterPageItems.Add(new MasterPageItem
             {
                 Title = "Transactions",
-                IconSource = "Overview.png",
+                IconSource = "Transactions.png",
                 TargetType = typeof(Transactions)
             });
             
             masterPageItems.Add(new MasterPageItem
             {
                 Title = "Currencies",
-                IconSource = "Settings.png",
+                IconSource = "Currencies.png",
                 TargetType = typeof(Currencies)
             });
             masterPageItems.Add(new MasterPageItem

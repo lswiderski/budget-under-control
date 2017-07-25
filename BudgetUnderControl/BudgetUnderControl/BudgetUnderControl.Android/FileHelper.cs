@@ -13,5 +13,16 @@ namespace BudgetUnderControl.Droid
             string path = Environment.GetFolderPath(Environment.SpecialFolder.Personal);
             return Path.Combine(path, filename);
         }
+
+        public void SaveText(string filename, string text)
+        {
+            var filePath = GetLocalFilePath(filename);
+            System.IO.File.WriteAllText(filePath, text);
+        }
+        public string LoadText(string filename)
+        {
+            var filePath = GetLocalFilePath(filename);
+            return System.IO.File.ReadAllText(filePath);
+        }
     }
 }

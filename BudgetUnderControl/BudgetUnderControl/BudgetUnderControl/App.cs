@@ -10,7 +10,6 @@ using BudgetUnderControl.Model;
 using Microsoft.Practices.ServiceLocation;
 using Autofac.Extras.CommonServiceLocator;
 using BudgetUnderControl.ViewModel;
-using System.ComponentModel;
 
 [assembly: XamlCompilation(XamlCompilationOptions.Compile)]
 namespace BudgetUnderControl
@@ -113,6 +112,8 @@ namespace BudgetUnderControl
             builder.RegisterType<AccountGroupModel>().As<IAccountGroupModel>().SingleInstance();
             builder.RegisterType<TransactionModel>().As<ITransactionModel>().SingleInstance();
             builder.RegisterType<CategoryModel>().As<ICategoryModel>().SingleInstance();
+            builder.RegisterType<SyncService>().As<ISyncService>().SingleInstance();
+            builder.RegisterInstance<IFileHelper>(DependencyService.Get<IFileHelper>());
 
             builder.RegisterType<EditAccountViewModel>().As<IEditAccountViewModel>().InstancePerDependency();
             builder.RegisterType<AddAccountViewModel>().As<IAddAccountViewModel>().InstancePerDependency();
@@ -121,7 +122,10 @@ namespace BudgetUnderControl
             builder.RegisterType<TransactionsViewModel>().As<ITransactionsViewModel>().InstancePerDependency();
             builder.RegisterType<AddTransactionViewModel>().As<IAddTransactionViewModel>().InstancePerDependency();
             builder.RegisterType<EditTransactionViewModel>().As<IEditTransactionViewModel>().InstancePerDependency();
+            builder.RegisterType<SettingsViewModel>().As<ISettingsViewModel>().InstancePerDependency();
             
+
+
 
             App.Container = builder.Build();
             ServiceLocator.SetLocatorProvider(() => new AutofacServiceLocator(App.Container));

@@ -9,9 +9,10 @@ using BudgetUnderControl.Common.Enums;
 namespace Migrations.Migrations
 {
     [DbContext(typeof(Context))]
-    partial class ContextModelSnapshot : ModelSnapshot
+    [Migration("20170724145706_AccountOrderTransferDateName")]
+    partial class AccountOrderTransferDateName
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
             modelBuilder
                 .HasAnnotation("ProductVersion", "1.1.2");
@@ -67,11 +68,7 @@ namespace Migrations.Migrations
 
                     b.Property<DateTime>("CreatedOn");
 
-                    b.Property<DateTime>("Date");
-
                     b.Property<int>("LastTransactionId");
-
-                    b.Property<DateTime?>("ModifiedOn");
 
                     b.Property<int?>("PreviousAccountSnapshotId");
 
@@ -208,11 +205,7 @@ namespace Migrations.Migrations
 
                     b.Property<string>("Comment");
 
-                    b.Property<DateTime>("CreatedOn");
-
                     b.Property<DateTime>("Date");
-
-                    b.Property<DateTime?>("ModifiedOn");
 
                     b.Property<string>("Name");
 

@@ -32,6 +32,8 @@ namespace Migrations.Migrations
                     b.Property<string>("Name")
                         .HasMaxLength(250);
 
+                    b.Property<int>("Order");
+
                     b.HasKey("Id");
 
                     b.HasIndex("AccountGroupId");
@@ -65,7 +67,11 @@ namespace Migrations.Migrations
 
                     b.Property<DateTime>("CreatedOn");
 
+                    b.Property<DateTime>("Date");
+
                     b.Property<int>("LastTransactionId");
+
+                    b.Property<DateTime?>("ModifiedOn");
 
                     b.Property<int?>("PreviousAccountSnapshotId");
 
@@ -203,6 +209,10 @@ namespace Migrations.Migrations
                     b.Property<string>("Comment");
 
                     b.Property<DateTime>("CreatedOn");
+
+                    b.Property<DateTime>("Date");
+
+                    b.Property<DateTime?>("ModifiedOn");
 
                     b.Property<string>("Name");
 

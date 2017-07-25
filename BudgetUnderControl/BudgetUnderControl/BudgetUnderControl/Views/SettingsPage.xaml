@@ -6,6 +6,8 @@
     <ContentPage.Content>
         <StackLayout>
             <Label Text="Setting Page!" HorizontalOptions="Center" VerticalOptions="CenterAndExpand" />
+            <Button Text="Export"  Clicked="ExportButton_Clicked"/>
+            <Button Text="Import"  Clicked="ImportButton_Clicked"/>
         </StackLayout>
     </ContentPage.Content>
 </ContentPage>

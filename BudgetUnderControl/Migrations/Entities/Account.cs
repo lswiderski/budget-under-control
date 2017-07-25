@@ -17,6 +17,7 @@ namespace BudgetUnderControl.Domain
         public int AccountGroupId { get; set; }
         public bool IsIncludedToTotal { get; set; }
         public string Comment { get; set; }
+        public int Order { get; set; }
 
         public AccountGroup AccountGroup { get; set; }
         public Currency Currency { get; set; }

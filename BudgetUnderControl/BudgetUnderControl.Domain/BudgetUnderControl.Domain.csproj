@@ -58,6 +58,14 @@
     <Compile Include="Migrations\20170701091129_Seed.Designer.cs">
       <DependentUpon>20170701091129_Seed.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\20170724145706_AccountOrderTransferDateName.cs" />
+    <Compile Include="Migrations\20170724145706_AccountOrderTransferDateName.Designer.cs">
+      <DependentUpon>20170724145706_AccountOrderTransferDateName.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\20170724151410_CreatedAndModifiedDates.cs" />
+    <Compile Include="Migrations\20170724151410_CreatedAndModifiedDates.Designer.cs">
+      <DependentUpon>20170724151410_CreatedAndModifiedDates.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\ContextModelSnapshot.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

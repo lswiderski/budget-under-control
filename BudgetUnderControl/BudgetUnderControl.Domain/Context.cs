@@ -18,12 +18,12 @@ namespace BudgetUnderControl.Domain
         public virtual DbSet<Category> Categories { get; set; }
         public virtual DbSet<Currency> Currencies { get; set; }
         public virtual DbSet<ExchangeRate> ExchangeRates { get; set; }
-        public virtual DbSet<File> Fiiles { get; set; }
+        public virtual DbSet<File> Files { get; set; }
         public virtual DbSet<Icon> Icons { get; set; }
         public virtual DbSet<Tag> Tags { get; set; }
         public virtual DbSet<TagToTransaction> TagsToTransactions { get; set; }
         public virtual DbSet<Transaction> Transactions { get; set; }
-        public virtual DbSet<Transfer> Transefres { get; set; }
+        public virtual DbSet<Transfer> Transfers { get; set; }
 
         public Context()
         {

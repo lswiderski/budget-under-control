@@ -54,6 +54,13 @@
     <Compile Include="Models\Currency\CurrencyModel.cs" />
     <Compile Include="Models\Currency\ICurrencyModel.cs" />
     <Compile Include="Models\Currency\Contracts\CurrencyViewModel.cs" />
+    <Compile Include="Models\Sync\Contracts\AccountSyncDTO.cs" />
+    <Compile Include="Models\Sync\Contracts\BackUpDTO.cs" />
+    <Compile Include="Models\Sync\Contracts\CurrencySyncDTO.cs" />
+    <Compile Include="Models\Sync\Contracts\TransactionSyncDTO.cs" />
+    <Compile Include="Models\Sync\Contracts\TransferSyncDTO.cs" />
+    <Compile Include="Models\Sync\ISyncService.cs" />
+    <Compile Include="Models\Sync\SyncService.cs" />
     <Compile Include="Models\Transaction\Contracts\AddTransactionDTO.cs" />
     <Compile Include="Models\Transaction\Contracts\AddTransferDTO.cs" />
     <Compile Include="Models\Transaction\Contracts\EditTransactionDTO.cs" />

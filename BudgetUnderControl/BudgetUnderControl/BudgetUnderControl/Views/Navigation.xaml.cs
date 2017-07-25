@@ -38,19 +38,20 @@ namespace BudgetUnderControl.Views
                 IconSource = "Overview.png",
                 TargetType = typeof(Transactions)
             });
-            masterPageItems.Add(new MasterPageItem
-            {
-                Title = "Settings",
-                IconSource = "Settings.png",
-                TargetType = typeof(SettingsPage)
-            });
+            
             masterPageItems.Add(new MasterPageItem
             {
                 Title = "Currencies",
                 IconSource = "Settings.png",
                 TargetType = typeof(Currencies)
             });
-            
+            masterPageItems.Add(new MasterPageItem
+            {
+                Title = "Settings",
+                IconSource = "Settings.png",
+                TargetType = typeof(SettingsPage)
+            });
+
             listView.ItemsSource = masterPageItems;
         }
     }

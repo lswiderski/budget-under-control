@@ -35,13 +35,14 @@ namespace BudgetUnderControl
 
             //MainPage = nav;
 
-            MainPage = MasterPage = new BudgetUnderControl.Views.MasterPage();
+            
         }
 
         protected override void OnStart()
         {
 
             AutoFacInit();
+            MainPage = MasterPage = new BudgetUnderControl.Views.MasterPage();
             //Debug.WriteLine("OnStart");
 
             //// always re-set when the app starts
@@ -123,7 +124,7 @@ namespace BudgetUnderControl
             builder.RegisterType<AddTransactionViewModel>().As<IAddTransactionViewModel>().InstancePerDependency();
             builder.RegisterType<EditTransactionViewModel>().As<IEditTransactionViewModel>().InstancePerDependency();
             builder.RegisterType<SettingsViewModel>().As<ISettingsViewModel>().InstancePerDependency();
-            
+            builder.RegisterType<OverviewViewModel>().As<IOverviewViewModel>().InstancePerDependency();
 
 
 

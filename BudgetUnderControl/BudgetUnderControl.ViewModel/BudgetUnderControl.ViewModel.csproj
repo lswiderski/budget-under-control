@@ -45,6 +45,8 @@
     <Compile Include="ViewModels\Account\IAccountsViewModel.cs" />
     <Compile Include="ViewModels\Account\IAddAccountViewModel.cs" />
     <Compile Include="ViewModels\Account\IEditAccountViewModel.cs" />
+    <Compile Include="ViewModels\Overview\IOverviewViewModel.cs" />
+    <Compile Include="ViewModels\Overview\OverviewViewModel.cs" />
     <Compile Include="ViewModels\Settings\ISettingsViewModel.cs" />
     <Compile Include="ViewModels\Settings\SettingsViewModel.cs" />
     <Compile Include="ViewModels\Transaction\AddTransactionViewModel.cs" />

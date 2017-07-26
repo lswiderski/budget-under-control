@@ -149,6 +149,40 @@ namespace BudgetUnderControl.Model
             ImportBackUpJSON(json);
         }
 
+        public void ExportCSV()
+        {
+            var fileName = string.Format("{0}_{1}.txt", "buc", DateTime.UtcNow.Ticks);
+
+            var query = (from tr in this.Context.Transactions
+                         join acc in this.Context.Accounts on tr.AccountId equals acc.Id
+                         join cur in this.Context.Currencies on acc.CurrencyId equals cur.Id
+                         from cat in this.Context.Categories.Where(x => x.Id == tr.Id).DefaultIfEmpty()
+                         select new
+                         {
+                             AccountName = acc.Name,
+                             CurrencyCode = cur.Code,
+                             Amount = tr.Amount,
+                             TransactionId = tr.Id,
+                             Category = cat != null ? cat.Name : "",
+                             TransactionName = tr.Name,
+                             
+                             Date = tr.Date,
+                             Type = tr.Type,
+                             Comment = tr.Comment
+                         }).ToList();
+
+            var csv = "AccountName;CurrencyCode;Amount;TransactionId;Category;Date;Type;Comment" + Environment.NewLine;
+            foreach (var item in query)
+            {
+                var line = string.Format("{0};{1};{2};{3};{4};{5};{6};{7}", 
+                    item.AccountName, item.CurrencyCode, item.Amount, item.TransactionId, item.Category,  item.Date, item.Type.ToString(), item.Comment)
+                    + Environment.NewLine;
+                csv += line;
+            }
+
+            fileHelper.SaveText(fileName, csv);
+        }
+
         private void ImportCurrencies(List<CurrencySyncDTO> currencies)
         {
             foreach (var item in currencies)

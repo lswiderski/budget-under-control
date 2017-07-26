@@ -16,16 +16,22 @@ namespace BudgetUnderControl.ViewModel
             this.syncService = syncService;
         }
 
-        public void ExportTransactions()
+        public void ExportBackup()
         {
             
             syncService.SaveBackupFile();
         }
 
-        public void ImportTransactions()
+        public void ImportBackup()
         {
 
             syncService.LoadBackupFile();
         }
+        public void ExportCSV()
+        {
+
+            syncService.ExportCSV();
+        }
+
     }
 }

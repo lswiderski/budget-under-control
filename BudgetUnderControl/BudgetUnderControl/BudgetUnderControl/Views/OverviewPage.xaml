@@ -6,7 +6,7 @@
              Title="Overview Page">
     <ContentPage.Content>
         <AbsoluteLayout x:Name="absoluteLayout" VerticalOptions="FillAndExpand" HorizontalOptions="FillAndExpand">
-            <StackLayout Padding="0,20,0,0" AbsoluteLayout.LayoutFlags="All" AbsoluteLayout.LayoutBounds="0,0,1,1">
+            <StackLayout Padding="20,20,0,0" AbsoluteLayout.LayoutFlags="All" AbsoluteLayout.LayoutBounds="0,0,1,1">
                 <Label Text="PLN:" />
                 <Label x:Name="pln" />
                 <Label Text="USD:" />

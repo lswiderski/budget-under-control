@@ -13,5 +13,6 @@ namespace BudgetUnderControl.Model
         string GetBackUpJSON();
         void SaveBackupFile();
         void LoadBackupFile();
+        void ExportCSV();
     }
 }

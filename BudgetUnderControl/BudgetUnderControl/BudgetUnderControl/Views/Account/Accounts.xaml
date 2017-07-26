@@ -6,9 +6,8 @@
              Title="Accounts">
     <ContentPage.Content>
         <AbsoluteLayout x:Name="absoluteLayout" VerticalOptions="FillAndExpand" HorizontalOptions="FillAndExpand">
-        <StackLayout Padding="0,20,0,0" AbsoluteLayout.LayoutFlags="All" AbsoluteLayout.LayoutBounds="0,0,1,1">
-            <Label Text="Accounts" HorizontalOptions="Center" FontAttributes="Bold" />
-            <ListView x:Name="accounts" ItemSelected="OnItemSelected" ItemsSource="{Binding Accounts}" SelectedItem="{Binding SelectedAccount}">
+            <StackLayout Padding="0,0,0,0" AbsoluteLayout.LayoutFlags="All" AbsoluteLayout.LayoutBounds="0,0,1,1">
+                <ListView x:Name="accounts" ItemSelected="OnItemSelected" ItemsSource="{Binding Accounts}" SelectedItem="{Binding SelectedAccount}">
                 <ListView.ItemTemplate>
                     <DataTemplate>
                         <local:AccountListItem Name="{Binding Name}" Currency="{Binding Currency}" Balance="{Binding  Balance}" />

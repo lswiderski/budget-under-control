@@ -27,11 +27,17 @@ namespace BudgetUnderControl.Views
 
         private void ExportButton_Clicked(object sender, EventArgs e)
         {
-            vm.ExportTransactions();
+            vm.ExportBackup();
         }
+
         private void ImportButton_Clicked(object sender, EventArgs e)
         {
-            vm.ImportTransactions();
+            vm.ImportBackup();
+        }
+
+        private void ExportCSVButton_Clicked(object sender, EventArgs e)
+        {
+            vm.ExportCSV();
         }
     }
 }

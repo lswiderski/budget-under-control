@@ -7,7 +7,7 @@
 
     <ContentPage.Content>
         <AbsoluteLayout x:Name="absoluteLayout" VerticalOptions="FillAndExpand" HorizontalOptions="FillAndExpand">
-            <StackLayout Padding="0,20,0,0" AbsoluteLayout.LayoutFlags="All" AbsoluteLayout.LayoutBounds="0,0,1,1">
+            <StackLayout  Padding="0,0,0,0" AbsoluteLayout.LayoutFlags="All" AbsoluteLayout.LayoutBounds="0,0,1,1">
                 <ListView x:Name="transactions" ItemsSource="{Binding Transactions}" SelectedItem="{Binding SelectedTransaction}"   ItemSelected="OnItemSelected" VerticalOptions="FillAndExpand" HorizontalOptions="FillAndExpand" HasUnevenRows="True"  >
                     <ListView.ItemTemplate>
                         <DataTemplate>

@@ -27,7 +27,8 @@ namespace BudgetUnderControl.Model
                  Comment = arg.Comment,
                  Name = arg.Name,
                  Type = arg.Type,
-                 Date = arg.CreatedOn,    
+                 Date = arg.CreatedOn,   
+                 CreatedOn = DateTime.UtcNow,
             };
 
             this.Context.Transactions.Add(transaction);
@@ -90,6 +91,7 @@ namespace BudgetUnderControl.Model
                 Name = arg.Name,
                 Type =  Common.Enums.TransactionType.Expense,
                 Date = arg.Date,
+                CreatedOn = DateTime.UtcNow,
             };
 
             var transactionIncome = new Transaction
@@ -101,6 +103,7 @@ namespace BudgetUnderControl.Model
                 Name = arg.Name,
                 Type = Common.Enums.TransactionType.Income,
                 Date = arg.TransferDate,
+                CreatedOn = DateTime.UtcNow,
             };
 
             this.Context.Transactions.Add(transactionExpense);
@@ -239,6 +242,7 @@ namespace BudgetUnderControl.Model
                 firstTransaction.Name = arg.Name;
                 firstTransaction.Type = arg.Type;
                 firstTransaction.Date = arg.Date;
+                firstTransaction.ModifiedOn = DateTime.UtcNow;
             }
             //new Transfer, no transfer before
             else if(arg.ExtendedType == Common.Enums.ExtendedTransactionType.Transfer
@@ -251,6 +255,7 @@ namespace BudgetUnderControl.Model
                 firstTransaction.Name = arg.Name;
                 firstTransaction.Type = TransactionType.Expense;
                 firstTransaction.Date = arg.Date;
+                firstTransaction.ModifiedOn = DateTime.UtcNow;
 
                 var transactionIncome = new Transaction
                 {
@@ -261,6 +266,7 @@ namespace BudgetUnderControl.Model
                     Name = arg.Name,
                     Type = TransactionType.Income,
                     Date = arg.TransferDate.Value,
+                    CreatedOn = DateTime.UtcNow
                 };
 
                 this.Context.Transactions.Add(transactionIncome);
@@ -286,7 +292,7 @@ namespace BudgetUnderControl.Model
                 firstTransaction.Name = arg.Name;
                 firstTransaction.Type = TransactionType.Expense;
                 firstTransaction.Date = arg.Date;
-
+                firstTransaction.ModifiedOn = DateTime.UtcNow;
 
                 secondTransaction.AccountId = arg.TransferAccountId.Value;
                 secondTransaction.Amount = arg.TransferAmount.Value;
@@ -295,6 +301,7 @@ namespace BudgetUnderControl.Model
                 secondTransaction.Name = arg.Name;
                 secondTransaction.Type = TransactionType.Income;
                 secondTransaction.Date = arg.TransferDate.Value;
+                secondTransaction.ModifiedOn = DateTime.UtcNow;
 
                 transfer.Rate = arg.Rate.Value;
             }
@@ -309,6 +316,7 @@ namespace BudgetUnderControl.Model
                 firstTransaction.Name = arg.Name;
                 firstTransaction.Type = arg.Type;
                 firstTransaction.Date = arg.Date;
+                firstTransaction.ModifiedOn = DateTime.UtcNow;
             }
 
             this.Context.SaveChanges();

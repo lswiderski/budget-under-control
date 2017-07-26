@@ -33,7 +33,6 @@ namespace BudgetUnderControl
 
             AutoFacInit();
             MainPage = MasterPage = new BudgetUnderControl.Views.MasterPage();
-
         }
 
         protected override void OnSleep()
@@ -73,7 +72,7 @@ namespace BudgetUnderControl
             builder.RegisterType<AddTransactionViewModel>().As<IAddTransactionViewModel>().InstancePerDependency();
             builder.RegisterType<EditTransactionViewModel>().As<IEditTransactionViewModel>().InstancePerDependency();
             builder.RegisterType<SettingsViewModel>().As<ISettingsViewModel>().InstancePerDependency();
-            
+            builder.RegisterType<OverviewViewModel>().As<IOverviewViewModel>().InstancePerDependency();
 
 
 

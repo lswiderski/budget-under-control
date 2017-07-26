@@ -7,7 +7,16 @@
     <ContentPage.Content>
         <AbsoluteLayout x:Name="absoluteLayout" VerticalOptions="FillAndExpand" HorizontalOptions="FillAndExpand">
             <StackLayout Padding="0,20,0,0" AbsoluteLayout.LayoutFlags="All" AbsoluteLayout.LayoutBounds="0,0,1,1">
-                <Label Text="Overview" />
+                <Label Text="PLN:" />
+                <Label x:Name="pln" />
+                <Label Text="USD:" />
+                <Label x:Name="usd" />
+                <Label Text="EUR:" />
+                <Label x:Name="eur" />
+                <Label Text="THB:" />
+                <Label x:Name="thb" />
+                <Label Text="Total:" />
+                <Label x:Name="total" />
             </StackLayout>
         </AbsoluteLayout>
     </ContentPage.Content>

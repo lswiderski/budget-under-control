@@ -29,7 +29,7 @@
             <StackLayout Orientation="Vertical" IsVisible="{Binding IsTransferOptionsVisible, Mode=TwoWay}">
                 <Label Text="Transfer" />
                     <Label Text="Account transfer to"></Label>
-                    <Picker x:Name="transferAccount" ItemsSource="{Binding Accounts}" ItemDisplayBinding="{Binding Name}"  SelectedIndex="{Binding  SelectedTransferAccountIndex, Mode=TwoWay}" Title="Account" />
+                    <Picker x:Name="transferAccount" ItemsSource="{Binding Accounts}" ItemDisplayBinding="{Binding Name}"  SelectedIndex="{Binding SelectedTransferAccountIndex, Mode=TwoWay}" Title="Account" />
                     <Label Text="Amount" IsVisible="{Binding IsTransferInOtherCurrency}"></Label>
                     <Entry x:Name="transferAmount" Text="{Binding TransferAmount}" Placeholder="Amount" IsVisible="{Binding IsTransferInOtherCurrency}" >
                     <Entry.Behaviors>

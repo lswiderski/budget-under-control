@@ -239,11 +239,12 @@ namespace BudgetUnderControl.ViewModel
                 {
                     transferAmount = value;
                     PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(TransferAmount)));
-                    if (!string.IsNullOrEmpty(Amount) && !string.IsNullOrEmpty(TransferAmount) && (decimal.Parse(TransferAmount.Replace(',', '.'), NumberStyles.AllowDecimalPoint, CultureInfo.InvariantCulture) != 0))
+                    decimal.TryParse(TransferAmount.Replace(',', '.'), NumberStyles.AllowDecimalPoint, CultureInfo.InvariantCulture, out decimal parsed);
+                    if (!string.IsNullOrEmpty(Amount) && !string.IsNullOrEmpty(TransferAmount) && (parsed != 0))
                     {
-                        transferRate = string.Format("{0}",
-                            decimal.Parse(Amount.Replace(',', '.'), NumberStyles.AllowDecimalPoint, CultureInfo.InvariantCulture) 
-                            / decimal.Parse(TransferAmount.Replace(',', '.'), NumberStyles.AllowDecimalPoint, CultureInfo.InvariantCulture));
+                        decimal.TryParse(TransferAmount.Replace(',', '.'), NumberStyles.AllowDecimalPoint, CultureInfo.InvariantCulture, out decimal transferedParsed);
+                        decimal.TryParse(Amount.Replace(',', '.'), NumberStyles.AllowDecimalPoint, CultureInfo.InvariantCulture, out decimal amountParsed);
+                        transferRate = string.Format("{0}", amountParsed / transferedParsed);
                         PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(TransferRate)));
                     }
                     PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(IsValid)));
@@ -433,6 +434,7 @@ namespace BudgetUnderControl.ViewModel
                 TransferDate = transferDate,
                 TransferAmount = transferAmount,
                 Rate = decimal.Parse(TransferRate.Replace(',', '.'), NumberStyles.AllowDecimalPoint, CultureInfo.InvariantCulture),
+                TransferAccountId = Accounts[selectedTransferAccountIndex].Id,
             };
 
             transactionModel.AddTransfer(transfer);

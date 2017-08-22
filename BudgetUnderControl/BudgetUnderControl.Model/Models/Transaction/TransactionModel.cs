@@ -96,7 +96,7 @@ namespace BudgetUnderControl.Model
 
             var transactionIncome = new Transaction
             {
-                AccountId = arg.AccountId,
+                AccountId = arg.TransferAccountId,
                 Amount = arg.TransferAmount,
                 CategoryId = arg.CategoryId,
                 Comment = arg.Comment,
@@ -309,14 +309,25 @@ namespace BudgetUnderControl.Model
             else if(arg.ExtendedType != Common.Enums.ExtendedTransactionType.Transfer
                 && transfer == null && secondTransaction == null)
             {
+                decimal amount = 0;
+                if (firstTransaction.Type != arg.Type)
+                {
+                    amount =  arg.Amount *-1;
+                }
+                else
+                {
+                    amount = arg.Amount;
+                }
+
                 firstTransaction.AccountId = arg.AccountId;
-                firstTransaction.Amount = arg.Amount;
                 firstTransaction.CategoryId = arg.CategoryId;
                 firstTransaction.Comment = arg.Comment;
-                firstTransaction.Name = arg.Name;
-                firstTransaction.Type = arg.Type;
+                firstTransaction.Name = arg.Name; 
                 firstTransaction.Date = arg.Date;
                 firstTransaction.ModifiedOn = DateTime.UtcNow;
+                
+                firstTransaction.Amount = amount;
+                firstTransaction.Type = arg.Type;
             }
 
             this.Context.SaveChanges();

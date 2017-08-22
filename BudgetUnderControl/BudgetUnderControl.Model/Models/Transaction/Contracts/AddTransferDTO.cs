@@ -15,6 +15,7 @@ namespace BudgetUnderControl.Model
         public string Name { get; set; }
         public string Comment { get; set; }
 
+        public int TransferAccountId { get; set; }
         public DateTime TransferDate { get; set; }
         public decimal TransferAmount { get; set; }
         public decimal Rate { get; set; }

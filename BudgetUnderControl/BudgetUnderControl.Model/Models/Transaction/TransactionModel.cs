@@ -219,7 +219,6 @@ namespace BudgetUnderControl.Model
             var firstTransaction = this.Context.Transactions.Where(x => x.Id == arg.Id).FirstOrDefault();
             Transaction secondTransaction = null;
             var transfer = this.Context.Transfers.Where(x => x.FromTransactionId == arg.Id)
-
            .FirstOrDefault();
 
             if (transfer != null)
@@ -330,6 +329,25 @@ namespace BudgetUnderControl.Model
                 firstTransaction.Type = arg.Type;
             }
 
+            this.Context.SaveChanges();
+        }
+
+        public void DeleteTransaction(int id)
+        {
+            var firstTransaction = this.Context.Transactions.Where(x => x.Id == id).FirstOrDefault();
+            Transaction secondTransaction = null;
+            var transfer = this.Context.Transfers.Where(x => x.FromTransactionId == id)
+           .FirstOrDefault();
+
+            if (transfer != null)
+            {
+                secondTransaction = this.Context.Transactions.Where(x => x.Id == transfer.ToTransactionId).FirstOrDefault();
+
+                this.Context.Transfers.Remove(transfer);
+                this.Context.SaveChanges();
+                this.Context.Transactions.Remove(secondTransaction);
+            }
+            this.Context.Transactions.Remove(firstTransaction);
             this.Context.SaveChanges();
         }
     }

@@ -10,5 +10,6 @@ namespace BudgetUnderControl.ViewModel
     {
         void EditTransaction();
         void GetTransaction(int transactionId);
+        void DeleteTransaction();
     }
 }

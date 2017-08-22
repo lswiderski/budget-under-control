@@ -14,5 +14,6 @@ namespace BudgetUnderControl.Model
         Task<ICollection<TransactionListItemDTO>> GetTransactions(int accountId);
         EditTransactionDTO GetEditTransaction(int id);
         void EditTransaction(EditTransactionDTO arg);
+        void DeleteTransaction(int id);
     }
 }

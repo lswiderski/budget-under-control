@@ -38,5 +38,13 @@ namespace BudgetUnderControl.Views
             base.OnAppearing();
             vm.GetTransaction(transactionId);
         }
+
+        async void OnDeleteButtonClicked(object sender, EventArgs args)
+        {
+            var remove = await this.DisplayAlert("Remove", "Do you want to remove this Transaction?", "Yes", "No");
+            if (!remove) return;
+            vm.DeleteTransaction();
+            await Navigation.PopModalAsync();
+        }
     }
 }

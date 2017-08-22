@@ -492,6 +492,7 @@ namespace BudgetUnderControl.ViewModel
                 TransferId=transferId,
                 TransferTransactionId=transferTransactionId,
             };
+
             if(SelectedTransferAccountIndex>=0)
             {
                 transactionDto.TransferAccountId = Accounts[SelectedTransferAccountIndex].Id;
@@ -499,6 +500,11 @@ namespace BudgetUnderControl.ViewModel
             
 
             transactionModel.EditTransaction(transactionDto);
+        }
+
+        public void DeleteTransaction()
+        {
+            transactionModel.DeleteTransaction(id);
         }
 
     }

@@ -25,7 +25,12 @@ namespace BudgetUnderControl.Views
 
             InitializeComponent();
             InitFAB();
-            
+
+        }
+
+        protected override void OnAppearing()
+        {
+            base.OnAppearing();
             var dict = vm.GetTotals();
             pln.Text = dict.ContainsKey("PLN") ? dict["PLN"].ToString() : "0";
             usd.Text = dict.ContainsKey("USD") ? dict["USD"].ToString() : "0";
@@ -36,7 +41,6 @@ namespace BudgetUnderControl.Views
                 + ((dict.ContainsKey("USD") ? dict["USD"] : 0) * 3.66m)
                 + ((dict.ContainsKey("EUR") ? dict["EUR"] : 0) * 4.26m)
                 + ((dict.ContainsKey("THB") ? dict["THB"] : 0) * 0.11m)).ToString();
-
         }
 
 

@@ -56,7 +56,7 @@ namespace BudgetUnderControl.ViewModel
 
         public async void LoadAccounts()
         {
-            Accounts = await accountModel.GetAccounts();
+            Accounts = accountModel.GetAccounts();
         }
     }
 }

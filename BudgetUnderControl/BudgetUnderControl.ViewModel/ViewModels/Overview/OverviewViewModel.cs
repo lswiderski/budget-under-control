@@ -18,7 +18,7 @@ namespace BudgetUnderControl.ViewModel
         public  Dictionary<string, decimal> GetTotals()
         {
             Dictionary<string, decimal> result = new Dictionary<string, decimal>();
-            var accounts = accountModel.GetAccounts().Result;
+            var accounts = accountModel.GetAccounts();
 
             foreach (var account in accounts)
             {

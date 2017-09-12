@@ -39,6 +39,7 @@
     <None Include="project.json" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Enums\AccountType.cs" />
     <Compile Include="Enums\ExtendedTransactionType.cs" />
     <Compile Include="Enums\TransactionType.cs" />
     <Compile Include="IFileHelper.cs" />

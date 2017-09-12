@@ -1,4 +1,5 @@
-﻿using System;
+﻿using BudgetUnderControl.Common.Enums;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
@@ -18,6 +19,8 @@ namespace BudgetUnderControl.Domain
         public bool IsIncludedToTotal { get; set; }
         public string Comment { get; set; }
         public int Order { get; set; }
+        public AccountType Type { get; set; }
+        public int? ParentAccountId { get; set; }
 
         public AccountGroup AccountGroup { get; set; }
         public Currency Currency { get; set; }

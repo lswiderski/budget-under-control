@@ -33,5 +33,10 @@ namespace BudgetUnderControl.Views
             vm.AddAccount();
             await Navigation.PopModalAsync();
         }
+
+        private void OnClearParentButtonClicked(object sender, EventArgs e)
+        {
+            vm.ClearParentAccountCombo();
+        }
     }
 }

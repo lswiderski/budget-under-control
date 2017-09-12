@@ -59,10 +59,14 @@ namespace BudgetUnderControl.Model
 
         public async Task<ICollection<TransactionListItemDTO>> GetTransactions(int accountId)
         {
+            var accounts = GetSubAccounts(accountId);
+            accounts.Add(accountId);
+            accounts = accounts.Distinct().ToList();
+
             var transactions = (from t in this.Context.Transactions
                                 join a in this.Context.Accounts on t.AccountId equals a.Id
                                 join c in this.Context.Currencies on a.CurrencyId equals c.Id
-                                where a.Id == accountId
+                                where accounts.Contains(a.Id)
                                 orderby t.Date descending
                                 select new TransactionListItemDTO
                                 {
@@ -349,6 +353,14 @@ namespace BudgetUnderControl.Model
             }
             this.Context.Transactions.Remove(firstTransaction);
             this.Context.SaveChanges();
+        }
+
+        public List<int> GetSubAccounts(int accountId)
+        {
+            var subAccounts = this.Context.Accounts.Where(x => x.ParentAccountId == accountId)
+                .Select(x => x.Id)
+                .ToList();
+            return subAccounts;
         }
     }
 }

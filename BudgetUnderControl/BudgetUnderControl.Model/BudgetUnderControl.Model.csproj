@@ -44,6 +44,7 @@
     <Compile Include="Models\AccountGroup\IAccountGroupModel.cs" />
     <Compile Include="Models\AccountGroup\Contracts\AccountGroupItemViewModel.cs" />
     <Compile Include="Models\Account\AccountModel.cs" />
+    <Compile Include="Models\Account\Contracts\AccountTypeDTO.cs" />
     <Compile Include="Models\Account\IAccountModel.cs" />
     <Compile Include="Models\Account\Contracts\AccountListItemDTO.cs" />
     <Compile Include="Models\Account\Contracts\AddAccountDTO.cs" />

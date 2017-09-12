@@ -1,4 +1,5 @@
 ﻿using Autofac;
+using BudgetUnderControl.Common.Enums;
 using BudgetUnderControl.Model;
 using System;
 using System.Collections.Generic;
@@ -23,6 +24,11 @@ namespace BudgetUnderControl.ViewModel
         List<AccountGroupItemDTO> accountGroups;
         public List<AccountGroupItemDTO> AccountGroups => accountGroups;
         public List<CurrencyDTO> Currencies => currencies;
+
+        List<AccountTypeDTO> accountTypes;
+        public List<AccountTypeDTO> AccountTypes => accountTypes;
+        List<AccountListItemDTO> accounts;
+        public List<AccountListItemDTO> Accounts => accounts;
 
         int selectedCurrencyIndex;
 
@@ -57,6 +63,42 @@ namespace BudgetUnderControl.ViewModel
                 {
                     selectedAccountGroupIndex  = value;
                     PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(SelectedAccountGroupIndex)));
+                }
+
+            }
+        }
+
+        int selectedAccountTypeIndex;
+        public int SelectedAccountTypeIndex
+        {
+            get
+            {
+                return selectedAccountTypeIndex;
+            }
+            set
+            {
+                if (selectedAccountTypeIndex != value)
+                {
+                    selectedAccountTypeIndex = value;
+                    PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(SelectedAccountTypeIndex)));
+                }
+
+            }
+        }
+
+        int selectedAccountIndex;
+        public int SelectedAccountIndex
+        {
+            get
+            {
+                return selectedAccountIndex;
+            }
+            set
+            {
+                if (selectedAccountIndex != value)
+                {
+                    selectedAccountIndex = value;
+                    PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(SelectedAccountIndex)));
                 }
 
             }
@@ -132,6 +174,8 @@ namespace BudgetUnderControl.ViewModel
         {
             currencies = (await currencyModel.GetCurriences()).ToList();
             accountGroups = (await accountGroupModel.GetAccountGroups()).ToList();
+            accounts = accountModel.GetAccounts().ToList();
+            accountTypes = this.GetAccountTypes().ToList();
         }
 
         public async void LoadAccount(int accountId)
@@ -145,24 +189,61 @@ namespace BudgetUnderControl.ViewModel
             IsInTotal = account.IsIncludedInTotal;
             SelectedAccountGroupIndex = AccountGroups.IndexOf(AccountGroups.FirstOrDefault(y => y.Id == account.AccountGroupId));
             SelectedCurrencyIndex = Currencies.IndexOf(Currencies.FirstOrDefault(y => y.Id == account.CurrencyId));
+            SelectedAccountIndex = account.ParentAccountId.HasValue ? Accounts.IndexOf(Accounts.FirstOrDefault(y => y.Id == account.ParentAccountId)) : -1;
+            SelectedAccountTypeIndex = AccountTypes.IndexOf(AccountTypes.FirstOrDefault(y => y.Id == (int)account.Type));
+            Order = account.Order.ToString();
         }
 
          public void SaveAccount()
         {
             decimal value;
             decimal.TryParse(amount.Replace(',', '.'), NumberStyles.AllowDecimalPoint, CultureInfo.InvariantCulture, out value);
+            int _order = 0;
+            int.TryParse(order, out _order);
+
             var dto = new EditAccountDTO
             {
                 Name = Name,
                 Comment = Comment,
                 Amount = value,
+                Order = _order,
                 AccountGroupId = AccountGroups[SelectedAccountGroupIndex].Id,
                 CurrencyId = Currencies[SelectedCurrencyIndex].Id,
                 IsIncludedInTotal = IsInTotal,
-                Id = accountId
+                Id = accountId,
+                Type = (AccountType)AccountTypes[SelectedAccountTypeIndex].Id,
+                ParentAccountId = selectedAccountIndex > -1 ? Accounts[SelectedAccountIndex].Id : (int?)null,
             };
 
             accountModel.EditAccount(dto);
+        }
+
+        private string order;
+        public string Order
+        {
+            get => order;
+            set
+            {
+                if (order != value)
+                {
+                    order = value;
+                    PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(Order)));
+                }
+            }
+        }
+
+        public void ClearParentAccountCombo()
+        {
+            SelectedAccountIndex = -1;
+        }
+
+        private ICollection<AccountTypeDTO> GetAccountTypes()
+        {
+            var collection = new List<AccountTypeDTO>();
+            collection.Add(new AccountTypeDTO { Id = (int)AccountType.Account, Name = AccountType.Account.ToString() });
+            collection.Add(new AccountTypeDTO { Id = (int)AccountType.Wallet, Name = AccountType.Wallet.ToString() });
+            collection.Add(new AccountTypeDTO { Id = (int)AccountType.Card, Name = AccountType.Card.ToString() });
+            return collection;
         }
     }
 }

@@ -34,6 +34,10 @@ namespace Migrations.Migrations
 
                     b.Property<int>("Order");
 
+                    b.Property<int?>("ParentAccountId");
+
+                    b.Property<byte>("Type");
+
                     b.HasKey("Id");
 
                     b.HasIndex("AccountGroupId");

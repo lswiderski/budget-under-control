@@ -361,7 +361,7 @@ namespace BudgetUnderControl.ViewModel
 
         async void GetDropdowns()
         {
-            accounts = (await accountModel.GetAccounts()).ToList();
+            accounts = accountModel.GetAccounts().ToList();
             categories = (await categoryModel.GetCategories()).ToList();
         }
 

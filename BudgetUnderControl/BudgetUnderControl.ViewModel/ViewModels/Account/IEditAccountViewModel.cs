@@ -15,12 +15,18 @@ namespace BudgetUnderControl.ViewModel
         string Comment { get; set; }
         bool IsInTotal { get; set; }
         string Amount { get; set; }
+        string Order { get; set; }
         int SelectedCurrencyIndex { get; set; }
         int SelectedAccountGroupIndex { get; set; }
+        int SelectedAccountIndex { get; set; }
+        int SelectedAccountTypeIndex { get; set; }
         List<AccountGroupItemDTO> AccountGroups { get;}
         List<CurrencyDTO> Currencies { get;}
+        List<AccountListItemDTO> Accounts { get; }
+        List<AccountTypeDTO> AccountTypes { get; }
 
         void LoadAccount(int accountId);
         void SaveAccount();
+        void ClearParentAccountCombo();
     }
 }

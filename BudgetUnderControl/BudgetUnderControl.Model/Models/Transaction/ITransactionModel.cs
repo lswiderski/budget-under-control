@@ -15,5 +15,6 @@ namespace BudgetUnderControl.Model
         EditTransactionDTO GetEditTransaction(int id);
         void EditTransaction(EditTransactionDTO arg);
         void DeleteTransaction(int id);
+        List<int> GetSubAccounts(int accountId);
     }
 }

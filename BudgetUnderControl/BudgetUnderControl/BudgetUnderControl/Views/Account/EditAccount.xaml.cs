@@ -39,5 +39,9 @@ namespace BudgetUnderControl.Views
             base.OnAppearing();
             vm.LoadAccount(accountId);
         }
+        private void OnClearParentButtonClicked(object sender, EventArgs e)
+        {
+            vm.ClearParentAccountCombo();
+        }
     }
 }

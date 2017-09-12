@@ -66,6 +66,10 @@
     <Compile Include="Migrations\20170724151410_CreatedAndModifiedDates.Designer.cs">
       <DependentUpon>20170724151410_CreatedAndModifiedDates.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\20170828195050_AccountType.cs" />
+    <Compile Include="Migrations\20170828195050_AccountType.Designer.cs">
+      <DependentUpon>20170828195050_AccountType.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\ContextModelSnapshot.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

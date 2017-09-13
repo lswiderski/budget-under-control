@@ -12,6 +12,7 @@ namespace BudgetUnderControl.Model
         void AddTransfer(AddTransferDTO args);
         Task<ICollection<TransactionListItemDTO>> GetTransactions();
         Task<ICollection<TransactionListItemDTO>> GetTransactions(int accountId);
+        Task<ICollection<TransactionListItemDTO>> GetTransactions(DateTime fromDate, DateTime toDate);
         EditTransactionDTO GetEditTransaction(int id);
         void EditTransaction(EditTransactionDTO arg);
         void DeleteTransaction(int id);

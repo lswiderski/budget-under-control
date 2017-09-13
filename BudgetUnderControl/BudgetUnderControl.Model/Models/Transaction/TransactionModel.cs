@@ -57,6 +57,29 @@ namespace BudgetUnderControl.Model
             return await transactions;
         }
 
+        public async Task<ICollection<TransactionListItemDTO>> GetTransactions(DateTime fromDate, DateTime toDate)
+        {
+            var transactions = (from t in this.Context.Transactions
+                                join a in this.Context.Accounts on t.AccountId equals a.Id
+                                join c in this.Context.Currencies on a.CurrencyId equals c.Id
+                                where t.Date >= fromDate && t.Date <= toDate
+                                orderby t.Date descending
+                                select new TransactionListItemDTO
+                                {
+                                    AccountId = t.AccountId,
+                                    Date = t.Date,
+                                    Id = t.Id,
+                                    Value = t.Amount,
+                                    Account = a.Name,
+                                    ValueWithCurrency = t.Amount + c.Symbol,
+                                    Type = t.Type,
+                                    Name = t.Name,
+                                }
+                                ).ToListAsync();
+
+            return await transactions;
+        }
+
         public async Task<ICollection<TransactionListItemDTO>> GetTransactions(int accountId)
         {
             var accounts = GetSubAccounts(accountId);

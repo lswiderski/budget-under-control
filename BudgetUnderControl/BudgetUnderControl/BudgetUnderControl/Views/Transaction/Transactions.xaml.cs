@@ -65,5 +65,15 @@ namespace BudgetUnderControl.Views
             var editTransaction = new EditTransaction(transactionId);
             await Navigation.PushModalAsync(editTransaction);
         }
+
+        protected async void OnNextMonthButtonClicked(object sender, EventArgs args)
+        {
+             vm.SetNextMonth();
+        }
+
+        protected async void OnPreviousMonthButtonClicked(object sender, EventArgs args)
+        {
+            vm.SetPreviousMonth();
+        }
     }
 }

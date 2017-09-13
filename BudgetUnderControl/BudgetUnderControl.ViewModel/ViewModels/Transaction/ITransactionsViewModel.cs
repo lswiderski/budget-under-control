@@ -11,7 +11,10 @@ namespace BudgetUnderControl.ViewModel
     {
         ICollection<TransactionListItemDTO> Transactions { get; set; }
         TransactionListItemDTO SelectedTransaction { get; set; }
+        string ActualRange { get; }
 
         void LoadTransactions();
+        void SetNextMonth();
+        void SetPreviousMonth();
     }
 }

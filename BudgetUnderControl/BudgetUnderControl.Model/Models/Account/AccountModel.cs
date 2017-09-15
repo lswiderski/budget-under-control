@@ -36,6 +36,7 @@ namespace BudgetUnderControl.Model
                             Name = account.Name,
                             Type = account.Type,
                             Order = account.Order,
+                            ParentAccountId = account.ParentAccountId,
                             subAccounts = this.Context.Accounts.Where(x => x.ParentAccountId == account.Id)
                                         .Select(x => x.Id)
                                 .ToList(),
@@ -51,7 +52,8 @@ namespace BudgetUnderControl.Model
                             Id = y.Id,
                             IsIncludedInTotal = y.IsIncludedInTotal,
                             Name = y.Name,
-                            Balance = y.Type == AccountType.Card ? 0 : this.Context.Transactions.Where(x => x.AccountId == y.Id || y.subAccounts.Contains(x.AccountId)).Sum(x => x.Amount),
+                            ParentAccountId = y.ParentAccountId,
+                            Balance = GetActualBalance(y.Id),
                         }).ToList();
 
             return  list;
@@ -97,7 +99,7 @@ namespace BudgetUnderControl.Model
                            Name = account.Name,
                            Comment = account.Comment,
                            AccountGroupId = account.AccountGroupId,
-                           Amount = account.Type == AccountType.Card ? 0 : this.Context.Transactions.Where(x => x.AccountId == account.Id || accounts.Contains(x.AccountId)).Sum(x => x.Amount),
+                           Amount = GetActualBalance(account.Id),
                            Type = account.Type,
                            ParentAccountId = account.ParentAccountId,
                            Order = account.Order,
@@ -130,7 +132,21 @@ namespace BudgetUnderControl.Model
         public async void RemoveAccount(int id)
         {
             var transactions = this.Context.Transactions.Where(x => x.AccountId == id).ToList();
-            this.Context.RemoveRange(transactions);
+
+            if(IsSubCardAccount(id))
+            {
+                var parentAccountId = GetParentAccountId(id).Value;
+                foreach (var transaction in transactions)
+                {
+                    transaction.AccountId = parentAccountId;
+                }
+            }
+            else
+            {
+                this.Context.RemoveRange(transactions);
+            }
+
+            
             this.Context.SaveChanges();
             var account = await this.Context.Accounts.Where(x => x.Id == id).FirstOrDefaultAsync();
             this.Context.Remove<Account>(account);
@@ -139,6 +155,13 @@ namespace BudgetUnderControl.Model
 
         private decimal GetActualBalance(int accountId)
         {
+            var isCard = IsSubCardAccount(accountId);
+
+            if(isCard)
+            {
+                accountId = this.GetParentAccountId(accountId).Value;
+            }
+
             var accounts = transactionModel.GetSubAccounts(accountId);
             accounts.Add(accountId);
             accounts = accounts.Distinct().ToList();
@@ -171,5 +194,16 @@ namespace BudgetUnderControl.Model
            
         }
 
+        private bool IsSubCardAccount(int accountId)
+        {
+            var result = this.Context.Accounts.Any(x => x.Id == accountId && x.ParentAccountId.HasValue && x.Type == AccountType.Card);
+            return result;
+        }
+
+        private int? GetParentAccountId(int accountId)
+        {
+            var result = this.Context.Accounts.Where(x => x.Id == accountId).Select(x => x.ParentAccountId).FirstOrDefault();
+            return result;
+        }
     }
 }

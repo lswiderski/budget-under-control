@@ -15,7 +15,7 @@ namespace BudgetUnderControl.Model
         public string Name { get; set; }
         public decimal Balance { get; set; }
         public bool IsIncludedInTotal { get; set; }
-
+        public int? ParentAccountId { get; set; }
         public string AmountWithCurrency
         {
             get

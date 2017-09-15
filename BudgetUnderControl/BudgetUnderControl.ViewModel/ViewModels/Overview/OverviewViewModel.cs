@@ -22,14 +22,18 @@ namespace BudgetUnderControl.ViewModel
 
             foreach (var account in accounts)
             {
-                if (!result.ContainsKey(account.Currency))
+                if(!account.ParentAccountId.HasValue)
                 {
-                    result.Add(account.Currency, account.Balance);
+                    if (!result.ContainsKey(account.Currency))
+                    {
+                        result.Add(account.Currency, account.Balance);
+                    }
+                    else
+                    {
+                        result[account.Currency] += account.Balance;
+                    }
                 }
-                else
-                {
-                    result[account.Currency] += account.Balance;
-                }
+
             }
 
             return result;

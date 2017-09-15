@@ -3,17 +3,32 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="BudgetUnderControl.Views.AccountDetails"
               xmlns:local="clr-namespace:BudgetUnderControl.Views;assembly=BudgetUnderControl"
-             Title="Account">
+             Title="{Binding Name, Mode=TwoWay}">
     <ContentPage.Content>
         <StackLayout>
-            <Label Text="Account Details Page" />
-            <Button Clicked="Button_Edit_Clicked" Text="Edit" />
             <StackLayout Orientation="Horizontal">
-                <Label Text="{Binding Name, Mode=TwoWay}" />
+                <Label Text="Balance: " />
                 <Label Text="{Binding ValueWithCurrency, Mode=TwoWay}" x:Name="valueLabel" PropertyChanged="valueLabel_PropertyChanged"/>
+                <Label Text="Expense: "/>
+                <Label Text="{Binding Expense, Mode=TwoWay}" TextColor="Red"/>
+                <Label Text="Income: "/>
+                <Label Text="{Binding Income, Mode=TwoWay}" TextColor="Green"/>
             </StackLayout>
-           
-            <Button Clicked="Button_Remove_Clicked" Text="Remove" />
+            
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="*" />
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="50" />
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="50" />
+                </Grid.ColumnDefinitions>
+
+                <Button Text="&lt;" Clicked="OnPreviousMonthButtonClicked" Grid.Row="0" Grid.Column="0" />
+                <Label x:Name="month" Text="{Binding ActualRange}" Grid.Row="0" Grid.Column="1" HorizontalTextAlignment="Center"  HorizontalOptions="FillAndExpand" Margin="0,10"/>
+                <Button Text=">" Clicked="OnNextMonthButtonClicked" Grid.Row="0" Grid.Column="2" />
+            </Grid>
             <ListView x:Name="transactions" ItemsSource="{Binding Transactions}"  VerticalOptions="FillAndExpand" HorizontalOptions="FillAndExpand" HasUnevenRows="True" >
                 <ListView.ItemTemplate>
                     <DataTemplate>

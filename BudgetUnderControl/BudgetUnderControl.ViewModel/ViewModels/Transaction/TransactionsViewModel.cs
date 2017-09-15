@@ -42,9 +42,6 @@ namespace BudgetUnderControl.ViewModel
             }
         }
 
-        private decimal income;
-        private decimal expense;
-
         public TransactionsViewModel(ITransactionModel transactionModel)
         {
             this.transactionModel = transactionModel;
@@ -52,8 +49,6 @@ namespace BudgetUnderControl.ViewModel
             var now = DateTime.UtcNow;
             FromDate = new DateTime(now.Year, now.Month, 1);
             ToDate = new DateTime(now.Year, now.Month, DateTime.DaysInMonth(now.Year, now.Month));
-            income = 0;
-            expense = 0;
         }
 
         public async void LoadTransactions()

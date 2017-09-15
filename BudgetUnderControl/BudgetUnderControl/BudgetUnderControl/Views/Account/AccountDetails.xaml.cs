@@ -55,5 +55,15 @@ namespace BudgetUnderControl.Views
         {
             valueLabel.TextColor = vm.Value < 0 ? Color.Red : Color.Green;
         }
+
+        protected async void OnNextMonthButtonClicked(object sender, EventArgs args)
+        {
+            vm.SetNextMonth();
+        }
+
+        protected async void OnPreviousMonthButtonClicked(object sender, EventArgs args)
+        {
+            vm.SetPreviousMonth();
+        }
     }
 }

@@ -109,6 +109,37 @@ namespace BudgetUnderControl.Model
             return await acc;
         }
 
+        public async Task<AccountDetailsDTO> GetAccountDetails(int id, DateTime fromDate, DateTime toDate)
+        {
+            var accounts = transactionModel.GetSubAccounts(id);
+            accounts.Add(id);
+            accounts = accounts.Distinct().ToList();
+
+            var acc = (from account in this.Context.Accounts
+                       join currency in this.Context.Currencies on account.CurrencyId equals currency.Id
+                       where account.Id == id
+                       select new AccountDetailsDTO
+                       {
+                           Currency = currency.Code,
+                           CurrencyId = currency.Id,
+                           CurrencySymbol = currency.Symbol,
+                           Id = account.Id,
+                           IsIncludedInTotal = account.IsIncludedToTotal,
+                           Name = account.Name,
+                           Comment = account.Comment,
+                           AccountGroupId = account.AccountGroupId,
+                           Amount = GetActualBalance(account.Id),
+                           Type = account.Type,
+                           ParentAccountId = account.ParentAccountId,
+                           Order = account.Order,
+                           Income = GetIncome(account.Id, fromDate, toDate),
+                           Expense = GetExpense(account.Id, fromDate, toDate)
+                       }
+                        ).FirstOrDefaultAsync();
+
+            return await acc;
+        }
+
         public async void EditAccount(EditAccountDTO vm)
         {
             var account = await this.Context.Accounts.Where(x => x.Id == vm.Id).FirstOrDefaultAsync();
@@ -167,6 +198,40 @@ namespace BudgetUnderControl.Model
             accounts = accounts.Distinct().ToList();
 
             var balance = this.Context.Transactions.Where(x => accounts.Contains(x.AccountId)).Sum(x => x.Amount);
+            return balance;
+        }
+
+        private decimal GetIncome(int accountId, DateTime fromDate, DateTime toDate)
+        {
+            var isCard = IsSubCardAccount(accountId);
+
+            if (isCard)
+            {
+                accountId = this.GetParentAccountId(accountId).Value;
+            }
+
+            var accounts = transactionModel.GetSubAccounts(accountId);
+            accounts.Add(accountId);
+            accounts = accounts.Distinct().ToList();
+
+            var balance = this.Context.Transactions.Where(x => accounts.Contains(x.AccountId) && x.Amount > 0 && x.Date >= fromDate && x.Date <= toDate).Sum(x => x.Amount);
+            return balance;
+        }
+
+        private decimal GetExpense(int accountId, DateTime fromDate, DateTime toDate)
+        {
+            var isCard = IsSubCardAccount(accountId);
+
+            if (isCard)
+            {
+                accountId = this.GetParentAccountId(accountId).Value;
+            }
+
+            var accounts = transactionModel.GetSubAccounts(accountId);
+            accounts.Add(accountId);
+            accounts = accounts.Distinct().ToList();
+
+            var balance = this.Context.Transactions.Where(x => accounts.Contains(x.AccountId) && x.Amount < 0 && x.Date >= fromDate && x.Date <= toDate).Sum(x => x.Amount);
             return balance;
         }
 

@@ -376,8 +376,8 @@ namespace BudgetUnderControl.ViewModel
             SelectedCategoryIndex = -1;
             SelectedAccountIndex = -1;
             SelectedTransferAccountIndex = -1;
-            Date = DateTime.UtcNow;
-            Time = DateTime.UtcNow.TimeOfDay;
+            Date = DateTime.Now;
+            Time = DateTime.Now.TimeOfDay;
 
 
             GetDropdowns();
@@ -399,6 +399,12 @@ namespace BudgetUnderControl.ViewModel
         public void GetTransaction(int transactionId)
         {
             var dto = transactionModel.GetEditTransaction(transactionId);
+
+            Date = dto.Date.ToLocalTime();
+            Time = Date.TimeOfDay;
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(Date)));
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(Time)));
+
             SelectedTypeIndex = types.IndexOf(dto.ExtendedType.ToString());
             SelectedCategoryIndex = getCategoryIndex(dto.CategoryId);
             SelectedAccountIndex = getAccountIndex(dto.AccountId);
@@ -406,9 +412,8 @@ namespace BudgetUnderControl.ViewModel
             Name = dto.Name;
             Comment = dto.Comment;
             Amount = Math.Abs(dto.Amount).ToString();
-            Date = dto.Date;
-
-            if(dto.TransferDate.HasValue)
+            
+            if (dto.TransferDate.HasValue)
             {
                 TransferDate = dto.TransferDate.Value;
             }
@@ -452,8 +457,8 @@ namespace BudgetUnderControl.ViewModel
 
         public void EditTransaction()
         {
-            var date = new DateTime(Date.Year, Date.Month, Date.Day, Time.Hours, Time.Minutes, Time.Seconds, Time.Milliseconds, DateTimeKind.Utc);
-            var transferDate = new DateTime(TransferDate.Year, TransferDate.Month, TransferDate.Day, TransferTime.Hours, TransferTime.Minutes, TransferTime.Seconds, TransferTime.Milliseconds, DateTimeKind.Utc);
+            var date = new DateTime(Date.Year, Date.Month, Date.Day, Time.Hours, Time.Minutes, Time.Seconds, Time.Milliseconds, DateTimeKind.Local).ToUniversalTime();
+            var transferDate = new DateTime(TransferDate.Year, TransferDate.Month, TransferDate.Day, TransferTime.Hours, TransferTime.Minutes, TransferTime.Seconds, TransferTime.Milliseconds, DateTimeKind.Local).ToUniversalTime();
 
 
             if (ExtendedType == ExtendedTransactionType.Transfer)

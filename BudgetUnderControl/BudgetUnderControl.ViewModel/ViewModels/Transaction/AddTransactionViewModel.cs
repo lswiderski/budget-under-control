@@ -352,8 +352,8 @@ namespace BudgetUnderControl.ViewModel
             SelectedCategoryIndex = -1;
             SelectedAccountIndex = -1;
             SelectedTransferAccountIndex = -1;
-            Date = DateTime.UtcNow;
-            Time = DateTime.UtcNow.TimeOfDay;
+            Date = DateTime.Now;
+            Time = DateTime.Now.TimeOfDay;
             
 
             GetDropdowns();
@@ -381,7 +381,7 @@ namespace BudgetUnderControl.ViewModel
             }
             else
             {
-                var date = new DateTime(Date.Year, Date.Month, Date.Day, Time.Hours, Time.Minutes, Time.Seconds, Time.Milliseconds, DateTimeKind.Utc);
+                var date = new DateTime(Date.Year, Date.Month, Date.Day, Time.Hours, Time.Minutes, Time.Seconds, Time.Milliseconds, DateTimeKind.Local).ToUniversalTime();
                 var amount = decimal.Parse(Amount.Replace(',', '.'), NumberStyles.AllowDecimalPoint, CultureInfo.InvariantCulture);
                 if(Type == TransactionType.Expense && amount > 0)
                 {
@@ -408,9 +408,10 @@ namespace BudgetUnderControl.ViewModel
 
         private void AddTransfer()
         {
-            var date = new DateTime(Date.Year, Date.Month, Date.Day, Time.Hours, Time.Minutes, Time.Seconds, Time.Milliseconds, DateTimeKind.Utc);
-            var transferDate = new DateTime(TransferDate.Year, TransferDate.Month, TransferDate.Day, TransferTime.Hours, TransferTime.Minutes, TransferTime.Seconds, TransferTime.Milliseconds, DateTimeKind.Utc);
+            var date = new DateTime(Date.Year, Date.Month, Date.Day, Time.Hours, Time.Minutes, Time.Seconds, Time.Milliseconds, DateTimeKind.Local).ToUniversalTime();
+            var transferDate = new DateTime(TransferDate.Year, TransferDate.Month, TransferDate.Day, TransferTime.Hours, TransferTime.Minutes, TransferTime.Seconds, TransferTime.Milliseconds, DateTimeKind.Local).ToUniversalTime();
 
+            
             var amount = decimal.Parse(Amount.Replace(',', '.'), NumberStyles.AllowDecimalPoint, CultureInfo.InvariantCulture);
             if (amount > 0)
             {

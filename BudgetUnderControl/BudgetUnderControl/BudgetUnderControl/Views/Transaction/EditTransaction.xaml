@@ -23,8 +23,8 @@
                 </Entry>
                 <Label Text="Date"></Label>
                 <StackLayout Orientation="Horizontal">
-                    <DatePicker Date="{Binding Date}" Format="d"></DatePicker>
-                    <TimePicker Time="{Binding Time}"></TimePicker>
+                    <DatePicker Date="{Binding Date, Mode=TwoWay}" Format="d"></DatePicker>
+                    <TimePicker Time="{Binding Time, Mode=TwoWay}"></TimePicker>
                 </StackLayout>
                 <StackLayout Orientation="Vertical" IsVisible="{Binding IsTransferOptionsVisible, Mode=TwoWay}">
                     <Label Text="Transfer" />
@@ -43,8 +43,8 @@
                         </Entry.Behaviors>
                     </Entry>
                     <StackLayout Orientation="Horizontal">
-                        <DatePicker Date="{Binding TransferDate}" Format="d"></DatePicker>
-                        <TimePicker Time="{Binding TransferTime}"></TimePicker>
+                        <DatePicker Date="{Binding TransferDate, Mode=TwoWay}" Format="d"></DatePicker>
+                        <TimePicker Time="{Binding TransferTime, Mode=TwoWay}"></TimePicker>
                     </StackLayout>
                 </StackLayout>
                 <Label Text="Comment"></Label>

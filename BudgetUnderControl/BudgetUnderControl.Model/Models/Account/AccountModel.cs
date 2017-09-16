@@ -197,7 +197,7 @@ namespace BudgetUnderControl.Model
             accounts.Add(accountId);
             accounts = accounts.Distinct().ToList();
 
-            var balance = this.Context.Transactions.Where(x => accounts.Contains(x.AccountId)).Sum(x => x.Amount);
+            var balance = (decimal) this.Context.Transactions.Where(x => accounts.Contains(x.AccountId)).Select(x => (decimal)x.Amount).ToList().Sum(x => (decimal)x);
             return balance;
         }
 
@@ -214,7 +214,7 @@ namespace BudgetUnderControl.Model
             accounts.Add(accountId);
             accounts = accounts.Distinct().ToList();
 
-            var balance = this.Context.Transactions.Where(x => accounts.Contains(x.AccountId) && x.Amount > 0 && x.Date >= fromDate && x.Date <= toDate).Sum(x => x.Amount);
+            var balance = this.Context.Transactions.Where(x => accounts.Contains(x.AccountId) && x.Amount > 0 && x.Date >= fromDate && x.Date <= toDate).Select(x => (decimal)x.Amount).ToList().Sum(x => (decimal)x);
             return balance;
         }
 
@@ -231,17 +231,17 @@ namespace BudgetUnderControl.Model
             accounts.Add(accountId);
             accounts = accounts.Distinct().ToList();
 
-            var balance = this.Context.Transactions.Where(x => accounts.Contains(x.AccountId) && x.Amount < 0 && x.Date >= fromDate && x.Date <= toDate).Sum(x => x.Amount);
+            var balance = this.Context.Transactions.Where(x => accounts.Contains(x.AccountId) && x.Amount < 0 && x.Date >= fromDate && x.Date <= toDate).Select(x => (decimal)x.Amount).ToList().Sum(x => (decimal)x);
             return balance;
         }
 
         private void BalanceAdjustment(int accountId, decimal targetBalance)
         {
-            var actualBalance = GetActualBalance(accountId);
+            decimal actualBalance = GetActualBalance(accountId);
 
             if(!decimal.Equals(actualBalance, targetBalance))
             {
-                var amount = targetBalance - actualBalance;
+                decimal amount = (decimal.Subtract(targetBalance, actualBalance));
 
                 Math.Sign(amount);
                 var transactionDTO = new AddTransactionDTO

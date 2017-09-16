@@ -51,6 +51,7 @@ namespace BudgetUnderControl.Model
                                     ValueWithCurrency = t.Amount + c.Symbol,
                                     Type = t.Type,
                                     Name = t.Name,
+                                    CurrencyCode = c.Code,
                                 }
                                 ).ToListAsync();
 
@@ -74,6 +75,7 @@ namespace BudgetUnderControl.Model
                                     ValueWithCurrency = t.Amount + c.Symbol,
                                     Type = t.Type,
                                     Name = t.Name,
+                                    CurrencyCode = c.Code,
                                 }
                                 ).ToListAsync();
 
@@ -101,6 +103,7 @@ namespace BudgetUnderControl.Model
                                     ValueWithCurrency = t.Amount + c.Symbol,
                                     Type = t.Type,
                                     Name = t.Name,
+                                    CurrencyCode = c.Code,
                                 }
                                 ).ToListAsync();
 
@@ -129,6 +132,7 @@ namespace BudgetUnderControl.Model
                                     ValueWithCurrency = t.Amount + c.Symbol,
                                     Type = t.Type,
                                     Name = t.Name,
+                                    CurrencyCode = c.Code,
                                 }
                                 ).ToListAsync();
 

@@ -8,6 +8,14 @@
     <ContentPage.Content>
         <AbsoluteLayout x:Name="absoluteLayout" VerticalOptions="FillAndExpand" HorizontalOptions="FillAndExpand">
             <StackLayout  Padding="0,0,0,0" AbsoluteLayout.LayoutFlags="All" AbsoluteLayout.LayoutBounds="0,0,1,1">
+                <StackLayout Orientation="Horizontal">
+                    <Label Text="Expense: "/>
+                    <Label Text="{Binding Expense, Mode=TwoWay}" TextColor="Red"/>
+                    <Label Text="Income: "/>
+                    <Label Text="{Binding Income, Mode=TwoWay}" TextColor="Green"/>
+                    <Label Text="No. Trans: "/>
+                    <Label Text="{Binding NumberOfTransactions, Mode=TwoWay}" />
+                </StackLayout>
                 <Grid>
                     <Grid.RowDefinitions>
                         <RowDefinition Height="*" />

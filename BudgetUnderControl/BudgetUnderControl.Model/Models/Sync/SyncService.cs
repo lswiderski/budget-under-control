@@ -72,7 +72,9 @@ namespace BudgetUnderControl.Model
                 CurrencyId = x.CurrencyId,
                 IsIncludedToTotal = x.IsIncludedToTotal,
                 Name = x.Name,
-                Order = x.Order
+                Order = x.Order,
+                ParentAccountId = x.ParentAccountId,
+                Type = x.Type,
             }).ToList();
 
             var transfers = this.Context.Transfers.Select(x => new TransferSyncDTO
@@ -140,12 +142,12 @@ namespace BudgetUnderControl.Model
         {
             var json = GetBackUpJSON();
 
-            fileHelper.SaveText(BACKUP_FILE_NAME, json);
+            fileHelper.SaveTextExternal(BACKUP_FILE_NAME, json);
         }
 
         public void LoadBackupFile()
         {
-           var json = fileHelper.LoadText(BACKUP_FILE_NAME);
+           var json = fileHelper.LoadTextExternal(BACKUP_FILE_NAME);
             ImportBackUpJSON(json);
         }
 
@@ -180,7 +182,7 @@ namespace BudgetUnderControl.Model
                 csv += line;
             }
 
-            fileHelper.SaveText(fileName, csv);
+            fileHelper.SaveTextExternal(fileName, csv);
         }
 
         private void ImportCurrencies(List<CurrencySyncDTO> currencies)
@@ -214,6 +216,8 @@ namespace BudgetUnderControl.Model
                     IsIncludedToTotal = item.IsIncludedToTotal,
                     Name = item.Name,
                     Order = item.Order,
+                    Type = item.Type,
+                    ParentAccountId = item.ParentAccountId
 
                 };
                 this.Context.Accounts.Add(account);

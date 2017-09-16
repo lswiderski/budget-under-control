@@ -14,6 +14,12 @@ namespace BudgetUnderControl.Droid
             return Path.Combine(path, filename);
         }
 
+        public string GetExternalFilePath(string filename)
+        {
+            string path = Android.OS.Environment.ExternalStorageDirectory.Path;
+            return Path.Combine(path, filename);
+        }
+
         public void SaveText(string filename, string text)
         {
             var filePath = GetLocalFilePath(filename);
@@ -22,6 +28,17 @@ namespace BudgetUnderControl.Droid
         public string LoadText(string filename)
         {
             var filePath = GetLocalFilePath(filename);
+            return System.IO.File.ReadAllText(filePath);
+        }
+
+        public void SaveTextExternal(string filename, string text)
+        {
+            var filePath = GetExternalFilePath(filename);
+            System.IO.File.WriteAllText(filePath, text);
+        }
+        public string LoadTextExternal(string filename)
+        {
+            var filePath = GetExternalFilePath(filename);
             return System.IO.File.ReadAllText(filePath);
         }
     }

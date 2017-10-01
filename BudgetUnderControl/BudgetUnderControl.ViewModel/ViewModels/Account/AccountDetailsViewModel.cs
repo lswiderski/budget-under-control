@@ -121,8 +121,8 @@ namespace BudgetUnderControl.ViewModel
             this.transactionModel = transactionModel;
 
             var now = DateTime.UtcNow;
-            FromDate = new DateTime(now.Year, now.Month, 1);
-            ToDate = new DateTime(now.Year, now.Month, DateTime.DaysInMonth(now.Year, now.Month));
+            FromDate = new DateTime(now.Year, now.Month, 1, 0, 0, 0);
+            ToDate = new DateTime(now.Year, now.Month, DateTime.DaysInMonth(now.Year, now.Month),23,59,59);
         }
 
         public async void LoadAccount(int accountId)
@@ -151,16 +151,16 @@ namespace BudgetUnderControl.ViewModel
 
         public void SetNextMonth()
         {
-            FromDate = new DateTime(FromDate.Year, FromDate.Month, 1).AddMonths(1);
-            ToDate = new DateTime(FromDate.Year, FromDate.Month, DateTime.DaysInMonth(FromDate.Year, FromDate.Month));
+            FromDate = new DateTime(FromDate.Year, FromDate.Month, 1, FromDate.Hour, FromDate.Minute, FromDate.Second).AddMonths(1);
+            ToDate = new DateTime(FromDate.Year, FromDate.Month, DateTime.DaysInMonth(FromDate.Year, FromDate.Month), ToDate.Hour, ToDate.Minute, ToDate.Second);
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(ActualRange)));
             LoadTransactions(accountId);
         }
 
         public void SetPreviousMonth()
         {
-            FromDate = new DateTime(FromDate.Year, FromDate.Month, 1).AddMonths(-1);
-            ToDate = new DateTime(FromDate.Year, FromDate.Month, DateTime.DaysInMonth(FromDate.Year, FromDate.Month));
+            FromDate = new DateTime(FromDate.Year, FromDate.Month, 1, FromDate.Hour, FromDate.Minute, FromDate.Second).AddMonths(-1);
+            ToDate = new DateTime(FromDate.Year, FromDate.Month, DateTime.DaysInMonth(FromDate.Year, FromDate.Month), ToDate.Hour, ToDate.Minute, ToDate.Second);
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(ActualRange)));
             LoadTransactions(accountId);
         }

@@ -63,6 +63,8 @@ namespace BudgetUnderControl.Model
             var transactions = (from t in this.Context.Transactions
                                 join a in this.Context.Accounts on t.AccountId equals a.Id
                                 join c in this.Context.Currencies on a.CurrencyId equals c.Id
+                                from transferFrom in this.Context.Transfers.Where(x => x.FromTransactionId == t.Id).DefaultIfEmpty()
+                                from transferTo in this.Context.Transfers.Where(x => x.ToTransactionId == t.Id).DefaultIfEmpty()
                                 where t.Date >= fromDate && t.Date <= toDate
                                 orderby t.Date descending
                                 select new TransactionListItemDTO
@@ -76,6 +78,7 @@ namespace BudgetUnderControl.Model
                                     Type = t.Type,
                                     Name = t.Name,
                                     CurrencyCode = c.Code,
+                                    IsTransfer = transferTo != null || transferFrom != null
                                 }
                                 ).ToListAsync();
 
@@ -119,6 +122,8 @@ namespace BudgetUnderControl.Model
             var transactions = (from t in this.Context.Transactions
                                 join a in this.Context.Accounts on t.AccountId equals a.Id
                                 join c in this.Context.Currencies on a.CurrencyId equals c.Id
+                                from transferFrom in this.Context.Transfers.Where(x => x.FromTransactionId == t.Id).DefaultIfEmpty()
+                                from transferTo in this.Context.Transfers.Where(x => x.ToTransactionId == t.Id).DefaultIfEmpty()
                                 where accounts.Contains(a.Id)
                                 && t.Date >= fromDate && t.Date <= toDate
                                 orderby t.Date descending
@@ -133,6 +138,7 @@ namespace BudgetUnderControl.Model
                                     Type = t.Type,
                                     Name = t.Name,
                                     CurrencyCode = c.Code,
+                                    IsTransfer = transferTo != null || transferFrom != null
                                 }
                                 ).ToListAsync();
 

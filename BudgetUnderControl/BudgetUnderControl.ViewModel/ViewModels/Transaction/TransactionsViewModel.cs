@@ -122,30 +122,38 @@ namespace BudgetUnderControl.ViewModel
             int noTransactions = 0;
             foreach (var item in Transactions)
             {
-                decimal _value = 0;
-
-                switch (item.CurrencyCode)
-                { 
-                    case "PLN": _value = item.Value * 1m;
-                break;
-                    case "USD": _value = item.Value * 3.66m;
-                break;
-                    case "EUR": _value = item.Value * 4.26m;
-                break;
-                    case "THB": _value = item.Value * 0.11m;
-                break;
-                default:
-                        break;
-                }
-
-                if(item.Value > 0)
+                if(item.IsTransfer == false)
                 {
-                    _income += _value;
+                    decimal _value = 0;
+
+                    switch (item.CurrencyCode)
+                    {
+                        case "PLN":
+                            _value = item.Value * 1m;
+                            break;
+                        case "USD":
+                            _value = item.Value * 3.66m;
+                            break;
+                        case "EUR":
+                            _value = item.Value * 4.26m;
+                            break;
+                        case "THB":
+                            _value = item.Value * 0.11m;
+                            break;
+                        default:
+                            break;
+                    }
+
+                    if (item.Value > 0)
+                    {
+                        _income += _value;
+                    }
+                    else
+                    {
+                        _expense += _value;
+                    }
                 }
-                else
-                {
-                    _expense += _value;
-                }
+               
                 noTransactions++;
             }
             NumberOfTransactions = noTransactions.ToString();

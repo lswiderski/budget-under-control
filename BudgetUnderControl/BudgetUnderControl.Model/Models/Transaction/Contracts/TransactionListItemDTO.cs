@@ -18,5 +18,6 @@ namespace BudgetUnderControl.Model
         public DateTime Date { get; set; }
         public string Name { get; set; }
         public string CurrencyCode { get; set; }
+        public bool? IsTransfer { get; set; }
     }
 }

@@ -15,6 +15,7 @@ namespace BudgetUnderControl.ViewModel
         void LoadAccount(int accountId);
         void RemoveAccount();
         ICollection<TransactionListItemDTO> Transactions { get; set; }
+        TransactionListItemDTO SelectedTransaction { get; set; }
 
         void LoadTransactions(int accountId);
         void SetNextMonth();

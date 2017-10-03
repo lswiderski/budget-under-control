@@ -13,6 +13,7 @@ namespace BudgetUnderControl.ViewModel
         public event PropertyChangedEventHandler PropertyChanged;
         IAccountModel accountModel;
         ITransactionModel transactionModel;
+        public TransactionListItemDTO SelectedTransaction { get; set; }
 
         int accountId;
 

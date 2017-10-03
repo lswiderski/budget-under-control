@@ -29,7 +29,7 @@
                 <Label x:Name="month" Text="{Binding ActualRange}" Grid.Row="0" Grid.Column="1" HorizontalTextAlignment="Center"  HorizontalOptions="FillAndExpand" Margin="0,10"/>
                 <Button Text=">" Clicked="OnNextMonthButtonClicked" Grid.Row="0" Grid.Column="2" />
             </Grid>
-            <ListView x:Name="transactions" ItemsSource="{Binding Transactions}"  VerticalOptions="FillAndExpand" HorizontalOptions="FillAndExpand" HasUnevenRows="True" >
+            <ListView x:Name="transactions" ItemsSource="{Binding Transactions}"   SelectedItem="{Binding SelectedTransaction}"   ItemSelected="OnItemSelected" VerticalOptions="FillAndExpand" HorizontalOptions="FillAndExpand" HasUnevenRows="True" >
                 <ListView.ItemTemplate>
                     <DataTemplate>
                         <local:TransactionListItem  Transaction="{Binding}"/>

@@ -189,7 +189,6 @@ namespace BudgetUnderControl.Model
         {
             var transaction = (from t in this.Context.Transactions
                                 join a in this.Context.Accounts on t.AccountId equals a.Id
-                                join c in this.Context.Currencies on a.CurrencyId equals c.Id
                                 where t.Id == id
                                 select new EditTransactionDTO
                                 {
@@ -197,7 +196,7 @@ namespace BudgetUnderControl.Model
                                     Date = t.Date,
                                     Id = t.Id,
                                     Amount = t.Amount,
-                                    CategoryId = c.Id,
+                                    CategoryId = t.CategoryId,
                                     Comment = t.Comment,
                                     Name = t.Name,
                                     Type = t.Type
@@ -231,7 +230,6 @@ namespace BudgetUnderControl.Model
 
                 var transferedTransaction = (from t in this.Context.Transactions
                                    join a in this.Context.Accounts on t.AccountId equals a.Id
-                                   join c in this.Context.Currencies on a.CurrencyId equals c.Id
                                    where t.Id == transferedTransactionId
                                    select new EditTransactionDTO
                                    {
@@ -239,7 +237,7 @@ namespace BudgetUnderControl.Model
                                        Date = t.Date,
                                        Id = t.Id,
                                        Amount = t.Amount,
-                                       CategoryId = c.Id,
+                                       CategoryId = t.CategoryId,
                                        Comment = t.Comment,
                                        Name = t.Name,
                                        Type = t.Type

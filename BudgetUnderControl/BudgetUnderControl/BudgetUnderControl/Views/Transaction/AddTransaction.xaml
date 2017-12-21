@@ -7,6 +7,12 @@
     <ContentPage.Content>
         <ScrollView>
             <StackLayout>
+                <Label Text="Amount"></Label>
+                <Entry x:Name="amount" Text="{Binding Amount}" Placeholder="Amount"  Keyboard="Numeric">
+                    <Entry.Behaviors>
+                        <behaviors:NumericValidationBehavior />
+                    </Entry.Behaviors>
+                </Entry>
                 <Label Text="Name"></Label>
                 <Entry x:Name="name" Text="{Binding Name}" Placeholder="Name"></Entry>
                 <Label Text="Type"></Label>
@@ -15,12 +21,7 @@
             <Picker x:Name="account" ItemsSource="{Binding Accounts}" ItemDisplayBinding="{Binding Name}"  SelectedIndex="{Binding  SelectedAccountIndex, Mode=TwoWay}" Title="Account" />
                 <Label Text="Category"></Label>
             <Picker x:Name="categories" ItemsSource="{Binding Categories}" ItemDisplayBinding="{Binding Name}"  SelectedIndex="{Binding  SelectedCategoryIndex, Mode=TwoWay}" Title="Category" />
-                <Label Text="Amount"></Label>
-                <Entry x:Name="amount" Text="{Binding Amount}" Placeholder="Amount"  Keyboard="Numeric">
-                <Entry.Behaviors>
-                    <behaviors:NumericValidationBehavior />
-                </Entry.Behaviors>
-            </Entry>
+               
                 <Label Text="Date"></Label>
                 <StackLayout Orientation="Horizontal">
                 <DatePicker Date="{Binding Date}" Format="d"></DatePicker>

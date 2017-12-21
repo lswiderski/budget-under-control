@@ -24,7 +24,11 @@ namespace BudgetUnderControl.Views
             }
             this.transactionId = transactionId;
             InitializeComponent();
-            
+
+            amount.Completed += (object sender, EventArgs e) => { name.Focus(); };
+            name.Completed += (object sender, EventArgs e) => { type.Focus(); };
+            type.Unfocused += (object sender, FocusEventArgs e) => { account.Focus(); };
+            account.Unfocused += (object sender, FocusEventArgs e) => { categories.Focus(); };
         }
 
         async void OnEditButtonClicked(object sender, EventArgs args)
@@ -37,6 +41,7 @@ namespace BudgetUnderControl.Views
         {
             base.OnAppearing();
             vm.GetTransaction(transactionId);
+            amount.Focus();
         }
 
         async void OnDeleteButtonClicked(object sender, EventArgs args)

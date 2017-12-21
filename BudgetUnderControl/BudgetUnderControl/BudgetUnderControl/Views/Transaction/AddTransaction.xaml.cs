@@ -22,6 +22,11 @@ namespace BudgetUnderControl.Views
                 this.BindingContext = vm = scope.Resolve<IAddTransactionViewModel>();
             }
             InitializeComponent();
+            
+            amount.Completed += (object sender, EventArgs e) => { name.Focus(); };
+            name.Completed += (object sender, EventArgs e) => { type.Focus(); };
+            type.Unfocused += (object sender, FocusEventArgs e) => { account.Focus(); };
+            account.Unfocused += (object sender, FocusEventArgs e) => { categories.Focus(); };
         }
 
         async void OnAddButtonClicked(object sender, EventArgs args)
@@ -29,5 +34,12 @@ namespace BudgetUnderControl.Views
             vm.AddTransacion();
             await Navigation.PopModalAsync();
         }
+
+        protected override void OnAppearing()
+        {
+            base.OnAppearing();
+            amount.Focus();
+        }
+
     }
 }

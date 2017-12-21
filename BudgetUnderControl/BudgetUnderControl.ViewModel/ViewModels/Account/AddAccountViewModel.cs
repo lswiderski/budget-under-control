@@ -213,6 +213,7 @@ namespace BudgetUnderControl.ViewModel
                 IsIncludedInTotal = IsInTotal,
                 Type = (AccountType)AccountTypes[SelectedAccountTypeIndex].Id,
                 ParentAccountId = selectedAccountIndex > -1 ? Accounts[SelectedAccountIndex].Id : (int?)null,
+                
             };
 
             accountModel.AddAccount(dto);

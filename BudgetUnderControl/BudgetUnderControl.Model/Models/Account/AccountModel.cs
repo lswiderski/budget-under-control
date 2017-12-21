@@ -26,6 +26,7 @@ namespace BudgetUnderControl.Model
         {
             var list = (from account in this.Context.Accounts
                         join currency in this.Context.Currencies on account.CurrencyId equals currency.Id
+                        where account.IsActive == true
                         select new
                         {
                             Currency = currency.Code,
@@ -70,7 +71,8 @@ namespace BudgetUnderControl.Model
                 Name = vm.Name,
                 Type = vm.Type,
                 ParentAccountId = vm.ParentAccountId,
-                Order = vm.Order
+                Order = vm.Order,
+                IsActive = true,
             };
             this.Context.Accounts.Add(account);
             await this.Context.SaveChangesAsync();
@@ -162,6 +164,10 @@ namespace BudgetUnderControl.Model
 
         public async void RemoveAccount(int id)
         {
+            //temporary no removing AccountAvailable
+            DeactivateAccount(id);
+            return;
+
             var transactions = this.Context.Transactions.Where(x => x.AccountId == id).ToList();
 
             if(IsSubCardAccount(id))
@@ -183,6 +189,22 @@ namespace BudgetUnderControl.Model
             this.Context.Remove<Account>(account);
             this.Context.SaveChanges();
         }
+
+        public async void DeactivateAccount(int id)
+        {
+            var account = await this.Context.Accounts.Where(x => x.Id == id).FirstOrDefaultAsync();
+            this.BalanceAdjustment(account.Id, 0);
+            account.IsActive = false;
+            this.Context.SaveChanges();
+        }
+
+        public async void ActivateAccount(int id)
+        {
+            var account = await this.Context.Accounts.Where(x => x.Id == id).FirstOrDefaultAsync();
+            account.IsActive = true;
+            this.Context.SaveChanges();
+        }
+
 
         private decimal GetActualBalance(int accountId)
         {

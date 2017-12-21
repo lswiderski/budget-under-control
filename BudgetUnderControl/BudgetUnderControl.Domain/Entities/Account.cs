@@ -21,6 +21,7 @@ namespace BudgetUnderControl.Domain
         public int Order { get; set; }
         public AccountType Type { get; set; }
         public int? ParentAccountId { get; set; }
+        public bool IsActive { get; set; }
 
         public AccountGroup AccountGroup { get; set; }
         public Currency Currency { get; set; }

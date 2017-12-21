@@ -70,6 +70,14 @@
     <Compile Include="Migrations\20170828195050_AccountType.Designer.cs">
       <DependentUpon>20170828195050_AccountType.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\20171221191741_AccountIsActive.cs" />
+    <Compile Include="Migrations\20171221191741_AccountIsActive.Designer.cs">
+      <DependentUpon>20171221191741_AccountIsActive.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\20171221191818_NewCategories.cs" />
+    <Compile Include="Migrations\20171221191818_NewCategories.Designer.cs">
+      <DependentUpon>20171221191818_NewCategories.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\ContextModelSnapshot.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

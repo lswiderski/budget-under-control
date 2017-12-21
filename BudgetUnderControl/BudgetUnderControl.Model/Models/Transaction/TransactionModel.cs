@@ -240,7 +240,7 @@ namespace BudgetUnderControl.Model
                                        CategoryId = t.CategoryId,
                                        Comment = t.Comment,
                                        Name = t.Name,
-                                       Type = t.Type
+                                       Type = t.Type,
                                    }
                               ).FirstOrDefault();
 
@@ -249,7 +249,7 @@ namespace BudgetUnderControl.Model
 
                 if (transaction.Id == transfer.FromTransactionId)
                 {
-                    transaction.TransferAmount = transferedTransaction.TransferAmount;
+                    transaction.TransferAmount = transferedTransaction.Amount;
                     transaction.TransferDate = transferedTransaction.Date;
                     transaction.TransferTransactionId = transferedTransaction.Id;
                     transaction.TransferAccountId = transferedTransaction.AccountId;

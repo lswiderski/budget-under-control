@@ -13,8 +13,6 @@
                 <Label x:Name="usd" />
                 <Label Text="EUR:" />
                 <Label x:Name="eur" />
-                <Label Text="THB:" />
-                <Label x:Name="thb" />
                 <Label Text="Total:" />
                 <Label x:Name="total" />
             </StackLayout>

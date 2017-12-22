@@ -1,6 +1,8 @@
-﻿using BudgetUnderControl.Model;
+﻿using BudgetUnderControl.Common;
+using BudgetUnderControl.Model;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
 using System.Text;
@@ -14,8 +16,8 @@ namespace BudgetUnderControl.ViewModel
         ITransactionModel transactionModel;
         public TransactionListItemDTO SelectedTransaction { get; set; }
 
-        ICollection<TransactionListItemDTO> transactions;
-        public ICollection<TransactionListItemDTO> Transactions
+        ObservableCollection<ObservableGroupCollection<string, TransactionListItemDTO>> transactions;
+        public ObservableCollection<ObservableGroupCollection<string, TransactionListItemDTO>> Transactions
         {
             get
             {
@@ -95,7 +97,7 @@ namespace BudgetUnderControl.ViewModel
 
         public async void LoadTransactions()
         {
-            Transactions = await transactionModel.GetTransactions(FromDate, ToDate);
+            Transactions = transactionModel.GetGroupedTransactions(FromDate, ToDate);
             SetIncomeExpense();
         }
 
@@ -120,7 +122,9 @@ namespace BudgetUnderControl.ViewModel
             decimal _income = 0m;
             decimal _expense = 0m;
             int noTransactions = 0;
-            foreach (var item in Transactions)
+
+            var trans = Transactions.SelectMany(x => x.Select(y => y)).ToList();
+            foreach (var item in trans)
             {
                 if(item.IsTransfer == false)
                 {

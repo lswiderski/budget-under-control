@@ -13,6 +13,9 @@
                     <Label Text="{Binding Expense, Mode=TwoWay}" TextColor="Red"/>
                     <Label Text="Income: "/>
                     <Label Text="{Binding Income, Mode=TwoWay}" TextColor="Green"/>
+                </StackLayout>
+                <StackLayout Orientation="Horizontal">
+
                     <Label Text="No. Trans: "/>
                     <Label Text="{Binding NumberOfTransactions, Mode=TwoWay}" />
                 </StackLayout>
@@ -30,10 +33,22 @@
                     <Label x:Name="month" Text="{Binding ActualRange}" Grid.Row="0" Grid.Column="1" HorizontalTextAlignment="Center"  HorizontalOptions="FillAndExpand" Margin="0,10"/>
                     <Button Text=">" Clicked="OnNextMonthButtonClicked" Grid.Row="0" Grid.Column="2" />
                 </Grid>
-                <ListView x:Name="transactions" ItemsSource="{Binding Transactions}" SelectedItem="{Binding SelectedTransaction}"   ItemSelected="OnItemSelected" VerticalOptions="FillAndExpand" HorizontalOptions="FillAndExpand" HasUnevenRows="True"  >
+                <ListView x:Name="transactions" ItemsSource="{Binding Transactions}"  IsGroupingEnabled="True" GroupDisplayBinding="{Binding Key}" SelectedItem="{Binding SelectedTransaction}"   ItemSelected="OnItemSelected" VerticalOptions="FillAndExpand" HorizontalOptions="FillAndExpand" HasUnevenRows="True"  >
+                    <ListView.GroupHeaderTemplate>
+                        <DataTemplate>
+                            <ViewCell>
+                                <StackLayout VerticalOptions="FillAndExpand" HorizontalOptions="FillAndExpand"
+                    >
+                                    <Grid VerticalOptions="FillAndExpand" HorizontalOptions="FillAndExpand">
+                                        <Label Text="{Binding Key}" FontSize="Small"  VerticalOptions="CenterAndExpand" HorizontalOptions="CenterAndExpand"/>
+                                    </Grid>
+                                </StackLayout>
+                            </ViewCell>
+                        </DataTemplate>
+                    </ListView.GroupHeaderTemplate>
                     <ListView.ItemTemplate>
                         <DataTemplate>
-                            <local:TransactionListItem  Transaction="{Binding}"/>
+                            <local:GroupedTransactionListItem  Transaction="{Binding}"/>
                         </DataTemplate>
                     </ListView.ItemTemplate>
                 </ListView>

@@ -1,8 +1,10 @@
-﻿using BudgetUnderControl.Common.Enums;
+﻿using BudgetUnderControl.Common;
+using BudgetUnderControl.Common.Enums;
 using BudgetUnderControl.Domain;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -84,6 +86,38 @@ namespace BudgetUnderControl.Model
 
             return await transactions;
         }
+
+        public ObservableCollection<ObservableGroupCollection<string, TransactionListItemDTO>> GetGroupedTransactions(DateTime fromDate, DateTime toDate)
+        {
+            var transactions = (from t in this.Context.Transactions
+                                join a in this.Context.Accounts on t.AccountId equals a.Id
+                                join c in this.Context.Currencies on a.CurrencyId equals c.Id
+                                from transferFrom in this.Context.Transfers.Where(x => x.FromTransactionId == t.Id).DefaultIfEmpty()
+                                from transferTo in this.Context.Transfers.Where(x => x.ToTransactionId == t.Id).DefaultIfEmpty()
+                                where t.Date >= fromDate && t.Date <= toDate
+                                orderby t.Date descending
+                                select new TransactionListItemDTO
+                                {
+                                    AccountId = t.AccountId,
+                                    Date = t.Date,
+                                    Id = t.Id,
+                                    Value = t.Amount,
+                                    Account = a.Name,
+                                    ValueWithCurrency = t.Amount + c.Symbol,
+                                    Type = t.Type,
+                                    Name = t.Name,
+                                    CurrencyCode = c.Code,
+                                    IsTransfer = transferTo != null || transferFrom != null
+                                }
+                                ).ToList()
+                                .OrderBy(x => x.Date)
+                                .GroupBy(x => x.Date.ToString("d MMM yyyy"))
+                                .Select(x => new ObservableGroupCollection<string, TransactionListItemDTO>(x))
+                                .ToList();
+
+            return new ObservableCollection<ObservableGroupCollection<string, TransactionListItemDTO>>(transactions);
+        }
+
 
         public async Task<ICollection<TransactionListItemDTO>> GetTransactions(int accountId)
         {

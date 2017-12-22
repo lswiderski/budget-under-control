@@ -42,6 +42,7 @@
     <Compile Include="Enums\AccountType.cs" />
     <Compile Include="Enums\ExtendedTransactionType.cs" />
     <Compile Include="Enums\TransactionType.cs" />
+    <Compile Include="Extensions\ObservableGroupCollection.cs" />
     <Compile Include="IFileHelper.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Settings.cs" />

@@ -44,6 +44,7 @@
     <Compile Include="Templates\CurrencyListItem.cs" />
     <Compile Include="Templates\FAB\FloatingActionButtonSize.cs" />
     <Compile Include="Templates\FAB\FloatingActionButtonView.cs" />
+    <Compile Include="Templates\GroupedTransactionListItem.cs" />
     <Compile Include="Templates\TransactionListItem.cs" />
     <Compile Include="Views\Account\AccountDetails.xaml.cs">
       <DependentUpon>AccountDetails.xaml</DependentUpon>

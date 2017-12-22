@@ -1,5 +1,7 @@
-﻿using System;
+﻿using BudgetUnderControl.Common;
+using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -18,5 +20,6 @@ namespace BudgetUnderControl.Model
         void EditTransaction(EditTransactionDTO arg);
         void DeleteTransaction(int id);
         List<int> GetSubAccounts(int accountId);
+        ObservableCollection<ObservableGroupCollection<string, TransactionListItemDTO>> GetGroupedTransactions(DateTime fromDate, DateTime toDate);
     }
 }

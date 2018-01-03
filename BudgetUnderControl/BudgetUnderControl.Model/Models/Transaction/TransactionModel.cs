@@ -110,7 +110,7 @@ namespace BudgetUnderControl.Model
                                     IsTransfer = transferTo != null || transferFrom != null
                                 }
                                 ).ToList()
-                                .OrderBy(x => x.Date)
+                                .OrderByDescending(x => x.Date)
                                 .GroupBy(x => x.Date.ToString("d MMM yyyy"))
                                 .Select(x => new ObservableGroupCollection<string, TransactionListItemDTO>(x))
                                 .ToList();

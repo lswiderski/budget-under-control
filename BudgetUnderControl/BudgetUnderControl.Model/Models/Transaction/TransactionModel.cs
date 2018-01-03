@@ -406,9 +406,14 @@ namespace BudgetUnderControl.Model
                 && transfer == null && secondTransaction == null)
             {
                 decimal amount = 0;
-                if (firstTransaction.Type != arg.Type)
+
+                if (arg.Type == TransactionType.Expense && arg.Amount > 0)
                 {
-                    amount =  arg.Amount *-1;
+                    amount = arg.Amount * (-1);
+                }
+                else if (arg.Type == TransactionType.Income && arg.Amount < 0)
+                {
+                    amount = arg.Amount * (-1);
                 }
                 else
                 {

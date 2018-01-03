@@ -485,7 +485,7 @@ namespace BudgetUnderControl.ViewModel
                 Comment = Comment,
                 Date = date,
                 Amount = amount,
-                CategoryId = SelectedCategoryIndex > 0 ? Categories[SelectedCategoryIndex].Id : (int?)null,
+                CategoryId = SelectedCategoryIndex >= 0 ? Categories[SelectedCategoryIndex].Id : (int?)null,
                 AccountId = Accounts[selectedAccountIndex].Id,
                 TransferDate = transferDate,
                 TransferAmount = transferAmount,

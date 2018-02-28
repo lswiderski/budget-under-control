@@ -173,16 +173,19 @@ namespace BudgetUnderControl.Model
                              Comment = tr.Comment
                          }).ToList();
 
-            var csv = "AccountName;CurrencyCode;Amount;TransactionId;Category;Date;Type;Comment" + Environment.NewLine;
+            var lines = new List<string>();
+            var firstLine = "AccountName;CurrencyCode;Amount;TransactionId;Category;Date;Type;Comment";
+            var csv = firstLine + Environment.NewLine;
+            lines.Add(firstLine);
             foreach (var item in query)
             {
                 var line = string.Format("{0};{1};{2};{3};{4};{5};{6};{7}", 
-                    item.AccountName, item.CurrencyCode, item.Amount, item.TransactionId, item.Category,  item.Date, item.Type.ToString(), item.Comment)
-                    + Environment.NewLine;
-                csv += line;
+                    item.AccountName, item.CurrencyCode, item.Amount, item.TransactionId, item.Category,  item.Date, item.Type.ToString(), item.Comment);
+                lines.Add(line);
+                csv += line + Environment.NewLine;
             }
-
-            fileHelper.SaveTextExternal(fileName, csv);
+            fileHelper.SaveTextExternal(fileName, lines.ToArray());
+            //fileHelper.SaveTextExternal(fileName, csv);
         }
 
         private void ImportCurrencies(List<CurrencySyncDTO> currencies)

@@ -78,6 +78,10 @@
     <Compile Include="Migrations\20171221191818_NewCategories.Designer.cs">
       <DependentUpon>20171221191818_NewCategories.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\20180327150342_ChinaCurrencies.cs" />
+    <Compile Include="Migrations\20180327150342_ChinaCurrencies.Designer.cs">
+      <DependentUpon>20180327150342_ChinaCurrencies.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\ContextModelSnapshot.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

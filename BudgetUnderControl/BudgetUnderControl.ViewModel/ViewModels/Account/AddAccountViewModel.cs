@@ -186,7 +186,7 @@ namespace BudgetUnderControl.ViewModel
 
         async void GetDropdowns()
         {
-            currencies = (await currencyModel.GetCurriences()).ToList();
+            currencies = (await currencyModel.GetCurriences()).OrderBy(x => x.Code).ToList();
             accountGroups = (await accountGroupModel.GetAccountGroups()).ToList();
             accounts = accountModel.GetAccounts().ToList();
             accountTypes = this.GetAccountTypes().ToList();

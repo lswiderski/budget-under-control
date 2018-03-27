@@ -142,12 +142,12 @@ namespace BudgetUnderControl.Model
         {
             var json = GetBackUpJSON();
 
-            fileHelper.SaveTextExternal(BACKUP_FILE_NAME, json);
+            fileHelper.SaveText(BACKUP_FILE_NAME, json);
         }
 
         public void LoadBackupFile()
         {
-           var json = fileHelper.LoadTextExternal(BACKUP_FILE_NAME);
+           var json = fileHelper.LoadText(BACKUP_FILE_NAME);
             ImportBackUpJSON(json);
         }
 
@@ -158,7 +158,7 @@ namespace BudgetUnderControl.Model
             var query = (from tr in this.Context.Transactions
                          join acc in this.Context.Accounts on tr.AccountId equals acc.Id
                          join cur in this.Context.Currencies on acc.CurrencyId equals cur.Id
-                         from cat in this.Context.Categories.Where(x => x.Id == tr.Id).DefaultIfEmpty()
+                         from cat in this.Context.Categories.Where(x => x.Id == tr.CategoryId).DefaultIfEmpty()
                          select new
                          {
                              AccountName = acc.Name,
@@ -174,17 +174,17 @@ namespace BudgetUnderControl.Model
                          }).ToList();
 
             var lines = new List<string>();
-            var firstLine = "AccountName;CurrencyCode;Amount;TransactionId;Category;Date;Type;Comment";
+            var firstLine = "TransactionId;Date;Time;Name;Amount;CurrencyCode;Category;Type;AccountName;Comment";
             var csv = firstLine + Environment.NewLine;
             lines.Add(firstLine);
             foreach (var item in query)
             {
-                var line = string.Format("{0};{1};{2};{3};{4};{5};{6};{7}", 
-                    item.AccountName, item.CurrencyCode, item.Amount, item.TransactionId, item.Category,  item.Date, item.Type.ToString(), item.Comment);
+                var line = string.Format("{0};{1};{2};{3};{4};{5};{6};{7};{8};{9}",
+                    item.TransactionId, item.Date.ToLocalTime().ToString("dd/MM/yyyy"), item.Date.ToLocalTime().ToString("HH:mm"), item.TransactionName,  item.Amount, item.CurrencyCode, item.Category,  item.Type.ToString(), item.AccountName,  item.Comment);
                 lines.Add(line);
                 csv += line + Environment.NewLine;
             }
-            fileHelper.SaveTextExternal(fileName, lines.ToArray());
+            fileHelper.SaveText(fileName, lines.ToArray());
             //fileHelper.SaveTextExternal(fileName, csv);
         }
 

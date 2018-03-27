@@ -1,4 +1,5 @@
-﻿using BudgetUnderControl.Common;
+﻿using Android.Content.Res;
+using BudgetUnderControl.Common;
 using BudgetUnderControl.Droid;
 using System;
 using System.IO;
@@ -8,6 +9,8 @@ namespace BudgetUnderControl.Droid
 {
     public class FileHelper : IFileHelper
     {
+        private string folderName = "BudgetUnderControl";
+
         public string GetLocalFilePath(string filename)
         {
             string path = Environment.GetFolderPath(Environment.SpecialFolder.Personal);
@@ -17,14 +20,24 @@ namespace BudgetUnderControl.Droid
         public string GetExternalFilePath(string filename)
         {
             string path = Android.OS.Environment.ExternalStorageDirectory.Path;
-            return Path.Combine(path, filename);
+            return Path.Combine(path, this.folderName, filename);
+        }
+
+        private string GetExternalPathWithoutFileName()
+        {
+            string path = Android.OS.Environment.ExternalStorageDirectory.Path;
+            return Path.Combine(path, this.folderName);
         }
 
         public void SaveText(string filename, string[] lines)
         {
-            var filePath = GetLocalFilePath(filename);
-            using (System.IO.StreamWriter file =
-           new System.IO.StreamWriter(filePath))
+            var path = this.GetExternalPathWithoutFileName();
+            var filePath = GetExternalFilePath(filename);
+            if (!Directory.Exists(path))
+            {
+                Directory.CreateDirectory(path);
+            }
+            using (System.IO.StreamWriter file = new System.IO.StreamWriter(filePath))
             {
                 foreach (string line in lines)
                 {
@@ -35,38 +48,35 @@ namespace BudgetUnderControl.Droid
 
         public void SaveText(string filename, string text)
         {
-            var filePath = GetLocalFilePath(filename);
-            System.IO.File.WriteAllText(filePath, text);
+            var path = this.GetExternalPathWithoutFileName();
+            var filePath = GetExternalFilePath(filename);
+            if(!Directory.Exists(path))
+            {
+                Directory.CreateDirectory(path);
+            }
+
+            using (System.IO.StreamWriter file = new System.IO.StreamWriter(filePath))
+            {
+                file.Write(text);
+            }
+
+            //System.IO.File.WriteAllText(filePath, text);
         }
+
         public string LoadText(string filename)
         {
-            var filePath = GetLocalFilePath(filename);
-            return System.IO.File.ReadAllText(filePath);
-        }
-
-        public void SaveTextExternal(string filename, string text)
-        {
             var filePath = GetExternalFilePath(filename);
-            System.IO.File.WriteAllText(filePath, text);
-        }
-
-        public void SaveTextExternal(string filename, string[] lines)
-        {
-            var filePath = GetExternalFilePath(filename);
-            using (System.IO.StreamWriter file =
-           new System.IO.StreamWriter(filePath))
+            var content = "";
+            if (File.Exists(filePath))
             {
-                foreach (string line in lines)
+                using (System.IO.StreamReader file = new System.IO.StreamReader(filePath))
                 {
-                    file.WriteLine(line);
+                    content = file.ReadToEnd();
                 }
             }
-        }
 
-        public string LoadTextExternal(string filename)
-        {
-            var filePath = GetExternalFilePath(filename);
-            return System.IO.File.ReadAllText(filePath);
+            return content;
+            //return System.IO.File.ReadAllText(filePath);
         }
     }
 }

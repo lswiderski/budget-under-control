@@ -1,4 +1,6 @@
 ﻿using BudgetUnderControl.Common;
+using BudgetUnderControl.Contracts.Models;
+using BudgetUnderControl.Domain.Repositiories;
 using BudgetUnderControl.Model;
 using System;
 using System.Collections.Generic;
@@ -13,7 +15,7 @@ namespace BudgetUnderControl.ViewModel
     public class TransactionsViewModel : ITransactionsViewModel, INotifyPropertyChanged
     {
         public event PropertyChangedEventHandler PropertyChanged;
-        ITransactionModel transactionModel;
+        ITransactionRepository transactionModel;
         public TransactionListItemDTO SelectedTransaction { get; set; }
 
         ObservableCollection<ObservableGroupCollection<string, TransactionListItemDTO>> transactions;
@@ -86,7 +88,7 @@ namespace BudgetUnderControl.ViewModel
             }
         }
         
-        public TransactionsViewModel(ITransactionModel transactionModel)
+        public TransactionsViewModel(ITransactionRepository transactionModel)
         {
             this.transactionModel = transactionModel;
 

@@ -1,4 +1,7 @@
 ﻿using BudgetUnderControl.Common.Enums;
+using BudgetUnderControl.Contracts.Models;
+
+using BudgetUnderControl.Domain.Repositiories;
 using BudgetUnderControl.Model;
 using System;
 using System.Collections.Generic;
@@ -340,14 +343,14 @@ namespace BudgetUnderControl.ViewModel
         List<CategoryListItemDTO> categories;
         public List<CategoryListItemDTO> Categories => categories;
 
-        ITransactionModel transactionModel;
-        IAccountModel accountModel;
-        ICategoryModel categoryModel;
-        public AddTransactionViewModel(ITransactionModel transactionModel, IAccountModel accountModel, ICategoryModel categoryModel)
+        ITransactionRepository transactionRepository;
+        IAccountRepository accountRepository;
+        ICategoryRepository categoryRepository;
+        public AddTransactionViewModel(ITransactionRepository transactionRepository, IAccountRepository accountRepository, ICategoryRepository categoryRepository)
         {
-            this.transactionModel = transactionModel;
-            this.accountModel = accountModel;
-            this.categoryModel = categoryModel;
+            this.transactionRepository = transactionRepository;
+            this.accountRepository = accountRepository;
+            this.categoryRepository = categoryRepository;
             SelectedTypeIndex = 0;
             SelectedCategoryIndex = -1;
             SelectedAccountIndex = -1;
@@ -361,8 +364,8 @@ namespace BudgetUnderControl.ViewModel
 
         async void GetDropdowns()
         {
-            accounts = accountModel.GetAccounts().ToList();
-            categories = (await categoryModel.GetCategories()).ToList();
+            accounts = accountRepository.GetAccounts().ToList();
+            categories = (await categoryRepository.GetCategories()).ToList();
         }
 
         void SetTransfer()
@@ -402,7 +405,7 @@ namespace BudgetUnderControl.ViewModel
                     Type = Type,
                 };
 
-                transactionModel.AddTransaction(transaction);
+                transactionRepository.AddTransaction(transaction);
             }
         }
 
@@ -438,7 +441,7 @@ namespace BudgetUnderControl.ViewModel
                 TransferAccountId = Accounts[selectedTransferAccountIndex].Id,
             };
 
-            transactionModel.AddTransfer(transfer);
+            transactionRepository.AddTransfer(transfer);
         }
     }
 }

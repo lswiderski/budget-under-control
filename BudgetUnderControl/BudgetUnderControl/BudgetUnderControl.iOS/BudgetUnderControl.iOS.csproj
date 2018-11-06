@@ -146,9 +146,9 @@
     <Reference Include="Xamarin.iOS" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\BudgetUnderControl\BudgetUnderControl.csproj">
-      <Project>{eedc537a-288a-4b87-959f-1c886ea12f9f}</Project>
-      <Name>BudgetUnderControl</Name>
+    <ProjectReference Include="..\BudgetUnderControl\BudgetUnderControl.Mobile.csproj">
+      <Project>{4528F06E-915D-4FD7-978B-F80F5AE224C5}</Project>
+      <Name>BudgetUnderControl.Mobile</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\iOS\Xamarin.iOS.CSharp.targets" />

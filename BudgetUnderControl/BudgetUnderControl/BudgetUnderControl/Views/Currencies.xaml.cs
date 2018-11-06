@@ -1,4 +1,5 @@
 ﻿using Autofac;
+using BudgetUnderControl.Domain.Repositiories;
 using BudgetUnderControl.Model;
 using System;
 using System.Collections.Generic;
@@ -14,14 +15,14 @@ namespace BudgetUnderControl.Views
     [XamlCompilation(XamlCompilationOptions.Compile)]
     public partial class Currencies : ContentPage
     {
-        ICurrencyModel currencyModel;
+        ICurrencyRepository currencyModel;
         public Currencies()
         {
             InitializeComponent();
 
             using (var scope = App.Container.BeginLifetimeScope())
             {
-                this.currencyModel = scope.Resolve<ICurrencyModel>();
+                this.currencyModel = scope.Resolve<ICurrencyRepository>();
             }
                
         }

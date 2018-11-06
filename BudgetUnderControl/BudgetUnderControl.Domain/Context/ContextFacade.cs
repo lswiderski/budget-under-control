@@ -23,6 +23,8 @@ namespace BudgetUnderControl.Domain
 
         private readonly Context _context;
 
+        public static ContextFacade Create(IContextConfig contextConfig) => new ContextFacade(contextConfig);
+
         public ContextFacade(IContextConfig contextConfig)
         {
             _context = Context.Create(contextConfig);

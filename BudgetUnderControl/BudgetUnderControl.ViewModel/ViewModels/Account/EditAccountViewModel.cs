@@ -1,6 +1,9 @@
 ﻿using Autofac;
 using BudgetUnderControl.Common.Enums;
+using BudgetUnderControl.Contracts.Models;
+using BudgetUnderControl.Domain.Repositiories;
 using BudgetUnderControl.Model;
+using BudgetUnderControl.Model.Services;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -14,9 +17,10 @@ namespace BudgetUnderControl.ViewModel
     public class EditAccountViewModel : IEditAccountViewModel, INotifyPropertyChanged
     {
         public event PropertyChangedEventHandler PropertyChanged;
-        IAccountModel accountModel;
-        ICurrencyModel currencyModel;
-        IAccountGroupModel accountGroupModel;
+        IAccountRepository accountModel;
+        IAccountService accountService;
+        ICurrencyRepository currencyModel;
+        IAccountGroupRepository accountGroupModel;
 
         int accountId;
 
@@ -162,11 +166,12 @@ namespace BudgetUnderControl.ViewModel
             }
         }
 
-        public EditAccountViewModel(IAccountModel accountModel, ICurrencyModel currencyModel, IAccountGroupModel accountGroupModel)
+        public EditAccountViewModel(IAccountRepository accountModel, ICurrencyRepository currencyModel, IAccountGroupRepository accountGroupModel, IAccountService accountService)
         {
             this.accountModel = accountModel;
             this.currencyModel = currencyModel;
             this.accountGroupModel = accountGroupModel;
+            this.accountService = accountService;
             GetDropdowns();
         }
 
@@ -182,7 +187,7 @@ namespace BudgetUnderControl.ViewModel
         {
             this.accountId = accountId;
 
-            var account = await this.accountModel.GetAccount(accountId);
+            var account = await this.accountService.GetEditAccountDTOAsync(accountId);
             Amount = account.Amount.ToString();
             Name = account.Name;
             Comment = account.Comment;

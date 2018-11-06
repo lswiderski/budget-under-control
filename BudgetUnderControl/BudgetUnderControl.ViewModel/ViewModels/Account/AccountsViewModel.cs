@@ -1,4 +1,6 @@
-﻿using BudgetUnderControl.Model;
+﻿using BudgetUnderControl.Contracts.Models;
+using BudgetUnderControl.Domain.Repositiories;
+using BudgetUnderControl.Model;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -11,7 +13,7 @@ namespace BudgetUnderControl.ViewModel
     public class AccountsViewModel : IAccountsViewModel, INotifyPropertyChanged
     {
         public event PropertyChangedEventHandler PropertyChanged;
-        IAccountModel accountModel;
+        IAccountRepository accountModel;
 
         ICollection<AccountListItemDTO> accounts;
         public ICollection<AccountListItemDTO> Accounts
@@ -49,7 +51,7 @@ namespace BudgetUnderControl.ViewModel
             }
         }
 
-        public AccountsViewModel(IAccountModel accountModel)
+        public AccountsViewModel(IAccountRepository accountModel)
         {
             this.accountModel = accountModel;
         }

@@ -38,8 +38,7 @@
     <Compile Include="Context\ContextFacade.cs" />
     <Compile Include="Context\Context.cs" />
     <Compile Include="Context\ContextConfig.cs" />
-    <Compile Include="Context\FakeContextFacade.cs" />
-    <Compile Include="Context\IContextFacadet.cs" />
+    <Compile Include="Context\IContextFacade.cs" />
     <Compile Include="Entities\Account.cs" />
     <Compile Include="Entities\AccountGroup.cs" />
     <Compile Include="Entities\AccountSnapshot.cs" />
@@ -87,6 +86,11 @@
     </Compile>
     <Compile Include="Migrations\ContextModelSnapshot.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Repositiories\IAccountGroupModel.cs" />
+    <Compile Include="Repositiories\IAccountRepository.cs" />
+    <Compile Include="Repositiories\ICategoryModel.cs" />
+    <Compile Include="Repositiories\ICurrencyModel.cs" />
+    <Compile Include="Repositiories\ITransactionRepository.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="project.json" />
@@ -96,7 +100,12 @@
       <Project>{1dd8730a-719c-4cee-a54d-aa1e5d6d2c84}</Project>
       <Name>BudgetUnderControl.Common</Name>
     </ProjectReference>
+    <ProjectReference Include="..\BudgetUnderControl.Contracts\BudgetUnderControl.Contracts.csproj">
+      <Project>{a3a2ac07-6fb9-4339-8338-bbd19fadf46d}</Project>
+      <Name>BudgetUnderControl.Contracts</Name>
+    </ProjectReference>
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\Portable\$(TargetFrameworkVersion)\Microsoft.Portable.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

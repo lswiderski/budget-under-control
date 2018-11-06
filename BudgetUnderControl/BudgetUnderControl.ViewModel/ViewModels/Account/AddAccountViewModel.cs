@@ -1,4 +1,6 @@
 ﻿using BudgetUnderControl.Common.Enums;
+using BudgetUnderControl.Contracts.Models;
+using BudgetUnderControl.Domain.Repositiories;
 using BudgetUnderControl.Model;
 using System;
 using System.Collections.Generic;
@@ -13,9 +15,9 @@ namespace BudgetUnderControl.ViewModel
     public class AddAccountViewModel : IAddAccountViewModel, INotifyPropertyChanged
     {
         public event PropertyChangedEventHandler PropertyChanged;
-        IAccountModel accountModel;
-        ICurrencyModel currencyModel;
-        IAccountGroupModel accountGroupModel;
+        IAccountRepository accountModel;
+        ICurrencyRepository currencyModel;
+        IAccountGroupRepository accountGroupModel;
 
         int accountId;
 
@@ -174,7 +176,7 @@ namespace BudgetUnderControl.ViewModel
             }
         }
 
-        public AddAccountViewModel(IAccountModel accountModel, ICurrencyModel currencyModel, IAccountGroupModel accountGroupModel)
+        public AddAccountViewModel(IAccountRepository accountModel, ICurrencyRepository currencyModel, IAccountGroupRepository accountGroupModel)
         {
             this.accountModel = accountModel;
             this.currencyModel = currencyModel;

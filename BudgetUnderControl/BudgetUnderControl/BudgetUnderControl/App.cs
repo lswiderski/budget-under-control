@@ -10,6 +10,8 @@ using BudgetUnderControl.Model;
 using Microsoft.Practices.ServiceLocation;
 using Autofac.Extras.CommonServiceLocator;
 using BudgetUnderControl.ViewModel;
+using BudgetUnderControl.Domain.Repositiories;
+using BudgetUnderControl.Model.Services;
 
 [assembly: XamlCompilation(XamlCompilationOptions.Compile)]
 namespace BudgetUnderControl
@@ -54,26 +56,27 @@ namespace BudgetUnderControl
 
             // Register services
             builder.RegisterInstance(new ContextConfig() { DbName = Settings.DB_NAME, DbPath = dbPath }).As<IContextConfig>();
-            builder.RegisterType<ContextFacade>().As<IContextFacade>().InstancePerLifetimeScope();
+            builder.RegisterType<ContextFacade>().As<IContextFacade>().InstancePerDependency();
             //builder.RegisterInstance(new Context(new ContextConfig() { DbName = Settings.DB_NAME, DbPath = dbPath }));
             builder.RegisterType<BaseModel>().As<IBaseModel>().InstancePerLifetimeScope();
-            builder.RegisterType<CurrencyModel>().As<ICurrencyModel>().SingleInstance();
-            builder.RegisterType<AccountModel>().As<IAccountModel>().SingleInstance();
-            builder.RegisterType<AccountGroupModel>().As<IAccountGroupModel>().SingleInstance();
-            builder.RegisterType<TransactionModel>().As<ITransactionModel>().SingleInstance();
-            builder.RegisterType<CategoryModel>().As<ICategoryModel>().SingleInstance();
-            builder.RegisterType<SyncService>().As<ISyncService>().SingleInstance();
+            builder.RegisterType<AccountService>().As<IAccountService>().InstancePerLifetimeScope();
+            builder.RegisterType<CurrencyRepository>().As<ICurrencyRepository>().InstancePerLifetimeScope();
+            builder.RegisterType<AccountRepository>().As<IAccountRepository>().InstancePerLifetimeScope();
+            builder.RegisterType<AccountGroupRepository>().As<IAccountGroupRepository>().InstancePerLifetimeScope();
+            builder.RegisterType<TransactionRepository>().As<ITransactionRepository>().InstancePerLifetimeScope();
+            builder.RegisterType<CategoryRepository>().As<ICategoryRepository>().InstancePerLifetimeScope();
+            builder.RegisterType<SyncService>().As<ISyncService>().InstancePerLifetimeScope();
             builder.RegisterInstance<IFileHelper>(DependencyService.Get<IFileHelper>());
 
-            builder.RegisterType<EditAccountViewModel>().As<IEditAccountViewModel>().InstancePerDependency();
-            builder.RegisterType<AddAccountViewModel>().As<IAddAccountViewModel>().InstancePerDependency();
-            builder.RegisterType<AccountsViewModel>().As<IAccountsViewModel>().InstancePerDependency();
-            builder.RegisterType<AccountDetailsViewModel>().As<IAccountDetailsViewModel>().InstancePerDependency();
-            builder.RegisterType<TransactionsViewModel>().As<ITransactionsViewModel>().InstancePerDependency();
-            builder.RegisterType<AddTransactionViewModel>().As<IAddTransactionViewModel>().InstancePerDependency();
-            builder.RegisterType<EditTransactionViewModel>().As<IEditTransactionViewModel>().InstancePerDependency();
-            builder.RegisterType<SettingsViewModel>().As<ISettingsViewModel>().InstancePerDependency();
-            builder.RegisterType<OverviewViewModel>().As<IOverviewViewModel>().InstancePerDependency();
+            builder.RegisterType<EditAccountViewModel>().As<IEditAccountViewModel>().InstancePerLifetimeScope();
+            builder.RegisterType<AddAccountViewModel>().As<IAddAccountViewModel>().InstancePerLifetimeScope();
+            builder.RegisterType<AccountsViewModel>().As<IAccountsViewModel>().InstancePerLifetimeScope();
+            builder.RegisterType<AccountDetailsViewModel>().As<IAccountDetailsViewModel>().InstancePerLifetimeScope();
+            builder.RegisterType<TransactionsViewModel>().As<ITransactionsViewModel>().InstancePerLifetimeScope();
+            builder.RegisterType<AddTransactionViewModel>().As<IAddTransactionViewModel>().InstancePerLifetimeScope();
+            builder.RegisterType<EditTransactionViewModel>().As<IEditTransactionViewModel>().InstancePerLifetimeScope();
+            builder.RegisterType<SettingsViewModel>().As<ISettingsViewModel>().InstancePerLifetimeScope();
+            builder.RegisterType<OverviewViewModel>().As<IOverviewViewModel>().InstancePerLifetimeScope();
 
 
 

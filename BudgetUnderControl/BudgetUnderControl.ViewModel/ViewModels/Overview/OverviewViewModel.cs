@@ -1,4 +1,5 @@
-﻿using BudgetUnderControl.Model;
+﻿using BudgetUnderControl.Domain.Repositiories;
+using BudgetUnderControl.Model;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,8 +10,8 @@ namespace BudgetUnderControl.ViewModel
 {
     public class OverviewViewModel : IOverviewViewModel
     {
-        IAccountModel accountModel;
-        public OverviewViewModel(IAccountModel accountModel)
+        IAccountRepository accountModel;
+        public OverviewViewModel(IAccountRepository accountModel)
         {
             this.accountModel = accountModel;
         }

@@ -1,4 +1,5 @@
 ﻿using BudgetUnderControl.Common.Enums;
+using BudgetUnderControl.Contracts.Models;
 using BudgetUnderControl.Model;
 using System;
 using System.Collections.Generic;

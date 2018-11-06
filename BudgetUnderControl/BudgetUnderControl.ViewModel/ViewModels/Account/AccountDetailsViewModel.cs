@@ -1,4 +1,6 @@
-﻿using BudgetUnderControl.Model;
+﻿using BudgetUnderControl.Contracts.Models;
+using BudgetUnderControl.Domain.Repositiories;
+using BudgetUnderControl.Model;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -11,8 +13,8 @@ namespace BudgetUnderControl.ViewModel
     public class AccountDetailsViewModel : IAccountDetailsViewModel, INotifyPropertyChanged
     {
         public event PropertyChangedEventHandler PropertyChanged;
-        IAccountModel accountModel;
-        ITransactionModel transactionModel;
+        IAccountRepository accountModel;
+        ITransactionRepository transactionRepository;
         public TransactionListItemDTO SelectedTransaction { get; set; }
 
         int accountId;
@@ -116,10 +118,10 @@ namespace BudgetUnderControl.ViewModel
             }
         }
 
-        public AccountDetailsViewModel(IAccountModel accountModel, ITransactionModel transactionModel)
+        public AccountDetailsViewModel(IAccountRepository accountModel, ITransactionRepository transactionRepository)
         {
             this.accountModel = accountModel;
-            this.transactionModel = transactionModel;
+            this.transactionRepository = transactionRepository;
 
             var now = DateTime.UtcNow;
             FromDate = new DateTime(now.Year, now.Month, 1, 0, 0, 0);
@@ -138,7 +140,7 @@ namespace BudgetUnderControl.ViewModel
         }
         public async void LoadTransactions(int accountId)
         {
-            Transactions = await transactionModel.GetTransactions(accountId, FromDate, ToDate);
+            Transactions = await transactionRepository.GetTransactions(accountId, FromDate, ToDate);
 
             var account = await this.accountModel.GetAccountDetails(accountId, FromDate, ToDate);
             Expense = account.Expense.ToString();

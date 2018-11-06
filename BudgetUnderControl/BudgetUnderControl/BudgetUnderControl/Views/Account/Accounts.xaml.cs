@@ -69,7 +69,7 @@ namespace BudgetUnderControl.Views
 
         void OnItemSelected(object sender, SelectedItemChangedEventArgs e)
         {
-            var accountId = vm.SelectedAccount.Id;
+            int accountId = vm.SelectedAccount.Id;
             App.MasterPage.NavigateTo(typeof(AccountDetails), accountId);
         }
 

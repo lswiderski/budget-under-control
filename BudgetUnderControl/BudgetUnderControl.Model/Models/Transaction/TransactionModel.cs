@@ -13,10 +13,8 @@ namespace BudgetUnderControl.Model
 {
     public class TransactionModel : BaseModel, ITransactionModel
     {
-        IContextConfig contextConfig;
-        public TransactionModel(IContextConfig contextConfig) : base(contextConfig)
+        public TransactionModel(IContextFacade context) : base(context)
         {
-            this.contextConfig = contextConfig;
         }
 
         public void AddTransaction(AddTransactionDTO arg)

@@ -11,13 +11,9 @@ namespace BudgetUnderControl.Model
 {
     public class AccountModel : BaseModel, IAccountModel
     {
-
-        IContextConfig contextConfig;
         ITransactionModel transactionModel;
-        public AccountModel(IContextConfig contextConfig, ITransactionModel transactionModel) : base(contextConfig)
+        public AccountModel(IContextConfig contextConfig, ITransactionModel transactionModel, IContextFacade context) : base(context)
         {
-            this.contextConfig = contextConfig;
-
             this.transactionModel = transactionModel;
         }
 

@@ -12,13 +12,10 @@ namespace BudgetUnderControl.Model
     {
         private static string BACKUP_FILE_NAME = "buc_backup.json";
 
-        IContextConfig contextConfig;
         IFileHelper fileHelper;
-        public SyncService(IContextConfig contextConfig, IFileHelper fileHelper) : base(contextConfig)
+        public SyncService( IFileHelper fileHelper, IContextFacade context) : base(context)
         {
-            this.contextConfig = contextConfig;
             this.fileHelper = fileHelper;
-
         }
 
         public string GetTransactionsJSON()

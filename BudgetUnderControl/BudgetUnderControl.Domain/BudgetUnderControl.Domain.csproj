@@ -35,8 +35,11 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="Context.cs" />
-    <Compile Include="ContextConfig.cs" />
+    <Compile Include="Context\ContextFacade.cs" />
+    <Compile Include="Context\Context.cs" />
+    <Compile Include="Context\ContextConfig.cs" />
+    <Compile Include="Context\FakeContextFacade.cs" />
+    <Compile Include="Context\IContextFacadet.cs" />
     <Compile Include="Entities\Account.cs" />
     <Compile Include="Entities\AccountGroup.cs" />
     <Compile Include="Entities\AccountSnapshot.cs" />
@@ -49,7 +52,7 @@
     <Compile Include="Entities\TagToTransaction.cs" />
     <Compile Include="Entities\Transaction.cs" />
     <Compile Include="Entities\Transfer.cs" />
-    <Compile Include="IContextConfig.cs" />
+    <Compile Include="Context\IContextConfig.cs" />
     <Compile Include="Migrations\20170701091117_Initial.cs" />
     <Compile Include="Migrations\20170701091117_Initial.Designer.cs">
       <DependentUpon>20170701091117_Initial.cs</DependentUpon>

@@ -10,10 +10,8 @@ namespace BudgetUnderControl.Model
 {
     public class CategoryModel : BaseModel, ICategoryModel
     {
-        IContextConfig contextConfig;
-        public CategoryModel(IContextConfig contextConfig) : base(contextConfig)
+        public CategoryModel(IContextFacade context) : base(context)
         {
-            this.contextConfig = contextConfig;
         }
 
         public async Task<ICollection<CategoryListItemDTO>> GetCategories()

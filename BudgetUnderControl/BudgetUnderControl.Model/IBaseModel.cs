@@ -9,6 +9,6 @@ namespace BudgetUnderControl.Model
 {
     public interface IBaseModel
     {
-        Context Context { get;}
+        IContextFacade Context { get;}
     }
 }

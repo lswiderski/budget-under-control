@@ -10,10 +10,8 @@ namespace BudgetUnderControl.Model
 {
     public class AccountGroupModel : BaseModel, IAccountGroupModel
     {
-        IContextConfig contextConfig;
-        public AccountGroupModel(IContextConfig contextConfig) : base(contextConfig)
+        public AccountGroupModel(IContextFacade context) : base(context)
         {
-            this.contextConfig = contextConfig;
         }
         
 

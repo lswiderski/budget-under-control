@@ -12,10 +12,8 @@ namespace BudgetUnderControl.Model
     
     public class CurrencyModel : BaseModel, ICurrencyModel
     {
-        IContextConfig contextConfig;
-        public CurrencyModel(IContextConfig contextConfig) : base(contextConfig)
+        public CurrencyModel(IContextFacade context) : base(context)
         {
-            this.contextConfig = contextConfig;
         }
 
         public async Task<ICollection<CurrencyDTO>> GetCurriences()

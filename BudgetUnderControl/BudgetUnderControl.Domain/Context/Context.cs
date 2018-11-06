@@ -25,19 +25,29 @@ namespace BudgetUnderControl.Domain
         public virtual DbSet<Transaction> Transactions { get; set; }
         public virtual DbSet<Transfer> Transfers { get; set; }
 
-        public Context()
+        public static Context Create(IContextConfig contextConfig)
         {
+            var context = new Context(contextConfig);
 
+            return context;
         }
 
-        public Context(string dbPath)
+        protected Context()
+        {
+            Database.Migrate();
+        }
+
+        protected Context(string dbPath)
         {
             this.databasePath = dbPath;
+            Database.Migrate();
         }
-        public Context(IContextConfig config)
+
+        protected Context(IContextConfig config)
         {
             var dbPath = config.DbPath;
             this.databasePath = dbPath;
+            Database.Migrate();
         }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)

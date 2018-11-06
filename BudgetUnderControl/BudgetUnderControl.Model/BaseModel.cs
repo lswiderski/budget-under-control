@@ -11,20 +11,18 @@ namespace BudgetUnderControl.Model
 {
     public class BaseModel : IBaseModel
     {
-        private Context _context;
+        private IContextFacade _context;
         private IContextConfig contextConfig;
-        public Context Context
+        public IContextFacade Context
         {
             get
             {
                 return _context;
             }
         }
-        public BaseModel(IContextConfig contextConfig)
-        {            
-            _context = new Context(contextConfig);
-            //Context.Database.EnsureCreated();
-            Context.Database.Migrate();
+        public BaseModel(IContextFacade context)
+        {
+            _context = context;
         }
     }
 }

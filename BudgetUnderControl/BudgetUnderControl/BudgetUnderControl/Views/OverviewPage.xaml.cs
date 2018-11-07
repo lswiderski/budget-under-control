@@ -28,10 +28,10 @@ namespace BudgetUnderControl.Views
 
         }
 
-        protected override void OnAppearing()
+        protected async override void OnAppearing()
         {
             base.OnAppearing();
-            var dict = vm.GetTotals();
+            var dict = await vm.GetTotalsAsync();
             pln.Text = dict.ContainsKey("PLN") ? dict["PLN"].ToString() : "0";
             usd.Text = dict.ContainsKey("USD") ? dict["USD"].ToString() : "0";
             eur.Text = dict.ContainsKey("EUR") ? dict["EUR"].ToString() : "0";

@@ -39,7 +39,7 @@ namespace BudgetUnderControl.Model
 
         public async Task<ICollection<TransactionListItemDTO>> GetTransactions()
         {
-            var transactions = (from t in this.Context.Transactions
+            var transactions = await (from t in this.Context.Transactions
                                 join a in this.Context.Accounts on t.AccountId equals a.Id
                                 join c in this.Context.Currencies on a.CurrencyId equals c.Id
                                 orderby t.Date descending
@@ -57,12 +57,12 @@ namespace BudgetUnderControl.Model
                                 }
                                 ).ToListAsync();
 
-            return await transactions;
+            return transactions;
         }
 
         public async Task<ICollection<TransactionListItemDTO>> GetTransactions(DateTime fromDate, DateTime toDate)
         {
-            var transactions = (from t in this.Context.Transactions
+            var transactions = await (from t in this.Context.Transactions
                                 join a in this.Context.Accounts on t.AccountId equals a.Id
                                 join c in this.Context.Currencies on a.CurrencyId equals c.Id
                                 from transferFrom in this.Context.Transfers.Where(x => x.FromTransactionId == t.Id).DefaultIfEmpty()
@@ -84,7 +84,7 @@ namespace BudgetUnderControl.Model
                                 }
                                 ).ToListAsync();
 
-            return await transactions;
+            return transactions;
         }
 
         public ObservableCollection<ObservableGroupCollection<string, TransactionListItemDTO>> GetGroupedTransactions(DateTime fromDate, DateTime toDate)
@@ -125,7 +125,7 @@ namespace BudgetUnderControl.Model
             accounts.Add(accountId);
             accounts = accounts.Distinct().ToList();
 
-            var transactions = (from t in this.Context.Transactions
+            var transactions = await (from t in this.Context.Transactions
                                 join a in this.Context.Accounts on t.AccountId equals a.Id
                                 join c in this.Context.Currencies on a.CurrencyId equals c.Id
                                 where accounts.Contains(a.Id)
@@ -144,7 +144,7 @@ namespace BudgetUnderControl.Model
                                 }
                                 ).ToListAsync();
 
-            return await transactions;
+            return transactions;
         }
 
         public async Task<ICollection<TransactionListItemDTO>> GetTransactions(int accountId, DateTime fromDate, DateTime toDate)
@@ -153,7 +153,7 @@ namespace BudgetUnderControl.Model
             accounts.Add(accountId);
             accounts = accounts.Distinct().ToList();
 
-            var transactions = (from t in this.Context.Transactions
+            var transactions = await (from t in this.Context.Transactions
                                 join a in this.Context.Accounts on t.AccountId equals a.Id
                                 join c in this.Context.Currencies on a.CurrencyId equals c.Id
                                 from transferFrom in this.Context.Transfers.Where(x => x.FromTransactionId == t.Id).DefaultIfEmpty()
@@ -176,7 +176,7 @@ namespace BudgetUnderControl.Model
                                 }
                                 ).ToListAsync();
 
-            return await transactions;
+            return transactions;
         }
 
         public void AddTransfer(AddTransferDTO arg)

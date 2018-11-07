@@ -97,7 +97,7 @@ namespace BudgetUnderControl.ViewModel
             ToDate = new DateTime(now.Year, now.Month, DateTime.DaysInMonth(now.Year, now.Month), 23, 59, 59);
         }
 
-        public async void LoadTransactions()
+        public void LoadTransactions()
         {
             Transactions = transactionModel.GetGroupedTransactions(FromDate, ToDate);
             SetIncomeExpense();

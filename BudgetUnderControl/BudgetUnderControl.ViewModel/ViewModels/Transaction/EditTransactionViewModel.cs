@@ -2,6 +2,7 @@
 using BudgetUnderControl.Contracts.Models;
 using BudgetUnderControl.Domain.Repositiories;
 using BudgetUnderControl.Model;
+using BudgetUnderControl.Model.Services;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -366,13 +367,13 @@ namespace BudgetUnderControl.ViewModel
         public List<CategoryListItemDTO> Categories => categories;
 
         ITransactionRepository transactionRepository;
-        IAccountRepository accountRepository;
+        IAccountService accountService;
         ICategoryRepository categoryRepository;
 
-        public EditTransactionViewModel(ITransactionRepository transactionRepository, IAccountRepository accountRepository, ICategoryRepository categoryRepository)
+        public EditTransactionViewModel(ITransactionRepository transactionRepository, IAccountService accountService, ICategoryRepository categoryRepository)
         {
             this.transactionRepository = transactionRepository;
-            this.accountRepository = accountRepository;
+            this.accountService = accountService;
             this.categoryRepository = categoryRepository;
             SelectedTypeIndex = 0;
             SelectedCategoryIndex = -1;
@@ -386,7 +387,7 @@ namespace BudgetUnderControl.ViewModel
         }
         async void GetDropdowns()
         {
-            accounts = accountRepository.GetAccounts().ToList();
+            accounts = (await accountService.GetAccountsWithBalanceAsync()).ToList();
             categories = (await categoryRepository.GetCategories()).ToList();
         }
 

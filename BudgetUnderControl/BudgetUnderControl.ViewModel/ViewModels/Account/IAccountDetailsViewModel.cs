@@ -13,13 +13,13 @@ namespace BudgetUnderControl.ViewModel
         string Name { get; set; }
         string ValueWithCurrency { get; set; }
         decimal Value { get; set; }
-        void LoadAccount(int accountId);
-        void RemoveAccount();
+        Task LoadAccount(int accountId);
+        Task RemoveAccount();
         ICollection<TransactionListItemDTO> Transactions { get; set; }
         TransactionListItemDTO SelectedTransaction { get; set; }
 
-        void LoadTransactions(int accountId);
-        void SetNextMonth();
-        void SetPreviousMonth();
+        Task LoadTransactions(int accountId);
+        Task SetNextMonth();
+        Task SetPreviousMonth();
     }
 }

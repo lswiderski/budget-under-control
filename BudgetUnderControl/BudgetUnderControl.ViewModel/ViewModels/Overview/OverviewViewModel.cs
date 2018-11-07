@@ -1,5 +1,6 @@
 ﻿using BudgetUnderControl.Domain.Repositiories;
 using BudgetUnderControl.Model;
+using BudgetUnderControl.Model.Services;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,16 +11,16 @@ namespace BudgetUnderControl.ViewModel
 {
     public class OverviewViewModel : IOverviewViewModel
     {
-        IAccountRepository accountModel;
-        public OverviewViewModel(IAccountRepository accountModel)
+        IAccountService accountService;
+        public OverviewViewModel(IAccountService accountModel)
         {
-            this.accountModel = accountModel;
+            this.accountService = accountModel;
         }
 
-        public  Dictionary<string, decimal> GetTotals()
+        public async Task<Dictionary<string, decimal>> GetTotalsAsync()
         {
             Dictionary<string, decimal> result = new Dictionary<string, decimal>();
-            var accounts = accountModel.GetAccounts();
+            var accounts = await accountService.GetAccountsWithBalanceAsync();
 
             foreach (var account in accounts)
             {

@@ -59,7 +59,7 @@ namespace BudgetUnderControl.Views
         {
             base.OnAppearing();
 
-            vm.LoadAccounts();
+            await vm.LoadAccounts();
         }
 
         protected override void OnDisappearing()

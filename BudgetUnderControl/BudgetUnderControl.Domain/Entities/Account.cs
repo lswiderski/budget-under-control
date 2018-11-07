@@ -14,21 +14,58 @@ namespace BudgetUnderControl.Domain
         [Key]
         public int Id { get; set; }
         [StringLength(250)]
-        public string Name { get; set; }
-        public int CurrencyId { get; set; }
-        public int AccountGroupId { get; set; }
-        public bool IsIncludedToTotal { get; set; }
-        public string Comment { get; set; }
-        public int Order { get; set; }
-        public AccountType Type { get; set; }
-        public int? ParentAccountId { get; set; }
+        public string Name { get; protected set; }
+        public int CurrencyId { get; protected set; }
+        public int AccountGroupId { get; protected set; }
+        public bool IsIncludedToTotal { get; protected set; }
+        public string Comment { get; protected set; }
+        public int Order { get; protected set; }
+        public AccountType Type { get; protected set; }
+        public int? ParentAccountId { get; protected set; }
         public bool IsActive { get; set; }
 
-        public AccountGroup AccountGroup { get; set; }
-        public virtual Currency Currency { get; set; }
-        public List<AccountSnapshot> AccountSnapshots { get; set; }
-        public List<Transaction> Transactions { get; set; }
+        public AccountGroup AccountGroup { get; protected set; }
+        public Currency Currency { get;  set; }
+        public List<AccountSnapshot> AccountSnapshots { get; protected set; }
+        public List<Transaction> Transactions { get; protected set; }
 
        
+        protected Account()
+        {
+
+        }
+
+        public static Account Create(string name, int currencyId, int accountGroupId,
+            bool isIncludedToTotal, string comment, int order, AccountType type, 
+            int? parentAccountId, bool isActive)
+        {
+            return new Account()
+            {
+                Name = name,
+                CurrencyId = currencyId,
+                AccountGroupId = accountGroupId,
+                IsActive = isActive,
+                IsIncludedToTotal = isIncludedToTotal,
+                Comment = comment,
+                Order = order,
+                Type = type,
+                ParentAccountId = parentAccountId
+            };
+        }
+
+        public void Edit(string name, int currencyId, int accountGroupId,
+            bool isIncludedToTotal, string comment, int order, AccountType type,
+            int? parentAccountId, bool isActive)
+        {
+            this.Name = name;
+            this.CurrencyId = currencyId;
+            this.AccountGroupId = accountGroupId;
+            this.IsActive = isActive;
+            this.IsIncludedToTotal = isIncludedToTotal;
+            this.Comment = comment;
+            this.Order = order;
+            this.Type = type;
+            this.ParentAccountId = parentAccountId;
+        }
     }
 }

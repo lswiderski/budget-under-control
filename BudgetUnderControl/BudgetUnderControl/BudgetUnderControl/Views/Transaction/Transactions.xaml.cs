@@ -66,12 +66,12 @@ namespace BudgetUnderControl.Views
             await Navigation.PushModalAsync(editTransaction);
         }
 
-        protected async void OnNextMonthButtonClicked(object sender, EventArgs args)
+        protected void OnNextMonthButtonClicked(object sender, EventArgs args)
         {
              vm.SetNextMonth();
         }
 
-        protected async void OnPreviousMonthButtonClicked(object sender, EventArgs args)
+        protected void OnPreviousMonthButtonClicked(object sender, EventArgs args)
         {
             vm.SetPreviousMonth();
         }

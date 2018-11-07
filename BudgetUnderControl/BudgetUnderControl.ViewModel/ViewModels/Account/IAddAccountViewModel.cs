@@ -23,7 +23,7 @@ namespace BudgetUnderControl.ViewModel
         List<CurrencyDTO> Currencies { get; }
         List<AccountListItemDTO> Accounts { get; }
         List<AccountTypeDTO> AccountTypes { get; }
-        void AddAccount();
+        Task AddAccount();
         void ClearParentAccountCombo();
     }
 }

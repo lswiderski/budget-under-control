@@ -1,6 +1,7 @@
 ﻿using BudgetUnderControl.Contracts.Models;
 using BudgetUnderControl.Domain.Repositiories;
 using BudgetUnderControl.Model;
+using BudgetUnderControl.Model.Services;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -13,7 +14,7 @@ namespace BudgetUnderControl.ViewModel
     public class AccountsViewModel : IAccountsViewModel, INotifyPropertyChanged
     {
         public event PropertyChangedEventHandler PropertyChanged;
-        IAccountRepository accountModel;
+        IAccountService accountService;
 
         ICollection<AccountListItemDTO> accounts;
         public ICollection<AccountListItemDTO> Accounts
@@ -51,14 +52,14 @@ namespace BudgetUnderControl.ViewModel
             }
         }
 
-        public AccountsViewModel(IAccountRepository accountModel)
+        public AccountsViewModel(IAccountService accountService)
         {
-            this.accountModel = accountModel;
+            this.accountService = accountService;
         }
 
-        public async void LoadAccounts()
+        public async Task LoadAccounts()
         {
-            Accounts = accountModel.GetAccounts();
+            Accounts = await accountService.GetAccountsWithBalanceAsync();
         }
     }
 }

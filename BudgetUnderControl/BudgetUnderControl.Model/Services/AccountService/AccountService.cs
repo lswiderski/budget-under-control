@@ -1,4 +1,6 @@
-﻿using BudgetUnderControl.Contracts.Models;
+﻿using BudgetUnderControl.Common.Enums;
+using BudgetUnderControl.Contracts.Models;
+using BudgetUnderControl.Domain;
 using BudgetUnderControl.Domain.Repositiories;
 using System;
 using System.Collections.Generic;
@@ -15,14 +17,6 @@ namespace BudgetUnderControl.Model.Services
         public AccountService(IAccountRepository accountRepository)
         {
             this.accountRepository = accountRepository;
-        }
-
-        public async Task ActivateAccountAsync(int id)
-        {
-            var account = await accountRepository.GetAccountAsync(id);
-            account.IsActive = true;
-
-            await accountRepository.UpdateAsync(account);
         }
 
         public async Task<EditAccountDTO> GetEditAccountDTOAsync(int id)
@@ -45,8 +39,124 @@ namespace BudgetUnderControl.Model.Services
                 AccountGroupId = account.AccountGroupId,
                 ParentAccountId = account.ParentAccountId
             };
+            return dto;
+        }
+
+        public async Task<ICollection<AccountListItemDTO>> GetAccountsWithBalanceAsync()
+        {
+            var accounts = await accountRepository.GetAccountsAsync();
+
+            var accountsWithBalance = accounts.Select(y => new AccountListItemDTO
+            {
+                Id = y.Id,
+                Currency = y.Currency.Code,
+                CurrencyId = y.CurrencyId,
+                CurrencySymbol = y.Currency.Symbol,
+                IsIncludedInTotal = y.IsIncludedToTotal,
+                Name = y.Name,
+                ParentAccountId = y.ParentAccountId,
+                
+            }).ToList();
+            accountsWithBalance.ForEach(async x => { x.Balance = await accountRepository.GetActualBalanceAsync(x.Id); });
+
+            return accountsWithBalance;
+        }
+
+        public async Task<AccountDetailsDTO> GetAccountDetailsAsync(int id, DateTime fromDate, DateTime toDate)
+        {
+            var account = await accountRepository.GetAccountAsync(id);
+
+            var dto = new AccountDetailsDTO
+            {
+                Currency = account.Currency.Code,
+                CurrencyId = account.CurrencyId,
+                CurrencySymbol = account.Currency.Symbol,
+                Id = account.Id,
+                IsIncludedInTotal = account.IsIncludedToTotal,
+                Name = account.Name,
+                Comment = account.Comment,
+                AccountGroupId = account.AccountGroupId,
+                Type = account.Type,
+                ParentAccountId = account.ParentAccountId,
+                Order = account.Order,
+                Income = accountRepository.GetIncome(account.Id, fromDate, toDate),
+                Expense = accountRepository.GetExpense(account.Id, fromDate, toDate)
+            };
 
             return dto;
+        }
+
+        public async Task AddAccountAsync(AddAccountDTO dto)
+        {
+            var account = Account.Create(dto.Name, dto.CurrencyId, dto.AccountGroupId, dto.IsIncludedInTotal, dto.Comment, dto.Order, dto.Type, dto.ParentAccountId, true);
+            await accountRepository.AddAccountAsync(account);
+            
+            if(account.Id <= 0)
+            {
+                throw new Exception();
+            }
+
+            if (account.Type != AccountType.Card)
+            {
+                await this.accountRepository.BalanceAdjustment(account.Id, dto.Amount);
+            }
+        }
+
+        public async Task EditAccountAsync(EditAccountDTO dto)
+        {
+            var account = await accountRepository.GetAccountAsync(dto.Id);
+            account.Edit(dto.Name, dto.CurrencyId, dto.AccountGroupId, dto.IsIncludedInTotal, dto.Comment, dto.Order, dto.Type, dto.ParentAccountId, dto.IsActive);
+            await accountRepository.UpdateAsync(account);
+
+            if (account.Type != AccountType.Card)
+            {
+                await this.accountRepository.BalanceAdjustment(account.Id, dto.Amount);
+            }  
+        }
+
+        public async Task ActivateAccountAsync(int id)
+        {
+            var account = await accountRepository.GetAccountAsync(id);
+            account.IsActive = true;
+
+            await accountRepository.UpdateAsync(account);
+        }
+
+        public async Task DeactivateAccountAsync(int id)
+        {
+            var account = await accountRepository.GetAccountAsync(id);
+            account.IsActive = false;
+
+            await accountRepository.UpdateAsync(account);
+        }
+
+        public async Task RemoveAccountAsync(int id)
+        {
+            //temporary no removing AccountAvailable
+            await this.DeactivateAccountAsync(id);
+
+            /*
+              var transactions = this.Context.Transactions.Where(x => x.AccountId == id).ToList();
+
+            if(IsSubCardAccount(id))
+            {
+                var parentAccountId = GetParentAccountId(id).Value;
+                foreach (var transaction in transactions)
+                {
+                    transaction.AccountId = parentAccountId;
+                }
+            }
+            else
+            {
+                this.Context.RemoveRange(transactions);
+            }
+
+            
+            this.Context.SaveChanges();
+            var account = await this.Context.Accounts.Where(x => x.Id == id).FirstOrDefaultAsync();
+            this.Context.Remove<Account>(account);
+            this.Context.SaveChanges();
+             */
         }
     }
 }

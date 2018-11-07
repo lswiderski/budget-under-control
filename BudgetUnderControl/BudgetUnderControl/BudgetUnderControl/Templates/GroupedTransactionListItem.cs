@@ -14,7 +14,7 @@ namespace BudgetUnderControl.Views
 
         public static readonly BindableProperty TransactionProperty = BindableProperty.Create("GroupedTransaction", typeof(TransactionListItemDTO), typeof(GroupedTransactionListItem));
 
-        Label dateLabel, nameLabel, accountLabel, valueLabel;
+        Label nameLabel, accountLabel, valueLabel;
 
         public TransactionListItemDTO Transaction
         {

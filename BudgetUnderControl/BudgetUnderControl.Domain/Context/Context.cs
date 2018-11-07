@@ -4,10 +4,11 @@ using Microsoft.EntityFrameworkCore;
 using System.Diagnostics;
 using System.Collections.Generic;
 using BudgetUnderControl.Common;
+using System;
 
 namespace BudgetUnderControl.Domain
 {
-    public class Context : DbContext
+    public class Context : DbContext, IDisposable
     {
         private string databasePath { get; set; }
 

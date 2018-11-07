@@ -17,8 +17,7 @@ namespace BudgetUnderControl.ViewModel
     public class EditAccountViewModel : IEditAccountViewModel, INotifyPropertyChanged
     {
         public event PropertyChangedEventHandler PropertyChanged;
-        IAccountRepository accountModel;
-        IAccountService accountService;
+        Model.Services.IAccountService accountService;
         ICurrencyRepository currencyModel;
         IAccountGroupRepository accountGroupModel;
 
@@ -166,9 +165,8 @@ namespace BudgetUnderControl.ViewModel
             }
         }
 
-        public EditAccountViewModel(IAccountRepository accountModel, ICurrencyRepository currencyModel, IAccountGroupRepository accountGroupModel, IAccountService accountService)
+        public EditAccountViewModel(ICurrencyRepository currencyModel, IAccountGroupRepository accountGroupModel, Model.Services.IAccountService accountService)
         {
-            this.accountModel = accountModel;
             this.currencyModel = currencyModel;
             this.accountGroupModel = accountGroupModel;
             this.accountService = accountService;
@@ -179,7 +177,7 @@ namespace BudgetUnderControl.ViewModel
         {
             currencies = (await currencyModel.GetCurriences()).ToList();
             accountGroups = (await accountGroupModel.GetAccountGroups()).ToList();
-            accounts = accountModel.GetAccounts().ToList();
+            accounts = (await accountService.GetAccountsWithBalanceAsync()).ToList();
             accountTypes = this.GetAccountTypes().ToList();
         }
 
@@ -199,7 +197,7 @@ namespace BudgetUnderControl.ViewModel
             Order = account.Order.ToString();
         }
 
-         public void SaveAccount()
+        public async Task SaveAccount()
         {
             decimal value;
             decimal.TryParse(amount.Replace(',', '.'), NumberStyles.AllowDecimalPoint, CultureInfo.InvariantCulture, out value);
@@ -216,11 +214,16 @@ namespace BudgetUnderControl.ViewModel
                 CurrencyId = Currencies[SelectedCurrencyIndex].Id,
                 IsIncludedInTotal = IsInTotal,
                 Id = accountId,
+                IsActive = true,
                 Type = (AccountType)AccountTypes[SelectedAccountTypeIndex].Id,
                 ParentAccountId = selectedAccountIndex > -1 ? Accounts[SelectedAccountIndex].Id : (int?)null,
             };
+            try { 
+           await accountService.EditAccountAsync(dto);
+        }catch (Exception e)
+            {
 
-            accountModel.EditAccount(dto);
+            }
         }
 
         private string order;

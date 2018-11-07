@@ -2,6 +2,7 @@
 using BudgetUnderControl.Contracts.Models;
 using BudgetUnderControl.Domain.Repositiories;
 using BudgetUnderControl.Model;
+using BudgetUnderControl.Model.Services;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -15,11 +16,9 @@ namespace BudgetUnderControl.ViewModel
     public class AddAccountViewModel : IAddAccountViewModel, INotifyPropertyChanged
     {
         public event PropertyChangedEventHandler PropertyChanged;
-        IAccountRepository accountModel;
+        Model.Services.IAccountService accountService;
         ICurrencyRepository currencyModel;
         IAccountGroupRepository accountGroupModel;
-
-        int accountId;
 
         List<CurrencyDTO> currencies;
         List<AccountGroupItemDTO> accountGroups;
@@ -176,9 +175,9 @@ namespace BudgetUnderControl.ViewModel
             }
         }
 
-        public AddAccountViewModel(IAccountRepository accountModel, ICurrencyRepository currencyModel, IAccountGroupRepository accountGroupModel)
+        public AddAccountViewModel(Model.Services.IAccountService accountService, ICurrencyRepository currencyModel, IAccountGroupRepository accountGroupModel)
         {
-            this.accountModel = accountModel;
+            this.accountService = accountService;
             this.currencyModel = currencyModel;
             this.accountGroupModel = accountGroupModel;
             GetDropdowns();
@@ -190,12 +189,12 @@ namespace BudgetUnderControl.ViewModel
         {
             currencies = (await currencyModel.GetCurriences()).OrderBy(x => x.Code).ToList();
             accountGroups = (await accountGroupModel.GetAccountGroups()).ToList();
-            accounts = accountModel.GetAccounts().ToList();
+            accounts = (await accountService.GetAccountsWithBalanceAsync()).ToList();
             accountTypes = this.GetAccountTypes().ToList();
            
         }
 
-        public void AddAccount()
+        public async Task AddAccount()
         {
             decimal value;
             int _order = 0;
@@ -218,7 +217,7 @@ namespace BudgetUnderControl.ViewModel
                 
             };
 
-            accountModel.AddAccount(dto);
+            await accountService.AddAccountAsync(dto);
         }
 
         public void ClearParentAccountCombo()

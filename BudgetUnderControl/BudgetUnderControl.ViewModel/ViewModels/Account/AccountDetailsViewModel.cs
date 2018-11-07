@@ -1,6 +1,7 @@
 ﻿using BudgetUnderControl.Contracts.Models;
 using BudgetUnderControl.Domain.Repositiories;
 using BudgetUnderControl.Model;
+using BudgetUnderControl.Model.Services;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -13,7 +14,7 @@ namespace BudgetUnderControl.ViewModel
     public class AccountDetailsViewModel : IAccountDetailsViewModel, INotifyPropertyChanged
     {
         public event PropertyChangedEventHandler PropertyChanged;
-        IAccountRepository accountModel;
+        IAccountService accountService;
         ITransactionRepository transactionRepository;
         public TransactionListItemDTO SelectedTransaction { get; set; }
 
@@ -118,9 +119,9 @@ namespace BudgetUnderControl.ViewModel
             }
         }
 
-        public AccountDetailsViewModel(IAccountRepository accountModel, ITransactionRepository transactionRepository)
+        public AccountDetailsViewModel(IAccountService accountService, ITransactionRepository transactionRepository)
         {
-            this.accountModel = accountModel;
+            this.accountService = accountService;
             this.transactionRepository = transactionRepository;
 
             var now = DateTime.UtcNow;
@@ -128,44 +129,45 @@ namespace BudgetUnderControl.ViewModel
             ToDate = new DateTime(now.Year, now.Month, DateTime.DaysInMonth(now.Year, now.Month),23,59,59);
         }
 
-        public async void LoadAccount(int accountId)
+        public async Task LoadAccount(int accountId)
         {
             this.accountId = accountId;
-            var account = await this.accountModel.GetAccountDetails(accountId, FromDate, ToDate);
+            var account = await this.accountService.GetAccountDetailsAsync(accountId, FromDate, ToDate);
             Name = "Account: " + account.Name;
             ValueWithCurrency = account.AmountWithCurrency;
             Value = account.Amount;
             Expense = account.Expense.ToString();
             Income = account.Income.ToString();
+
         }
-        public async void LoadTransactions(int accountId)
+        public async Task LoadTransactions(int accountId)
         {
             Transactions = await transactionRepository.GetTransactions(accountId, FromDate, ToDate);
 
-            var account = await this.accountModel.GetAccountDetails(accountId, FromDate, ToDate);
+            var account = await this.accountService.GetAccountDetailsAsync(accountId, FromDate, ToDate);
             Expense = account.Expense.ToString();
             Income = account.Income.ToString();
         }
 
-        public void RemoveAccount()
+        public async Task RemoveAccount()
         {
-            accountModel.RemoveAccount(accountId);
+            await accountService.RemoveAccountAsync(accountId);
         }
 
-        public void SetNextMonth()
+        public async Task SetNextMonth()
         {
             FromDate = new DateTime(FromDate.Year, FromDate.Month, 1, FromDate.Hour, FromDate.Minute, FromDate.Second).AddMonths(1);
             ToDate = new DateTime(FromDate.Year, FromDate.Month, DateTime.DaysInMonth(FromDate.Year, FromDate.Month), ToDate.Hour, ToDate.Minute, ToDate.Second);
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(ActualRange)));
-            LoadTransactions(accountId);
+            await LoadTransactions(accountId);
         }
 
-        public void SetPreviousMonth()
+        public async Task SetPreviousMonth()
         {
             FromDate = new DateTime(FromDate.Year, FromDate.Month, 1, FromDate.Hour, FromDate.Minute, FromDate.Second).AddMonths(-1);
             ToDate = new DateTime(FromDate.Year, FromDate.Month, DateTime.DaysInMonth(FromDate.Year, FromDate.Month), ToDate.Hour, ToDate.Minute, ToDate.Second);
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(ActualRange)));
-            LoadTransactions(accountId);
+            await LoadTransactions(accountId);
         }
     }
 }

@@ -19,67 +19,22 @@ namespace BudgetUnderControl.Model
             this.transactionRepository = transactionRepository;
         }
 
-        
-        public ICollection<AccountListItemDTO> GetAccounts()
-        {
-            var list = (from account in this.Context.Accounts
-                        join currency in this.Context.Currencies on account.CurrencyId equals currency.Id
-                        where account.IsActive == true
-                        select new
-                        {
-                            Currency = currency.Code,
-                            CurrencyId = currency.Id,
-                            CurrencySymbol = currency.Symbol,
-                            Id = account.Id,
-                            IsIncludedInTotal = account.IsIncludedToTotal,
-                            Name = account.Name,
-                            Type = account.Type,
-                            Order = account.Order,
-                            ParentAccountId = account.ParentAccountId,
-                            subAccounts = this.Context.Accounts.Where(x => x.ParentAccountId == account.Id)
-                                        .Select(x => x.Id)
-                                .ToList(),
-        }
-                        )
-                        .OrderBy(x => x.Order)
-                        .ToList()
-                        .Select(async y => new AccountListItemDTO
-                        {
-                            Currency = y.Currency,
-                            CurrencyId = y.CurrencyId,
-                            CurrencySymbol = y.CurrencySymbol,
-                            Id = y.Id,
-                            IsIncludedInTotal = y.IsIncludedInTotal,
-                            Name = y.Name,
-                            ParentAccountId = y.ParentAccountId,
-                            Balance = await GetActualBalanceAsync(y.Id),
-                        })
-                        .Select(y => y.Result)
-                        .ToList();
 
-            return  list;
+        public async Task<IEnumerable<Account>> GetAccountsAsync()
+        {
+            var accounts = await (from account in this.Context.Accounts
+                                  join currency in this.Context.Currencies on account.CurrencyId equals currency.Id
+                                  where account.IsActive == true
+                                  select account)
+                                 .Include(p => p.Currency)
+                                 .ToListAsync();
+            return accounts;
         }
 
-        public async void AddAccount(AddAccountDTO vm)
+        public async Task AddAccountAsync(Account account)
         {
-            var account = new Account
-            {
-                AccountGroupId = vm.AccountGroupId,
-                Comment = vm.Comment,
-                CurrencyId = vm.CurrencyId,
-                IsIncludedToTotal = vm.IsIncludedInTotal,
-                Name = vm.Name,
-                Type = vm.Type,
-                ParentAccountId = vm.ParentAccountId,
-                Order = vm.Order,
-                IsActive = true,
-            };
             this.Context.Accounts.Add(account);
             await this.Context.SaveChangesAsync();
-            if (account.Type != AccountType.Card)
-            {
-                this.BalanceAdjustment(account.Id, vm.Amount);
-            }
         }
 
         public async Task<Account> GetAccountAsync(int id)
@@ -89,11 +44,11 @@ namespace BudgetUnderControl.Model
             accounts = accounts.Distinct().ToList();
 
             var acc = await (from account in this.Context.Accounts
-                       join currency in this.Context.Currencies on account.CurrencyId equals currency.Id
-                       where account.Id == id
-                       select account
-                       ).Include(p => p.Currency).FirstOrDefaultAsync();
-
+                             join currency in this.Context.Currencies on account.CurrencyId equals currency.Id
+                             where account.Id == id
+                             select account
+                       ).Include(p => p.Currency)
+                       .FirstOrDefaultAsync();
 
             return acc;
         }
@@ -104,107 +59,11 @@ namespace BudgetUnderControl.Model
             await this.Context.SaveChangesAsync();
         }
 
-        public async Task<AccountDetailsDTO> GetAccountDetails(int id, DateTime fromDate, DateTime toDate)
-        {
-            var accounts = transactionRepository.GetSubAccounts(id);
-            accounts.Add(id);
-            accounts = accounts.Distinct().ToList();
-
-            var acc = await (from account in this.Context.Accounts
-                       join currency in this.Context.Currencies on account.CurrencyId equals currency.Id
-                       where account.Id == id
-                       select new AccountDetailsDTO
-                       {
-                           Currency = currency.Code,
-                           CurrencyId = currency.Id,
-                           CurrencySymbol = currency.Symbol,
-                           Id = account.Id,
-                           IsIncludedInTotal = account.IsIncludedToTotal,
-                           Name = account.Name,
-                           Comment = account.Comment,
-                           AccountGroupId = account.AccountGroupId,
-                           Type = account.Type,
-                           ParentAccountId = account.ParentAccountId,
-                           Order = account.Order,
-                           Income = GetIncome(account.Id, fromDate, toDate),
-                           Expense = GetExpense(account.Id, fromDate, toDate)
-                       }
-                        ).FirstOrDefaultAsync();
-
-            acc.Amount = await GetActualBalanceAsync(acc.Id);
-
-            return acc;
-        }
-
-        public async void EditAccount(EditAccountDTO vm)
-        {
-            var account = await this.Context.Accounts.Where(x => x.Id == vm.Id).FirstOrDefaultAsync();
-            account.AccountGroupId = vm.AccountGroupId;
-            account.Comment = vm.Comment;
-            account.CurrencyId = vm.CurrencyId;
-            account.IsIncludedToTotal = vm.IsIncludedInTotal;
-            account.Name = vm.Name;
-            account.Type = vm.Type;
-            account.ParentAccountId = vm.ParentAccountId;
-            account.Order = vm.Order;
-            this.Context.SaveChanges();
-
-            if(account.Type != AccountType.Card)
-            {
-                this.BalanceAdjustment(account.Id, vm.Amount);
-            }
-            
-        }
-
-        public async void RemoveAccount(int id)
-        {
-            //temporary no removing AccountAvailable
-            DeactivateAccount(id);
-            return;
-
-            var transactions = this.Context.Transactions.Where(x => x.AccountId == id).ToList();
-
-            if(IsSubCardAccount(id))
-            {
-                var parentAccountId = GetParentAccountId(id).Value;
-                foreach (var transaction in transactions)
-                {
-                    transaction.AccountId = parentAccountId;
-                }
-            }
-            else
-            {
-                this.Context.RemoveRange(transactions);
-            }
-
-            
-            this.Context.SaveChanges();
-            var account = await this.Context.Accounts.Where(x => x.Id == id).FirstOrDefaultAsync();
-            this.Context.Remove<Account>(account);
-            this.Context.SaveChanges();
-        }
-
-        public async void DeactivateAccount(int id)
-        {
-            var account = await this.Context.Accounts.Where(x => x.Id == id).FirstOrDefaultAsync();
-            this.BalanceAdjustment(account.Id, 0);
-            account.IsActive = false;
-            this.Context.SaveChanges();
-        }
-
-        public async Task ActivateAccountAsync(int id)
-        {
-            var account = await this.Context.Accounts.Where(x => x.Id == id).FirstOrDefaultAsync();
-            account.IsActive = true;
-            this.Context.SaveChanges();
-        }
-
-
         public async Task<decimal> GetActualBalanceAsync(int accountId)
         {
             var isCard = IsSubCardAccount(accountId);
 
-            if(isCard)
+            if (isCard)
             {
                 accountId = this.GetParentAccountId(accountId).Value;
             }
@@ -218,7 +77,7 @@ namespace BudgetUnderControl.Model
             return balance;
         }
 
-        private decimal GetIncome(int accountId, DateTime fromDate, DateTime toDate)
+        public decimal GetIncome(int accountId, DateTime fromDate, DateTime toDate)
         {
             var isCard = IsSubCardAccount(accountId);
 
@@ -235,7 +94,7 @@ namespace BudgetUnderControl.Model
             return balance;
         }
 
-        private decimal GetExpense(int accountId, DateTime fromDate, DateTime toDate)
+        public decimal GetExpense(int accountId, DateTime fromDate, DateTime toDate)
         {
             var isCard = IsSubCardAccount(accountId);
 
@@ -252,11 +111,11 @@ namespace BudgetUnderControl.Model
             return balance;
         }
 
-        private async void BalanceAdjustment(int accountId, decimal targetBalance)
+        public async Task BalanceAdjustment(int accountId, decimal targetBalance)
         {
             decimal actualBalance = await GetActualBalanceAsync(accountId);
 
-            if(!decimal.Equals(actualBalance, targetBalance))
+            if (!decimal.Equals(actualBalance, targetBalance))
             {
                 decimal amount = (decimal.Subtract(targetBalance, actualBalance));
 
@@ -273,7 +132,6 @@ namespace BudgetUnderControl.Model
 
                 transactionRepository.AddTransaction(transactionDTO);
             }
-           
         }
 
         private bool IsSubCardAccount(int accountId)

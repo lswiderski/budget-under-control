@@ -13,6 +13,6 @@ namespace BudgetUnderControl.ViewModel
         ICollection<AccountListItemDTO> Accounts { get; }
         AccountListItemDTO SelectedAccount { get; set; }
 
-        void LoadAccounts();
+        Task LoadAccounts();
     }
 }

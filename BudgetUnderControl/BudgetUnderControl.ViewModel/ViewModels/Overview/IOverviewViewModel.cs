@@ -8,6 +8,6 @@ namespace BudgetUnderControl.ViewModel
 {
     public interface IOverviewViewModel
     {
-        Dictionary<string, decimal> GetTotals();
+        Task<Dictionary<string, decimal>> GetTotalsAsync();
     }
 }

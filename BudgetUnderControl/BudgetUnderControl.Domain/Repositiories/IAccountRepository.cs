@@ -9,15 +9,17 @@ namespace BudgetUnderControl.Domain.Repositiories
 {
     public interface IAccountRepository
     {
-        ICollection<AccountListItemDTO> GetAccounts();
-        void AddAccount(AddAccountDTO account);
+        Task<IEnumerable<Account>> GetAccountsAsync();
         Task<Account> GetAccountAsync(int id);
-        Task<AccountDetailsDTO> GetAccountDetails(int id, DateTime fromDate, DateTime toDate);
-        void EditAccount(EditAccountDTO vm);
-        void RemoveAccount(int id);
-        Task ActivateAccountAsync(int id);
-        void DeactivateAccount(int id);
         Task UpdateAsync(Account account);
         Task<decimal> GetActualBalanceAsync(int accountId);
+        Task AddAccountAsync(Account account);
+        Task BalanceAdjustment(int accountId, decimal targetBalance);
+
+        decimal GetIncome(int accountId, DateTime fromDate, DateTime toDate);
+        decimal GetExpense(int accountId, DateTime fromDate, DateTime toDate);
+
+
+        
     }
 }

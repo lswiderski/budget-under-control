@@ -208,19 +208,9 @@ namespace BudgetUnderControl.Model
         {
             foreach (var item in accounts)
             {
-                var account = new Account
-                {
-                    AccountGroupId = item.AccountGroupId,
-                    Comment = item.Comment,
-                    CurrencyId = item.CurrencyId,
-                    Id = item.Id,
-                    IsIncludedToTotal = item.IsIncludedToTotal,
-                    Name = item.Name,
-                    Order = item.Order,
-                    Type = item.Type,
-                    ParentAccountId = item.ParentAccountId
-
-                };
+                var account = Account.Create(item.Name, item.CurrencyId, item.AccountGroupId, item.IsIncludedToTotal, item.Comment, item.Order, item.Type, item.ParentAccountId, true);
+                
+                account.Id = item.Id;
                 this.Context.Accounts.Add(account);
             }
 

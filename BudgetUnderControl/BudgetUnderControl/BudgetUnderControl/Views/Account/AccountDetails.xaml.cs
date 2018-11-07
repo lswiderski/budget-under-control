@@ -66,15 +66,15 @@ namespace BudgetUnderControl.Views
             var remove = await this.DisplayAlert("Remove", "Do you want to remove this account?", "Yes", "No");
             if (!remove) return;
 
-            vm.RemoveAccount();
+            await vm.RemoveAccount();
             App.MasterPage.NavigateTo(typeof(Accounts));
         }
 
-        protected override void OnAppearing()
+        protected override async void OnAppearing()
         {
             base.OnAppearing();
-            vm.LoadAccount(accountId);
-            vm.LoadTransactions(accountId);
+            await vm.LoadAccount(accountId);
+            await vm.LoadTransactions(accountId);
         }
 
         private void valueLabel_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
@@ -82,14 +82,14 @@ namespace BudgetUnderControl.Views
             valueLabel.TextColor = vm.Value < 0 ? Color.Red : Color.Green;
         }
 
-        protected async void OnNextMonthButtonClicked(object sender, EventArgs args)
+        protected async Task OnNextMonthButtonClicked(object sender, EventArgs args)
         {
-            vm.SetNextMonth();
+            await vm.SetNextMonth();
         }
 
-        protected async void OnPreviousMonthButtonClicked(object sender, EventArgs args)
+        protected async Task OnPreviousMonthButtonClicked(object sender, EventArgs args)
         {
-            vm.SetPreviousMonth();
+            await vm.SetPreviousMonth();
         }
 
         async void OnItemSelected(object sender, SelectedItemChangedEventArgs e)

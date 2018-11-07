@@ -27,7 +27,7 @@ namespace BudgetUnderControl.ViewModel
         List<AccountTypeDTO> AccountTypes { get; }
 
         void LoadAccount(int accountId);
-        void SaveAccount();
+        Task SaveAccount();
         void ClearParentAccountCombo();
     }
 }

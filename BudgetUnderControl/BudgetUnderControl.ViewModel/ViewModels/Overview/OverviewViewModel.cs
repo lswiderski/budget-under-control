@@ -1,6 +1,4 @@
-﻿using BudgetUnderControl.Domain.Repositiories;
-using BudgetUnderControl.Model;
-using BudgetUnderControl.Model.Services;
+﻿using BudgetUnderControl.Model.Services;
 using System;
 using System.Collections.Generic;
 using System.Linq;

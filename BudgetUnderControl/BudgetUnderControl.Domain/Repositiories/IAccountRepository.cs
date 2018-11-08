@@ -18,8 +18,10 @@ namespace BudgetUnderControl.Domain.Repositiories
         Task<List<int>> GetSubAccountsAsync(int accountId);
         Task<decimal> GetExpenseAsync(int accountId, DateTime fromDate, DateTime toDate);
         Task<decimal> GetIncomeAsync(int accountId, DateTime fromDate, DateTime toDate);
+        Task RemoveAccountsAsync(IEnumerable<Account> accounts);
 
 
-        
+
+
     }
 }

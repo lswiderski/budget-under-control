@@ -10,5 +10,6 @@ namespace BudgetUnderControl.Domain.Repositiories
     public interface ICurrencyRepository
     {
         Task<ICollection<Currency>> GetCurriencesAsync();
+        Task AddCurrencyAsync(Currency currency);
     }
 }

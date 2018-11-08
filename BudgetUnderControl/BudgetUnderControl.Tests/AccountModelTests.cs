@@ -22,7 +22,7 @@ namespace BudgetUnderControl.Tests
             var accountService = new AccountService(accountRepositoryMock.Object);
 
             var account = Account.Create("test", 1, 1, true, "", 1, Common.Enums.AccountType.Wallet, null, true);
-            account.Currency = new Currency { Code = "PLN", Symbol = "zl" };
+            account.Currency = Currency.Create( "PLN", "Polski zloty", 985, "zl");
            
             accountRepositoryMock.Setup(x => x.GetAccountAsync(It.IsAny<int>())).ReturnsAsync(account);
             accountRepositoryMock.Setup(x => x.GetActualBalanceAsync(It.IsAny<int>())).ReturnsAsync(10);

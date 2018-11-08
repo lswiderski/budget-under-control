@@ -44,8 +44,8 @@
     <Compile Include="Repositories\Account\AccountRepository.cs" />
     <Compile Include="Repositories\Category\CategoryRepository.cs" />
     <Compile Include="Repositories\Currency\CurrencyRepository.cs" />
-    <Compile Include="Repositories\Sync\ISyncService.cs" />
-    <Compile Include="Repositories\Sync\SyncService.cs" />
+    <Compile Include="Services\SyncService\ISyncService.cs" />
+    <Compile Include="Services\SyncService\SyncService.cs" />
     <Compile Include="Repositories\Transaction\TransactionRepository.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Services\AccountGroupService\AccountGroupService.cs" />

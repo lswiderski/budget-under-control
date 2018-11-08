@@ -57,10 +57,23 @@ namespace BudgetUnderControl.Model
             await this.Context.SaveChangesAsync();
         }
 
+        public async Task RemoveTransactionsAsync(IEnumerable<Transaction> transactions)
+        {
+            this.Context.Transactions.RemoveRange(transactions);
+            await this.Context.SaveChangesAsync();
+        }
+
+        public async Task RemoveTransfersAsync(IEnumerable<Transfer> transfers)
+        {
+            this.Context.Transfers.RemoveRange(transfers);
+            await this.Context.SaveChangesAsync();
+        }
+
         public async Task<ICollection<Transaction>> GetTransactionsAsync(TransactionsFilter filter = null)
         {
 
             var query = this.Context.Transactions
+                        .Include(p => p.Category)
                         .Include(p => p.Account)
                         .ThenInclude(p => p.Currency)
                         .AsQueryable();
@@ -110,6 +123,13 @@ namespace BudgetUnderControl.Model
         {
             var transfer = await this.Context.Transfers.Where(t => t.FromTransactionId == transactionId || t.ToTransactionId == transactionId).SingleOrDefaultAsync();
             return transfer;
+        }
+
+        public async Task<ICollection<Transfer>> GetTransfersAsync()
+        {
+            var transfers = await this.Context.Transfers.ToListAsync();
+
+            return transfers;
         }
 
 

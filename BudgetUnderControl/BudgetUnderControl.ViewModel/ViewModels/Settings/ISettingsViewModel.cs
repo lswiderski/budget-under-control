@@ -8,10 +8,10 @@ namespace BudgetUnderControl.ViewModel
 {
     public interface ISettingsViewModel
     {
-        void ExportBackup();
+        Task ExportBackupAsync();
 
-        void ImportBackup();
+        Task ImportBackupAsync();
 
-        void ExportCSV();
+        Task ExportCSVAsync();
     }
 }

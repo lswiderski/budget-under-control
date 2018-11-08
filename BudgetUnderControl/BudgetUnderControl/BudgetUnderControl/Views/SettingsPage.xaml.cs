@@ -25,19 +25,19 @@ namespace BudgetUnderControl.Views
             InitializeComponent();
         }
 
-        private void ExportButton_Clicked(object sender, EventArgs e)
+        private async void ExportButton_Clicked(object sender, EventArgs e)
         {
-            vm.ExportBackup();
+            await vm.ExportBackupAsync();
         }
 
-        private void ImportButton_Clicked(object sender, EventArgs e)
+        private async void ImportButton_Clicked(object sender, EventArgs e)
         {
-            vm.ImportBackup();
+            await vm.ImportBackupAsync();
         }
 
-        private void ExportCSVButton_Clicked(object sender, EventArgs e)
+        private async void ExportCSVButton_Clicked(object sender, EventArgs e)
         {
-            vm.ExportCSV();
+            await vm.ExportCSVAsync();
         }
     }
 }

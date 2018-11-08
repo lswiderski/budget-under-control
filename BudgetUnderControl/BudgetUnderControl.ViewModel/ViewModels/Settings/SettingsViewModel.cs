@@ -1,4 +1,5 @@
 ﻿using BudgetUnderControl.Model;
+using BudgetUnderControl.Model.Services;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -16,21 +17,18 @@ namespace BudgetUnderControl.ViewModel
             this.syncService = syncService;
         }
 
-        public void ExportBackup()
+        public async Task ExportBackupAsync()
         {
-            
-            syncService.SaveBackupFile();
+            await syncService.SaveBackupFileAsync();
         }
 
-        public void ImportBackup()
+        public async Task ImportBackupAsync()
         {
-
-            syncService.LoadBackupFile();
+            await syncService.LoadBackupFileAsync();
         }
-        public void ExportCSV()
+        public async Task ExportCSVAsync()
         {
-
-            syncService.ExportCSV();
+            await syncService.ExportCSVAsync();
         }
 
     }

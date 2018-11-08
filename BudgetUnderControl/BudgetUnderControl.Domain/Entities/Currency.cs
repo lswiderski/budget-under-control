@@ -10,17 +10,42 @@ namespace BudgetUnderControl.Domain
     public class Currency
     {
         [Key]
-        public int Id { get; set; }
+        public int Id { get; protected set; }
         [StringLength(3)]
-        public string Code { get; set; }
+        public string Code { get; protected set; }
         [StringLength(250)]
-        public string FullName { get; set; }
-        public short Number { get; set; }
+        public string FullName { get; protected set; }
+        public short Number { get; protected set; }
         [StringLength(3)]
-        public string Symbol { get; set; }
+        public string Symbol { get; protected set; }
 
         public List<Account> Accounts { get; set; }
         public List<ExchangeRate> FromExchangeRates { get; set; }
         public List<ExchangeRate> ToExchangeRates { get; set; }
+
+        public Currency()
+        {
+
+        }
+
+        public static Currency Create(string code, string name, short number, string symbol)
+        {
+            return new Currency
+            {
+                Code = code,
+                FullName = name,
+                Number = number,
+                Symbol = symbol
+            };
+        }
+
+        /// <summary>
+        /// Use for sync/imports
+        /// </summary>
+        /// <param name="id"></param>
+        public void SetId(int id)
+        {
+            this.Id = id;
+        }
     }
 }

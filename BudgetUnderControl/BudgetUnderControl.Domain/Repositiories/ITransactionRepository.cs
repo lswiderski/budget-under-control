@@ -12,6 +12,7 @@ namespace BudgetUnderControl.Domain.Repositiories
     public interface ITransactionRepository
     {
         Task<ICollection<Transaction>> GetTransactionsAsync(TransactionsFilter filter = null);
+        Task<ICollection<Transfer>> GetTransfersAsync();
         Task<Transaction> GetTransactionAsync(int id);
         Task AddTransactionAsync(Transaction transaction);
         Task UpdateAsync(Transaction transaction);
@@ -20,5 +21,7 @@ namespace BudgetUnderControl.Domain.Repositiories
         Task RemoveTransactionAsync(Transaction transaction);
         Task RemoveTransferAsync(Transfer transfer);
         Task<Transfer> GetTransferAsync(int transactionId);
+        Task RemoveTransactionsAsync(IEnumerable<Transaction> transactions);
+        Task RemoveTransfersAsync(IEnumerable<Transfer> transfers);
     }
 }

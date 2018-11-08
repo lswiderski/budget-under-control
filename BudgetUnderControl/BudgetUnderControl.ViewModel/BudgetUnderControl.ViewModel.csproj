@@ -68,10 +68,6 @@
       <Project>{a3a2ac07-6fb9-4339-8338-bbd19fadf46d}</Project>
       <Name>BudgetUnderControl.Contracts</Name>
     </ProjectReference>
-    <ProjectReference Include="..\BudgetUnderControl.Domain\BudgetUnderControl.Domain.csproj">
-      <Project>{298a3723-97db-436c-a016-f8d00228dfb4}</Project>
-      <Name>BudgetUnderControl.Domain</Name>
-    </ProjectReference>
     <ProjectReference Include="..\BudgetUnderControl.Model\BudgetUnderControl.Infrastructure.csproj">
       <Project>{87755b9f-917a-43d7-80e4-1ce9e813b660}</Project>
       <Name>BudgetUnderControl.Infrastructure</Name>

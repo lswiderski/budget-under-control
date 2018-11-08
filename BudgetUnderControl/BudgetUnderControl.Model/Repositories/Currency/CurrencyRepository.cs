@@ -18,6 +18,12 @@ namespace BudgetUnderControl.Model
         {
         }
 
+        public async Task AddCurrencyAsync(Currency currency)
+        {
+            this.Context.Currencies.Add(currency);
+            await this.Context.SaveChangesAsync();
+        }
+
         public async Task<ICollection<Currency>> GetCurriencesAsync()
         {
             var list = await this.Context.Currencies.ToListAsync();

@@ -34,6 +34,12 @@ namespace BudgetUnderControl.Model
             await this.Context.SaveChangesAsync();
         }
 
+        public async Task RemoveAccountsAsync(IEnumerable<Account> accounts)
+        {
+            this.Context.Accounts.RemoveRange(accounts);
+            await this.Context.SaveChangesAsync();
+        }
+
         public async Task<Account> GetAccountAsync(int id)
         {
             var accounts = await this.GetSubAccountsAsync(id);

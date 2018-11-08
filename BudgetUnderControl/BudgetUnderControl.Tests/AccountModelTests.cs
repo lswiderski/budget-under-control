@@ -18,7 +18,7 @@ namespace BudgetUnderControl.Tests
         [Fact]
         public async Task activate_account_async_should_active_selected_account()
         {
-            var accountRepositoryMock = new Mock<Domain.Repositiories.IAccountRepository>();
+            var accountRepositoryMock = new Mock<IAccountRepository>();
             var accountService = new AccountService(accountRepositoryMock.Object);
 
             var account = Account.Create("test", 1, 1, true, "", 1, Common.Enums.AccountType.Wallet, null, true);

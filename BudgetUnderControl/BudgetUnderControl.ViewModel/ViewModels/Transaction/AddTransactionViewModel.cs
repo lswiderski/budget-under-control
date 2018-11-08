@@ -344,14 +344,14 @@ namespace BudgetUnderControl.ViewModel
         List<CategoryListItemDTO> categories;
         public List<CategoryListItemDTO> Categories => categories;
 
-        ITransactionRepository transactionRepository;
+        ITransactionService transactionService;
         IAccountService accountService;
-        ICategoryRepository categoryRepository;
-        public AddTransactionViewModel(ITransactionRepository transactionRepository, IAccountService accountRepository, ICategoryRepository categoryRepository)
+        ICategoryService categoryService;
+        public AddTransactionViewModel(ITransactionService transactionService, IAccountService accountRepository, ICategoryService categoryService)
         {
-            this.transactionRepository = transactionRepository;
+            this.transactionService = transactionService;
             this.accountService = accountRepository;
-            this.categoryRepository = categoryRepository;
+            this.categoryService = categoryService;
             SelectedTypeIndex = 0;
             SelectedCategoryIndex = -1;
             SelectedAccountIndex = -1;
@@ -366,7 +366,7 @@ namespace BudgetUnderControl.ViewModel
         async void GetDropdowns()
         {
             accounts = (await accountService.GetAccountsWithBalanceAsync()).ToList();
-            categories = (await categoryRepository.GetCategories()).ToList();
+            categories = (await categoryService.GetCategoriesAsync()).ToList();
         }
 
         void SetTransfer()
@@ -377,11 +377,11 @@ namespace BudgetUnderControl.ViewModel
             TransferAmount = Amount;
         }
 
-        public void AddTransacion()
+        public async Task AddTransacionAsync()
         {
             if(IsItTransfer)
             {
-                AddTransfer();
+               await AddTransferAsync();
             }
             else
             {
@@ -406,11 +406,11 @@ namespace BudgetUnderControl.ViewModel
                     Type = Type,
                 };
 
-                transactionRepository.AddTransaction(transaction);
+                await transactionService.AddTransactionAsync(transaction);
             }
         }
 
-        private void AddTransfer()
+        private async Task AddTransferAsync()
         {
             var date = new DateTime(Date.Year, Date.Month, Date.Day, Time.Hours, Time.Minutes, Time.Seconds, Time.Milliseconds, DateTimeKind.Local).ToUniversalTime();
             var transferDate = new DateTime(TransferDate.Year, TransferDate.Month, TransferDate.Day, TransferTime.Hours, TransferTime.Minutes, TransferTime.Seconds, TransferTime.Milliseconds, DateTimeKind.Local).ToUniversalTime();
@@ -442,7 +442,7 @@ namespace BudgetUnderControl.ViewModel
                 TransferAccountId = Accounts[selectedTransferAccountIndex].Id,
             };
 
-            transactionRepository.AddTransfer(transfer);
+            await transactionService.AddTransferAsync(transfer);
         }
     }
 }

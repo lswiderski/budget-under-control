@@ -15,7 +15,7 @@ namespace BudgetUnderControl.ViewModel
     {
         public event PropertyChangedEventHandler PropertyChanged;
         IAccountService accountService;
-        ITransactionRepository transactionRepository;
+        ITransactionService transactionnService;
         public TransactionListItemDTO SelectedTransaction { get; set; }
 
         int accountId;
@@ -119,10 +119,10 @@ namespace BudgetUnderControl.ViewModel
             }
         }
 
-        public AccountDetailsViewModel(IAccountService accountService, ITransactionRepository transactionRepository)
+        public AccountDetailsViewModel(IAccountService accountService, ITransactionService transactionnService)
         {
             this.accountService = accountService;
-            this.transactionRepository = transactionRepository;
+            this.transactionnService = transactionnService;
 
             var now = DateTime.UtcNow;
             FromDate = new DateTime(now.Year, now.Month, 1, 0, 0, 0);
@@ -132,7 +132,7 @@ namespace BudgetUnderControl.ViewModel
         public async Task LoadAccount(int accountId)
         {
             this.accountId = accountId;
-            var account = await this.accountService.GetAccountDetailsAsync(accountId, FromDate, ToDate);
+            var account = await this.accountService.GetAccountDetailsAsync(new TransactionsFilter { AccountId = accountId, FromDate = FromDate, ToDate = ToDate });
             Name = "Account: " + account.Name;
             ValueWithCurrency = account.AmountWithCurrency;
             Value = account.Amount;
@@ -142,9 +142,9 @@ namespace BudgetUnderControl.ViewModel
         }
         public async Task LoadTransactions(int accountId)
         {
-            Transactions = await transactionRepository.GetTransactions(accountId, FromDate, ToDate);
+            Transactions = await transactionnService.GetTransactionsAsync(new TransactionsFilter { AccountId = accountId, FromDate = FromDate, ToDate = ToDate });
 
-            var account = await this.accountService.GetAccountDetailsAsync(accountId, FromDate, ToDate);
+            var account = await this.accountService.GetAccountDetailsAsync(new TransactionsFilter { AccountId = accountId, FromDate = FromDate, ToDate = ToDate });
             Expense = account.Expense.ToString();
             Income = account.Income.ToString();
         }

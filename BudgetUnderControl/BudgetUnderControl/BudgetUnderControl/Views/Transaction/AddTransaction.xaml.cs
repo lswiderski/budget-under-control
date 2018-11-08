@@ -31,7 +31,7 @@ namespace BudgetUnderControl.Views
 
         async void OnAddButtonClicked(object sender, EventArgs args)
         {
-            vm.AddTransacion();
+            await vm.AddTransacionAsync();
             await Navigation.PopModalAsync();
         }
 

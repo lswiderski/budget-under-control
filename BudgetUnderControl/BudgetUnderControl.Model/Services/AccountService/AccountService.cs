@@ -62,9 +62,14 @@ namespace BudgetUnderControl.Model.Services
             return accountsWithBalance;
         }
 
-        public async Task<AccountDetailsDTO> GetAccountDetailsAsync(int id, DateTime fromDate, DateTime toDate)
+        public async Task<AccountDetailsDTO> GetAccountDetailsAsync(TransactionsFilter filter)
         {
-            var account = await accountRepository.GetAccountAsync(id);
+            if(filter == null || !filter.AccountId.HasValue
+                || !filter.FromDate.HasValue || !filter.ToDate.HasValue)
+            {
+                throw new ArgumentNullException();
+            }
+            var account = await accountRepository.GetAccountAsync(filter.AccountId.Value);
 
             var dto = new AccountDetailsDTO
             {
@@ -79,8 +84,8 @@ namespace BudgetUnderControl.Model.Services
                 Type = account.Type,
                 ParentAccountId = account.ParentAccountId,
                 Order = account.Order,
-                Income = accountRepository.GetIncome(account.Id, fromDate, toDate),
-                Expense = accountRepository.GetExpense(account.Id, fromDate, toDate)
+                Income = await accountRepository.GetIncomeAsync(account.Id, filter.FromDate.Value, filter.ToDate.Value),
+                Expense = await accountRepository.GetExpenseAsync(account.Id, filter.FromDate.Value, filter.ToDate.Value)
             };
 
             return dto;
@@ -98,7 +103,7 @@ namespace BudgetUnderControl.Model.Services
 
             if (account.Type != AccountType.Card)
             {
-                await this.accountRepository.BalanceAdjustment(account.Id, dto.Amount);
+                await this.accountRepository.BalanceAdjustmentAsync(account.Id, dto.Amount);
             }
         }
 
@@ -110,14 +115,14 @@ namespace BudgetUnderControl.Model.Services
 
             if (account.Type != AccountType.Card)
             {
-                await this.accountRepository.BalanceAdjustment(account.Id, dto.Amount);
+                await this.accountRepository.BalanceAdjustmentAsync(account.Id, dto.Amount);
             }  
         }
 
         public async Task ActivateAccountAsync(int id)
         {
             var account = await accountRepository.GetAccountAsync(id);
-            account.IsActive = true;
+            account.SetActive(true);
 
             await accountRepository.UpdateAsync(account);
         }
@@ -125,7 +130,7 @@ namespace BudgetUnderControl.Model.Services
         public async Task DeactivateAccountAsync(int id)
         {
             var account = await accountRepository.GetAccountAsync(id);
-            account.IsActive = false;
+            account.SetActive(false);
 
             await accountRepository.UpdateAsync(account);
         }

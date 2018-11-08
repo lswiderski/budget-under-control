@@ -11,7 +11,7 @@ namespace BudgetUnderControl.ViewModel
 {
     public interface IAddTransactionViewModel
     {
-        void AddTransacion();
+        Task AddTransacionAsync();
         
         List<CategoryListItemDTO> Categories { get; }
         List<AccountListItemDTO> Accounts { get; }

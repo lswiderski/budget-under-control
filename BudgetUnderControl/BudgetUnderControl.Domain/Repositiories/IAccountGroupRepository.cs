@@ -9,6 +9,6 @@ namespace BudgetUnderControl.Domain.Repositiories
 {
     public interface IAccountGroupRepository
     {
-        Task<ICollection<AccountGroupItemDTO>> GetAccountGroups();
+        Task<ICollection<AccountGroup>> GetAccountGroupsAsync();
     }
 }

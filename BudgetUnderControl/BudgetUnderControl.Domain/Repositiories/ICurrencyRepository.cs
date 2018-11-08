@@ -9,6 +9,6 @@ namespace BudgetUnderControl.Domain.Repositiories
 {
     public interface ICurrencyRepository
     {
-        Task<ICollection<CurrencyDTO>> GetCurriences();
+        Task<ICollection<Currency>> GetCurriencesAsync();
     }
 }

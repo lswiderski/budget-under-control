@@ -10,12 +10,45 @@ namespace BudgetUnderControl.Domain
     public class Transfer
     {
         [Key]
-        public int Id { get; set; }
-        public int FromTransactionId { get; set; }
-        public int ToTransactionId { get; set; }
-        public decimal Rate { get; set; }
+        public int Id { get; protected set; }
+        public int FromTransactionId { get; protected set; }
+        public int ToTransactionId { get; protected set; }
+        public decimal Rate { get; protected set; }
 
         public Transaction FromTransaction { get; set; }
         public Transaction ToTransaction { get; set; }
+
+        public Transfer()
+        {
+
+        }
+
+        public static Transfer Create(int fromTransactionId, int toTransactionId, decimal rate)
+        {
+            return new Transfer()
+            {
+                FromTransactionId = fromTransactionId,
+                ToTransactionId = toTransactionId,
+                Rate = rate
+            };
+        }
+
+        /// <summary>
+        /// Use for sync/imports
+        /// </summary>
+        /// <param name="id"></param>
+        public void SetId(int id)
+        {
+            this.Id = id;
+        }
+
+        /// <summary>
+        /// Use for sync/imports
+        /// </summary>
+        /// <param name="rate"></param>
+        public void SetRate(decimal rate)
+        {
+            this.Rate = rate;
+        }
     }
 }

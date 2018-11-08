@@ -16,17 +16,10 @@ namespace BudgetUnderControl.Model
         {
         }
 
-        public async Task<ICollection<CategoryListItemDTO>> GetCategories()
+        public async Task<ICollection<Category>> GetCategoriesAsync()
         {
-            var list = this.Context.Categories
-                .Select( x=> new CategoryListItemDTO
-                {
-                    Id = x.Id,
-                    Name = x.Name
-                })
-                .ToListAsync();
-
-            return await list;
+            var list = await this.Context.Categories.ToListAsync();
+            return list;
         }
     }
 }

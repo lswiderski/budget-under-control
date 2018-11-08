@@ -209,8 +209,7 @@ namespace BudgetUnderControl.Model
             foreach (var item in accounts)
             {
                 var account = Account.Create(item.Name, item.CurrencyId, item.AccountGroupId, item.IsIncludedToTotal, item.Comment, item.Order, item.Type, item.ParentAccountId, true);
-                
-                account.Id = item.Id;
+                account.SetId(item.Id);
                 this.Context.Accounts.Add(account);
             }
 
@@ -221,20 +220,11 @@ namespace BudgetUnderControl.Model
         {
             foreach (var item in transactions)
             {
-                var transaction = new Transaction
-                {
-                    AccountId = item.AccountId,
-                    Amount = item.Amount,
-                    CategoryId = item.CategoryId,
-                    Comment = item.Comment,
-                    CreatedOn = item.CreatedOn,
-                    Date = item.Date,
-                    Id = item.Id,
-                    ModifiedOn = item.ModifiedOn,
-                    Name = item.Name,
-                    Type = item.Type,
-
-                };
+                var transaction = Transaction.Create(item.AccountId, item.Type, item.Amount, item.Date, item.Name, item.Comment, item.CategoryId);
+                transaction.SetId(item.Id);
+                transaction.SetCreatedOn(item.CreatedOn);
+                transaction.SetModifiedOn(item.ModifiedOn);
+                
                 this.Context.Transactions.Add(transaction);
             }
         }
@@ -243,13 +233,8 @@ namespace BudgetUnderControl.Model
         {
             foreach (var item in transfers)
             {
-                var transfer = new Transfer
-                {
-                    FromTransactionId = item.FromTransactionId,
-                    Id = item.Id,
-                    Rate = item.Rate,
-                    ToTransactionId = item.ToTransactionId
-                };
+                var transfer = Transfer.Create(item.FromTransactionId, item.ToTransactionId, item.Rate);
+                transfer.SetId(item.Id);
                 this.Context.Transfers.Add(transfer);
             }
             this.Context.SaveChanges();

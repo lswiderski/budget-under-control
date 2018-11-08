@@ -28,11 +28,11 @@ namespace BudgetUnderControl.Views
             InitFAB();
     }
 
-        protected override void OnAppearing()
+        protected override async void OnAppearing()
         {
             base.OnAppearing();
 
-            vm.LoadTransactions();
+            await vm.LoadTransactionsAsync();
         }
 
         private void InitFAB()
@@ -66,14 +66,14 @@ namespace BudgetUnderControl.Views
             await Navigation.PushModalAsync(editTransaction);
         }
 
-        protected void OnNextMonthButtonClicked(object sender, EventArgs args)
+        protected async Task OnNextMonthButtonClicked(object sender, EventArgs args)
         {
-             vm.SetNextMonth();
+             await vm.SetNextMonth();
         }
 
-        protected void OnPreviousMonthButtonClicked(object sender, EventArgs args)
+        protected async Task OnPreviousMonthButtonClicked(object sender, EventArgs args)
         {
-            vm.SetPreviousMonth();
+            await vm.SetPreviousMonth();
         }
     }
 }

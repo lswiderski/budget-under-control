@@ -59,7 +59,11 @@ namespace BudgetUnderControl
             builder.RegisterType<ContextFacade>().As<IContextFacade>().InstancePerLifetimeScope();
             //builder.RegisterInstance(new Context(new ContextConfig() { DbName = Settings.DB_NAME, DbPath = dbPath }));
             builder.RegisterType<BaseModel>().As<IBaseModel>().InstancePerLifetimeScope();
-            builder.RegisterType<AccountService>().As<Model.Services.IAccountService>().InstancePerLifetimeScope();
+            builder.RegisterType<AccountService>().As<IAccountService>().InstancePerLifetimeScope();
+            builder.RegisterType<CurrencyService>().As<ICurrencyService>().InstancePerLifetimeScope();
+            builder.RegisterType<CategoryService>().As<ICategoryService>().InstancePerLifetimeScope(); 
+            builder.RegisterType<AccountGroupService>().As<IAccountGroupService>().InstancePerLifetimeScope(); 
+            builder.RegisterType<TransactionService>().As<ITransactionService>().InstancePerLifetimeScope();
             builder.RegisterType<CurrencyRepository>().As<ICurrencyRepository>().InstancePerLifetimeScope();
             builder.RegisterType<AccountRepository>().As<IAccountRepository>().InstancePerLifetimeScope();
             builder.RegisterType<AccountGroupRepository>().As<IAccountGroupRepository>().InstancePerLifetimeScope();

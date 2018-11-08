@@ -8,8 +8,8 @@ namespace BudgetUnderControl.ViewModel
 {
     public interface IEditTransactionViewModel
     {
-        void EditTransaction();
-        void GetTransaction(int transactionId);
-        void DeleteTransaction();
+        Task EditTransactionAsync();
+        Task GetTransactionAsync(int transactionId);
+        Task DeleteTransactionAsync();
     }
 }

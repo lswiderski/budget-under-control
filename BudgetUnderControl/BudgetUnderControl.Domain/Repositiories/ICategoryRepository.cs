@@ -9,6 +9,6 @@ namespace BudgetUnderControl.Domain.Repositiories
 {
     public interface ICategoryRepository
     {
-        Task<ICollection<CategoryListItemDTO>> GetCategories();
+        Task<ICollection<Category>> GetCategoriesAsync();
     }
 }

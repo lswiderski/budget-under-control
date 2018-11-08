@@ -11,16 +11,14 @@ namespace BudgetUnderControl.Domain.Repositiories
 {
     public interface ITransactionRepository
     {
-        void AddTransaction(AddTransactionDTO arg);
-        void AddTransfer(AddTransferDTO args);
-        Task<ICollection<TransactionListItemDTO>> GetTransactions();
-        Task<ICollection<TransactionListItemDTO>> GetTransactions(int accountId);
-        Task<ICollection<TransactionListItemDTO>> GetTransactions(DateTime fromDate, DateTime toDate);
-        Task<ICollection<TransactionListItemDTO>> GetTransactions(int accountId, DateTime fromDate, DateTime toDate);
-        EditTransactionDTO GetEditTransaction(int id);
-        void EditTransaction(EditTransactionDTO arg);
-        void DeleteTransaction(int id);
-        List<int> GetSubAccounts(int accountId);
-        ObservableCollection<ObservableGroupCollection<string, TransactionListItemDTO>> GetGroupedTransactions(DateTime fromDate, DateTime toDate);
+        Task<ICollection<Transaction>> GetTransactionsAsync(TransactionsFilter filter = null);
+        Task<Transaction> GetTransactionAsync(int id);
+        Task AddTransactionAsync(Transaction transaction);
+        Task UpdateAsync(Transaction transaction);
+        Task AddTransferAsync(Transfer transfer);
+        Task UpdateTransferAsync(Transfer transfer);
+        Task RemoveTransactionAsync(Transaction transaction);
+        Task RemoveTransferAsync(Transfer transfer);
+        Task<Transfer> GetTransferAsync(int transactionId);
     }
 }

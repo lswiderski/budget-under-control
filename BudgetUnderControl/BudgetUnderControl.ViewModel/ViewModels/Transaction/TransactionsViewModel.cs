@@ -2,6 +2,7 @@
 using BudgetUnderControl.Contracts.Models;
 using BudgetUnderControl.Domain.Repositiories;
 using BudgetUnderControl.Model;
+using BudgetUnderControl.Model.Services;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -15,7 +16,7 @@ namespace BudgetUnderControl.ViewModel
     public class TransactionsViewModel : ITransactionsViewModel, INotifyPropertyChanged
     {
         public event PropertyChangedEventHandler PropertyChanged;
-        ITransactionRepository transactionModel;
+        ITransactionService transactionService;
         public TransactionListItemDTO SelectedTransaction { get; set; }
 
         ObservableCollection<ObservableGroupCollection<string, TransactionListItemDTO>> transactions;
@@ -88,35 +89,35 @@ namespace BudgetUnderControl.ViewModel
             }
         }
         
-        public TransactionsViewModel(ITransactionRepository transactionModel)
+        public TransactionsViewModel(ITransactionService transactionService)
         {
-            this.transactionModel = transactionModel;
+            this.transactionService = transactionService;
 
             var now = DateTime.UtcNow;
             FromDate = new DateTime(now.Year, now.Month, 1,0,0,0);
             ToDate = new DateTime(now.Year, now.Month, DateTime.DaysInMonth(now.Year, now.Month), 23, 59, 59);
         }
 
-        public void LoadTransactions()
+        public async Task LoadTransactionsAsync()
         {
-            Transactions = transactionModel.GetGroupedTransactions(FromDate, ToDate);
+            Transactions = await transactionService.GetGroupedTransactionsAsync(new TransactionsFilter { FromDate = FromDate, ToDate= ToDate } );
             SetIncomeExpense();
         }
 
-        public void SetNextMonth()
+        public async Task SetNextMonth()
         {
             FromDate = new DateTime(FromDate.Year, FromDate.Month, 1, FromDate.Hour, FromDate.Minute, FromDate.Second).AddMonths(1);
             ToDate = new DateTime(FromDate.Year, FromDate.Month, DateTime.DaysInMonth(FromDate.Year, FromDate.Month), ToDate.Hour, ToDate.Minute, ToDate.Second);
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(ActualRange)));
-            LoadTransactions();
+            await LoadTransactionsAsync();
         }
 
-        public void SetPreviousMonth()
+        public async Task SetPreviousMonth()
         {
             FromDate = new DateTime(FromDate.Year, FromDate.Month, 1, FromDate.Hour, FromDate.Minute, FromDate.Second).AddMonths(-1);
             ToDate = new DateTime(FromDate.Year, FromDate.Month, DateTime.DaysInMonth(FromDate.Year, FromDate.Month), ToDate.Hour, ToDate.Minute, ToDate.Second);
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(ActualRange)));
-            LoadTransactions();
+            await LoadTransactionsAsync();
         }
 
         private void SetIncomeExpense()

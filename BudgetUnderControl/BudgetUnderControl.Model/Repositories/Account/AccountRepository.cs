@@ -13,12 +13,9 @@ namespace BudgetUnderControl.Model
 {
     public class AccountRepository : BaseModel, IAccountRepository
     {
-        ITransactionRepository transactionRepository;
-        public AccountRepository(IContextFacade context, ITransactionRepository transactionRepository) : base(context)
+        public AccountRepository(IContextFacade context) : base(context)
         {
-            this.transactionRepository = transactionRepository;
         }
-
 
         public async Task<IEnumerable<Account>> GetAccountsAsync()
         {
@@ -39,7 +36,7 @@ namespace BudgetUnderControl.Model
 
         public async Task<Account> GetAccountAsync(int id)
         {
-            var accounts = transactionRepository.GetSubAccounts(id);
+            var accounts = await this.GetSubAccountsAsync(id);
             accounts.Add(id);
             accounts = accounts.Distinct().ToList();
 
@@ -68,7 +65,7 @@ namespace BudgetUnderControl.Model
                 accountId = this.GetParentAccountId(accountId).Value;
             }
 
-            var accounts = transactionRepository.GetSubAccounts(accountId);
+            var accounts = await this.GetSubAccountsAsync(accountId);
             accounts.Add(accountId);
             accounts = accounts.Distinct().ToList();
             var transactions = await this.Context.Transactions.Where(x => accounts.Contains(x.AccountId)).Select(x => (decimal)x.Amount).ToListAsync();
@@ -77,7 +74,7 @@ namespace BudgetUnderControl.Model
             return balance;
         }
 
-        public decimal GetIncome(int accountId, DateTime fromDate, DateTime toDate)
+        public async Task<decimal> GetIncomeAsync(int accountId, DateTime fromDate, DateTime toDate)
         {
             var isCard = IsSubCardAccount(accountId);
 
@@ -86,7 +83,7 @@ namespace BudgetUnderControl.Model
                 accountId = this.GetParentAccountId(accountId).Value;
             }
 
-            var accounts = transactionRepository.GetSubAccounts(accountId);
+            var accounts = await this.GetSubAccountsAsync(accountId);
             accounts.Add(accountId);
             accounts = accounts.Distinct().ToList();
 
@@ -94,7 +91,7 @@ namespace BudgetUnderControl.Model
             return balance;
         }
 
-        public decimal GetExpense(int accountId, DateTime fromDate, DateTime toDate)
+        public async Task<decimal> GetExpenseAsync(int accountId, DateTime fromDate, DateTime toDate)
         {
             var isCard = IsSubCardAccount(accountId);
 
@@ -103,7 +100,7 @@ namespace BudgetUnderControl.Model
                 accountId = this.GetParentAccountId(accountId).Value;
             }
 
-            var accounts = transactionRepository.GetSubAccounts(accountId);
+            var accounts = await this.GetSubAccountsAsync(accountId);
             accounts.Add(accountId);
             accounts = accounts.Distinct().ToList();
 
@@ -111,7 +108,7 @@ namespace BudgetUnderControl.Model
             return balance;
         }
 
-        public async Task BalanceAdjustment(int accountId, decimal targetBalance)
+        public async Task BalanceAdjustmentAsync(int accountId, decimal targetBalance)
         {
             decimal actualBalance = await GetActualBalanceAsync(accountId);
 
@@ -119,19 +116,20 @@ namespace BudgetUnderControl.Model
             {
                 decimal amount = (decimal.Subtract(targetBalance, actualBalance));
 
-                Math.Sign(amount);
-                var transactionDTO = new AddTransactionDTO
-                {
-                    AccountId = accountId,
-                    CreatedOn = DateTime.UtcNow,
-                    Comment = string.Empty,
-                    Name = "BalanceAdjustment",
-                    Amount = amount,
-                    Type = Math.Sign(amount) < 0 ? TransactionType.Expense : TransactionType.Income,
-                };
+                var type = Math.Sign(amount) < 0 ? TransactionType.Expense : TransactionType.Income;
+                var transaction = Transaction.Create(accountId, type, amount, DateTime.UtcNow, "BalanceAdjustment", string.Empty);
 
-                transactionRepository.AddTransaction(transactionDTO);
+                this.Context.Transactions.Add(transaction);
+                await this.Context.SaveChangesAsync();
             }
+        }
+
+        public async Task<List<int>> GetSubAccountsAsync(int accountId)
+        {
+            var subAccounts = await this.Context.Accounts.Where(x => x.ParentAccountId == accountId)
+                .Select(x => x.Id)
+                .ToListAsync();
+            return subAccounts;
         }
 
         private bool IsSubCardAccount(int accountId)

@@ -366,15 +366,15 @@ namespace BudgetUnderControl.ViewModel
         List<CategoryListItemDTO> categories;
         public List<CategoryListItemDTO> Categories => categories;
 
-        ITransactionRepository transactionRepository;
+        ITransactionService transactionService;
         IAccountService accountService;
-        ICategoryRepository categoryRepository;
+        ICategoryService categoryService;
 
-        public EditTransactionViewModel(ITransactionRepository transactionRepository, IAccountService accountService, ICategoryRepository categoryRepository)
+        public EditTransactionViewModel(ITransactionService transactionService, IAccountService accountService, ICategoryService categoryService)
         {
-            this.transactionRepository = transactionRepository;
+            this.transactionService = transactionService;
             this.accountService = accountService;
-            this.categoryRepository = categoryRepository;
+            this.categoryService = categoryService;
             SelectedTypeIndex = 0;
             SelectedCategoryIndex = -1;
             SelectedAccountIndex = -1;
@@ -388,7 +388,7 @@ namespace BudgetUnderControl.ViewModel
         async void GetDropdowns()
         {
             accounts = (await accountService.GetAccountsWithBalanceAsync()).ToList();
-            categories = (await categoryRepository.GetCategories()).ToList();
+            categories = (await categoryService.GetCategoriesAsync()).ToList();
         }
 
         void SetTransfer()
@@ -399,9 +399,9 @@ namespace BudgetUnderControl.ViewModel
             TransferAmount = Amount;
         }
 
-        public void GetTransaction(int transactionId)
+        public async Task GetTransactionAsync(int transactionId)
         {
-            var dto = transactionRepository.GetEditTransaction(transactionId);
+            var dto = await transactionService.GetEditTransactionAsync(transactionId);
 
             Date = dto.Date.ToLocalTime();
             Time = Date.TimeOfDay;
@@ -458,7 +458,7 @@ namespace BudgetUnderControl.ViewModel
             return -1;
         }
 
-        public void EditTransaction()
+        public async Task EditTransactionAsync()
         {
             var date = new DateTime(Date.Year, Date.Month, Date.Day, Time.Hours, Time.Minutes, Time.Seconds, Time.Milliseconds, DateTimeKind.Local).ToUniversalTime();
             var transferDate = new DateTime(TransferDate.Year, TransferDate.Month, TransferDate.Day, TransferTime.Hours, TransferTime.Minutes, TransferTime.Seconds, TransferTime.Milliseconds, DateTimeKind.Local).ToUniversalTime();
@@ -507,12 +507,12 @@ namespace BudgetUnderControl.ViewModel
             }
             
 
-            transactionRepository.EditTransaction(transactionDto);
+            await transactionService.EditTransactionAsync(transactionDto);
         }
 
-        public void DeleteTransaction()
+        public async Task DeleteTransactionAsync()
         {
-            transactionRepository.DeleteTransaction(id);
+            await transactionService.RemoveTransactionAsync(id);
         }
 
     }

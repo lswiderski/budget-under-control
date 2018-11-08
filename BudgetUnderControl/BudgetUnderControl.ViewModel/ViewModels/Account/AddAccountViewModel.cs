@@ -16,9 +16,9 @@ namespace BudgetUnderControl.ViewModel
     public class AddAccountViewModel : IAddAccountViewModel, INotifyPropertyChanged
     {
         public event PropertyChangedEventHandler PropertyChanged;
-        Model.Services.IAccountService accountService;
-        ICurrencyRepository currencyModel;
-        IAccountGroupRepository accountGroupModel;
+        IAccountService accountService;
+        ICurrencyService currencyService;
+        IAccountGroupService accountGroupService;
 
         List<CurrencyDTO> currencies;
         List<AccountGroupItemDTO> accountGroups;
@@ -175,11 +175,11 @@ namespace BudgetUnderControl.ViewModel
             }
         }
 
-        public AddAccountViewModel(Model.Services.IAccountService accountService, ICurrencyRepository currencyModel, IAccountGroupRepository accountGroupModel)
+        public AddAccountViewModel(IAccountService accountService, ICurrencyService currencyService, IAccountGroupService accountGroupService)
         {
             this.accountService = accountService;
-            this.currencyModel = currencyModel;
-            this.accountGroupModel = accountGroupModel;
+            this.currencyService = currencyService;
+            this.accountGroupService = accountGroupService;
             GetDropdowns();
 
             selectedAccountIndex = -1;
@@ -187,8 +187,8 @@ namespace BudgetUnderControl.ViewModel
 
         async void GetDropdowns()
         {
-            currencies = (await currencyModel.GetCurriences()).OrderBy(x => x.Code).ToList();
-            accountGroups = (await accountGroupModel.GetAccountGroups()).ToList();
+            currencies = (await currencyService.GetCurriencesAsync()).OrderBy(x => x.Code).ToList();
+            accountGroups = (await accountGroupService.GetAccountGroupsAsync()).ToList();
             accounts = (await accountService.GetAccountsWithBalanceAsync()).ToList();
             accountTypes = this.GetAccountTypes().ToList();
            

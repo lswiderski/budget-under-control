@@ -29,7 +29,7 @@ namespace BudgetUnderControl.Domain
         public static Context Create(IContextConfig contextConfig)
         {
             var context = new Context(contextConfig);
-
+            
             return context;
         }
 

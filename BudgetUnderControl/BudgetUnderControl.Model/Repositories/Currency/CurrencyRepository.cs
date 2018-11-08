@@ -18,16 +18,11 @@ namespace BudgetUnderControl.Model
         {
         }
 
-        public async Task<ICollection<CurrencyDTO>> GetCurriences()
+        public async Task<ICollection<Currency>> GetCurriencesAsync()
         {
-            var list = this.Context.Currencies.Select(x => new CurrencyDTO
-            {
-                Code = x.Code,
-                Id = x.Id,
-                Name = x.FullName,
-            }).ToListAsync();
+            var list = await this.Context.Currencies.ToListAsync();
 
-            return await list;
+            return list;
         }
     }
 }

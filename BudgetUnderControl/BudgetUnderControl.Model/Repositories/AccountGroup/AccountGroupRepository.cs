@@ -14,20 +14,15 @@ namespace BudgetUnderControl.Model
         public AccountGroupRepository(IContextFacade context) : base(context)
         {
         }
-        
 
-        public async Task<ICollection<AccountGroupItemDTO>> GetAccountGroups()
+
+        public async Task<ICollection<AccountGroup>> GetAccountGroupsAsync()
         {
-            var list = (from ag in this.Context.AccountGroup
-                       
-                        select new AccountGroupItemDTO
-                        {
-                            Id = ag.Id,
-                            Name = ag.Name,
-                        }
+            var list = await (from ag in this.Context.AccountGroup
+                              select ag
                         ).ToListAsync();
 
-            return await list;
+            return list;
         }
     }
 }

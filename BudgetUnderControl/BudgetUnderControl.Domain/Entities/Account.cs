@@ -12,7 +12,7 @@ namespace BudgetUnderControl.Domain
     public class Account
     {
         [Key]
-        public int Id { get; set; }
+        public int Id { get; protected set; }
         [StringLength(250)]
         public string Name { get; protected set; }
         public int CurrencyId { get; protected set; }
@@ -22,7 +22,7 @@ namespace BudgetUnderControl.Domain
         public int Order { get; protected set; }
         public AccountType Type { get; protected set; }
         public int? ParentAccountId { get; protected set; }
-        public bool IsActive { get; set; }
+        public bool IsActive { get; protected set; }
 
         public AccountGroup AccountGroup { get; protected set; }
         public Currency Currency { get;  set; }
@@ -66,6 +66,24 @@ namespace BudgetUnderControl.Domain
             this.Order = order;
             this.Type = type;
             this.ParentAccountId = parentAccountId;
+        }
+
+        /// <summary>
+        /// Use for sync/imports
+        /// </summary>
+        /// <param name="id"></param>
+        public void SetId(int id)
+        {
+            this.Id = id;
+        }
+
+        /// <summary>
+        /// Use for sync/imports
+        /// </summary>
+        /// <param name="id"></param>
+        public void SetActive(bool isActive)
+        {
+            this.IsActive = IsActive;
         }
     }
 }

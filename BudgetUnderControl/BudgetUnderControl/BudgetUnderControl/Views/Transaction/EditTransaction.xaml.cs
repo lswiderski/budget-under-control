@@ -28,21 +28,21 @@ namespace BudgetUnderControl.Views
 
         async void OnEditButtonClicked(object sender, EventArgs args)
         {
-            vm.EditTransaction();
+            await vm.EditTransactionAsync();
             await Navigation.PopModalAsync();
         }
 
-        protected override void OnAppearing()
+        protected override async void OnAppearing()
         {
             base.OnAppearing();
-            vm.GetTransaction(transactionId);
+            await vm.GetTransactionAsync(transactionId);
         }
 
         async void OnDeleteButtonClicked(object sender, EventArgs args)
         {
             var remove = await this.DisplayAlert("Remove", "Do you want to remove this Transaction?", "Yes", "No");
             if (!remove) return;
-            vm.DeleteTransaction();
+            await vm.DeleteTransactionAsync();
             await Navigation.PopModalAsync();
         }
     }

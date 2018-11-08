@@ -1,6 +1,7 @@
 ﻿using Autofac;
 using BudgetUnderControl.Domain.Repositiories;
 using BudgetUnderControl.Model;
+using BudgetUnderControl.Model.Services;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -15,30 +16,30 @@ namespace BudgetUnderControl.Views
     [XamlCompilation(XamlCompilationOptions.Compile)]
     public partial class Currencies : ContentPage
     {
-        ICurrencyRepository currencyModel;
+        ICurrencyService currencyService;
         public Currencies()
         {
             InitializeComponent();
 
             using (var scope = App.Container.BeginLifetimeScope())
             {
-                this.currencyModel = scope.Resolve<ICurrencyRepository>();
+                this.currencyService = scope.Resolve<ICurrencyService>();
             }
                
         }
 
-        async void OnButtonClicked(object sender, EventArgs e)
+        async Task OnButtonClicked(object sender, EventArgs e)
         {
-            var model = currencyModel.GetCurriences();
+            var model = await currencyService.GetCurriencesAsync();
 
-            curriences.ItemsSource = await model;
+            curriences.ItemsSource =  model;
         }
 
         protected override async void OnAppearing()
         {
-            var model = currencyModel.GetCurriences();
+            var model = await currencyService.GetCurriencesAsync();
 
-            curriences.ItemsSource = await model;
+            curriences.ItemsSource =  model;
         }
     }
 }

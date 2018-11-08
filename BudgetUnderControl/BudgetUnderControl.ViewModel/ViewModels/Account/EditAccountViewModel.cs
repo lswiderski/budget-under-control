@@ -17,9 +17,9 @@ namespace BudgetUnderControl.ViewModel
     public class EditAccountViewModel : IEditAccountViewModel, INotifyPropertyChanged
     {
         public event PropertyChangedEventHandler PropertyChanged;
-        Model.Services.IAccountService accountService;
-        ICurrencyRepository currencyModel;
-        IAccountGroupRepository accountGroupModel;
+        IAccountService accountService;
+        ICurrencyService currencyService;
+        IAccountGroupService accountGroupService;
 
         int accountId;
 
@@ -165,18 +165,18 @@ namespace BudgetUnderControl.ViewModel
             }
         }
 
-        public EditAccountViewModel(ICurrencyRepository currencyModel, IAccountGroupRepository accountGroupModel, Model.Services.IAccountService accountService)
+        public EditAccountViewModel(ICurrencyService currencyService, IAccountGroupService accountGroupService, IAccountService accountService)
         {
-            this.currencyModel = currencyModel;
-            this.accountGroupModel = accountGroupModel;
+            this.currencyService = currencyService;
+            this.accountGroupService = accountGroupService;
             this.accountService = accountService;
             GetDropdowns();
         }
 
         async void GetDropdowns()
         {
-            currencies = (await currencyModel.GetCurriences()).ToList();
-            accountGroups = (await accountGroupModel.GetAccountGroups()).ToList();
+            currencies = (await currencyService.GetCurriencesAsync()).ToList();
+            accountGroups = (await accountGroupService.GetAccountGroupsAsync()).ToList();
             accounts = (await accountService.GetAccountsWithBalanceAsync()).ToList();
             accountTypes = this.GetAccountTypes().ToList();
         }

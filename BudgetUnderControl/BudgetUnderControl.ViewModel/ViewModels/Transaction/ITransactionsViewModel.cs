@@ -16,8 +16,8 @@ namespace BudgetUnderControl.ViewModel
         TransactionListItemDTO SelectedTransaction { get; set; }
         string ActualRange { get; }
 
-        void LoadTransactions();
-        void SetNextMonth();
-        void SetPreviousMonth();
+        Task LoadTransactionsAsync();
+        Task SetNextMonth();
+        Task SetPreviousMonth();
     }
 }

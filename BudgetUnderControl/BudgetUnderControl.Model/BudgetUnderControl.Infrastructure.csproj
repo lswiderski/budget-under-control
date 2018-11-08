@@ -48,8 +48,16 @@
     <Compile Include="Repositories\Sync\SyncService.cs" />
     <Compile Include="Repositories\Transaction\TransactionRepository.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Services\AccountGroupService\AccountGroupService.cs" />
+    <Compile Include="Services\AccountGroupService\IAccountGroupService.cs" />
     <Compile Include="Services\AccountService\AccountService.cs" />
     <Compile Include="Services\AccountService\IAccountService.cs" />
+    <Compile Include="Services\CategoryService\CategoryService.cs" />
+    <Compile Include="Services\CategoryService\ICategoryService.cs" />
+    <Compile Include="Services\CurrencyService\CurrencyService.cs" />
+    <Compile Include="Services\CurrencyService\ICurrencyService.cs" />
+    <Compile Include="Services\TransactionService\ITransactionService.cs" />
+    <Compile Include="Services\TransactionService\TransactionService.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\BudgetUnderControl.Common\BudgetUnderControl.Common.csproj">

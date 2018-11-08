@@ -14,10 +14,10 @@ namespace BudgetUnderControl.Domain.Repositiories
         Task UpdateAsync(Account account);
         Task<decimal> GetActualBalanceAsync(int accountId);
         Task AddAccountAsync(Account account);
-        Task BalanceAdjustment(int accountId, decimal targetBalance);
-
-        decimal GetIncome(int accountId, DateTime fromDate, DateTime toDate);
-        decimal GetExpense(int accountId, DateTime fromDate, DateTime toDate);
+        Task BalanceAdjustmentAsync(int accountId, decimal targetBalance);
+        Task<List<int>> GetSubAccountsAsync(int accountId);
+        Task<decimal> GetExpenseAsync(int accountId, DateTime fromDate, DateTime toDate);
+        Task<decimal> GetIncomeAsync(int accountId, DateTime fromDate, DateTime toDate);
 
 
         

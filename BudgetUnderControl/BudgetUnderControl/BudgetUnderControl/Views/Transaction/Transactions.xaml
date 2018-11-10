@@ -3,6 +3,7 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="BudgetUnderControl.Views.Transactions"
              xmlns:local="clr-namespace:BudgetUnderControl.Views;assembly=BudgetUnderControl"
+             xmlns:local1="clr-namespace:BudgetUnderControl.Views"
              Title="Transactions">
 
     <ContentPage.Content>
@@ -48,7 +49,7 @@
                     </ListView.GroupHeaderTemplate>
                     <ListView.ItemTemplate>
                         <DataTemplate>
-                            <local:GroupedTransactionListItem  Transaction="{Binding}"/>
+                            <local1:GroupedTransactionListItem  Transaction="{Binding}"/>
                         </DataTemplate>
                     </ListView.ItemTemplate>
                 </ListView>

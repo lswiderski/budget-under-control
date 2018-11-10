@@ -3,14 +3,15 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="BudgetUnderControl.Views.EditTransaction"
              xmlns:local="clr-namespace:BudgetUnderControl.Views;assembly=BudgetUnderControl"
-             xmlns:behaviors="clr-namespace:BudgetUnderControl.Behaviors;assembly=BudgetUnderControl">
+             xmlns:behaviors="clr-namespace:BudgetUnderControl.Behaviors;assembly=BudgetUnderControl"
+             xmlns:behaviors1="clr-namespace:BudgetUnderControl.Behaviors">
     <ContentPage.Content>
         <ScrollView>
             <StackLayout>
                 <Label Text="Amount"></Label>
                 <Entry x:Name="amount" Text="{Binding Amount}" Placeholder="Amount" Keyboard="Numeric" >
                     <Entry.Behaviors>
-                        <behaviors:NumericValidationBehavior />
+                        <behaviors1:NumericValidationBehavior />
                     </Entry.Behaviors>
                 </Entry>
                 <Label Text="Name"></Label>
@@ -34,13 +35,13 @@
                     <Label Text="Amount" IsVisible="{Binding IsTransferInOtherCurrency}"></Label>
                     <Entry x:Name="transferAmount" Text="{Binding TransferAmount}" Placeholder="Amount" IsVisible="{Binding IsTransferInOtherCurrency}" Keyboard="Numeric" >
                         <Entry.Behaviors>
-                            <behaviors:NumericValidationBehavior />
+                            <behaviors1:NumericValidationBehavior />
                         </Entry.Behaviors>
                     </Entry>
                     <Label Text="Exchange Rate" IsVisible="{Binding IsTransferInOtherCurrency}"></Label>
                     <Entry x:Name="transferRate" Text="{Binding TransferRate}" Placeholder="Rate" IsVisible="{Binding IsTransferInOtherCurrency}">
                         <Entry.Behaviors>
-                            <behaviors:NumericValidationBehavior />
+                            <behaviors1:NumericValidationBehavior />
                         </Entry.Behaviors>
                     </Entry>
                     <StackLayout Orientation="Horizontal">

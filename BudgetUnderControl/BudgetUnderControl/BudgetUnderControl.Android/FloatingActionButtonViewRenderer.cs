@@ -13,8 +13,8 @@ using Xamarin.Forms.Platform.Android;
 using Xamarin.Forms;
 using BudgetUnderControl.Droid;
 using BudgetUnderControl.Views;
-using com.refractored.fab;
 using System.IO;
+using Refractored.Fab;
 
 [assembly: ExportRenderer(typeof(FloatingActionButtonView), typeof(FloatingActionButtonViewRenderer))]
 namespace BudgetUnderControl.Droid

@@ -4,7 +4,7 @@
              x:Class="BudgetUnderControl.Views.AddAccount"
              xmlns:local="clr-namespace:BudgetUnderControl.Views;assembly=BudgetUnderControl"
              xmlns:behaviors="clr-namespace:BudgetUnderControl.Behaviors;assembly=BudgetUnderControl"
-             >
+             xmlns:behaviors1="clr-namespace:BudgetUnderControl.Behaviors">
     <ContentPage.Content>
         <ScrollView>
             <StackLayout>
@@ -14,7 +14,7 @@
                 <Picker x:Name="currency" ItemsSource="{Binding Currencies}" ItemDisplayBinding="{Binding CodeWithName}"  SelectedIndex="{Binding  SelectedCurrencyIndex, Mode=TwoWay}" Title="Currency" />
                 <Entry x:Name="amount" Text="{Binding Amount}" Placeholder="Amount" Keyboard="Numeric">
                     <Entry.Behaviors>
-                        <behaviors:NumericValidationBehavior />
+                        <behaviors1:NumericValidationBehavior />
                     </Entry.Behaviors>
                 </Entry>
                 <Label x:Name="switchLabel" Text="Is Counted in Total"></Label>
@@ -28,7 +28,7 @@
                 <Label Text="Order"></Label>
                 <Entry x:Name="order" Text="{Binding Order}" Placeholder="Order"  Keyboard="Numeric">
                     <Entry.Behaviors>
-                        <behaviors:NumericValidationBehavior />
+                        <behaviors1:NumericValidationBehavior />
                     </Entry.Behaviors>
                 </Entry>
                 <Label x:Name="commentLabel" Text="Comment"></Label>

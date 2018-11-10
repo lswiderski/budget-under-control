@@ -7,11 +7,11 @@ using Autofac;
 using BudgetUnderControl.Views;
 using BudgetUnderControl.Common;
 using BudgetUnderControl.Model;
-using Microsoft.Practices.ServiceLocation;
 using Autofac.Extras.CommonServiceLocator;
 using BudgetUnderControl.ViewModel;
 using BudgetUnderControl.Domain.Repositiories;
 using BudgetUnderControl.Model.Services;
+using CommonServiceLocator;
 
 [assembly: XamlCompilation(XamlCompilationOptions.Compile)]
 namespace BudgetUnderControl
@@ -85,7 +85,7 @@ namespace BudgetUnderControl
 
 
             App.Container = builder.Build();
-            ServiceLocator.SetLocatorProvider(() => new AutofacServiceLocator(App.Container));
+            ServiceLocator.SetLocatorProvider(() => new AutofacServiceLocator(Container));
 
         }
     }

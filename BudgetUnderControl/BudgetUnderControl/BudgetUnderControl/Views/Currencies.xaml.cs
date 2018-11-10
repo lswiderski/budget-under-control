@@ -28,7 +28,7 @@ namespace BudgetUnderControl.Views
                
         }
 
-        async Task OnButtonClicked(object sender, EventArgs e)
+        async void OnButtonClicked(object sender, EventArgs e)
         {
             var model = await currencyService.GetCurriencesAsync();
 

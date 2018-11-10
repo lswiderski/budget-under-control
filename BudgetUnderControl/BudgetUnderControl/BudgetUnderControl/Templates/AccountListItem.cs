@@ -27,7 +27,7 @@ namespace BudgetUnderControl.Views
             set { SetValue(CurrencyProperty, value); }
         }
 
-        public string Amount
+        public string Balance
         {
             get { return (string)GetValue(BalanceProperty); }
             set { SetValue(BalanceProperty, value); }
@@ -58,7 +58,7 @@ namespace BudgetUnderControl.Views
             {
                 nameLabel.Text = Name;
                 currencyLabel.Text = Currency;
-                balance.Text = Amount;
+                balance.Text = Balance;
             }
         }
     }

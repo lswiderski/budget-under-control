@@ -100,10 +100,6 @@
       <Project>{1dd8730a-719c-4cee-a54d-aa1e5d6d2c84}</Project>
       <Name>BudgetUnderControl.Common</Name>
     </ProjectReference>
-    <ProjectReference Include="..\BudgetUnderControl.Contracts\BudgetUnderControl.Contracts.csproj">
-      <Project>{a3a2ac07-6fb9-4339-8338-bbd19fadf46d}</Project>
-      <Name>BudgetUnderControl.Contracts</Name>
-    </ProjectReference>
   </ItemGroup>
   <ItemGroup />
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\Portable\$(TargetFrameworkVersion)\Microsoft.Portable.CSharp.targets" />

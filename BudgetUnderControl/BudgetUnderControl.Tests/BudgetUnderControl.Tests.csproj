@@ -16,7 +16,7 @@
   <ItemGroup>
     <ProjectReference Include="..\BudgetUnderControl.Common\BudgetUnderControl.Common.csproj" />
     <ProjectReference Include="..\BudgetUnderControl.Domain\BudgetUnderControl.Domain.csproj" />
-    <ProjectReference Include="..\BudgetUnderControl.Model\BudgetUnderControl.Infrastructure.csproj" />
+    <ProjectReference Include="..\BudgetUnderControl.Infrastructure\BudgetUnderControl.Infrastructure.csproj" />
   </ItemGroup>
 
 </Project>

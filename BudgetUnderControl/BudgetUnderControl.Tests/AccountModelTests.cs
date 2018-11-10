@@ -1,4 +1,4 @@
-﻿using BudgetUnderControl.Contracts.Models;
+﻿using BudgetUnderControl.Common.Contracts;
 using BudgetUnderControl.Domain;
 using BudgetUnderControl.Domain.Repositiories;
 using BudgetUnderControl.Model;

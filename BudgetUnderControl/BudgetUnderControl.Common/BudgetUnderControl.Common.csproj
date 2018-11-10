@@ -39,6 +39,24 @@
     <None Include="project.json" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Contracts\AccountGroup\AccountGroupItemViewModel.cs" />
+    <Compile Include="Contracts\Accounts\AccountDetailsDTO.cs" />
+    <Compile Include="Contracts\Accounts\AccountListItemDTO.cs" />
+    <Compile Include="Contracts\Accounts\AccountTypeDTO.cs" />
+    <Compile Include="Contracts\Accounts\AddAccountDTO.cs" />
+    <Compile Include="Contracts\Accounts\EditAccountDTO.cs" />
+    <Compile Include="Contracts\Category\CategoryListItemDTO.cs" />
+    <Compile Include="Contracts\Currency\CurrencyViewModel.cs" />
+    <Compile Include="Contracts\Sync\AccountSyncDTO.cs" />
+    <Compile Include="Contracts\Sync\BackUpDTO.cs" />
+    <Compile Include="Contracts\Sync\CurrencySyncDTO.cs" />
+    <Compile Include="Contracts\Sync\TransactionSyncDTO.cs" />
+    <Compile Include="Contracts\Sync\TransferSyncDTO.cs" />
+    <Compile Include="Contracts\Transaction\AddTransactionDTO.cs" />
+    <Compile Include="Contracts\Transaction\AddTransferDTO.cs" />
+    <Compile Include="Contracts\Transaction\EditTransactionDTO.cs" />
+    <Compile Include="Contracts\Transaction\TransactionListItemDTO.cs" />
+    <Compile Include="Contracts\Transaction\TransactionsFilter.cs" />
     <Compile Include="Enums\AccountType.cs" />
     <Compile Include="Enums\ExtendedTransactionType.cs" />
     <Compile Include="Enums\TransactionType.cs" />

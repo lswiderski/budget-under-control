@@ -5,10 +5,10 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace BudgetUnderControl.Domain.Repositiories
+namespace BudgetUnderControl.Model.Services
 {
-    public interface ICategoryRepository
+    public interface ICurrencyService
     {
-        Task<ICollection<Category>> GetCategoriesAsync();
+        Task<ICollection<CurrencyDTO>> GetCurriencesAsync();
     }
 }

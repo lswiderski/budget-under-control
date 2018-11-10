@@ -1,4 +1,4 @@
-﻿using BudgetUnderControl.Contracts.Models;
+﻿using BudgetUnderControl.Common.Contracts;
 using System;
 using System.Collections.Generic;
 using System.Linq;

@@ -1,0 +1,21 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="BudgetUnderControl.Views.OverviewPage"
+             xmlns:local="clr-namespace:BudgetUnderControl.Views;assembly=BudgetUnderControl.Mobile"
+             Title="Overview Page">
+    <ContentPage.Content>
+        <AbsoluteLayout x:Name="absoluteLayout" VerticalOptions="FillAndExpand" HorizontalOptions="FillAndExpand">
+            <StackLayout Padding="20,20,0,0" AbsoluteLayout.LayoutFlags="All" AbsoluteLayout.LayoutBounds="0,0,1,1">
+                <Label Text="PLN:" />
+                <Label x:Name="pln" />
+                <Label Text="USD:" />
+                <Label x:Name="usd" />
+                <Label Text="EUR:" />
+                <Label x:Name="eur" />
+                <Label Text="Total:" />
+                <Label x:Name="total" />
+            </StackLayout>
+        </AbsoluteLayout>
+    </ContentPage.Content>
+</ContentPage>

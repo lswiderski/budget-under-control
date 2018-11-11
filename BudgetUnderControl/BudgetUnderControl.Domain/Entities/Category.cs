@@ -7,13 +7,18 @@ using System.Threading.Tasks;
 
 namespace BudgetUnderControl.Domain
 {
-    public class Category
+    public class Category : ISyncable
     {
         [Key]
         public int Id { get; set; }
         [StringLength(100)]
         public string Name { get; set; }
 
+        public int OwnerId { get; protected set; }
+        public DateTime? ModifiedOn { get; protected set; }
+        public Guid ExternalId { get; protected set; }
+
+        public virtual User Owner { get; set; }
         public List<Transaction> Transactions { get; set; }
     }
 }

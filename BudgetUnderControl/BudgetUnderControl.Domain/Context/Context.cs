@@ -5,13 +5,15 @@ using System.Diagnostics;
 using System.Collections.Generic;
 using BudgetUnderControl.Common;
 using System;
+using BudgetUnderControl.Common.Enums;
 
 namespace BudgetUnderControl.Domain
 {
     public class Context : DbContext, IDisposable
     {
-        private string databasePath { get; set; }
+        private readonly IContextConfig config;
 
+        private string databasePath { get; set; }
 
         public virtual DbSet<Account> Accounts { get; set; }
         public virtual DbSet<AccountGroup> AccountGroup { get; set; }
@@ -25,6 +27,7 @@ namespace BudgetUnderControl.Domain
         public virtual DbSet<TagToTransaction> TagsToTransactions { get; set; }
         public virtual DbSet<Transaction> Transactions { get; set; }
         public virtual DbSet<Transfer> Transfers { get; set; }
+        public virtual DbSet<User> Users { get; set; }
 
         public static Context Create(IContextConfig contextConfig)
         {
@@ -35,25 +38,32 @@ namespace BudgetUnderControl.Domain
 
         protected Context()
         {
-            Database.Migrate();
+            
         }
 
-        protected Context(string dbPath)
+        public Context(IContextConfig config)
         {
-            this.databasePath = dbPath;
-            Database.Migrate();
-        }
-
-        protected Context(IContextConfig config)
-        {
-            var dbPath = config.DbPath;
-            this.databasePath = dbPath;
-            Database.Migrate();
+            this.config = config;
+            if (config.Application == ApplicationType.Mobile)
+            {
+                Database.Migrate();
+            }
         }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-            optionsBuilder.UseSqlite($"Filename={databasePath}");
+            if(config.Application == ApplicationType.Mobile)
+            {
+                optionsBuilder.UseSqlite(config.ConnectionString, options => options.MigrationsAssembly("BudgetUnderControl.Domain"));
+            }
+            else if(config.Application == ApplicationType.Web)
+            {
+                optionsBuilder.UseSqlServer(config.ConnectionString, options => options.MigrationsAssembly("BudgetUnderControl.API"));
+            }
+            else if (config.Application == ApplicationType.Migrations)
+            {
+                optionsBuilder.UseSqlite(config.ConnectionString, options => options.MigrationsAssembly("BudgetUnderControl.API"));
+            }
         }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -70,7 +80,7 @@ namespace BudgetUnderControl.Domain
             modelBuilder.Entity<TagToTransaction>().ToTable("TagToTransaction");
             modelBuilder.Entity<Transaction>().ToTable("Transaction");
             modelBuilder.Entity<Transfer>().ToTable("Transfer");
-
+            modelBuilder.Entity<User>().ToTable("User");
 
 
             modelBuilder.Entity<Account>()
@@ -155,6 +165,24 @@ namespace BudgetUnderControl.Domain
                 .HasOne(x => x.PreviousAccountSnapshot)
                 .WithMany()
                 .HasForeignKey(e => e.PreviousAccountSnapshotId);
+
+            modelBuilder.Entity<Account>()
+                 .HasOne(x => x.Owner)
+                .WithMany(y => y.Accounts)
+                .HasForeignKey(x => x.OwnerId)
+                .HasConstraintName("ForeignKey_Account_User");
+
+            modelBuilder.Entity<Transaction>()
+                 .HasOne(x => x.AddedBy)
+                .WithMany(y => y.Transactions)
+                .HasForeignKey(x => x.AddedById)
+                .HasConstraintName("ForeignKey_Transaction_User");
+
+            modelBuilder.Entity<AccountGroup>()
+                 .HasOne(x => x.Owner)
+                .WithMany(y => y.AccountGroups)
+                .HasForeignKey(x => x.OwnerId)
+                .HasConstraintName("ForeignKey_AccountGroup_User");
         }
 
         }

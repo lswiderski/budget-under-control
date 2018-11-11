@@ -6,11 +6,17 @@
     <DebugType>pdbonly</DebugType>
     <DebugSymbols>true</DebugSymbols>
   </PropertyGroup>
+ <ItemGroup>
+   <Compile Include="..\BudgetUnderControl.API\Migrations\20181111162341_Users.cs" Link="Migrations\20181111162341_Users.cs" />
+   <Compile Include="..\BudgetUnderControl.API\Migrations\20181111162341_Users.Designer.cs" Link="Migrations\20181111162341_Users.Designer.cs" />
+   <Compile Include="..\BudgetUnderControl.API\Migrations\ContextModelSnapshot.cs" Link="Migrations\ContextModelSnapshot.cs" />
+ </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Autofac" Version="4.8.1" />
     <PackageReference Include="Microsoft.EntityFrameworkCore" Version="2.1.4" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="2.1.4" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="2.1.4" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="2.1.4" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="2.1.4">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>

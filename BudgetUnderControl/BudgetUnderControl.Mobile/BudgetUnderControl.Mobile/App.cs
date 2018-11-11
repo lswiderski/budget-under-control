@@ -12,6 +12,7 @@ using BudgetUnderControl.ViewModel;
 using BudgetUnderControl.Domain.Repositiories;
 using BudgetUnderControl.Model.Services;
 using CommonServiceLocator;
+using BudgetUnderControl.Common.Enums;
 
 [assembly: XamlCompilation(XamlCompilationOptions.Compile)]
 namespace BudgetUnderControl
@@ -55,7 +56,7 @@ namespace BudgetUnderControl
             var builder = new ContainerBuilder();
 
             // Register services
-            builder.RegisterInstance(new ContextConfig() { DbName = Settings.DB_NAME, DbPath = dbPath }).As<IContextConfig>();
+            builder.RegisterInstance(new ContextConfig() { DbName = Settings.DB_NAME, DbPath = dbPath, Application = ApplicationType.Mobile }).As<IContextConfig>();
             builder.RegisterType<ContextFacade>().As<IContextFacade>().InstancePerLifetimeScope();
             //builder.RegisterInstance(new Context(new ContextConfig() { DbName = Settings.DB_NAME, DbPath = dbPath }));
             builder.RegisterType<BaseModel>().As<IBaseModel>().InstancePerLifetimeScope();

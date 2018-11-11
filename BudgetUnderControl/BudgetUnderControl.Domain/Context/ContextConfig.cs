@@ -1,4 +1,5 @@
-﻿using System;
+﻿using BudgetUnderControl.Common.Enums;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -18,6 +19,23 @@ namespace BudgetUnderControl.Domain
         set
             {
                 _dbPath = value;
+            }
+        }
+
+        public ApplicationType Application { get; set; }
+
+        public string ConnectionString { get
+            {
+                switch (this.Application)
+                {
+                    case ApplicationType.Mobile:
+                    case ApplicationType.Migrations:
+                        return $"Filename={this.DbPath}";
+                    case ApplicationType.Web:
+                        return $"Server=localhost;User Id=SA;Password=Abcd1234!;Database={this.DbName}";                       
+                    default:
+                        return string.Empty;
+                }
             }
         }
     }

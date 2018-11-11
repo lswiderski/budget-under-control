@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace BudgetUnderControl.Domain
 {
-    public class Account
+    public class Account : ISyncable
     {
         [Key]
         public int Id { get; protected set; }
@@ -23,13 +23,17 @@ namespace BudgetUnderControl.Domain
         public AccountType Type { get; protected set; }
         public int? ParentAccountId { get; protected set; }
         public bool IsActive { get; protected set; }
+        public int OwnerId { get; protected set; }
+        public DateTime? ModifiedOn { get; protected set; }
+        public Guid ExternalId { get; protected set; }
 
         public AccountGroup AccountGroup { get; protected set; }
         public Currency Currency { get;  set; }
         public List<AccountSnapshot> AccountSnapshots { get; protected set; }
         public List<Transaction> Transactions { get; protected set; }
+        public virtual User Owner { get; set; }
 
-       
+
         protected Account()
         {
 
@@ -49,7 +53,8 @@ namespace BudgetUnderControl.Domain
                 Comment = comment,
                 Order = order,
                 Type = type,
-                ParentAccountId = parentAccountId
+                ParentAccountId = parentAccountId,
+                ExternalId = Guid.NewGuid(),
             };
         }
 

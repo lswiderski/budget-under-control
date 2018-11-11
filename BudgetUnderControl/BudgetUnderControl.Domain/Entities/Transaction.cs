@@ -6,7 +6,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace BudgetUnderControl.Domain
 {
-    public class Transaction
+    public class Transaction : ISyncable
     {
         [Key]
         public int Id { get; protected set; }
@@ -19,6 +19,8 @@ namespace BudgetUnderControl.Domain
         public string Comment { get; protected set; }
         public DateTime CreatedOn { get; protected set; }
         public DateTime? ModifiedOn { get; protected set; }
+        public Guid ExternalId { get; protected set; }
+        public int AddedById { get; protected set; }
 
         [NotMapped]
         public bool IsTransfer { get; set; }
@@ -29,6 +31,7 @@ namespace BudgetUnderControl.Domain
         public Account Account { get; set; }
         public List<Transfer> ToTransfers { get; set; }
         public List<Transfer> FromTransfers { get; set; }
+        public User AddedBy { get; protected set; }
 
         public Transaction()
         {
@@ -46,7 +49,8 @@ namespace BudgetUnderControl.Domain
                 Name = name,
                 Comment = comment,
                 CategoryId = categoryId,
-                CreatedOn = DateTime.UtcNow
+                CreatedOn = DateTime.UtcNow,
+                ExternalId = Guid.NewGuid(),
             };
         }
 

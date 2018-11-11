@@ -1,4 +1,5 @@
-﻿using System;
+﻿using BudgetUnderControl.Common.Enums;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -10,5 +11,7 @@ namespace BudgetUnderControl.Domain
     {
         string DbName { get; set; }
         string DbPath { get; set; }
+        ApplicationType Application { get; set; }
+        string ConnectionString { get;}
     }
 }

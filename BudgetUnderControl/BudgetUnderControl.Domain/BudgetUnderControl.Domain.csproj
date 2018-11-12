@@ -9,6 +9,8 @@
  <ItemGroup>
    <Compile Include="..\BudgetUnderControl.API\Migrations\20181111162341_Users.cs" Link="Migrations\20181111162341_Users.cs" />
    <Compile Include="..\BudgetUnderControl.API\Migrations\20181111162341_Users.Designer.cs" Link="Migrations\20181111162341_Users.Designer.cs" />
+   <Compile Include="..\BudgetUnderControl.API\Migrations\20181112161126_ExternalIds.cs" Link="Migrations\20181112161126_ExternalIds.cs" />
+   <Compile Include="..\BudgetUnderControl.API\Migrations\20181112161126_ExternalIds.Designer.cs" Link="Migrations\20181112161126_ExternalIds.Designer.cs" />
    <Compile Include="..\BudgetUnderControl.API\Migrations\ContextModelSnapshot.cs" Link="Migrations\ContextModelSnapshot.cs" />
  </ItemGroup>
   <ItemGroup>

@@ -14,5 +14,6 @@ namespace BudgetUnderControl.Model.Services
         Task SaveBackupFileAsync();
         Task LoadBackupFileAsync();
         Task ExportCSVAsync();
+        Task ExportDBAsync();
     }
 }

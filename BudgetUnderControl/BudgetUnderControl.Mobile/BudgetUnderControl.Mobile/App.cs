@@ -13,6 +13,7 @@ using BudgetUnderControl.Domain.Repositiories;
 using BudgetUnderControl.Model.Services;
 using CommonServiceLocator;
 using BudgetUnderControl.Common.Enums;
+using BudgetUnderControl.Infrastructure.Repositories;
 
 [assembly: XamlCompilation(XamlCompilationOptions.Compile)]
 namespace BudgetUnderControl
@@ -70,6 +71,7 @@ namespace BudgetUnderControl
             builder.RegisterType<AccountGroupRepository>().As<IAccountGroupRepository>().InstancePerLifetimeScope();
             builder.RegisterType<TransactionRepository>().As<ITransactionRepository>().InstancePerLifetimeScope();
             builder.RegisterType<CategoryRepository>().As<ICategoryRepository>().InstancePerLifetimeScope();
+            builder.RegisterType<UserRepository>().As<IUserRepository>().InstancePerLifetimeScope();
             builder.RegisterType<SyncService>().As<ISyncService>().InstancePerLifetimeScope();
             builder.RegisterInstance<IFileHelper>(DependencyService.Get<IFileHelper>());
 

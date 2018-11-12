@@ -38,7 +38,7 @@ namespace BudgetUnderControl.Domain
 
         }
         
-        public static Transaction Create(int accountId, TransactionType type, decimal amount, DateTime date, string name, string comment, int? categoryId = null)
+        public static Transaction Create(int accountId, TransactionType type, decimal amount, DateTime date, string name, string comment, int addedById, int? categoryId = null)
         {
             return new Transaction()
             {
@@ -51,6 +51,7 @@ namespace BudgetUnderControl.Domain
                 CategoryId = categoryId,
                 CreatedOn = DateTime.UtcNow,
                 ExternalId = Guid.NewGuid(),
+                AddedById = addedById,
             };
         }
 

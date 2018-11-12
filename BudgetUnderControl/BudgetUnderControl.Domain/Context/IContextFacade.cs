@@ -29,5 +29,6 @@ namespace BudgetUnderControl.Domain
         DbSet<TagToTransaction> TagsToTransactions { get; set; }
         DbSet<Transaction> Transactions { get; set; }
         DbSet<Transfer> Transfers { get; set; }
+        DbSet<User> Users { get; set; }
     }
 }

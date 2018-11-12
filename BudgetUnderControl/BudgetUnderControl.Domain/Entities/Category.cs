@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -20,5 +21,14 @@ namespace BudgetUnderControl.Domain
 
         public virtual User Owner { get; set; }
         public List<Transaction> Transactions { get; set; }
+
+        [NotMapped]
+        public string ExternalIdString
+        {
+            get
+            {
+                return this.ExternalId.ToString();
+            }
+        }
     }
 }

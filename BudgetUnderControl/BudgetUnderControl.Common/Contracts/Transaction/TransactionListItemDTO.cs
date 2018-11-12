@@ -19,6 +19,7 @@ namespace BudgetUnderControl.Common.Contracts
         public string Name { get; set; }
         public string CurrencyCode { get; set; }
         public bool? IsTransfer { get; set; }
+        public string ExternalId { get; set; }
 
         public DateTime JustDate {
             get

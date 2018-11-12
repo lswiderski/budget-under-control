@@ -39,5 +39,10 @@ namespace BudgetUnderControl.Views
         {
             await vm.ExportCSVAsync();
         }
+
+        private async void ExportSQLDBButton_Clicked(object sender, EventArgs e)
+        {
+            await vm.ExportDBAsync();
+        }
     }
 }

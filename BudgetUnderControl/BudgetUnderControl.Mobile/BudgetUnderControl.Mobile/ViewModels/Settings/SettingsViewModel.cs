@@ -26,10 +26,15 @@ namespace BudgetUnderControl.ViewModel
         {
             await syncService.LoadBackupFileAsync();
         }
+
         public async Task ExportCSVAsync()
         {
             await syncService.ExportCSVAsync();
         }
 
+        public async Task ExportDBAsync()
+        {
+            await syncService.ExportDBAsync();
+        }
     }
 }

@@ -41,7 +41,7 @@ namespace BudgetUnderControl.Domain
 
         public static Account Create(string name, int currencyId, int accountGroupId,
             bool isIncludedToTotal, string comment, int order, AccountType type, 
-            int? parentAccountId, bool isActive)
+            int? parentAccountId, bool isActive, int ownerId)
         {
             return new Account()
             {
@@ -55,6 +55,7 @@ namespace BudgetUnderControl.Domain
                 Type = type,
                 ParentAccountId = parentAccountId,
                 ExternalId = Guid.NewGuid(),
+                OwnerId = ownerId
             };
         }
 

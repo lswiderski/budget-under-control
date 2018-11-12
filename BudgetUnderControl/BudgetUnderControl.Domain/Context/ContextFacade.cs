@@ -91,6 +91,11 @@ namespace BudgetUnderControl.Domain
             get => _context.Transfers;
             set => _context.Transfers = value;
         }
+        public DbSet<User> Users
+        {
+            get => _context.Users;
+            set => _context.Users = value;
+        }
 
     }
 }

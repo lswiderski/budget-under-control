@@ -29,6 +29,17 @@ namespace BudgetUnderControl.Droid
             return Path.Combine(path, this.folderName);
         }
 
+        public bool CopyFile(string sourcePath, string destinationPath)
+        {
+            if (File.Exists(sourcePath))
+            {
+                File.Copy(sourcePath, destinationPath, true);
+                return true;
+            }
+
+            return false;
+        }
+
         public void SaveText(string filename, string[] lines)
         {
             var path = this.GetExternalPathWithoutFileName();

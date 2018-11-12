@@ -13,10 +13,12 @@ namespace BudgetUnderControl.Model.Services
     public class AccountService : IAccountService
     {
         private readonly IAccountRepository accountRepository;
+        private readonly IUserRepository userRepository;
 
-        public AccountService(IAccountRepository accountRepository)
+        public AccountService(IAccountRepository accountRepository, IUserRepository userRepository)
         {
             this.accountRepository = accountRepository;
+            this.userRepository = userRepository;
         }
 
         public async Task<EditAccountDTO> GetEditAccountDTOAsync(int id)
@@ -92,8 +94,8 @@ namespace BudgetUnderControl.Model.Services
         }
 
         public async Task AddAccountAsync(AddAccountDTO dto)
-        {
-            var account = Account.Create(dto.Name, dto.CurrencyId, dto.AccountGroupId, dto.IsIncludedInTotal, dto.Comment, dto.Order, dto.Type, dto.ParentAccountId, true);
+        {   var user = await userRepository.GetFirstUserAsync();
+            var account = Account.Create(dto.Name, dto.CurrencyId, dto.AccountGroupId, dto.IsIncludedInTotal, dto.Comment, dto.Order, dto.Type, dto.ParentAccountId, true, user.Id);
             await accountRepository.AddAccountAsync(account);
             
             if(account.Id <= 0)

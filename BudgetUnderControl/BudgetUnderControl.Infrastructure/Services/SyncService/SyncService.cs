@@ -20,13 +20,15 @@ namespace BudgetUnderControl.Model.Services
         ICurrencyRepository currencyRepository;
         ICategoryRepository categoryRepository;
         IAccountGroupRepository accountGroupRepository;
+        IUserRepository userRepository;
 
         public SyncService(IFileHelper fileHelper,
             ITransactionRepository transactionRepository,
             IAccountRepository accountRepository,
             ICurrencyRepository currencyRepository,
             ICategoryRepository categoryRepository,
-            IAccountGroupRepository accountGroupRepository
+            IAccountGroupRepository accountGroupRepository,
+            IUserRepository userRepository
             )
         {
             this.fileHelper = fileHelper;
@@ -35,6 +37,7 @@ namespace BudgetUnderControl.Model.Services
             this.currencyRepository = currencyRepository;
             this.categoryRepository = categoryRepository;
             this.accountGroupRepository = accountGroupRepository;
+            this.userRepository = userRepository;
         }
 
         public async Task<string> GetTransactionsJSONAsync()
@@ -196,6 +199,12 @@ namespace BudgetUnderControl.Model.Services
             //fileHelper.SaveTextExternal(fileName, csv);
         }
 
+        public async Task ExportDBAsync()
+        {
+            //temporary
+            ExtractDB();
+        }
+
         private async Task ImportCurrenciesAsync(List<CurrencySyncDTO> currencies)
         {
             foreach (var item in currencies)
@@ -208,9 +217,10 @@ namespace BudgetUnderControl.Model.Services
 
         private async Task ImportAccountsAsync(List<AccountSyncDTO> accounts)
         {
+            var user = await userRepository.GetFirstUserAsync();
             foreach (var item in accounts)
             {
-                var account = Account.Create(item.Name, item.CurrencyId, item.AccountGroupId, item.IsIncludedToTotal, item.Comment, item.Order, item.Type, item.ParentAccountId, true);
+                var account = Account.Create(item.Name, item.CurrencyId, item.AccountGroupId, item.IsIncludedToTotal, item.Comment, item.Order, item.Type, item.ParentAccountId, true, user.Id);
                 account.SetId(item.Id);
                 await this.accountRepository.AddAccountAsync(account);
             }
@@ -218,9 +228,10 @@ namespace BudgetUnderControl.Model.Services
 
         private async Task ImportTransactionsAsync(List<TransactionSyncDTO> transactions)
         {
+            var user = await userRepository.GetFirstUserAsync();
             foreach (var item in transactions)
             {
-                var transaction = Transaction.Create(item.AccountId, item.Type, item.Amount, item.Date, item.Name, item.Comment, item.CategoryId);
+                var transaction = Transaction.Create(item.AccountId, item.Type, item.Amount, item.Date, item.Name, item.Comment, user.Id, item.CategoryId);
                 transaction.SetId(item.Id);
                 transaction.SetCreatedOn(item.CreatedOn);
                 transaction.SetModifiedOn(item.ModifiedOn);
@@ -250,6 +261,15 @@ namespace BudgetUnderControl.Model.Services
             await this.accountRepository.RemoveAccountsAsync(accounts);
 
             //this.Context.Currencies.RemoveRange(this.Context.Currencies);
+        }
+
+        public void ExtractDB()
+        {
+            var sourcePath = fileHelper.GetLocalFilePath(Settings.DB_NAME);
+
+            var databaseBackupPath = fileHelper.GetExternalFilePath(string.Format("{0}_{1}.db3", "buc_Backup", DateTime.UtcNow.Ticks));
+            fileHelper.CopyFile(sourcePath, databaseBackupPath);
+
         }
     }
 }

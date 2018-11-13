@@ -28,7 +28,7 @@ namespace BudgetUnderControl.Migrations.AndroidRunner
             DbContextOptionsBuilder<Context> optionsBuilder = new DbContextOptionsBuilder<Context>()
                 .UseSqlite(connectionString, options => options.MigrationsAssembly("BudgetUnderControl.Migrations.SQLite"));
 
-            return new Context(optionsBuilder.Options);
+            return new Context(optionsBuilder.Options, contextConfig);
         }
     }
 }

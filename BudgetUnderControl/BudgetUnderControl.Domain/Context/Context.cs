@@ -41,9 +41,9 @@ namespace BudgetUnderControl.Domain
             
         }
 
-        public Context(DbContextOptions option) : base(option)
+        public Context(DbContextOptions option, IContextConfig config) : base(option)
         {
-        
+            this.config = config;
         }
 
         public Context(IContextConfig config)

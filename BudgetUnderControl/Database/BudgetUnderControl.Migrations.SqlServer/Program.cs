@@ -32,8 +32,7 @@ namespace BudgetUnderControl.Migrations.SqlServer
             DbContextOptionsBuilder<Context> optionsBuilder = new DbContextOptionsBuilder<Context>()
                 .UseSqlServer(connectionString);
 
-             return new Context(optionsBuilder.Options);
-            //return new Context(contextConfig);
+             return new Context(optionsBuilder.Options, contextConfig);
         }
     }
 

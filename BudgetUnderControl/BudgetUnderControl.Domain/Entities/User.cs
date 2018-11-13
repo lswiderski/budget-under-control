@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Text;
 
 namespace BudgetUnderControl.Domain
@@ -8,6 +9,7 @@ namespace BudgetUnderControl.Domain
     public class User : ISyncable
     {
         [Key]
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int Id { get; protected set; }
         [StringLength(50)]
         public string Username { get; protected set; }

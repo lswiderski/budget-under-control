@@ -88,6 +88,10 @@
       <Project>{1dd8730a-719c-4cee-a54d-aa1e5d6d2c84}</Project>
       <Name>BudgetUnderControl.Common</Name>
     </ProjectReference>
+    <ProjectReference Include="..\..\Database\BudgetUnderControl.Migrations.SQLite\BudgetUnderControl.Migrations.SQLite.csproj">
+      <Project>{bcd5202a-0dd5-4e05-8d54-305980336ddf}</Project>
+      <Name>BudgetUnderControl.Migrations.SQLite</Name>
+    </ProjectReference>
     <ProjectReference Include="..\BudgetUnderControl.Mobile\BudgetUnderControl.Mobile.csproj">
       <Project>{5d873291-fdfc-4ff4-be62-62b5c6bbf2ce}</Project>
       <Name>BudgetUnderControl.Mobile</Name>

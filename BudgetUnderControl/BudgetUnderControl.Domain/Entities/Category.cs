@@ -11,6 +11,7 @@ namespace BudgetUnderControl.Domain
     public class Category : ISyncable
     {
         [Key]
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int Id { get; set; }
         [StringLength(100)]
         public string Name { get; set; }

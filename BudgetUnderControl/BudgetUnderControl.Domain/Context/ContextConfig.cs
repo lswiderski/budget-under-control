@@ -12,6 +12,8 @@ namespace BudgetUnderControl.Domain
         private string _dbPath;
 
         public string DbName { get; set; }
+        public string DbUser { get; set; }
+        public string DbPassword { get; set; }
         public string DbPath { get
             {   
                 return _dbPath;  
@@ -29,10 +31,11 @@ namespace BudgetUnderControl.Domain
                 switch (this.Application)
                 {
                     case ApplicationType.Mobile:
-                    case ApplicationType.Migrations:
+                    case ApplicationType.SQLiteMigrations:
                         return $"Filename={this.DbPath}";
+                    case ApplicationType.SqlServerMigrations:
                     case ApplicationType.Web:
-                        return $"Server=localhost;User Id=SA;Password=Abcd1234!;Database={this.DbName}";                       
+                        return $"Data Source=.;Initial Catalog={this.DbName};User ID={this.DbUser};Password={this.DbPassword}";                       
                     default:
                         return string.Empty;
                 }

@@ -51,13 +51,13 @@ namespace BudgetUnderControl
 
         protected void AutoFacInit()
         {
-            var dbPath = DependencyService.Get<IFileHelper>().GetLocalFilePath(Settings.DB_NAME);
+            var dbPath = DependencyService.Get<IFileHelper>().GetLocalFilePath(Settings.DB_SQLite_NAME);
 
             // Initialize Autofac builder
             var builder = new ContainerBuilder();
 
             // Register services
-            builder.RegisterInstance(new ContextConfig() { DbName = Settings.DB_NAME, DbPath = dbPath, Application = ApplicationType.Mobile }).As<IContextConfig>();
+            builder.RegisterInstance(new ContextConfig() { DbName = Settings.DB_SQLite_NAME, DbPath = dbPath, Application = ApplicationType.Mobile }).As<IContextConfig>();
             builder.RegisterType<ContextFacade>().As<IContextFacade>().InstancePerLifetimeScope();
             //builder.RegisterInstance(new Context(new ContextConfig() { DbName = Settings.DB_NAME, DbPath = dbPath }));
             builder.RegisterType<BaseModel>().As<IBaseModel>().InstancePerLifetimeScope();

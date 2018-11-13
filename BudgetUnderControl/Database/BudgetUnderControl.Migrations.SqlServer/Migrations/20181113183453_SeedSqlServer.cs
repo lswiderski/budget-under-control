@@ -1,15 +1,50 @@
-﻿using System;
-using System.Collections.Generic;
-using Microsoft.EntityFrameworkCore.Migrations;
+﻿using Microsoft.EntityFrameworkCore.Migrations;
 
-namespace Migrations.Migrations
+namespace BudgetUnderControl.Migrations.SqlServer.Migrations
 {
-    public partial class ChinaCurrencies : Migration
+    public partial class SeedSqlServer : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.Sql("INSERT INTO CATEGORY (Name)" +
-                                                "VALUES ('Home' )");
+
+
+            migrationBuilder.Sql("INSERT INTO [USER] (Username,Role,Email,Password,Salt,CreatedAt,ExternalId)" +
+                                               "VALUES ('demo', 'User', 'demo@swiderski.xyz','11a78a6a43d03d06489bf0611735acd0', 's0mRIdlKvI','2018-11-11 15:29:09.584149','10000000-0000-0000-0000-000000000001')"); //password:asdfg
+
+
+            migrationBuilder.Sql("INSERT INTO CURRENCY (Code,FullName,Number,Symbol)" +
+                                            "VALUES ('PLN', 'Polski Złoty',985, 'zł' )");
+            migrationBuilder.Sql("INSERT INTO CURRENCY (Code,FullName,Number,Symbol)" +
+                                                "VALUES ('USD', 'United States dollar',840, '$' )");
+            migrationBuilder.Sql("INSERT INTO CURRENCY (Code,FullName,Number,Symbol)" +
+                                                "VALUES ('EUR', 'Euro',978, '€' )");
+            migrationBuilder.Sql("INSERT INTO CURRENCY (Code,FullName,Number,Symbol)" +
+                                                "VALUES ('THB', 'Thai baht',764, '฿' )");
+
+            migrationBuilder.Sql("INSERT INTO CATEGORY (Name, ExternalId, OwnerId)" +
+                                                "VALUES ('Food', 'cb80cf16-02db-47ba-9ee7-5d9e78a695db', 1)");
+            migrationBuilder.Sql("INSERT INTO CATEGORY (Name, ExternalId, OwnerId)" +
+                                                "VALUES ('Transport', '3a458c42-f302-4664-86e5-7ac9598cd511', 1 )");
+            migrationBuilder.Sql("INSERT INTO CATEGORY (Name, ExternalId, OwnerId)" +
+                                                "VALUES ('Other' , 'e457e4d5-83f5-481e-a34d-6b983fb37756', 1)");
+
+            migrationBuilder.Sql("INSERT INTO CATEGORY (Name, ExternalId, OwnerId)" +
+                                                "VALUES ('Salary', '153253bd-a5e6-47b6-889f-cfcd3146cbae', 1 )");
+            migrationBuilder.Sql("INSERT INTO CATEGORY (Name, ExternalId, OwnerId)" +
+                                                "VALUES ('Taxes' , '1d268617-00a4-458b-a356-b86cc9aed482', 1)");
+            migrationBuilder.Sql("INSERT INTO ACCOUNTGROUP (Name, ExternalId, OwnerId)" +
+                                                "VALUES ('Cash' , '5f9c5721-24e8-4366-8e81-bbb09b20f265', 1)");
+            migrationBuilder.Sql("INSERT INTO ACCOUNTGROUP (Name, ExternalId, OwnerId)" +
+                                                "VALUES ('Account', '34a216a1-c9cb-4012-9344-8c39ff5d5b4c', 1 )");
+            migrationBuilder.Sql("INSERT INTO CATEGORY (Name, ExternalId, OwnerId)" +
+                                               "VALUES ('Entertainment' , '4313c995-993a-4e16-9a7e-f0e5120917de', 1)");
+            migrationBuilder.Sql("INSERT INTO CATEGORY (Name, ExternalId, OwnerId)" +
+                                                "VALUES ('Health' , '28f813d3-1d26-44c1-a3b4-88b17fb9963c', 1)");
+            migrationBuilder.Sql("INSERT INTO CATEGORY (Name, ExternalId, OwnerId)" +
+                                                "VALUES ('Interest' , 'ddef31c7-7fa4-4e0c-a456-55b85353b46d', 1)");
+
+            migrationBuilder.Sql("INSERT INTO CATEGORY (Name, ExternalId, OwnerId)" +
+                                              "VALUES ('Home' , '3956d5ea-a428-453b-9f68-cf486dd942ff', 1)");
 
             migrationBuilder.Sql("INSERT INTO CURRENCY (Code,FullName,Number,Symbol)" +
                                                 "VALUES ('CNY', 'Renminbi Juan',156, '¥' )");
@@ -69,6 +104,7 @@ namespace Migrations.Migrations
                                                 "VALUES ('HUF', 'Hungarian forint',348, 'Ft' )");
             migrationBuilder.Sql("INSERT INTO CURRENCY (Code,FullName,Number,Symbol)" +
                                                 "VALUES ('RON', 'Romanian leu',946, 'lei' )");
+   
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)

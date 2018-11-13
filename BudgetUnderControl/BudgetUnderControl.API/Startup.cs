@@ -43,14 +43,14 @@ namespace BudgetUnderControl.API
                     .AddEntityFrameworkInMemoryDatabase()
                     .AddDbContext<Context>();
 
-            var dbPath = Settings.DB_NAME;
+            var dbPath = Settings.DB_SQLite_NAME;
 
             // Initialize Autofac builder
             var builder = new ContainerBuilder();
-            //var contextConfig = new ContextConfig() { DbName = Settings.DB_NAME, DbPath = dbPath, Application = ApplicationType.Web };
-            var contextConfig = new ContextConfig() { DbName = Settings.DB_NAME, DbPath = dbPath, Application = ApplicationType.Migrations };
+            var contextConfig = new ContextConfig() { DbName = Settings.DB_SQLServer_NAME, DbPath = dbPath, Application = ApplicationType.SqlServerMigrations, DbPassword= "Qwerty!1", DbUser="buc" };
+            //var contextConfig = new ContextConfig() { DbName = Settings.DB_SQLite_NAME, DbPath = dbPath, Application = ApplicationType.Migrations };
             // Register services
-            builder.RegisterInstance(contextConfig).As<IContextConfig>();
+                builder.RegisterInstance(contextConfig).As<IContextConfig>();
             builder.RegisterType<WebContextFacade>().As<IContextFacade>().InstancePerLifetimeScope();
             builder.RegisterInstance(new Context(contextConfig));
             builder.RegisterType<BaseModel>().As<IBaseModel>().InstancePerLifetimeScope();

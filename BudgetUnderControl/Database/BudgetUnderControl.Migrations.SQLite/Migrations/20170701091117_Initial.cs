@@ -136,13 +136,13 @@ namespace Migrations.Migrations
                         column: x => x.FromCurrencyId,
                         principalTable: "Currency",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
                         name: "ForeignKey_ExchangeRate_ToCurrency",
                         column: x => x.ToCurrencyId,
                         principalTable: "Currency",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.Restrict);
                 });
 
             migrationBuilder.CreateTable(
@@ -202,7 +202,7 @@ namespace Migrations.Migrations
                         column: x => x.LastTransactionId,
                         principalTable: "Transaction",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
                         name: "FK_AccountSnapshot_AccountSnapshot_PreviousAccountSnapshotId",
                         column: x => x.PreviousAccountSnapshotId,
@@ -255,13 +255,13 @@ namespace Migrations.Migrations
                         column: x => x.FromTransactionId,
                         principalTable: "Transaction",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
                         name: "ForeignKey_Transfer_ToTransaction",
                         column: x => x.ToTransactionId,
                         principalTable: "Transaction",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.Restrict);
                 });
 
             migrationBuilder.CreateIndex(

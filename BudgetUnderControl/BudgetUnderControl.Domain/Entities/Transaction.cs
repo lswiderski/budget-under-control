@@ -9,6 +9,7 @@ namespace BudgetUnderControl.Domain
     public class Transaction : ISyncable
     {
         [Key]
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int Id { get; protected set; }
         public int AccountId { get; protected set; }
         public TransactionType Type { get; protected set; }

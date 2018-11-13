@@ -265,7 +265,7 @@ namespace BudgetUnderControl.Model.Services
 
         public void ExtractDB()
         {
-            var sourcePath = fileHelper.GetLocalFilePath(Settings.DB_NAME);
+            var sourcePath = fileHelper.GetLocalFilePath(Settings.DB_SQLite_NAME);
 
             var databaseBackupPath = fileHelper.GetExternalFilePath(string.Format("{0}_{1}.db3", "buc_Backup", DateTime.UtcNow.Ticks));
             fileHelper.CopyFile(sourcePath, databaseBackupPath);

@@ -8,6 +8,7 @@ namespace BudgetUnderControl.Common.Enums
     {
         Mobile,
         Web,
-        Migrations
+        SQLiteMigrations,
+        SqlServerMigrations
     }
 }

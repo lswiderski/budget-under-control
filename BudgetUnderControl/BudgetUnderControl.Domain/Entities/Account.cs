@@ -12,6 +12,7 @@ namespace BudgetUnderControl.Domain
     public class Account : ISyncable
     {
         [Key]
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int Id { get; protected set; }
         [StringLength(250)]
         public string Name { get; protected set; }

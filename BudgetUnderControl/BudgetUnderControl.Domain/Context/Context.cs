@@ -41,6 +41,11 @@ namespace BudgetUnderControl.Domain
             
         }
 
+        public Context(DbContextOptions option) : base(option)
+        {
+        
+        }
+
         public Context(IContextConfig config)
         {
             this.config = config;
@@ -52,18 +57,18 @@ namespace BudgetUnderControl.Domain
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-            if(config.Application == ApplicationType.Mobile)
+            if(config!= null)
             {
-                optionsBuilder.UseSqlite(config.ConnectionString, options => options.MigrationsAssembly("BudgetUnderControl.Domain"));
+                if (config.Application == ApplicationType.Mobile || config.Application == ApplicationType.SQLiteMigrations)
+                {
+                    optionsBuilder.UseSqlite(config.ConnectionString, options => options.MigrationsAssembly("BudgetUnderControl.Migrations.SQLite"));
+                }
+                else if (config.Application == ApplicationType.Web || config.Application == ApplicationType.SqlServerMigrations)
+                {
+                    optionsBuilder.UseSqlServer(config.ConnectionString, options => options.MigrationsAssembly("BudgetUnderControl.Migrations.SqlServer"));
+                }
             }
-            else if(config.Application == ApplicationType.Web)
-            {
-                optionsBuilder.UseSqlServer(config.ConnectionString, options => options.MigrationsAssembly("BudgetUnderControl.API"));
-            }
-            else if (config.Application == ApplicationType.Migrations)
-            {
-                optionsBuilder.UseSqlite(config.ConnectionString, options => options.MigrationsAssembly("BudgetUnderControl.API"));
-            }
+            
         }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -101,29 +106,27 @@ namespace BudgetUnderControl.Domain
                 .HasForeignKey(x => x.AccountId)
                 .HasConstraintName("ForeignKey_AccountSnapshot_Account");
 
-            modelBuilder.Entity<AccountSnapshot>()
-                .HasOne(x => x.LastTransaction)
-                .WithMany(y => y.AccountSnapshots)
-                .HasForeignKey(x => x.LastTransactionId)
-                .HasConstraintName("ForeignKey_AccountSnapshot_LastTransaction");
 
             modelBuilder.Entity<AccountSnapshot>()
                 .HasOne(x => x.LastTransaction)
                 .WithMany(y => y.AccountSnapshots)
                 .HasForeignKey(x => x.LastTransactionId)
-                .HasConstraintName("ForeignKey_AccountSnapshot_LastTransaction");
+                .HasConstraintName("ForeignKey_AccountSnapshot_LastTransaction")
+                .OnDelete(DeleteBehavior.Restrict);
 
             modelBuilder.Entity<ExchangeRate>()
                 .HasOne(x => x.FromCurrency)
                 .WithMany(y => y.FromExchangeRates)
                 .HasForeignKey(x => x.FromCurrencyId)
-                .HasConstraintName("ForeignKey_ExchangeRate_FromCurrency");
+                .HasConstraintName("ForeignKey_ExchangeRate_FromCurrency")
+                .OnDelete(DeleteBehavior.Restrict);
 
             modelBuilder.Entity<ExchangeRate>()
                 .HasOne(x => x.ToCurrency)
                 .WithMany(y => y.ToExchangeRates)
                 .HasForeignKey(x => x.ToCurrencyId)
-                .HasConstraintName("ForeignKey_ExchangeRate_ToCurrency");
+                .HasConstraintName("ForeignKey_ExchangeRate_ToCurrency")
+                .OnDelete(DeleteBehavior.Restrict);
 
             modelBuilder.Entity<TagToTransaction>()
                .HasOne(x => x.Tag)
@@ -153,13 +156,15 @@ namespace BudgetUnderControl.Domain
                 .HasOne(x => x.FromTransaction)
                 .WithMany(y => y.FromTransfers)
                 .HasForeignKey(x => x.FromTransactionId)
-                .HasConstraintName("ForeignKey_Transfer_FromTransaction");
+                .HasConstraintName("ForeignKey_Transfer_FromTransaction")
+                 .OnDelete(DeleteBehavior.Restrict);
 
             modelBuilder.Entity<Transfer>()
                 .HasOne(x => x.ToTransaction)
                 .WithMany(y => y.ToTransfers)
                 .HasForeignKey(x => x.ToTransactionId)
-                .HasConstraintName("ForeignKey_Transfer_ToTransaction");
+                .HasConstraintName("ForeignKey_Transfer_ToTransaction")
+                 .OnDelete(DeleteBehavior.Restrict);
 
             modelBuilder.Entity<AccountSnapshot>()
                 .HasOne(x => x.PreviousAccountSnapshot)
@@ -170,19 +175,22 @@ namespace BudgetUnderControl.Domain
                  .HasOne(x => x.Owner)
                 .WithMany(y => y.Accounts)
                 .HasForeignKey(x => x.OwnerId)
-                .HasConstraintName("ForeignKey_Account_User");
+                .HasConstraintName("ForeignKey_Account_User")
+                .OnDelete(DeleteBehavior.Restrict);
 
             modelBuilder.Entity<Transaction>()
                  .HasOne(x => x.AddedBy)
                 .WithMany(y => y.Transactions)
                 .HasForeignKey(x => x.AddedById)
-                .HasConstraintName("ForeignKey_Transaction_User");
+                .HasConstraintName("ForeignKey_Transaction_User")
+                .OnDelete(DeleteBehavior.Restrict);
 
             modelBuilder.Entity<AccountGroup>()
                  .HasOne(x => x.Owner)
                 .WithMany(y => y.AccountGroups)
                 .HasForeignKey(x => x.OwnerId)
-                .HasConstraintName("ForeignKey_AccountGroup_User");
+                .HasConstraintName("ForeignKey_AccountGroup_User")
+                .OnDelete(DeleteBehavior.Restrict);
         }
 
         }

@@ -1,7 +1,8 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>netstandard2.0</TargetFramework>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>netcoreapp2.1</TargetFramework>
   </PropertyGroup>
 
   <ItemGroup>
@@ -16,6 +17,7 @@
   <ItemGroup>
     <ProjectReference Include="..\..\BudgetUnderControl.Common\BudgetUnderControl.Common.csproj" />
     <ProjectReference Include="..\..\BudgetUnderControl.Domain\BudgetUnderControl.Domain.csproj" />
+    <ProjectReference Include="..\BudgetUnderControl.Migrations.SQLite\BudgetUnderControl.Migrations.SQLite.csproj" />
   </ItemGroup>
 
 </Project>

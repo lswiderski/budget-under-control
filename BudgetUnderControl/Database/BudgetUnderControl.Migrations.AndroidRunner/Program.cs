@@ -4,8 +4,7 @@ using BudgetUnderControl.Domain;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Design;
 using System;
-
-namespace BudgetUnderControl.Migrations.SQLite
+namespace BudgetUnderControl.Migrations.AndroidRunner
 {
     class Program : IDesignTimeDbContextFactory<Context>
     {

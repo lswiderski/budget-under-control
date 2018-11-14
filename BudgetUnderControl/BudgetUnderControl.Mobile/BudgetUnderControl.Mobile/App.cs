@@ -16,6 +16,9 @@ using BudgetUnderControl.Common.Enums;
 using BudgetUnderControl.Infrastructure.Repositories;
 using BudgetUnderControl.Infrastructure.Services;
 using BudgetUnderControl.Infrastructure.Services.UserService;
+using BudgetUnderControl.Infrastructure.IoC;
+using Microsoft.Extensions.Configuration;
+using BudgetUnderControl.Mobile.IoC;
 
 [assembly: XamlCompilation(XamlCompilationOptions.Compile)]
 namespace BudgetUnderControl
@@ -23,6 +26,8 @@ namespace BudgetUnderControl
     public class App : Application
     {
         public static IContainer Container;
+        public IConfiguration Configuration { get; }
+
         public static MasterPage MasterPage
         {
             get;
@@ -53,56 +58,12 @@ namespace BudgetUnderControl
 
         protected void AutoFacInit()
         {
-            var dbPath = DependencyService.Get<IFileHelper>().GetLocalFilePath(Settings.DB_SQLite_NAME);
-
             // Initialize Autofac builder
             var builder = new ContainerBuilder();
 
             // Register services
-            builder.RegisterInstance(new ContextConfig() { DbName = Settings.DB_SQLite_NAME, DbPath = dbPath, Application = ApplicationType.Mobile }).As<IContextConfig>();
-            builder.RegisterType<ContextFacade>().As<IContextFacade>().InstancePerLifetimeScope();
-            //builder.RegisterInstance(new Context(new ContextConfig() { DbName = Settings.DB_NAME, DbPath = dbPath }));
-            builder.RegisterType<BaseModel>().As<IBaseModel>().InstancePerLifetimeScope();
-            builder.RegisterType<AccountService>().As<IAccountService>().InstancePerLifetimeScope();
-            builder.RegisterType<CurrencyService>().As<ICurrencyService>().InstancePerLifetimeScope();
-            builder.RegisterType<CategoryService>().As<ICategoryService>().InstancePerLifetimeScope(); 
-            builder.RegisterType<AccountGroupService>().As<IAccountGroupService>().InstancePerLifetimeScope(); 
-            builder.RegisterType<TransactionService>().As<ITransactionService>().InstancePerLifetimeScope();
-            builder.RegisterType<CurrencyRepository>().As<ICurrencyRepository>().InstancePerLifetimeScope();
-            builder.RegisterType<AccountRepository>().As<IAccountRepository>().InstancePerLifetimeScope();
-            builder.RegisterType<AccountGroupRepository>().As<IAccountGroupRepository>().InstancePerLifetimeScope();
-            builder.RegisterType<TransactionRepository>().As<ITransactionRepository>().InstancePerLifetimeScope();
-            builder.RegisterType<CategoryRepository>().As<ICategoryRepository>().InstancePerLifetimeScope();
-            builder.RegisterType<UserRepository>().As<IUserRepository>().InstancePerLifetimeScope();
-            builder.RegisterType<SyncService>().As<ISyncService>().InstancePerLifetimeScope();
-            builder.RegisterType<UserService>().As<IUserService>().InstancePerLifetimeScope();
-            builder.RegisterInstance<IFileHelper>(DependencyService.Get<IFileHelper>());
-
-            builder.RegisterType<EditAccountViewModel>().As<IEditAccountViewModel>().InstancePerLifetimeScope();
-            builder.RegisterType<AddAccountViewModel>().As<IAddAccountViewModel>().InstancePerLifetimeScope();
-            builder.RegisterType<AccountsViewModel>().As<IAccountsViewModel>().InstancePerLifetimeScope();
-            builder.RegisterType<AccountDetailsViewModel>().As<IAccountDetailsViewModel>().InstancePerLifetimeScope();
-            builder.RegisterType<TransactionsViewModel>().As<ITransactionsViewModel>().InstancePerLifetimeScope();
-            builder.RegisterType<AddTransactionViewModel>().As<IAddTransactionViewModel>().InstancePerLifetimeScope();
-            builder.RegisterType<EditTransactionViewModel>().As<IEditTransactionViewModel>().InstancePerLifetimeScope();
-            builder.RegisterType<SettingsViewModel>().As<ISettingsViewModel>().InstancePerLifetimeScope();
-            builder.RegisterType<OverviewViewModel>().As<IOverviewViewModel>().InstancePerLifetimeScope();
-
-            builder.Register<Func<IUserIdentityContext>>(c =>
-            {
-                var context = c.Resolve<IComponentContext>();
-                return () =>
-                {
-                    var service = context.Resolve<IUserService>();
-                    var identity = service.CreateUserIdentityContext();
-                    return identity;
-                };
-            });
-
-            builder.Register<IUserIdentityContext>(c =>
-            {
-                return c.Resolve<Func<IUserIdentityContext>>()();
-            });
+            builder.RegisterModule<InfrastructureModule>();
+            builder.RegisterModule<MobileModule>();
 
             App.Container = builder.Build();
             ServiceLocator.SetLocatorProvider(() => new AutofacServiceLocator(Container));

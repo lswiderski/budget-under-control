@@ -5,10 +5,12 @@ using System.Threading.Tasks;
 using Autofac;
 using Autofac.Extensions.DependencyInjection;
 using Autofac.Extras.CommonServiceLocator;
+using BudgetUnderControl.API.IoC;
 using BudgetUnderControl.Common;
 using BudgetUnderControl.Common.Enums;
 using BudgetUnderControl.Domain;
 using BudgetUnderControl.Domain.Repositiories;
+using BudgetUnderControl.Infrastructure.IoC;
 using BudgetUnderControl.Infrastructure.Repositories;
 using BudgetUnderControl.Infrastructure.Services;
 using BudgetUnderControl.Infrastructure.Services.UserService;
@@ -44,54 +46,17 @@ namespace BudgetUnderControl.API
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1)
                 .AddJsonOptions(x => x.SerializerSettings.Formatting = Formatting.Indented);
 
-
             services.AddEntityFrameworkSqlServer()
                     .AddEntityFrameworkInMemoryDatabase()
                     .AddDbContext<Context>();
 
-            var dbPath = Settings.DB_SQLite_NAME;
-
             // Initialize Autofac builder
-            var builder = new ContainerBuilder();
-            //var contextConfig = new ContextConfig() { DbName = Settings.DB_SQLServer_NAME, DbPath = dbPath, Application = ApplicationType.SqlServerMigrations, DbPassword= "Qwerty!1", DbUser="buc" };
-            var contextConfig = new ContextConfig() { DbName = Settings.DB_SQLServer_NAME, DbPath = dbPath, Application = ApplicationType.Web, DbPassword= "Qwerty!1", DbUser="buc" };
-            // Register services
-            builder.RegisterInstance(contextConfig).As<IContextConfig>();
-            builder.RegisterType<WebContextFacade>().As<IContextFacade>().InstancePerLifetimeScope();
-            builder.RegisterInstance(new Context(contextConfig));
-            builder.RegisterType<BaseModel>().As<IBaseModel>().InstancePerLifetimeScope();
-            builder.RegisterType<AccountService>().As<IAccountService>().InstancePerLifetimeScope();
-            builder.RegisterType<CurrencyService>().As<ICurrencyService>().InstancePerLifetimeScope();
-            builder.RegisterType<CategoryService>().As<ICategoryService>().InstancePerLifetimeScope();
-            builder.RegisterType<AccountGroupService>().As<IAccountGroupService>().InstancePerLifetimeScope();
-            builder.RegisterType<TransactionService>().As<ITransactionService>().InstancePerLifetimeScope();
-            builder.RegisterType<CurrencyRepository>().As<ICurrencyRepository>().InstancePerLifetimeScope();
-            builder.RegisterType<AccountRepository>().As<IAccountRepository>().InstancePerLifetimeScope();
-            builder.RegisterType<AccountGroupRepository>().As<IAccountGroupRepository>().InstancePerLifetimeScope();
-            builder.RegisterType<TransactionRepository>().As<ITransactionRepository>().InstancePerLifetimeScope();
-            builder.RegisterType<CategoryRepository>().As<ICategoryRepository>().InstancePerLifetimeScope();
-            builder.RegisterType<UserRepository>().As<IUserRepository>().InstancePerLifetimeScope();
-            builder.RegisterType<SyncService>().As<ISyncService>().InstancePerLifetimeScope();
-            builder.RegisterType<UserService>().As<IUserService>().InstancePerLifetimeScope();
+            var builder = new ContainerBuilder();          
 
-            builder.Register<Func<IUserIdentityContext>>(c =>
-            {
-                var context = c.Resolve<IComponentContext>();
-                return () =>
-                {
-                    var service = context.Resolve<IUserService>();
-                    var identity = service.CreateUserIdentityContext();
-                    return identity;
-                };
-            });
-
-            builder.Register<IUserIdentityContext>(c =>
-            {
-                return c.Resolve<Func<IUserIdentityContext>>()();
-            });
+            builder.RegisterModule<InfrastructureModule>();
+            builder.RegisterModule<ApiModule>();
 
             builder.Populate(services);
-           // builder.RegisterModule(new ContainerModule(Configuration));
             ApplicationContainer = builder.Build();
 
             return new AutofacServiceProvider(ApplicationContainer);

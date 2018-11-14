@@ -14,6 +14,8 @@ using BudgetUnderControl.Model.Services;
 using CommonServiceLocator;
 using BudgetUnderControl.Common.Enums;
 using BudgetUnderControl.Infrastructure.Repositories;
+using BudgetUnderControl.Infrastructure.Services;
+using BudgetUnderControl.Infrastructure.Services.UserService;
 
 [assembly: XamlCompilation(XamlCompilationOptions.Compile)]
 namespace BudgetUnderControl
@@ -73,6 +75,7 @@ namespace BudgetUnderControl
             builder.RegisterType<CategoryRepository>().As<ICategoryRepository>().InstancePerLifetimeScope();
             builder.RegisterType<UserRepository>().As<IUserRepository>().InstancePerLifetimeScope();
             builder.RegisterType<SyncService>().As<ISyncService>().InstancePerLifetimeScope();
+            builder.RegisterType<UserService>().As<IUserService>().InstancePerLifetimeScope();
             builder.RegisterInstance<IFileHelper>(DependencyService.Get<IFileHelper>());
 
             builder.RegisterType<EditAccountViewModel>().As<IEditAccountViewModel>().InstancePerLifetimeScope();
@@ -85,7 +88,21 @@ namespace BudgetUnderControl
             builder.RegisterType<SettingsViewModel>().As<ISettingsViewModel>().InstancePerLifetimeScope();
             builder.RegisterType<OverviewViewModel>().As<IOverviewViewModel>().InstancePerLifetimeScope();
 
+            builder.Register<Func<IUserIdentityContext>>(c =>
+            {
+                var context = c.Resolve<IComponentContext>();
+                return () =>
+                {
+                    var service = context.Resolve<IUserService>();
+                    var identity = service.CreateUserIdentityContext();
+                    return identity;
+                };
+            });
 
+            builder.Register<IUserIdentityContext>(c =>
+            {
+                return c.Resolve<Func<IUserIdentityContext>>()();
+            });
 
             App.Container = builder.Build();
             ServiceLocator.SetLocatorProvider(() => new AutofacServiceLocator(Container));

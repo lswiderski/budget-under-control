@@ -1,5 +1,6 @@
 ﻿using BudgetUnderControl.Common.Contracts;
 using BudgetUnderControl.Domain.Repositiories;
+using BudgetUnderControl.Infrastructure.Services;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,7 +12,7 @@ namespace BudgetUnderControl.Model.Services
     public class CurrencyService : ICurrencyService
     {
         private readonly ICurrencyRepository currencyRepository;
-
+      
         public CurrencyService(ICurrencyRepository currencyRepository)
         {
             this.currencyRepository = currencyRepository;
@@ -19,8 +20,7 @@ namespace BudgetUnderControl.Model.Services
 
         public async Task<ICollection<CurrencyDTO>> GetCurriencesAsync()
         {
-            var currencies = await this.currencyRepository.GetCurriencesAsync();
-
+            var currencies = await this.currencyRepository.GetCurriencesAsync();       
             var dtos = currencies.Select(x => new CurrencyDTO
             {
                 Id = x.Id,

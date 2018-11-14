@@ -23,11 +23,11 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BudgetUnderControl.API", "B
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Database", "Database", "{E92D78B8-B723-45E4-8030-F8C86030D4D4}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BudgetUnderControl.Migrations.SqlServer", "Database\BudgetUnderControl.Migrations.SqlServer\BudgetUnderControl.Migrations.SqlServer.csproj", "{F5528CB8-9B5C-4BF5-B32C-CF069280F944}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BudgetUnderControl.Migrations.SqlServer", "Database\BudgetUnderControl.Migrations.SqlServer\BudgetUnderControl.Migrations.SqlServer.csproj", "{F5528CB8-9B5C-4BF5-B32C-CF069280F944}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BudgetUnderControl.Migrations.SQLite", "Database\BudgetUnderControl.Migrations.SQLite\BudgetUnderControl.Migrations.SQLite.csproj", "{BCD5202A-0DD5-4E05-8D54-305980336DDF}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BudgetUnderControl.Migrations.SQLite", "Database\BudgetUnderControl.Migrations.SQLite\BudgetUnderControl.Migrations.SQLite.csproj", "{BCD5202A-0DD5-4E05-8D54-305980336DDF}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BudgetUnderControl.Migrations.AndroidRunner", "Database\BudgetUnderControl.Migrations.AndroidRunner\BudgetUnderControl.Migrations.AndroidRunner.csproj", "{749676BC-D340-49A5-89F4-497891A60115}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BudgetUnderControl.Migrations.AndroidRunner", "Database\BudgetUnderControl.Migrations.AndroidRunner\BudgetUnderControl.Migrations.AndroidRunner.csproj", "{749676BC-D340-49A5-89F4-497891A60115}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -324,6 +324,7 @@ Global
 	GlobalSection(NestedProjects) = preSolution
 		{9F216BA6-9BD4-4F35-AEC5-8C73A9501BC0} = {43FFCFAA-62AC-4355-BDF0-97F7A093AA3D}
 		{1889C441-B018-4E70-83CA-BC34E4BCFA79} = {43FFCFAA-62AC-4355-BDF0-97F7A093AA3D}
+		{7EAC3AFA-BB03-49F7-AE33-1E61409E534B} = {43FFCFAA-62AC-4355-BDF0-97F7A093AA3D}
 		{F5528CB8-9B5C-4BF5-B32C-CF069280F944} = {E92D78B8-B723-45E4-8030-F8C86030D4D4}
 		{BCD5202A-0DD5-4E05-8D54-305980336DDF} = {E92D78B8-B723-45E4-8030-F8C86030D4D4}
 		{749676BC-D340-49A5-89F4-497891A60115} = {E92D78B8-B723-45E4-8030-F8C86030D4D4}

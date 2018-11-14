@@ -9,6 +9,7 @@ using BudgetUnderControl.Common.Enums;
 using BudgetUnderControl.Common.Contracts;
 using BudgetUnderControl.Domain;
 using BudgetUnderControl.Domain.Repositiories;
+using BudgetUnderControl.Infrastructure.Services;
 
 namespace BudgetUnderControl.Model.Services
 {
@@ -16,6 +17,7 @@ namespace BudgetUnderControl.Model.Services
     {
         private readonly ITransactionRepository transactionRepository;
         private readonly IUserRepository userRepository;
+
         public TransactionService(ITransactionRepository transactionRepository, IUserRepository userRepository)
         {
             this.transactionRepository = transactionRepository;

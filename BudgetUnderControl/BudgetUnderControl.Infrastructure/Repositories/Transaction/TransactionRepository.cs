@@ -1,6 +1,7 @@
 ﻿using BudgetUnderControl.Common.Contracts;
 using BudgetUnderControl.Domain;
 using BudgetUnderControl.Domain.Repositiories;
+using BudgetUnderControl.Infrastructure.Services;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
@@ -12,9 +13,13 @@ namespace BudgetUnderControl.Model
     public class TransactionRepository : BaseModel, ITransactionRepository
     {
         IAccountRepository accountRepository;
-        public TransactionRepository(IContextFacade context, IAccountRepository accountRepository) : base(context)
+        private IUserIdentityContext userIdentityContext;
+    
+        public TransactionRepository(IContextFacade context, IAccountRepository accountRepository,
+            IUserIdentityContext userIdentityContext) : base(context)
         {
             this.accountRepository = accountRepository;
+            this.userIdentityContext = userIdentityContext;
         }
 
         public async Task AddTransactionAsync(Transaction transaction)
@@ -68,7 +73,7 @@ namespace BudgetUnderControl.Model
         public async Task<ICollection<Transaction>> GetTransactionsAsync(TransactionsFilter filter = null)
         {
 
-            var query = this.Context.Transactions
+            var query = this.GetUserPartitionedQuery()
                         .Include(p => p.Category)
                         .Include(p => p.Account)
                         .ThenInclude(p => p.Currency)
@@ -111,7 +116,7 @@ namespace BudgetUnderControl.Model
 
         public async Task<Transaction> GetTransactionAsync(int id)
         {
-            var transaction = await this.Context.Transactions.Where(t => t.Id == id).SingleAsync();
+            var transaction = await this.GetUserPartitionedQuery().Where(t => t.Id == id).SingleAsync();
             return transaction;
         }
 
@@ -127,5 +132,11 @@ namespace BudgetUnderControl.Model
 
             return transfers;
         }
+
+        private IQueryable<Transaction> GetUserPartitionedQuery()
+        {
+            return this.Context.Transactions.Where(x => x.AddedById == this.userIdentityContext.UserId).AsQueryable();
+        }
+            
     }
 }

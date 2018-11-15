@@ -18,5 +18,6 @@ namespace BudgetUnderControl.Model.Services
 
         Task AddAccountAsync(AddAccountDTO account);
         Task EditAccountAsync(EditAccountDTO vm);
+        Task<bool> IsValidAsync(int accountId);
     }
 }

@@ -1,10 +1,12 @@
 ﻿using Autofac;
 using BudgetUnderControl.Domain.Repositiories;
+using BudgetUnderControl.Infrastructure.Commands;
 using BudgetUnderControl.Infrastructure.Repositories;
 using BudgetUnderControl.Infrastructure.Services;
 using BudgetUnderControl.Infrastructure.Services.UserService;
 using BudgetUnderControl.Model;
 using BudgetUnderControl.Model.Services;
+using FluentValidation;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -16,6 +18,7 @@ namespace BudgetUnderControl.Infrastructure.IoC
 
         protected override void Load(ContainerBuilder builder)
         {
+            builder.RegisterType<AddTransactionValidator>().As<IValidator<AddTransactionCommand>>().InstancePerDependency();
             builder.RegisterType<BaseModel>().As<IBaseModel>().InstancePerLifetimeScope();
             builder.RegisterType<AccountService>().As<IAccountService>().InstancePerLifetimeScope();
             builder.RegisterType<CurrencyService>().As<ICurrencyService>().InstancePerLifetimeScope();

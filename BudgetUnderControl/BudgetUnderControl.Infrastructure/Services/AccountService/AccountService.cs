@@ -163,5 +163,11 @@ namespace BudgetUnderControl.Model.Services
             this.Context.SaveChanges();
              */
         }
+
+        public async Task<bool> IsValidAsync(int accountId)
+        {
+            var currencies = await this.accountRepository.GetAccountsAsync();
+            return currencies.Any(x => x.Id == accountId);
+        }
     }
 }

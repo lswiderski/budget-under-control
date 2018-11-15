@@ -30,5 +30,11 @@ namespace BudgetUnderControl.Model.Services
 
             return dtos;
         }
+
+        public async Task<bool> IsValidAsync(int currencyId)
+        {
+            var currencies = await this.currencyRepository.GetCurriencesAsync();
+            return currencies.Any(x => x.Id == currencyId);
+        }
     }
 }

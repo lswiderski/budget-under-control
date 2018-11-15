@@ -1,5 +1,7 @@
 ﻿using BudgetUnderControl.Common.Contracts;
+using BudgetUnderControl.Infrastructure.Commands;
 using BudgetUnderControl.Model.Services;
+using FluentValidation.AspNetCore;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
@@ -14,7 +16,7 @@ namespace BudgetUnderControl.API.Controllers
     {
         private readonly ITransactionService transactionService;
 
-        public TransactionsController(ITransactionService transactionService)
+        public TransactionsController(ITransactionService transactionService, ICurrencyService currencyService)
         {
             this.transactionService = transactionService;
         }
@@ -26,6 +28,13 @@ namespace BudgetUnderControl.API.Controllers
             return transactions.ToList();
         }
 
-       
+        // POST api/transactions
+        [HttpPost]
+        public IActionResult Post([FromBody] AddTransactionCommand value)
+        {
+
+            return Ok();
+        }
+
     }
 }

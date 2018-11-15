@@ -10,6 +10,7 @@ using BudgetUnderControl.Common;
 using BudgetUnderControl.Common.Enums;
 using BudgetUnderControl.Domain;
 using BudgetUnderControl.Domain.Repositiories;
+using BudgetUnderControl.Infrastructure.Commands;
 using BudgetUnderControl.Infrastructure.IoC;
 using BudgetUnderControl.Infrastructure.Repositories;
 using BudgetUnderControl.Infrastructure.Services;
@@ -17,6 +18,8 @@ using BudgetUnderControl.Infrastructure.Services.UserService;
 using BudgetUnderControl.Model;
 using BudgetUnderControl.Model.Services;
 using CommonServiceLocator;
+using FluentValidation;
+using FluentValidation.AspNetCore;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
@@ -44,8 +47,8 @@ namespace BudgetUnderControl.API
         public IServiceProvider ConfigureServices(IServiceCollection services)
         {
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1)
-                .AddJsonOptions(x => x.SerializerSettings.Formatting = Formatting.Indented);
-
+                .AddJsonOptions(x => x.SerializerSettings.Formatting = Formatting.Indented)
+                .AddFluentValidation();
             services.AddEntityFrameworkSqlServer()
                     .AddEntityFrameworkInMemoryDatabase()
                     .AddDbContext<Context>();

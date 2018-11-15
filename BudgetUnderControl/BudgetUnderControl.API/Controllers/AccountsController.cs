@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using BudgetUnderControl.Common.Contracts;
+using BudgetUnderControl.Infrastructure.Commands;
 using BudgetUnderControl.Model.Services;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -20,18 +21,21 @@ namespace BudgetUnderControl.API.Controllers
             this.accountService = accountService;
         }
 
+        // GET api/accounts
         [HttpGet]
         public async Task<ActionResult<IEnumerable<AccountListItemDTO>>> Get()
         {
             var accounts = await this.accountService.GetAccountsWithBalanceAsync();
-            return accounts.ToList();
+            return Ok(accounts.ToList());
         }
 
+        // GET api/accounts/5
         [HttpGet("{id}")]
         public async Task<ActionResult<AccountDetailsDTO>> GetAccountDetails(int id)
         {
             var account = await this.accountService.GetAccountDetailsAsync(new TransactionsFilter {  AccountId = id});
-            return account;
+            return Ok(account);
         }
+
     }
 }

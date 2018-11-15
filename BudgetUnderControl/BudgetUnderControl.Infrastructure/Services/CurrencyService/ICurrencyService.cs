@@ -10,5 +10,6 @@ namespace BudgetUnderControl.Model.Services
     public interface ICurrencyService
     {
         Task<ICollection<CurrencyDTO>> GetCurriencesAsync();
+        Task<bool> IsValidAsync(int currencyId);
     }
 }

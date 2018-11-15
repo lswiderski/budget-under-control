@@ -46,7 +46,7 @@ namespace BudgetUnderControl.Model.Services
 
         public async Task<ICollection<AccountListItemDTO>> GetAccountsWithBalanceAsync()
         {
-            var accounts = await accountRepository.GetAccountsAsync();
+            var accounts = await accountRepository.GetAccountsAsync(true);
 
             var accountsWithBalance = accounts.Select(y => new AccountListItemDTO
             {
@@ -65,11 +65,11 @@ namespace BudgetUnderControl.Model.Services
 
         public async Task<AccountDetailsDTO> GetAccountDetailsAsync(TransactionsFilter filter)
         {
-            if(filter == null || !filter.AccountId.HasValue)
+            if(filter == null || filter.AccountsIds == null || !filter.AccountsIds.Any())
             {
                 throw new ArgumentNullException();
             }
-            var account = await accountRepository.GetAccountAsync(filter.AccountId.Value);
+            var account = await accountRepository.GetAccountAsync(filter.AccountsIds.First());
 
             var dto = new AccountDetailsDTO
             {
@@ -166,7 +166,7 @@ namespace BudgetUnderControl.Model.Services
 
         public async Task<bool> IsValidAsync(int accountId)
         {
-            var currencies = await this.accountRepository.GetAccountsAsync();
+            var currencies = await this.accountRepository.GetAccountsAsync(true);
             return currencies.Any(x => x.Id == accountId);
         }
     }

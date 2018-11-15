@@ -12,8 +12,8 @@ namespace BudgetUnderControl.Model
 {
     public class TransactionRepository : BaseModel, ITransactionRepository
     {
-        IAccountRepository accountRepository;
-        private IUserIdentityContext userIdentityContext;
+        private readonly IAccountRepository accountRepository;
+        private readonly IUserIdentityContext userIdentityContext;
     
         public TransactionRepository(IContextFacade context, IAccountRepository accountRepository,
             IUserIdentityContext userIdentityContext) : base(context)
@@ -80,13 +80,17 @@ namespace BudgetUnderControl.Model
                         .AsQueryable();
 
 
-            if (filter != null && filter.AccountId.HasValue)
+            if (filter != null && filter.AccountsIds != null && filter.AccountsIds.Any())
             {
-                var accounts = await this.accountRepository.GetSubAccountsAsync(filter.AccountId.Value);
-                accounts.Add(filter.AccountId.Value);
+                var accounts = await this.accountRepository.GetSubAccountsAsync(filter.AccountsIds);
+                accounts.AddRange(filter.AccountsIds);
                 accounts = accounts.Distinct().ToList();
 
                 query = query.Where(q => accounts.Contains(q.AccountId)).AsQueryable();
+            }
+            else
+            {
+                query = query.Where(q => q.Account.OwnerId == userIdentityContext.UserId).AsQueryable();
             }
 
             if (filter != null)

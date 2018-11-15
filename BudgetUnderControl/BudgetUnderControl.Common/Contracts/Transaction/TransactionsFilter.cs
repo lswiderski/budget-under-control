@@ -6,7 +6,7 @@ namespace BudgetUnderControl.Common.Contracts
 {
     public class TransactionsFilter
     {
-        public int? AccountId { get; set; }
+        public IEnumerable<int> AccountsIds { get; set; }
         public DateTime FromDate { get; set; }
         public DateTime ToDate { get; set; }
 

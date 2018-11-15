@@ -131,7 +131,7 @@ namespace BudgetUnderControl.ViewModel
         public async Task LoadAccount(int accountId)
         {
             this.accountId = accountId;
-            var account = await this.accountService.GetAccountDetailsAsync(new TransactionsFilter { AccountId = accountId, FromDate = FromDate, ToDate = ToDate });
+            var account = await this.accountService.GetAccountDetailsAsync(new TransactionsFilter { AccountsIds = new HashSet<int> { accountId }, FromDate = FromDate, ToDate = ToDate });
             Name = "Account: " + account.Name;
             ValueWithCurrency = account.AmountWithCurrency;
             Value = account.Amount;
@@ -141,9 +141,9 @@ namespace BudgetUnderControl.ViewModel
         }
         public async Task LoadTransactions(int accountId)
         {
-            Transactions = await transactionnService.GetTransactionsAsync(new TransactionsFilter { AccountId = accountId, FromDate = FromDate, ToDate = ToDate });
+            Transactions = await transactionnService.GetTransactionsAsync(new TransactionsFilter { AccountsIds = new HashSet<int> { accountId }, FromDate = FromDate, ToDate = ToDate });
 
-            var account = await this.accountService.GetAccountDetailsAsync(new TransactionsFilter { AccountId = accountId, FromDate = FromDate, ToDate = ToDate });
+            var account = await this.accountService.GetAccountDetailsAsync(new TransactionsFilter { AccountsIds = new HashSet<int> { accountId },  FromDate = FromDate, ToDate = ToDate });
             Expense = account.Expense.ToString();
             Income = account.Income.ToString();
         }

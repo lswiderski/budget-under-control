@@ -33,7 +33,7 @@ namespace BudgetUnderControl.API.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult<AccountDetailsDTO>> GetAccountDetails(int id)
         {
-            var account = await this.accountService.GetAccountDetailsAsync(new TransactionsFilter {  AccountId = id});
+            var account = await this.accountService.GetAccountDetailsAsync(new TransactionsFilter {AccountsIds = new HashSet<int> { id }});
             return Ok(account);
         }
 

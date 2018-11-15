@@ -60,14 +60,12 @@ namespace BudgetUnderControl.Model.Services
                 
             }).ToList();
             accountsWithBalance.ForEach(async x => { x.Balance = await accountRepository.GetActualBalanceAsync(x.Id); });
-
             return accountsWithBalance;
         }
 
         public async Task<AccountDetailsDTO> GetAccountDetailsAsync(TransactionsFilter filter)
         {
-            if(filter == null || !filter.AccountId.HasValue
-                || !filter.FromDate.HasValue || !filter.ToDate.HasValue)
+            if(filter == null || !filter.AccountId.HasValue)
             {
                 throw new ArgumentNullException();
             }
@@ -86,8 +84,8 @@ namespace BudgetUnderControl.Model.Services
                 Type = account.Type,
                 ParentAccountId = account.ParentAccountId,
                 Order = account.Order,
-                Income = await accountRepository.GetIncomeAsync(account.Id, filter.FromDate.Value, filter.ToDate.Value),
-                Expense = await accountRepository.GetExpenseAsync(account.Id, filter.FromDate.Value, filter.ToDate.Value)
+                Income = await accountRepository.GetIncomeAsync(account.Id, filter.FromDate, filter.ToDate),
+                Expense = await accountRepository.GetExpenseAsync(account.Id, filter.FromDate, filter.ToDate)
             };
 
             return dto;

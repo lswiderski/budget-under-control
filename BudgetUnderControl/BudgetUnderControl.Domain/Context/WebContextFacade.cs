@@ -24,9 +24,9 @@ namespace BudgetUnderControl.Domain
 
         public static ContextFacade Create(IContextConfig contextConfig) => new ContextFacade(contextConfig);
 
-        public WebContextFacade(Context context)
+        public WebContextFacade(IContextConfig contextConfig)
         {
-            _context = context;
+            _context = Context.Create(contextConfig);
         }
 
         public DbSet<Account> Accounts

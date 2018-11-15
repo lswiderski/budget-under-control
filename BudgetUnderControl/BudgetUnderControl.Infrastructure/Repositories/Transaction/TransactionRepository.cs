@@ -73,7 +73,7 @@ namespace BudgetUnderControl.Model
         public async Task<ICollection<Transaction>> GetTransactionsAsync(TransactionsFilter filter = null)
         {
 
-            var query = this.GetUserPartitionedQuery()
+            var query = this.Context.Transactions
                         .Include(p => p.Category)
                         .Include(p => p.Account)
                         .ThenInclude(p => p.Currency)
@@ -89,14 +89,10 @@ namespace BudgetUnderControl.Model
                 query = query.Where(q => accounts.Contains(q.AccountId)).AsQueryable();
             }
 
-            if (filter != null && filter.FromDate.HasValue)
+            if (filter != null)
             {
-                query = query.Where(q => q.Date >= filter.FromDate.Value).AsQueryable();
-            }
-
-            if (filter != null && filter.ToDate.HasValue)
-            {
-                query = query.Where(q => q.Date <= filter.ToDate.Value).AsQueryable();
+                query = query.Where(q => q.Date >= filter.FromDate).AsQueryable();
+                query = query.Where(q => q.Date <= filter.ToDate).AsQueryable();
             }
 
             var transactionsWithExtraProperty = (await (from t in query
@@ -116,7 +112,7 @@ namespace BudgetUnderControl.Model
 
         public async Task<Transaction> GetTransactionAsync(int id)
         {
-            var transaction = await this.GetUserPartitionedQuery().Where(t => t.Id == id).SingleAsync();
+            var transaction = await this.Context.Transactions.Where(t => t.Id == id).SingleAsync();
             return transaction;
         }
 
@@ -131,11 +127,6 @@ namespace BudgetUnderControl.Model
             var transfers = await this.Context.Transfers.ToListAsync();
 
             return transfers;
-        }
-
-        private IQueryable<Transaction> GetUserPartitionedQuery()
-        {
-            return this.Context.Transactions.Where(x => x.AddedById == this.userIdentityContext.UserId).AsQueryable();
         }
             
     }

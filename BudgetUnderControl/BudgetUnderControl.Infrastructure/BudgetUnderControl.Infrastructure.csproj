@@ -19,4 +19,7 @@
     <ProjectReference Include="..\BudgetUnderControl.Common\BudgetUnderControl.Common.csproj" />
     <ProjectReference Include="..\BudgetUnderControl.Domain\BudgetUnderControl.Domain.csproj" />
   </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Commands\" />
+  </ItemGroup>
 </Project>

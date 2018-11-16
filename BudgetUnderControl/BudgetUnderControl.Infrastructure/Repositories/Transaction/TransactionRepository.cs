@@ -120,6 +120,12 @@ namespace BudgetUnderControl.Model
             return transaction;
         }
 
+        public async Task<Transaction> GetTransactionAsync(Guid id)
+        {
+            var transaction = await this.Context.Transactions.Where(t => t.ExternalId == id).SingleAsync();
+            return transaction;
+        }
+
         public async Task<Transfer> GetTransferAsync(int transactionId)
         {
             var transfer = await this.Context.Transfers.Where(t => t.FromTransactionId == transactionId || t.ToTransactionId == transactionId).SingleOrDefaultAsync();

@@ -9,7 +9,7 @@ using System.Text;
 
 namespace BudgetUnderControl.Infrastructure.Commands
 {
-    public class AddTransaction: ICommand
+    public class AddTransaction : ICommand
     {
         public int AccountId { get; set; }
         public int? CategoryId { get; set; }
@@ -24,6 +24,12 @@ namespace BudgetUnderControl.Infrastructure.Commands
         public DateTime TransferDate { get; set; }
         public decimal TransferAmount { get; set; }
         public decimal Rate { get; set; }
+        public Guid ExternalId { get; }
+
+        public AddTransaction()
+        {
+            this.ExternalId = Guid.NewGuid();
+        }
     }
 
     public class AddTransactionValidator : AbstractValidator<AddTransaction>

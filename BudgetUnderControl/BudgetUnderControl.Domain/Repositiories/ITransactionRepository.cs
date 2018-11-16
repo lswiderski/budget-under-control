@@ -14,6 +14,7 @@ namespace BudgetUnderControl.Domain.Repositiories
         Task<ICollection<Transaction>> GetTransactionsAsync(TransactionsFilter filter = null);
         Task<ICollection<Transfer>> GetTransfersAsync();
         Task<Transaction> GetTransactionAsync(int id);
+        Task<Transaction> GetTransactionAsync(Guid id);
         Task AddTransactionAsync(Transaction transaction);
         Task UpdateAsync(Transaction transaction);
         Task AddTransferAsync(Transfer transfer);

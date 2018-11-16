@@ -8,6 +8,7 @@ using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using BudgetUnderControl.Infrastructure.Commands;
 
 namespace BudgetUnderControl.ViewModel
 {
@@ -327,6 +328,7 @@ namespace BudgetUnderControl.ViewModel
         private int id;
         private int? transferId;
         private int? transferTransactionId;
+        private Guid externalId;
 
         IList<string> types = new List<string>
         {
@@ -367,12 +369,15 @@ namespace BudgetUnderControl.ViewModel
         ITransactionService transactionService;
         IAccountService accountService;
         ICategoryService categoryService;
+        ICommandDispatcher commandDispatcher;
 
-        public EditTransactionViewModel(ITransactionService transactionService, IAccountService accountService, ICategoryService categoryService)
+        public EditTransactionViewModel(ITransactionService transactionService, IAccountService accountService, 
+            ICategoryService categoryService, ICommandDispatcher commandDispatcher)
         {
             this.transactionService = transactionService;
             this.accountService = accountService;
             this.categoryService = categoryService;
+            this.commandDispatcher = commandDispatcher;
             SelectedTypeIndex = 0;
             SelectedCategoryIndex = -1;
             SelectedAccountIndex = -1;
@@ -399,7 +404,7 @@ namespace BudgetUnderControl.ViewModel
 
         public async Task GetTransactionAsync(int transactionId)
         {
-            var dto = await transactionService.GetEditTransactionAsync(transactionId);
+            var dto = await transactionService.GetTransactionAsync(transactionId);
 
             Date = dto.Date.ToLocalTime();
             Time = Date.TimeOfDay;
@@ -428,6 +433,7 @@ namespace BudgetUnderControl.ViewModel
             id = dto.Id;
             transferId = dto.TransferId;
             transferTransactionId = dto.TransferTransactionId;
+            externalId = dto.ExternalId;
         }
 
         private int getCategoryIndex(int? categoryId)
@@ -480,7 +486,7 @@ namespace BudgetUnderControl.ViewModel
                 transferAmount *= (-1);
             }
 
-            var transactionDto = new EditTransactionDTO
+            var transactionCommand = new EditTransaction
             {
                 Name = Name,
                 Comment = Comment,
@@ -492,25 +498,30 @@ namespace BudgetUnderControl.ViewModel
                 TransferAmount = transferAmount,
                 Rate = decimal.Parse(TransferRate.Replace(',', '.'), NumberStyles.AllowDecimalPoint, CultureInfo.InvariantCulture),
                 ExtendedType = ExtendedType,
-                Type = Type,
-
                 Id=id,
                 TransferId=transferId,
                 TransferTransactionId=transferTransactionId,
+                ExternalId = externalId,
             };
 
             if(SelectedTransferAccountIndex>=0)
             {
-                transactionDto.TransferAccountId = Accounts[SelectedTransferAccountIndex].Id;
+                transactionCommand.TransferAccountId = Accounts[SelectedTransferAccountIndex].Id;
             }
-            
 
-            await transactionService.EditTransactionAsync(transactionDto);
+            using (var scope = App.Container.BeginLifetimeScope())
+            {
+                await commandDispatcher.DispatchAsync(transactionCommand, scope);
+            }
         }
 
         public async Task DeleteTransactionAsync()
         {
-            await transactionService.RemoveTransactionAsync(id);
+            var deleteCommand = new DeleteTransaction { Id = id };
+            using (var scope = App.Container.BeginLifetimeScope())
+            {
+                await commandDispatcher.DispatchAsync(deleteCommand, scope);
+            }
         }
 
     }

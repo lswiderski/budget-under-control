@@ -13,12 +13,15 @@ namespace BudgetUnderControl.Model.Services
     public interface ITransactionService
     {
         Task<ICollection<TransactionListItemDTO>> GetTransactionsAsync(TransactionsFilter filter = null);
+        Task<EditTransactionDTO> GetTransactionAsync(int transactionId);
+        Task<EditTransactionDTO> GetTransactionAsync(Guid transactionId);
+        Task EditTransactionAsync(EditTransaction command);
+        Task AddTransactionAsync(AddTransaction command);
+        Task DeleteTransactionAsync(DeleteTransaction command);
+
         Task<ObservableCollection<ObservableGroupCollection<string, TransactionListItemDTO>>> GetGroupedTransactionsAsync(TransactionsFilter filter = null);
         
-        Task EditTransactionAsync(EditTransactionDTO transaction);
-        Task RemoveTransactionAsync(int transactionId);
-        Task <EditTransactionDTO> GetEditTransactionAsync(int id);
-
-        Task AddTransactionAsync(AddTransaction command);
+       
+       
     }
 }

@@ -32,6 +32,7 @@ namespace BudgetUnderControl.Infrastructure.IoC
                 .InstancePerLifetimeScope();
 
             builder.RegisterType<AddTransactionValidator>().As<IValidator<AddTransaction>>().InstancePerLifetimeScope();
+            builder.RegisterType<EditTransactionValidator>().As<IValidator<EditTransaction>>().InstancePerLifetimeScope();
             builder.RegisterType<BaseModel>().As<IBaseModel>().InstancePerLifetimeScope();
             builder.RegisterType<AccountService>().As<IAccountService>().InstancePerLifetimeScope();
             builder.RegisterType<CurrencyService>().As<ICurrencyService>().InstancePerLifetimeScope();

@@ -24,5 +24,8 @@ namespace BudgetUnderControl.Common.Contracts
         public DateTime? TransferDate { get; set; }
         public decimal? TransferAmount { get; set; }
         public decimal? Rate { get; set; }
+        public Guid ExternalId { get; set; }
+        public DateTime CreatedOn { get; set; }
+        public DateTime? ModifiedOn { get; set; }
     }
 }

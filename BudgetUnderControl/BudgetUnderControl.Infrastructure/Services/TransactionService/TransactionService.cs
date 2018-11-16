@@ -21,12 +21,15 @@ namespace BudgetUnderControl.Model.Services
         private readonly ITransactionRepository transactionRepository;
         private readonly IUserRepository userRepository;
         private readonly IValidator<AddTransaction> addTransactionValidator;
-
-        public TransactionService(ITransactionRepository transactionRepository, IUserRepository userRepository, IValidator<AddTransaction> addTransactionValidator)
+        private readonly IValidator<EditTransaction> editTransactionValidator;
+        public TransactionService(ITransactionRepository transactionRepository, IUserRepository userRepository, 
+            IValidator<AddTransaction> addTransactionValidator,
+            IValidator<EditTransaction> editTransactionValidator)
         {
             this.transactionRepository = transactionRepository;
             this.userRepository = userRepository;
             this.addTransactionValidator = addTransactionValidator;
+            this.editTransactionValidator = editTransactionValidator;
         }
 
         public async Task<ICollection<TransactionListItemDTO>> GetTransactionsAsync(TransactionsFilter filter = null)
@@ -43,7 +46,10 @@ namespace BudgetUnderControl.Model.Services
                 Type = t.Type,
                 Name = t.Name,
                 CurrencyCode = t.Account.Currency.Code,
-                IsTransfer = t.IsTransfer
+                IsTransfer = t.IsTransfer,
+                ExternalId = t.ExternalId.ToString(),
+                ModifiedOn = t.ModifiedOn,
+                CreatedOn = t.CreatedOn,
             }).ToList();
 
             return dtos;
@@ -66,6 +72,8 @@ namespace BudgetUnderControl.Model.Services
                 CurrencyCode = t.Account.Currency.Code,
                 IsTransfer = t.IsTransfer,
                 ExternalId = t.ExternalId.ToString(),
+                ModifiedOn = t.ModifiedOn,
+                CreatedOn = t.CreatedOn,
             }).OrderByDescending(x => x.Date)
                                 .GroupBy(x => x.Date.ToString("d MMM yyyy"))
                                 .Select(x => new ObservableGroupCollection<string, TransactionListItemDTO>(x))
@@ -94,10 +102,10 @@ namespace BudgetUnderControl.Model.Services
                 {
                     command.TransferAmount *= (-1);
                 }
-                var transactionExpense = Transaction.Create(command.AccountId, TransactionType.Expense, command.Amount, command.Date, command.Name, command.Comment, user.Id, command.CategoryId);
+                var transactionExpense = Transaction.Create(command.AccountId, TransactionType.Expense, command.Amount, command.Date, command.Name, command.Comment, user.Id, command.CategoryId, command.ExternalId);
                 await transactionRepository.AddTransactionAsync(transactionExpense);
 
-                var transactionIncome = Transaction.Create(command.TransferAccountId, TransactionType.Income, command.TransferAmount, command.TransferDate, command.Name, command.Comment, user.Id, command.CategoryId);
+                var transactionIncome = Transaction.Create(command.TransferAccountId, TransactionType.Income, command.TransferAmount, command.TransferDate, command.Name, command.Comment, user.Id, command.CategoryId, command.ExternalId);
                 await transactionRepository.AddTransactionAsync(transactionIncome);
 
                 var transfer = Transfer.Create(transactionExpense.Id, transactionIncome.Id, command.Rate);
@@ -114,99 +122,118 @@ namespace BudgetUnderControl.Model.Services
                 {
                     command.Amount *= (-1);
                 }
-                var transaction = Transaction.Create(command.AccountId, type, command.Amount, command.Date, command.Name, command.Comment, user.Id, command.CategoryId);
+                var transaction = Transaction.Create(command.AccountId, type, command.Amount, command.Date, command.Name, command.Comment, user.Id, command.CategoryId, command.ExternalId);
 
                 await this.transactionRepository.AddTransactionAsync(transaction);
             }
         }
 
-        public async Task EditTransactionAsync(EditTransactionDTO arg)
+        public async Task EditTransactionAsync(EditTransaction command)
         {
-            var firstTransaction = await this.transactionRepository.GetTransactionAsync(arg.Id);
+            var results = editTransactionValidator.Validate(command);
+            if (!results.IsValid)
+            {
+                throw new ArgumentException(results.ToString("~"));
+            }
+
+            var firstTransaction = await this.transactionRepository.GetTransactionAsync(command.Id);
             Transaction secondTransaction = null;
 
             await transactionRepository.UpdateAsync(firstTransaction);
 
-            var transfer = await transactionRepository.GetTransferAsync(arg.Id); 
+            var transfer = await transactionRepository.GetTransferAsync(command.Id); 
 
             if (transfer != null)
             {
-                var secondTRansactionId = transfer.ToTransactionId != arg.Id ? transfer.ToTransactionId : transfer.FromTransactionId;
+                var secondTransactionId = transfer.ToTransactionId != command.Id ? transfer.ToTransactionId : transfer.FromTransactionId;
                 secondTransaction = await this.transactionRepository.GetTransactionAsync(transfer.ToTransactionId);
             }
 
             //remove transfer, no more transfer
-            if (arg.ExtendedType != ExtendedTransactionType.Transfer
+            if (command.ExtendedType != ExtendedTransactionType.Transfer
                 && transfer != null && secondTransaction != null)
             {
                 await this.transactionRepository.RemoveTransferAsync(transfer);
                 await this.transactionRepository.RemoveTransactionAsync(secondTransaction);
-                firstTransaction.Edit(arg.AccountId, arg.Type, arg.Amount, arg.Date, arg.Name, arg.Comment, arg.CategoryId);
+                firstTransaction.Edit(command.AccountId, command.ExtendedType.ToTransactionType(), command.Amount, command.Date, command.Name, command.Comment, command.CategoryId);
                 await this.transactionRepository.UpdateAsync(firstTransaction);
             }
             //new Transfer, no transfer before
-            else if (arg.ExtendedType == ExtendedTransactionType.Transfer
+            else if (command.ExtendedType == ExtendedTransactionType.Transfer
                 && transfer == null && secondTransaction == null)
             {
-                firstTransaction.Edit(arg.AccountId, TransactionType.Expense, arg.Amount, arg.Date, arg.Name, arg.Comment, arg.CategoryId);
+                firstTransaction.Edit(command.AccountId, TransactionType.Expense, command.Amount, command.Date, command.Name, command.Comment, command.CategoryId);
                 await this.transactionRepository.UpdateAsync(firstTransaction);
 
                 var user = await userRepository.GetFirstUserAsync();
 
-                var transactionIncome = Transaction.Create(arg.TransferAccountId.Value, TransactionType.Income, arg.TransferAmount.Value, arg.TransferDate.Value, arg.Name, arg.Comment, user.Id, arg.CategoryId);
+                var transactionIncome = Transaction.Create(command.TransferAccountId.Value, TransactionType.Income, command.TransferAmount.Value, command.TransferDate.Value, command.Name, command.Comment, user.Id, command.CategoryId, command.ExternalId);
                 await transactionRepository.AddTransactionAsync(transactionIncome);
 
-                var newTransfer = Transfer.Create(firstTransaction.Id, transactionIncome.Id, arg.Rate.Value);
+                var newTransfer = Transfer.Create(firstTransaction.Id, transactionIncome.Id, command.Rate.Value);
                 await transactionRepository.AddTransferAsync(newTransfer);
 
             }
 
             //edit transfer
-            else if (arg.ExtendedType == Common.Enums.ExtendedTransactionType.Transfer
+            else if (command.ExtendedType == ExtendedTransactionType.Transfer
                 && transfer != null && secondTransaction != null)
             {
-                firstTransaction.Edit(arg.AccountId, TransactionType.Expense, arg.Amount, arg.Date, arg.Name, arg.Comment, arg.CategoryId);
+                firstTransaction.Edit(command.AccountId, TransactionType.Expense, command.Amount, command.Date, command.Name, command.Comment, command.CategoryId);
                 await this.transactionRepository.UpdateAsync(firstTransaction);
 
-                secondTransaction.Edit(arg.TransferAccountId.Value, TransactionType.Income, arg.TransferAmount.Value, arg.TransferDate.Value, arg.Name, arg.Comment, arg.CategoryId);
+                secondTransaction.Edit(command.TransferAccountId.Value, TransactionType.Income, command.TransferAmount.Value, command.TransferDate.Value, command.Name, command.Comment, command.CategoryId);
                 await this.transactionRepository.UpdateAsync(firstTransaction);
 
-                transfer.SetRate(arg.Rate.Value);
+                transfer.SetRate(command.Rate.Value);
                 await transactionRepository.UpdateTransferAsync(transfer);
             }
             //just edit 1 transaction, no transfer before
-            else if (arg.ExtendedType != Common.Enums.ExtendedTransactionType.Transfer
+            else if (command.ExtendedType != ExtendedTransactionType.Transfer
                 && transfer == null && secondTransaction == null)
             {
                 decimal amount = 0;
 
-                if (arg.Type == TransactionType.Expense && arg.Amount > 0)
+                if (command.ExtendedType == ExtendedTransactionType.Expense && command.Amount > 0)
                 {
-                    amount = arg.Amount * (-1);
+                    amount = command.Amount * (-1);
                 }
-                else if (arg.Type == TransactionType.Income && arg.Amount < 0)
+                else if (command.ExtendedType == ExtendedTransactionType.Income && command.Amount < 0)
                 {
-                    amount = arg.Amount * (-1);
+                    amount = command.Amount * (-1);
                 }
                 else
                 {
-                    amount = arg.Amount;
+                    amount = command.Amount;
                 }
 
-                firstTransaction.Edit(arg.AccountId, arg.Type, amount, arg.Date, arg.Name, arg.Comment, arg.CategoryId);
+                firstTransaction.Edit(command.AccountId, command.ExtendedType.ToTransactionType(), amount, command.Date, command.Name, command.Comment, command.CategoryId);
                 await this.transactionRepository.UpdateAsync(firstTransaction);
             }
         }
 
-        public async Task RemoveTransactionAsync(int transactionId)
+        public async Task DeleteTransactionAsync(DeleteTransaction command)
         {
-            var firstTransaction = await this.transactionRepository.GetTransactionAsync(transactionId);
+            Transaction firstTransaction = null;
+            if (command.Id != null)
+            {
+                firstTransaction = await this.transactionRepository.GetTransactionAsync(command.Id.Value);
+            }
+            else if(command.ExternalId != null)
+            {
+                firstTransaction = await this.transactionRepository.GetTransactionAsync(command.ExternalId.Value);
+            }
+            else
+            {
+                throw new ArgumentException("No Transaction to remove");
+            }
+
             Transaction secondTransaction = null;
-            var transfer = await this.transactionRepository.GetTransferAsync(transactionId);
+            var transfer = await this.transactionRepository.GetTransferAsync(firstTransaction.Id);
 
             if (transfer != null)
             {
-                var secondTRansactionId = transfer.ToTransactionId != transactionId ? transfer.ToTransactionId : transfer.FromTransactionId;
+                var secondTRansactionId = transfer.ToTransactionId != firstTransaction.Id ? transfer.ToTransactionId : transfer.FromTransactionId;
                 secondTransaction = await this.transactionRepository.GetTransactionAsync(secondTRansactionId);
                 await transactionRepository.RemoveTransferAsync(transfer);
                 await transactionRepository.RemoveTransactionAsync(secondTransaction);
@@ -214,20 +241,33 @@ namespace BudgetUnderControl.Model.Services
             await transactionRepository.RemoveTransactionAsync(firstTransaction);
         }
 
-        public async Task<EditTransactionDTO> GetEditTransactionAsync(int id)
+        public async Task<EditTransactionDTO> GetTransactionAsync(Guid id)
         {
-            var t = await this.transactionRepository.GetTransactionAsync(id);
+            var transaction = await this.transactionRepository.GetTransactionAsync(id);
+            return await this.EntityToEditQueryAsync(transaction);
+        }
 
+        public async Task<EditTransactionDTO> GetTransactionAsync(int id)
+        {
+            var transaction = await this.transactionRepository.GetTransactionAsync(id);
+            return await this.EntityToEditQueryAsync(transaction);
+        }
+
+        private async Task<EditTransactionDTO> EntityToEditQueryAsync(Transaction entity)
+        {
             var transaction = new EditTransactionDTO
             {
-                AccountId = t.AccountId,
-                Amount = t.Amount,
-                CategoryId = t.CategoryId,
-                Comment = t.Comment,
-                Date = t.Date,
-                Id = t.Id,
-                Name = t.Name,
-                Type = t.Type,
+                AccountId = entity.AccountId,
+                Amount = entity.Amount,
+                CategoryId = entity.CategoryId,
+                Comment = entity.Comment,
+                Date = entity.Date,
+                Id = entity.Id,
+                Name = entity.Name,
+                Type = entity.Type,
+                ExternalId = entity.ExternalId,
+                ModifiedOn = entity.ModifiedOn,
+                CreatedOn = entity.CreatedOn,
             };
 
             transaction.ExtendedType = transaction.Type == TransactionType.Income ? ExtendedTransactionType.Income : ExtendedTransactionType.Expense;
@@ -280,5 +320,6 @@ namespace BudgetUnderControl.Model.Services
 
             return transaction;
         }
+
     }
 }

@@ -86,6 +86,14 @@ namespace BudgetUnderControl.Model.Services
 
             if(command.Type == ExtendedTransactionType.Transfer)
             {
+                if (command.Amount > 0)
+                {
+                    command.Amount *= (-1);
+                }
+                if (command.TransferAmount < 0)
+                {
+                    command.TransferAmount *= (-1);
+                }
                 var transactionExpense = Transaction.Create(command.AccountId, TransactionType.Expense, command.Amount, command.Date, command.Name, command.Comment, user.Id, command.CategoryId);
                 await transactionRepository.AddTransactionAsync(transactionExpense);
 
@@ -97,7 +105,16 @@ namespace BudgetUnderControl.Model.Services
             }
             else
             {
-                var transaction = Transaction.Create(command.AccountId, command.Type.ToTransactionType(), command.Amount, command.Date, command.Name, command.Comment, user.Id, command.CategoryId);
+                var type = command.Type.ToTransactionType();
+                if (type == TransactionType.Expense && command.Amount > 0)
+                {
+                    command.Amount *= (-1);
+                }
+                else if (type == TransactionType.Income && command.Amount < 0)
+                {
+                    command.Amount *= (-1);
+                }
+                var transaction = Transaction.Create(command.AccountId, type, command.Amount, command.Date, command.Name, command.Comment, user.Id, command.CategoryId);
 
                 await this.transactionRepository.AddTransactionAsync(transaction);
             }

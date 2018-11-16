@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Autofac;
 using Autofac.Extensions.DependencyInjection;
 using Autofac.Extras.CommonServiceLocator;
+using BudgetUnderControl.API.Framework;
 using BudgetUnderControl.API.IoC;
 using BudgetUnderControl.Common;
 using BudgetUnderControl.Common.Enums;
@@ -68,6 +69,7 @@ namespace BudgetUnderControl.API
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IHostingEnvironment env)
         {
+            
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
@@ -77,8 +79,10 @@ namespace BudgetUnderControl.API
                 app.UseHsts();
             }
 
-            app.UseHttpsRedirection();
+            //app.UseHttpsRedirection();
+            app.UseCustomExceptionHandler();
             app.UseMvc();
+            //;
         }
     }
 }

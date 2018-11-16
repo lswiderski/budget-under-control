@@ -20,12 +20,13 @@ namespace BudgetUnderControl.Model.Services
     {
         private readonly ITransactionRepository transactionRepository;
         private readonly IUserRepository userRepository;
-       
+        private readonly IValidator<AddTransaction> addTransactionValidator;
 
-        public TransactionService(ITransactionRepository transactionRepository, IUserRepository userRepository)
+        public TransactionService(ITransactionRepository transactionRepository, IUserRepository userRepository, IValidator<AddTransaction> addTransactionValidator)
         {
             this.transactionRepository = transactionRepository;
             this.userRepository = userRepository;
+            this.addTransactionValidator = addTransactionValidator;
         }
 
         public async Task<ICollection<TransactionListItemDTO>> GetTransactionsAsync(TransactionsFilter filter = null)
@@ -75,6 +76,12 @@ namespace BudgetUnderControl.Model.Services
 
         public async Task AddTransactionAsync(AddTransaction command)
         {
+            var results = addTransactionValidator.Validate(command);
+            if(!results.IsValid)
+            {
+                throw new ArgumentException(results.ToString("~"));
+            }
+
             var user = await userRepository.GetFirstUserAsync();
 
             if(command.Type == ExtendedTransactionType.Transfer)

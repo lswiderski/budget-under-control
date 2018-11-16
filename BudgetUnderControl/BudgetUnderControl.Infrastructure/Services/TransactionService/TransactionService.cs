@@ -10,6 +10,9 @@ using BudgetUnderControl.Common.Contracts;
 using BudgetUnderControl.Domain;
 using BudgetUnderControl.Domain.Repositiories;
 using BudgetUnderControl.Infrastructure.Services;
+using BudgetUnderControl.Infrastructure.Commands;
+using BudgetUnderControl.Common.Extensions;
+using FluentValidation;
 
 namespace BudgetUnderControl.Model.Services
 {
@@ -17,6 +20,7 @@ namespace BudgetUnderControl.Model.Services
     {
         private readonly ITransactionRepository transactionRepository;
         private readonly IUserRepository userRepository;
+       
 
         public TransactionService(ITransactionRepository transactionRepository, IUserRepository userRepository)
         {
@@ -69,12 +73,27 @@ namespace BudgetUnderControl.Model.Services
             return new ObservableCollection<ObservableGroupCollection<string, TransactionListItemDTO>>(dtos);
         }
 
-        public async Task AddTransactionAsync(AddTransactionDTO item)
+        public async Task AddTransactionAsync(AddTransaction command)
         {
             var user = await userRepository.GetFirstUserAsync();
-            var transaction = Transaction.Create(item.AccountId, item.Type, item.Amount, item.CreatedOn, item.Name, item.Comment, user.Id, item.CategoryId);
 
-            await this.transactionRepository.AddTransactionAsync(transaction);
+            if(command.Type == ExtendedTransactionType.Transfer)
+            {
+                var transactionExpense = Transaction.Create(command.AccountId, TransactionType.Expense, command.Amount, command.Date, command.Name, command.Comment, user.Id, command.CategoryId);
+                await transactionRepository.AddTransactionAsync(transactionExpense);
+
+                var transactionIncome = Transaction.Create(command.TransferAccountId, TransactionType.Income, command.TransferAmount, command.TransferDate, command.Name, command.Comment, user.Id, command.CategoryId);
+                await transactionRepository.AddTransactionAsync(transactionIncome);
+
+                var transfer = Transfer.Create(transactionExpense.Id, transactionIncome.Id, command.Rate);
+                await transactionRepository.AddTransferAsync(transfer);
+            }
+            else
+            {
+                var transaction = Transaction.Create(command.AccountId, command.Type.ToTransactionType(), command.Amount, command.Date, command.Name, command.Comment, user.Id, command.CategoryId);
+
+                await this.transactionRepository.AddTransactionAsync(transaction);
+            }
         }
 
         public async Task EditTransactionAsync(EditTransactionDTO arg)
@@ -169,20 +188,6 @@ namespace BudgetUnderControl.Model.Services
                 await transactionRepository.RemoveTransactionAsync(secondTransaction);
             }
             await transactionRepository.RemoveTransactionAsync(firstTransaction);
-        }
-
-        public async Task AddTransferAsync(AddTransferDTO arg)
-        {
-            var user = await userRepository.GetFirstUserAsync();
-            var transactionExpense = Transaction.Create(arg.AccountId, TransactionType.Income, arg.Amount, arg.Date, arg.Name, arg.Comment, user.Id, arg.CategoryId);
-            await transactionRepository.AddTransactionAsync(transactionExpense);
-
-            var transactionIncome = Transaction.Create(arg.TransferAccountId, TransactionType.Income, arg.TransferAmount, arg.TransferDate, arg.Name, arg.Comment,user.Id, arg.CategoryId);
-            await transactionRepository.AddTransactionAsync(transactionIncome);
-
-            var transfer = Transfer.Create(transactionExpense.Id, transactionIncome.Id, arg.Rate);
-            await transactionRepository.AddTransferAsync(transfer);
-
         }
 
         public async Task<EditTransactionDTO> GetEditTransactionAsync(int id)

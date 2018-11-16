@@ -1,5 +1,6 @@
 ﻿using BudgetUnderControl.Common;
 using BudgetUnderControl.Common.Contracts;
+using BudgetUnderControl.Infrastructure.Commands;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -13,10 +14,11 @@ namespace BudgetUnderControl.Model.Services
     {
         Task<ICollection<TransactionListItemDTO>> GetTransactionsAsync(TransactionsFilter filter = null);
         Task<ObservableCollection<ObservableGroupCollection<string, TransactionListItemDTO>>> GetGroupedTransactionsAsync(TransactionsFilter filter = null);
-        Task AddTransactionAsync(AddTransactionDTO transaction);
+        
         Task EditTransactionAsync(EditTransactionDTO transaction);
         Task RemoveTransactionAsync(int transactionId);
         Task <EditTransactionDTO> GetEditTransactionAsync(int id);
-        Task AddTransferAsync(AddTransferDTO arg);
+
+        Task AddTransactionAsync(AddTransaction command);
     }
 }

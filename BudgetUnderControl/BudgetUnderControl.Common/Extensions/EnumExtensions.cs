@@ -1,4 +1,5 @@
 ﻿using BudgetUnderControl.Common.Attributes;
+using BudgetUnderControl.Common.Enums;
 using System;
 using System.Collections.Generic;
 using System.Reflection;
@@ -33,6 +34,32 @@ namespace BudgetUnderControl.Common.Extensions
             T result;
             Enum.TryParse(value, out result);
             return result;
+        }
+
+        public static TransactionType ToTransactionType(this ExtendedTransactionType value)
+        {
+            switch (value)
+            {
+                case ExtendedTransactionType.Income:
+                    return TransactionType.Income;
+                case ExtendedTransactionType.Expense:
+                    return TransactionType.Expense;
+                default:
+                    throw new ArgumentException();
+            }
+        }
+
+        public static ExtendedTransactionType ToExtendedTransactionType(this TransactionType value)
+        {
+            switch (value)
+            {
+                case TransactionType.Income:
+                    return ExtendedTransactionType.Income;
+                case TransactionType.Expense:
+                    return ExtendedTransactionType.Expense;
+                default:
+                    throw new ArgumentException();
+            }
         }
     }
 }

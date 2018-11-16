@@ -9,6 +9,7 @@ using BudgetUnderControl.Model.Services;
 using FluentValidation;
 using System;
 using System.Collections.Generic;
+using System.Reflection;
 using System.Text;
 
 namespace BudgetUnderControl.Infrastructure.IoC
@@ -18,7 +19,19 @@ namespace BudgetUnderControl.Infrastructure.IoC
 
         protected override void Load(ContainerBuilder builder)
         {
-            builder.RegisterType<AddTransactionValidator>().As<IValidator<AddTransactionCommand>>().InstancePerDependency();
+            var assembly = typeof(InfrastructureModule)
+            .GetTypeInfo()
+            .Assembly;
+
+            builder.RegisterAssemblyTypes(assembly)
+                    .AsClosedTypesOf(typeof(ICommandHandler<>))
+                    .InstancePerLifetimeScope();
+
+            builder.RegisterType<CommandDispatcher>()
+                .As<ICommandDispatcher>()
+                .InstancePerLifetimeScope();
+
+            builder.RegisterType<AddTransactionValidator>().As<IValidator<AddTransaction>>().InstancePerLifetimeScope();
             builder.RegisterType<BaseModel>().As<IBaseModel>().InstancePerLifetimeScope();
             builder.RegisterType<AccountService>().As<IAccountService>().InstancePerLifetimeScope();
             builder.RegisterType<CurrencyService>().As<ICurrencyService>().InstancePerLifetimeScope();

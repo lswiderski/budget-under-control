@@ -12,4 +12,5 @@ namespace BudgetUnderControl.Common.Enums
         Expense = 1,
         Transfer = 2
     }
+
 }

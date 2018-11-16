@@ -9,6 +9,8 @@ using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using BudgetUnderControl.Infrastructure.Commands;
+using BudgetUnderControl.Common.Extensions;
 
 namespace BudgetUnderControl.ViewModel
 {
@@ -342,14 +344,14 @@ namespace BudgetUnderControl.ViewModel
         List<CategoryListItemDTO> categories;
         public List<CategoryListItemDTO> Categories => categories;
 
-        ITransactionService transactionService;
         IAccountService accountService;
         ICategoryService categoryService;
-        public AddTransactionViewModel(ITransactionService transactionService, IAccountService accountRepository, ICategoryService categoryService)
+        ICommandDispatcher commandDispatcher;
+        public AddTransactionViewModel(IAccountService accountRepository, ICategoryService categoryService, ICommandDispatcher commandDispatcher)
         {
-            this.transactionService = transactionService;
             this.accountService = accountRepository;
             this.categoryService = categoryService;
+            this.commandDispatcher = commandDispatcher;
             SelectedTypeIndex = 0;
             SelectedCategoryIndex = -1;
             SelectedAccountIndex = -1;
@@ -393,18 +395,22 @@ namespace BudgetUnderControl.ViewModel
                 {
                     amount *= (-1);
                 }
-                var transaction = new AddTransactionDTO
+                var transaction = new AddTransaction
                 {
                     Name = Name,
                     Comment = Comment,
-                    CreatedOn = date,
+                    Date = date,
                     Amount = amount,
                     CategoryId = SelectedCategoryIndex >= 0  ? Categories[SelectedCategoryIndex].Id : (int?)null,
                     AccountId = Accounts[selectedAccountIndex].Id,
-                    Type = Type,
+                    Type = Type.ToExtendedTransactionType(),
                 };
 
-                await transactionService.AddTransactionAsync(transaction);
+                using (var scope = App.Container.BeginLifetimeScope())
+                {
+                    await commandDispatcher.DispatchAsync(transaction, scope);
+                }
+                
             }
         }
 
@@ -426,7 +432,7 @@ namespace BudgetUnderControl.ViewModel
                 transferAmount *= (-1);
             }
 
-            var transfer = new AddTransferDTO
+            var addTransactionCommand = new AddTransaction
             {
                 Name = Name,
                 Comment = Comment,
@@ -438,9 +444,13 @@ namespace BudgetUnderControl.ViewModel
                 TransferAmount = transferAmount,
                 Rate = decimal.Parse(TransferRate.Replace(',', '.'), NumberStyles.AllowDecimalPoint, CultureInfo.InvariantCulture),
                 TransferAccountId = Accounts[selectedTransferAccountIndex].Id,
+                Type = ExtendedTransactionType.Transfer,
             };
 
-            await transactionService.AddTransferAsync(transfer);
+            using (var scope = App.Container.BeginLifetimeScope())
+            {
+                await commandDispatcher.DispatchAsync(addTransactionCommand, scope);
+            }
         }
     }
 }

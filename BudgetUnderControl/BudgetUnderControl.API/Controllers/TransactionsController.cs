@@ -12,11 +12,11 @@ namespace BudgetUnderControl.API.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class TransactionsController : ControllerBase
+    public class TransactionsController : ApiControllerBase
     {
         private readonly ITransactionService transactionService;
 
-        public TransactionsController(ITransactionService transactionService, ICurrencyService currencyService)
+        public TransactionsController(ITransactionService transactionService, ICurrencyService currencyService, ICommandDispatcher commandDispatcher) : base(commandDispatcher)
         {
             this.transactionService = transactionService;
         }
@@ -30,10 +30,11 @@ namespace BudgetUnderControl.API.Controllers
 
         // POST api/transactions
         [HttpPost]
-        public IActionResult Post([FromBody] AddTransactionCommand value)
+        public async Task<IActionResult> Post([FromBody] AddTransaction command)
         {
+            await this.DispatchAsync(command);
 
-            return Ok();
+            return Created($"transactions/{command.Name}", new object());
         }
 
     }

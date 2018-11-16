@@ -9,7 +9,7 @@ using System.Text;
 
 namespace BudgetUnderControl.Infrastructure.Commands
 {
-    public class AddTransactionCommand
+    public class AddTransaction: ICommand
     {
         public int AccountId { get; set; }
         public int? CategoryId { get; set; }
@@ -26,7 +26,7 @@ namespace BudgetUnderControl.Infrastructure.Commands
         public decimal Rate { get; set; }
     }
 
-    public class AddTransactionValidator : AbstractValidator<AddTransactionCommand>
+    public class AddTransactionValidator : AbstractValidator<AddTransaction>
     {
         public AddTransactionValidator(ICategoryService categoryService, IAccountService accountService)
         {
@@ -66,7 +66,7 @@ namespace BudgetUnderControl.Infrastructure.Commands
 
             RuleFor(t => t.TransferAccountId).NotEmpty().When(t => t.Type == ExtendedTransactionType.Transfer).CustomAsync(async (id, context, cancel) =>
             {
-                if ((context.InstanceToValidate as AddTransactionCommand).Type == ExtendedTransactionType.Transfer)
+                if ((context.InstanceToValidate as AddTransaction).Type == ExtendedTransactionType.Transfer)
                 {
                     var isValid = await accountService.IsValidAsync(id);
                     if (!isValid)

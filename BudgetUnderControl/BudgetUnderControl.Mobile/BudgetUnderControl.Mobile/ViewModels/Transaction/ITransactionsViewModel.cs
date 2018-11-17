@@ -1,6 +1,6 @@
 ﻿using BudgetUnderControl.Common;
 using BudgetUnderControl.Common.Contracts;
-using BudgetUnderControl.Model;
+using BudgetUnderControl.Infrastructure;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;

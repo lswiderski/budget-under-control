@@ -10,7 +10,7 @@ using System.Text;
 using System.Threading.Tasks;
 using BudgetUnderControl.Infrastructure.Services;
 
-namespace BudgetUnderControl.Model
+namespace BudgetUnderControl.Infrastructure
 {
     public class AccountRepository : BaseModel, IAccountRepository
     {
@@ -75,6 +75,18 @@ namespace BudgetUnderControl.Model
             var acc = await (from account in this.Context.Accounts
                              join currency in this.Context.Currencies on account.CurrencyId equals currency.Id
                              where account.Id == id
+                             select account
+                       ).Include(p => p.Currency)
+                       .FirstOrDefaultAsync();
+
+            return acc;
+        }
+
+        public async Task<Account> GetAccountAsync(Guid id)
+        {
+            var acc = await (from account in this.Context.Accounts
+                             join currency in this.Context.Currencies on account.CurrencyId equals currency.Id
+                             where account.ExternalId == id
                              select account
                        ).Include(p => p.Currency)
                        .FirstOrDefaultAsync();
@@ -170,6 +182,24 @@ namespace BudgetUnderControl.Model
                 && accountsIds.Contains(x.ParentAccountId.Value)
                 && x.IsActive == true)
                 .Select(x => x.Id)
+                .ToListAsync();
+            return subAccounts;
+        }
+
+        public async Task<List<Guid>> GetSubAccountsAsync(IEnumerable<Guid> accountsExternalIds, bool? active = null)
+        {
+            var accountsIds = await this.Context.Accounts.Where(x => accountsExternalIds.Contains(x.ExternalId)).Select(x => x.Id).ToListAsync();
+            var query = this.Context.Accounts.AsQueryable();
+            if (active.HasValue)
+            {
+                query = query.Where(a => a.IsActive == active).AsQueryable();
+            }
+
+            var subAccounts = await query
+                .Where(x => x.ParentAccountId.HasValue
+                && accountsIds.Contains(x.ParentAccountId.Value)
+                && x.IsActive == true)
+                .Select(x => x.ExternalId)
                 .ToListAsync();
             return subAccounts;
         }

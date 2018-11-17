@@ -1,5 +1,5 @@
 ﻿using BudgetUnderControl.Common.Contracts;
-using BudgetUnderControl.Model;
+using BudgetUnderControl.Infrastructure;
 using System;
 using System.Collections.Generic;
 using System.Linq;

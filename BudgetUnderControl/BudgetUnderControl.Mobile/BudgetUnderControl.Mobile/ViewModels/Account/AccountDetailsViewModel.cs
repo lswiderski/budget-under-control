@@ -1,6 +1,6 @@
 ﻿using BudgetUnderControl.Common.Contracts;
-using BudgetUnderControl.Model;
-using BudgetUnderControl.Model.Services;
+using BudgetUnderControl.Infrastructure;
+using BudgetUnderControl.Infrastructure.Services;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -17,7 +17,7 @@ namespace BudgetUnderControl.ViewModel
         ITransactionService transactionnService;
         public TransactionListItemDTO SelectedTransaction { get; set; }
 
-        int accountId;
+        Guid accountId;
 
         private string name;
         public string Name
@@ -128,10 +128,10 @@ namespace BudgetUnderControl.ViewModel
             ToDate = new DateTime(now.Year, now.Month, DateTime.DaysInMonth(now.Year, now.Month),23,59,59);
         }
 
-        public async Task LoadAccount(int accountId)
+        public async Task LoadAccount(Guid accountId)
         {
             this.accountId = accountId;
-            var account = await this.accountService.GetAccountDetailsAsync(new TransactionsFilter { AccountsIds = new HashSet<int> { accountId }, FromDate = FromDate, ToDate = ToDate });
+            var account = await this.accountService.GetAccountDetailsAsync(new TransactionsFilter { AccountsExternalIds = new HashSet<Guid> { accountId }, FromDate = FromDate, ToDate = ToDate });
             Name = "Account: " + account.Name;
             ValueWithCurrency = account.AmountWithCurrency;
             Value = account.Amount;
@@ -139,11 +139,11 @@ namespace BudgetUnderControl.ViewModel
             Income = account.Income.ToString();
 
         }
-        public async Task LoadTransactions(int accountId)
+        public async Task LoadTransactions(Guid accountId)
         {
-            Transactions = await transactionnService.GetTransactionsAsync(new TransactionsFilter { AccountsIds = new HashSet<int> { accountId }, FromDate = FromDate, ToDate = ToDate });
+            Transactions = await transactionnService.GetTransactionsAsync(new TransactionsFilter { AccountsExternalIds = new HashSet<Guid> { accountId }, FromDate = FromDate, ToDate = ToDate });
 
-            var account = await this.accountService.GetAccountDetailsAsync(new TransactionsFilter { AccountsIds = new HashSet<int> { accountId },  FromDate = FromDate, ToDate = ToDate });
+            var account = await this.accountService.GetAccountDetailsAsync(new TransactionsFilter { AccountsExternalIds = new HashSet<Guid> { accountId },  FromDate = FromDate, ToDate = ToDate });
             Expense = account.Expense.ToString();
             Income = account.Income.ToString();
         }

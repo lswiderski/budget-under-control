@@ -8,7 +8,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace BudgetUnderControl.Model
+namespace BudgetUnderControl.Infrastructure
 {
     public class TransactionRepository : BaseModel, ITransactionRepository
     {
@@ -87,6 +87,14 @@ namespace BudgetUnderControl.Model
                 accounts = accounts.Distinct().ToList();
 
                 query = query.Where(q => accounts.Contains(q.AccountId)).AsQueryable();
+            }
+            else if(filter != null && filter.AccountsExternalIds != null && filter.AccountsExternalIds.Any())
+            {
+                var accounts = await this.accountRepository.GetSubAccountsAsync(filter.AccountsExternalIds);
+                accounts.AddRange(filter.AccountsExternalIds);
+                accounts = accounts.Distinct().ToList();
+
+                query = query.Where(q => accounts.Contains(q.Account.ExternalId)).AsQueryable();
             }
             else
             {

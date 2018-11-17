@@ -7,7 +7,7 @@ using BudgetUnderControl.Domain;
 using BudgetUnderControl.Common;
 using Microsoft.EntityFrameworkCore;
 
-namespace BudgetUnderControl.Model
+namespace BudgetUnderControl.Infrastructure
 {
     public class BaseModel : IBaseModel
     {

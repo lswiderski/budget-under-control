@@ -14,7 +14,7 @@ using BudgetUnderControl.Infrastructure.Commands;
 using BudgetUnderControl.Common.Extensions;
 using FluentValidation;
 
-namespace BudgetUnderControl.Model.Services
+namespace BudgetUnderControl.Infrastructure.Services
 {
     public class TransactionService : ITransactionService
     {

@@ -1,6 +1,6 @@
 ﻿using BudgetUnderControl.Common.Contracts;
 using BudgetUnderControl.Infrastructure.Commands;
-using BudgetUnderControl.Model.Services;
+using BudgetUnderControl.Infrastructure.Services;
 using FluentValidation.AspNetCore;
 using Microsoft.AspNetCore.Mvc;
 using System;

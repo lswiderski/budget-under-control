@@ -1,4 +1,4 @@
-﻿using BudgetUnderControl.Model.Services;
+﻿using BudgetUnderControl.Infrastructure.Services;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace BudgetUnderControl.Infrastructure.Commands
 {
-    class EditTransactionHandler : ICommandHandler<EditTransaction>
+    public class EditTransactionHandler : ICommandHandler<EditTransaction>
     {
         private readonly ITransactionService transactionService;
         public EditTransactionHandler(ITransactionService transactionService)

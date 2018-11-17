@@ -1,4 +1,4 @@
-﻿using BudgetUnderControl.Model.Services;
+﻿using BudgetUnderControl.Infrastructure.Services;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace BudgetUnderControl.Infrastructure.Commands.Transaction
 {
-    class DeleteTransactionHandler : ICommandHandler<DeleteTransaction>
+    public class DeleteTransactionHandler : ICommandHandler<DeleteTransaction>
     {
         private readonly ITransactionService transactionService;
         public DeleteTransactionHandler(ITransactionService transactionService)

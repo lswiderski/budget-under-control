@@ -9,6 +9,7 @@ namespace BudgetUnderControl.Common.Contracts
     public class AccountListItemDTO
     {
         public int Id { get; set; }
+        public Guid ExternalId { get; set; }
         public int CurrencyId { get; set; }
         public string Currency { get; set; }
         public string CurrencySymbol { get; set; }

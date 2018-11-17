@@ -6,7 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace BudgetUnderControl.Model.Services
+namespace BudgetUnderControl.Infrastructure.Services
 {
     public class CategoryService : ICategoryService
     {

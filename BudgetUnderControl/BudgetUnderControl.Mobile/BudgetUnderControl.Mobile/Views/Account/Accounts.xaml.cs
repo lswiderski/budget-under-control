@@ -1,5 +1,5 @@
 ﻿using Autofac;
-using BudgetUnderControl.Model;
+using BudgetUnderControl.Infrastructure;
 using BudgetUnderControl.ViewModel;
 using System;
 using System.Collections;
@@ -69,7 +69,7 @@ namespace BudgetUnderControl.Views
 
         void OnItemSelected(object sender, SelectedItemChangedEventArgs e)
         {
-            int accountId = vm.SelectedAccount.Id;
+            Guid accountId = vm.SelectedAccount.ExternalId;
             App.MasterPage.NavigateTo(typeof(AccountDetails), accountId);
         }
 

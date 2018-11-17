@@ -9,5 +9,6 @@ namespace BudgetUnderControl.Domain.Repositiories
     public interface IAccountGroupRepository
     {
         Task<ICollection<AccountGroup>> GetAccountGroupsAsync();
+        Task<AccountGroup> GetAccountGroupAsync(Guid id);
     }
 }

@@ -1,5 +1,5 @@
 ﻿using BudgetUnderControl.Common.Contracts;
-using BudgetUnderControl.Model;
+using BudgetUnderControl.Infrastructure;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -13,12 +13,12 @@ namespace BudgetUnderControl.ViewModel
         string Name { get; set; }
         string ValueWithCurrency { get; set; }
         decimal Value { get; set; }
-        Task LoadAccount(int accountId);
+        Task LoadAccount(Guid accountId);
         Task RemoveAccount();
         ICollection<TransactionListItemDTO> Transactions { get; set; }
         TransactionListItemDTO SelectedTransaction { get; set; }
 
-        Task LoadTransactions(int accountId);
+        Task LoadTransactions(Guid accountId);
         Task SetNextMonth();
         Task SetPreviousMonth();
     }

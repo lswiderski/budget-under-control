@@ -1,21 +1,11 @@
 ﻿using System;
 using Xamarin.Forms;
 using Xamarin.Forms.Xaml;
-using System.Diagnostics;
-using BudgetUnderControl.Domain;
 using Autofac;
 using BudgetUnderControl.Views;
-using BudgetUnderControl.Common;
-using BudgetUnderControl.Model;
+
 using Autofac.Extras.CommonServiceLocator;
-using BudgetUnderControl.ViewModel;
-using BudgetUnderControl.Domain.Repositiories;
-using BudgetUnderControl.Model.Services;
 using CommonServiceLocator;
-using BudgetUnderControl.Common.Enums;
-using BudgetUnderControl.Infrastructure.Repositories;
-using BudgetUnderControl.Infrastructure.Services;
-using BudgetUnderControl.Infrastructure.Services.UserService;
 using BudgetUnderControl.Infrastructure.IoC;
 using Microsoft.Extensions.Configuration;
 using BudgetUnderControl.Mobile.IoC;

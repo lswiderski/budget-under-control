@@ -7,14 +7,13 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace BudgetUnderControl.Model
+namespace BudgetUnderControl.Infrastructure
 {
     public class AccountGroupRepository : BaseModel, IAccountGroupRepository
     {
         public AccountGroupRepository(IContextFacade context) : base(context)
         {
         }
-
 
         public async Task<ICollection<AccountGroup>> GetAccountGroupsAsync()
         {
@@ -23,6 +22,15 @@ namespace BudgetUnderControl.Model
                         ).ToListAsync();
 
             return list;
+        }
+
+        public async Task<AccountGroup> GetAccountGroupAsync(Guid id)
+        {
+            var accountGroup = await (from ag in this.Context.AccountGroup
+                                      select ag
+                        ).FirstOrDefaultAsync(x => x.ExternalId == id);
+
+            return accountGroup;
         }
     }
 }

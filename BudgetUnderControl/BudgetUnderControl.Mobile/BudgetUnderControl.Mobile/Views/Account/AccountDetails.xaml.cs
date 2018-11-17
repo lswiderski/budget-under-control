@@ -1,5 +1,5 @@
 ﻿using Autofac;
-using BudgetUnderControl.Model;
+using BudgetUnderControl.Infrastructure;
 using BudgetUnderControl.ViewModel;
 using System;
 using System.Collections.Generic;
@@ -17,9 +17,9 @@ namespace BudgetUnderControl.Views
     {
         private FloatingActionButtonView fab;
         IAccountDetailsViewModel vm;
-        int accountId;
+        Guid accountId;
 
-        public AccountDetails(int accountId)
+        public AccountDetails(Guid accountId)
         {
             using (var scope = App.Container.BeginLifetimeScope())
             {

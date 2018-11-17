@@ -1,8 +1,8 @@
 ﻿using Autofac;
 using BudgetUnderControl.Common.Enums;
 using BudgetUnderControl.Common.Contracts;
-using BudgetUnderControl.Model;
-using BudgetUnderControl.Model.Services;
+using BudgetUnderControl.Infrastructure;
+using BudgetUnderControl.Infrastructure.Services;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -10,6 +10,7 @@ using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using BudgetUnderControl.Infrastructure.Commands;
 
 namespace BudgetUnderControl.ViewModel
 {
@@ -19,8 +20,10 @@ namespace BudgetUnderControl.ViewModel
         IAccountService accountService;
         ICurrencyService currencyService;
         IAccountGroupService accountGroupService;
+        ICommandDispatcher commandDispatcher;
 
         int accountId;
+        Guid ExternalId;
 
         List<CurrencyDTO> currencies;
         List<AccountGroupItemDTO> accountGroups;
@@ -164,11 +167,12 @@ namespace BudgetUnderControl.ViewModel
             }
         }
 
-        public EditAccountViewModel(ICurrencyService currencyService, IAccountGroupService accountGroupService, IAccountService accountService)
+        public EditAccountViewModel(ICurrencyService currencyService, IAccountGroupService accountGroupService, IAccountService accountService, ICommandDispatcher commandDispatcher)
         {
             this.currencyService = currencyService;
             this.accountGroupService = accountGroupService;
             this.accountService = accountService;
+            this.commandDispatcher = commandDispatcher;
             GetDropdowns();
         }
 
@@ -180,11 +184,9 @@ namespace BudgetUnderControl.ViewModel
             accountTypes = this.GetAccountTypes().ToList();
         }
 
-        public async void LoadAccount(int accountId)
+        public async void LoadAccount(Guid accountId)
         {
-            this.accountId = accountId;
-
-            var account = await this.accountService.GetEditAccountDTOAsync(accountId);
+            var account = await this.accountService.GetAccountAsync(accountId);
             Amount = account.Amount.ToString();
             Name = account.Name;
             Comment = account.Comment;
@@ -194,6 +196,8 @@ namespace BudgetUnderControl.ViewModel
             SelectedAccountIndex = account.ParentAccountId.HasValue ? Accounts.IndexOf(Accounts.FirstOrDefault(y => y.Id == account.ParentAccountId)) : -1;
             SelectedAccountTypeIndex = AccountTypes.IndexOf(AccountTypes.FirstOrDefault(y => y.Id == (int)account.Type));
             Order = account.Order.ToString();
+            this.ExternalId = accountId;
+            this.accountId = account.Id;
         }
 
         public async Task SaveAccount()
@@ -203,7 +207,7 @@ namespace BudgetUnderControl.ViewModel
             int _order = 0;
             int.TryParse(order, out _order);
 
-            var dto = new EditAccountDTO
+            var command = new EditAccount
             {
                 Name = Name,
                 Comment = Comment,
@@ -216,9 +220,14 @@ namespace BudgetUnderControl.ViewModel
                 IsActive = true,
                 Type = (AccountType)AccountTypes[SelectedAccountTypeIndex].Id,
                 ParentAccountId = selectedAccountIndex > -1 ? Accounts[SelectedAccountIndex].Id : (int?)null,
+                ExternalId = ExternalId
             };
-            try { 
-           await accountService.EditAccountAsync(dto);
+            try {
+                using (var scope = App.Container.BeginLifetimeScope())
+                {
+                    await commandDispatcher.DispatchAsync(command, scope);
+                }
+                
         }catch (Exception e)
             {
 

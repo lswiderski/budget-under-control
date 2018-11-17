@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace BudgetUnderControl.Model
+namespace BudgetUnderControl.Infrastructure
 {
     public interface IBaseModel
     {

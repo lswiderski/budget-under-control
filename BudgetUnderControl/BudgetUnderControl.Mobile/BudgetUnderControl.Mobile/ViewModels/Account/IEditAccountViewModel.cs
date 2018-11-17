@@ -1,5 +1,5 @@
 ﻿using BudgetUnderControl.Common.Contracts;
-using BudgetUnderControl.Model;
+using BudgetUnderControl.Infrastructure;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -26,7 +26,7 @@ namespace BudgetUnderControl.ViewModel
         List<AccountListItemDTO> Accounts { get; }
         List<AccountTypeDTO> AccountTypes { get; }
 
-        void LoadAccount(int accountId);
+        void LoadAccount(Guid accountId);
         Task SaveAccount();
         void ClearParentAccountCombo();
     }

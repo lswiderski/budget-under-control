@@ -7,8 +7,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using BudgetUnderControl.Infrastructure.Commands;
+using FluentValidation;
 
-namespace BudgetUnderControl.Model.Services
+namespace BudgetUnderControl.Infrastructure.Services
 {
     public class AccountService : IAccountService
     {
@@ -21,13 +23,14 @@ namespace BudgetUnderControl.Model.Services
             this.userRepository = userRepository;
         }
 
-        public async Task<EditAccountDTO> GetEditAccountDTOAsync(int id)
+        public async Task<EditAccountDTO> GetAccountAsync(Guid id)
         {
             var account = await accountRepository.GetAccountAsync(id);
-            var balance = await accountRepository.GetActualBalanceAsync(id);
+            var balance = await accountRepository.GetActualBalanceAsync(account.Id);
             var dto = new EditAccountDTO
             {
                 Id = account.Id,
+                ExternalId = account.ExternalId,
                 Name = account.Name,
                 Comment = account.Comment,
                 IsActive = account.IsActive,
@@ -51,13 +54,14 @@ namespace BudgetUnderControl.Model.Services
             var accountsWithBalance = accounts.Select(y => new AccountListItemDTO
             {
                 Id = y.Id,
+                ExternalId = y.ExternalId,
                 Currency = y.Currency.Code,
                 CurrencyId = y.CurrencyId,
                 CurrencySymbol = y.Currency.Symbol,
                 IsIncludedInTotal = y.IsIncludedToTotal,
                 Name = y.Name,
                 ParentAccountId = y.ParentAccountId,
-                
+
             }).ToList();
             accountsWithBalance.ForEach(async x => { x.Balance = await accountRepository.GetActualBalanceAsync(x.Id); });
             return accountsWithBalance;
@@ -65,11 +69,19 @@ namespace BudgetUnderControl.Model.Services
 
         public async Task<AccountDetailsDTO> GetAccountDetailsAsync(TransactionsFilter filter)
         {
-            if(filter == null || filter.AccountsIds == null || !filter.AccountsIds.Any())
+            Account account;
+            if (filter != null && filter.AccountsIds != null && filter.AccountsIds.Any())
+            {
+                account = await accountRepository.GetAccountAsync(filter.AccountsIds.First());
+            }
+            else if (filter != null && filter.AccountsExternalIds != null && filter.AccountsExternalIds.Any())
+            {
+                account = await accountRepository.GetAccountAsync(filter.AccountsExternalIds.First());
+            }
+            else
             {
                 throw new ArgumentNullException();
             }
-            var account = await accountRepository.GetAccountAsync(filter.AccountsIds.First());
 
             var dto = new AccountDetailsDTO
             {
@@ -77,6 +89,7 @@ namespace BudgetUnderControl.Model.Services
                 CurrencyId = account.CurrencyId,
                 CurrencySymbol = account.Currency.Symbol,
                 Id = account.Id,
+                ExternalId = account.ExternalId,
                 IsIncludedInTotal = account.IsIncludedToTotal,
                 Name = account.Name,
                 Comment = account.Comment,
@@ -92,32 +105,33 @@ namespace BudgetUnderControl.Model.Services
             return dto;
         }
 
-        public async Task AddAccountAsync(AddAccountDTO dto)
-        {   var user = await userRepository.GetFirstUserAsync();
-            var account = Account.Create(dto.Name, dto.CurrencyId, dto.AccountGroupId, dto.IsIncludedInTotal, dto.Comment, dto.Order, dto.Type, dto.ParentAccountId, true, user.Id);
+        public async Task AddAccountAsync(AddAccount command)
+        {
+            var user = await userRepository.GetFirstUserAsync();
+            var account = Account.Create(command.Name, command.CurrencyId, command.AccountGroupId, command.IsIncludedInTotal, command.Comment, command.Order, command.Type, command.ParentAccountId, true, user.Id);
             await accountRepository.AddAccountAsync(account);
-            
-            if(account.Id <= 0)
+
+            if (account.Id <= 0)
             {
                 throw new Exception();
             }
 
             if (account.Type != AccountType.Card)
             {
-                await this.accountRepository.BalanceAdjustmentAsync(account.Id, dto.Amount);
+                await this.accountRepository.BalanceAdjustmentAsync(account.Id, command.Amount);
             }
         }
 
-        public async Task EditAccountAsync(EditAccountDTO dto)
+        public async Task EditAccountAsync(EditAccount command)
         {
-            var account = await accountRepository.GetAccountAsync(dto.Id);
-            account.Edit(dto.Name, dto.CurrencyId, dto.AccountGroupId, dto.IsIncludedInTotal, dto.Comment, dto.Order, dto.Type, dto.ParentAccountId, dto.IsActive);
+            var account = await accountRepository.GetAccountAsync(command.Id);
+            account.Edit(command.Name, command.CurrencyId, command.AccountGroupId, command.IsIncludedInTotal, command.Comment, command.Order, command.Type, command.ParentAccountId, command.IsActive);
             await accountRepository.UpdateAsync(account);
 
             if (account.Type != AccountType.Card)
             {
-                await this.accountRepository.BalanceAdjustmentAsync(account.Id, dto.Amount);
-            }  
+                await this.accountRepository.BalanceAdjustmentAsync(account.Id, command.Amount);
+            }
         }
 
         public async Task ActivateAccountAsync(int id)
@@ -134,6 +148,24 @@ namespace BudgetUnderControl.Model.Services
             account.SetActive(false);
 
             await accountRepository.UpdateAsync(account);
+        }
+
+        public async Task DeactivateAccountAsync(Guid id)
+        {
+            var account = await accountRepository.GetAccountAsync(id);
+            account.SetActive(false);
+
+            await accountRepository.UpdateAsync(account);
+        }
+
+        public async Task DeleteAccountAsync(DeleteAccount command)
+        {
+            await this.DeactivateAccountAsync(command.Id);
+        }
+
+        public async Task RemoveAccountAsync(Guid id)
+        {
+            await this.DeactivateAccountAsync(id);
         }
 
         public async Task RemoveAccountAsync(int id)
@@ -167,8 +199,8 @@ namespace BudgetUnderControl.Model.Services
 
         public async Task<bool> IsValidAsync(int accountId)
         {
-            var currencies = await this.accountRepository.GetAccountsAsync(true);
-            return currencies.Any(x => x.Id == accountId);
+            var accounts = await this.accountRepository.GetAccountsAsync(true);
+            return accounts.Any(x => x.Id == accountId);
         }
     }
 }

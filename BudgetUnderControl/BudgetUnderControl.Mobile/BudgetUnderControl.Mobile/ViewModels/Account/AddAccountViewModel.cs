@@ -1,7 +1,7 @@
 ﻿using BudgetUnderControl.Common.Enums;
 using BudgetUnderControl.Common.Contracts;
-using BudgetUnderControl.Model;
-using BudgetUnderControl.Model.Services;
+using BudgetUnderControl.Infrastructure;
+using BudgetUnderControl.Infrastructure.Services;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -9,6 +9,7 @@ using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using BudgetUnderControl.Infrastructure.Commands;
 
 namespace BudgetUnderControl.ViewModel
 {
@@ -18,6 +19,7 @@ namespace BudgetUnderControl.ViewModel
         IAccountService accountService;
         ICurrencyService currencyService;
         IAccountGroupService accountGroupService;
+        ICommandDispatcher commandDispatcher;
 
         List<CurrencyDTO> currencies;
         List<AccountGroupItemDTO> accountGroups;
@@ -174,11 +176,12 @@ namespace BudgetUnderControl.ViewModel
             }
         }
 
-        public AddAccountViewModel(IAccountService accountService, ICurrencyService currencyService, IAccountGroupService accountGroupService)
+        public AddAccountViewModel(IAccountService accountService, ICurrencyService currencyService, IAccountGroupService accountGroupService, ICommandDispatcher commandDispatcher)
         {
             this.accountService = accountService;
             this.currencyService = currencyService;
             this.accountGroupService = accountGroupService;
+            this.commandDispatcher = commandDispatcher;
             GetDropdowns();
 
             selectedAccountIndex = -1;
@@ -202,7 +205,7 @@ namespace BudgetUnderControl.ViewModel
                 _order = 0;
             }
             decimal.TryParse(amount.Replace(',', '.'), NumberStyles.AllowDecimalPoint, CultureInfo.InvariantCulture, out value);
-            var dto = new AddAccountDTO
+            var command = new AddAccount
             {
                 Name = Name,
                 Comment = Comment,
@@ -216,7 +219,10 @@ namespace BudgetUnderControl.ViewModel
                 
             };
 
-            await accountService.AddAccountAsync(dto);
+            using (var scope = App.Container.BeginLifetimeScope())
+            {
+                await commandDispatcher.DispatchAsync(command, scope);
+            }
         }
 
         public void ClearParentAccountCombo()

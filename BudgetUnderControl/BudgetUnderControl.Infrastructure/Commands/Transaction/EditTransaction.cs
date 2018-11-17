@@ -1,5 +1,5 @@
 ﻿using BudgetUnderControl.Common.Enums;
-using BudgetUnderControl.Model.Services;
+using BudgetUnderControl.Infrastructure.Services;
 using FluentValidation;
 using System;
 using System.Collections.Generic;

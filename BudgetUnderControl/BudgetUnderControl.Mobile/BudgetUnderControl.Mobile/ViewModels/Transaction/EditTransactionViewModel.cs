@@ -1,6 +1,6 @@
 ﻿using BudgetUnderControl.Common.Enums;
 using BudgetUnderControl.Common.Contracts;
-using BudgetUnderControl.Model.Services;
+using BudgetUnderControl.Infrastructure.Services;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;

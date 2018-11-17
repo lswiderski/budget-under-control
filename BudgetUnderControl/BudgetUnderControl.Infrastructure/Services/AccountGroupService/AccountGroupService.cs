@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace BudgetUnderControl.Model.Services
+namespace BudgetUnderControl.Infrastructure.Services
 {
     public class AccountGroupService : IAccountGroupService
     {
@@ -16,6 +16,7 @@ namespace BudgetUnderControl.Model.Services
         {
             this.accountGroupRepository = accountGroupRepository;
         }
+
         public async Task<ICollection<AccountGroupItemDTO>> GetAccountGroupsAsync()
         {
             var groups = await this.accountGroupRepository.GetAccountGroupsAsync();
@@ -24,10 +25,30 @@ namespace BudgetUnderControl.Model.Services
                         {
                             Id = ag.Id,
                             Name = ag.Name,
+                            ExternalId = ag.ExternalId,
                         }
                         ).ToList();
 
             return list;
+        }
+
+        public async Task<AccountGroupItemDTO> GetAccountGroupAsync(Guid id)
+        {
+            var group = await this.accountGroupRepository.GetAccountGroupAsync(id);
+            var dto = new AccountGroupItemDTO
+            {
+                Id = group.Id,
+                ExternalId = group.ExternalId,
+                Name = group.Name,
+            };
+
+            return dto;
+        }
+
+        public async Task<bool> IsValidAsync(int id)
+        {
+            var accountsGroups = await this.accountGroupRepository.GetAccountGroupsAsync();
+            return accountsGroups.Any(x => x.Id == id);
         }
     }
 }

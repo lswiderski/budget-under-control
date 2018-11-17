@@ -4,8 +4,8 @@ using BudgetUnderControl.Infrastructure.Commands;
 using BudgetUnderControl.Infrastructure.Repositories;
 using BudgetUnderControl.Infrastructure.Services;
 using BudgetUnderControl.Infrastructure.Services.UserService;
-using BudgetUnderControl.Model;
-using BudgetUnderControl.Model.Services;
+using BudgetUnderControl.Infrastructure;
+using BudgetUnderControl.Infrastructure.Services;
 using FluentValidation;
 using System;
 using System.Collections.Generic;
@@ -31,8 +31,10 @@ namespace BudgetUnderControl.Infrastructure.IoC
                 .As<ICommandDispatcher>()
                 .InstancePerLifetimeScope();
 
-            builder.RegisterType<AddTransactionValidator>().As<IValidator<AddTransaction>>().InstancePerLifetimeScope();
-            builder.RegisterType<EditTransactionValidator>().As<IValidator<EditTransaction>>().InstancePerLifetimeScope();
+            builder.RegisterAssemblyTypes(assembly)
+                   .AsClosedTypesOf(typeof(IValidator<>))
+                   .InstancePerLifetimeScope();
+
             builder.RegisterType<BaseModel>().As<IBaseModel>().InstancePerLifetimeScope();
             builder.RegisterType<AccountService>().As<IAccountService>().InstancePerLifetimeScope();
             builder.RegisterType<CurrencyService>().As<ICurrencyService>().InstancePerLifetimeScope();

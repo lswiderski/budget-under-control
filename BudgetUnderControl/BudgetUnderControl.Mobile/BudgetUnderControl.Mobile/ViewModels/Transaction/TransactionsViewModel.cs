@@ -98,7 +98,30 @@ namespace BudgetUnderControl.ViewModel
 
         public async Task LoadTransactionsAsync()
         {
-            Transactions = await transactionService.GetGroupedTransactionsAsync(new TransactionsFilter { FromDate = FromDate, ToDate= ToDate } );
+            var transactions = await transactionService.GetTransactionsAsync(new TransactionsFilter { FromDate = FromDate, ToDate= ToDate } );
+
+            var dtos = transactions.Select(t => new TransactionListItemDTO
+            {
+                AccountId = t.AccountId,
+                Date = t.Date,
+                Id = t.Id,
+                Value = t.Value,
+                Account = t.Account,
+                ValueWithCurrency = t.ValueWithCurrency,
+                Type = t.Type,
+                Name = t.Name,
+                CurrencyCode = t.CurrencyCode,
+                IsTransfer = t.IsTransfer,
+                ExternalId = t.ExternalId,
+                ModifiedOn = t.ModifiedOn,
+                CreatedOn = t.CreatedOn,
+            }).OrderByDescending(x => x.Date)
+                                .GroupBy(x => x.Date.ToString("d MMM yyyy"))
+                                .Select(x => new ObservableGroupCollection<string, TransactionListItemDTO>(x))
+                                .ToList();
+
+            Transactions = new ObservableCollection<ObservableGroupCollection<string, TransactionListItemDTO>>(dtos);
+
             SetIncomeExpense();
         }
 

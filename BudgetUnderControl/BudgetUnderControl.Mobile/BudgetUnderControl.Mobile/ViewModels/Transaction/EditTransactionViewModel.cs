@@ -402,7 +402,7 @@ namespace BudgetUnderControl.ViewModel
             TransferAmount = Amount;
         }
 
-        public async Task GetTransactionAsync(int transactionId)
+        public async Task GetTransactionAsync(Guid transactionId)
         {
             var dto = await transactionService.GetTransactionAsync(transactionId);
 

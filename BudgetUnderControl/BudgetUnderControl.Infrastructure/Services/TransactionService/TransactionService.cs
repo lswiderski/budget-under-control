@@ -47,39 +47,13 @@ namespace BudgetUnderControl.Model.Services
                 Name = t.Name,
                 CurrencyCode = t.Account.Currency.Code,
                 IsTransfer = t.IsTransfer,
-                ExternalId = t.ExternalId.ToString(),
+                ExternalId = t.ExternalId,
                 ModifiedOn = t.ModifiedOn,
                 CreatedOn = t.CreatedOn,
+
             }).ToList();
 
             return dtos;
-        }
-
-        public async Task<ObservableCollection<ObservableGroupCollection<string, TransactionListItemDTO>>> GetGroupedTransactionsAsync(TransactionsFilter filter = null)
-        {
-            var transactions = await this.transactionRepository.GetTransactionsAsync(filter);
-
-            var dtos = transactions.Select(t => new TransactionListItemDTO
-            {
-                AccountId = t.AccountId,
-                Date = t.Date,
-                Id = t.Id,
-                Value = t.Amount,
-                Account = t.Account.Name,
-                ValueWithCurrency = t.Amount + t.Account.Currency.Symbol,
-                Type = t.Type,
-                Name = t.Name,
-                CurrencyCode = t.Account.Currency.Code,
-                IsTransfer = t.IsTransfer,
-                ExternalId = t.ExternalId.ToString(),
-                ModifiedOn = t.ModifiedOn,
-                CreatedOn = t.CreatedOn,
-            }).OrderByDescending(x => x.Date)
-                                .GroupBy(x => x.Date.ToString("d MMM yyyy"))
-                                .Select(x => new ObservableGroupCollection<string, TransactionListItemDTO>(x))
-                                .ToList();
-
-            return new ObservableCollection<ObservableGroupCollection<string, TransactionListItemDTO>>(dtos);
         }
 
         public async Task AddTransactionAsync(AddTransaction command)

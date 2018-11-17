@@ -9,7 +9,7 @@ namespace BudgetUnderControl.ViewModel
     public interface IEditTransactionViewModel
     {
         Task EditTransactionAsync();
-        Task GetTransactionAsync(int transactionId);
+        Task GetTransactionAsync(Guid transactionId);
         Task DeleteTransactionAsync();
     }
 }

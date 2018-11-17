@@ -15,8 +15,8 @@ namespace BudgetUnderControl.Views
     public partial class EditTransaction : ContentPage
     {
         IEditTransactionViewModel vm;
-        int transactionId;
-        public EditTransaction(int transactionId)
+        Guid transactionId;
+        public EditTransaction(Guid transactionId)
         {
             using (var scope = App.Container.BeginLifetimeScope())
             {

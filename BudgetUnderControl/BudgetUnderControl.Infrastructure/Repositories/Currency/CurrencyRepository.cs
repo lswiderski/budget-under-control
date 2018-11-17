@@ -30,5 +30,12 @@ namespace BudgetUnderControl.Model
 
             return list;
         }
+
+        public async Task<Currency> GetCurrencyAsync(int id)
+        {
+            var currency = await this.Context.Currencies.FirstOrDefaultAsync(x => x.Id == id);
+
+            return currency;
+        }
     }
 }

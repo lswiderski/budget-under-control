@@ -11,6 +11,8 @@ namespace BudgetUnderControl.Common.Contracts
         public int Id { get; set; }
         public string Code { get; set; }
         public string Name { get; set; }
+        public short Number { get; set; }
+        public string Symbol { get; set; }
 
         public string CodeWithName
         {

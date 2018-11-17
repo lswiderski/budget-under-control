@@ -85,7 +85,8 @@ namespace BudgetUnderControl.Model.Services
                 ParentAccountId = account.ParentAccountId,
                 Order = account.Order,
                 Income = await accountRepository.GetIncomeAsync(account.Id, filter.FromDate, filter.ToDate),
-                Expense = await accountRepository.GetExpenseAsync(account.Id, filter.FromDate, filter.ToDate)
+                Expense = await accountRepository.GetExpenseAsync(account.Id, filter.FromDate, filter.ToDate),
+                Amount = await accountRepository.GetActualBalanceAsync(account.Id),
             };
 
             return dto;

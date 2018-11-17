@@ -22,11 +22,20 @@ namespace BudgetUnderControl.API.Controllers
             this.currencyService = currencyService;
         }
 
+        // GET api/currencies
         [HttpGet]
         public async Task<ActionResult<IEnumerable<CurrencyDTO>>> Get()
         {
             var currencies = await this.currencyService.GetCurriencesAsync();
             return currencies.ToList();
+        }
+
+        // GET api/currencies/1
+        [HttpGet("{id}")]
+        public async Task<ActionResult<EditTransactionDTO>> GetById(int id)
+        {
+            var category = await this.currencyService.GetCurrencyAsync(id);
+            return Ok(category);
         }
 
     }

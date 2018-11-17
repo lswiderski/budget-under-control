@@ -21,11 +21,20 @@ namespace BudgetUnderControl.API.Controllers
             this.transactionService = transactionService;
         }
 
+        // GET api/transactions
         [HttpGet]
         public async Task<ActionResult<IEnumerable<TransactionListItemDTO>>> Get()
         {
             var transactions = await this.transactionService.GetTransactionsAsync();
-            return transactions.ToList();
+            return Ok(transactions.ToList());
+        }
+
+        // GET api/transactions/552cbd7c-e9d9-46c9-ab7e-2b10ae38ab4a
+        [HttpGet("{id}")]
+        public async Task<ActionResult<EditTransactionDTO>> GetById(Guid id)
+        {
+            var transaction = await this.transactionService.GetTransactionAsync(id);
+            return Ok(transaction);
         }
 
         // POST api/transactions
@@ -36,14 +45,6 @@ namespace BudgetUnderControl.API.Controllers
 
             //return Created($"transactions/{command.ExternalId}", command);
             return CreatedAtAction(nameof(Get), new { id = command.ExternalId }, command);
-        }
-
-        // GET api/transactions/552cbd7c-e9d9-46c9-ab7e-2b10ae38ab4a
-        [HttpGet("{id}")]
-        public async Task<ActionResult<EditTransactionDTO>> GetById(Guid id)
-        {
-            var transaction = await this.transactionService.GetTransactionAsync(id);
-            return Ok(transaction);
         }
 
         // PUT api/transactions/552cbd7c-e9d9-46c9-ab7e-2b10ae38ab4a

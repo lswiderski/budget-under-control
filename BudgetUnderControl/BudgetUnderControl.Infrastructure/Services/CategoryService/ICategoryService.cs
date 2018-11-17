@@ -10,6 +10,7 @@ namespace BudgetUnderControl.Model.Services
     public interface ICategoryService
     {
         Task<ICollection<CategoryListItemDTO>> GetCategoriesAsync();
+        Task<CategoryListItemDTO> GetCategoryAsync(Guid id);
         Task<bool> IsValidAsync(int categoryId);
     }
 }

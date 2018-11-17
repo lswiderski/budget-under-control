@@ -24,11 +24,26 @@ namespace BudgetUnderControl.Model.Services
             var dtos = categories.Select(x => new CategoryListItemDTO
             {
                 Id = x.Id,
-                Name = x.Name
+                Name = x.Name,
+                ExternalId = x.ExternalId
             })
                .ToList();
 
             return dtos;
+        }
+
+        public async Task<CategoryListItemDTO> GetCategoryAsync(Guid id)
+        {
+            var category = await this.categoryRepository.GetCategoryAsync(id);
+
+            var dto = new CategoryListItemDTO
+            {
+                Id = category.Id,
+                Name = category.Name,
+                ExternalId = category.ExternalId
+            };
+
+            return dto;
         }
 
         public async Task<bool> IsValidAsync(int categoryId)

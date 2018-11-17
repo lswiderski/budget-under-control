@@ -11,5 +11,6 @@ namespace BudgetUnderControl.Domain.Repositiories
     {
         Task<ICollection<Currency>> GetCurriencesAsync();
         Task AddCurrencyAsync(Currency currency);
+        Task<Currency> GetCurrencyAsync(int id);
     }
 }

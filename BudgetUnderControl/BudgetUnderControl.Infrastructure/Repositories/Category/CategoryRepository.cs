@@ -31,5 +31,11 @@ namespace BudgetUnderControl.Model
             var list = await this.Context.Categories.ToListAsync();
             return list;
         }
+
+        public async Task<Category> GetCategoryAsync(Guid id)
+        {
+            var category = await this.Context.Categories.Where(x => x.ExternalId == id).FirstOrDefaultAsync();
+            return category;
+        }
     }
 }

@@ -25,10 +25,27 @@ namespace BudgetUnderControl.Model.Services
             {
                 Id = x.Id,
                 Code = x.Code,
-                Name = x.FullName
+                Name = x.FullName,
+                Number = x.Number,
+                Symbol = x.Symbol,
             }).ToList();
 
             return dtos;
+        }
+        public async Task<CurrencyDTO> GetCurrencyAsync(int id)
+        {
+            var currency = await this.currencyRepository.GetCurrencyAsync(id);
+
+            var dto = new CurrencyDTO
+            {
+                Id = currency.Id,
+                Code = currency.Code,
+                Name = currency.FullName,
+                Number = currency.Number,
+                Symbol = currency.Symbol,
+            };
+
+            return dto;
         }
 
         public async Task<bool> IsValidAsync(int currencyId)

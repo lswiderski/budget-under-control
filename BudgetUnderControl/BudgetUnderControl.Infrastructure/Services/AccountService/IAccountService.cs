@@ -12,14 +12,11 @@ namespace BudgetUnderControl.Infrastructure.Services
     {
         Task ActivateAccountAsync(int id);
         Task DeactivateAccountAsync(int id);
-        Task RemoveAccountAsync(int id);
-
 
         Task<ICollection<AccountListItemDTO>> GetAccountsWithBalanceAsync();
         Task<EditAccountDTO> GetAccountAsync(Guid id);
         Task<AccountDetailsDTO> GetAccountDetailsAsync(TransactionsFilter filter);
 
-        Task RemoveAccountAsync(Guid id);
         Task AddAccountAsync(AddAccount account);
         Task EditAccountAsync(EditAccount command);
         Task DeleteAccountAsync(DeleteAccount command);

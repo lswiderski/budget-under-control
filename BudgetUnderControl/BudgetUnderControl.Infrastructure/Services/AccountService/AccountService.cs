@@ -160,41 +160,30 @@ namespace BudgetUnderControl.Infrastructure.Services
 
         public async Task DeleteAccountAsync(DeleteAccount command)
         {
-            await this.DeactivateAccountAsync(command.Id);
-        }
-
-        public async Task RemoveAccountAsync(Guid id)
-        {
-            await this.DeactivateAccountAsync(id);
-        }
-
-        public async Task RemoveAccountAsync(int id)
-        {
             //temporary no removing AccountAvailable
-            await this.DeactivateAccountAsync(id);
-
+            await this.DeactivateAccountAsync(command.Id);
             /*
-              var transactions = this.Context.Transactions.Where(x => x.AccountId == id).ToList();
+             var transactions = this.Context.Transactions.Where(x => x.AccountId == id).ToList();
 
-            if(IsSubCardAccount(id))
-            {
-                var parentAccountId = GetParentAccountId(id).Value;
-                foreach (var transaction in transactions)
-                {
-                    transaction.AccountId = parentAccountId;
-                }
-            }
-            else
-            {
-                this.Context.RemoveRange(transactions);
-            }
+           if(IsSubCardAccount(id))
+           {
+               var parentAccountId = GetParentAccountId(id).Value;
+               foreach (var transaction in transactions)
+               {
+                   transaction.AccountId = parentAccountId;
+               }
+           }
+           else
+           {
+               this.Context.RemoveRange(transactions);
+           }
 
-            
-            this.Context.SaveChanges();
-            var account = await this.Context.Accounts.Where(x => x.Id == id).FirstOrDefaultAsync();
-            this.Context.Remove<Account>(account);
-            this.Context.SaveChanges();
-             */
+
+           this.Context.SaveChanges();
+           var account = await this.Context.Accounts.Where(x => x.Id == id).FirstOrDefaultAsync();
+           this.Context.Remove<Account>(account);
+           this.Context.SaveChanges();
+            */
         }
 
         public async Task<bool> IsValidAsync(int accountId)

@@ -23,9 +23,9 @@ namespace BudgetUnderControl.API.Controllers
 
         // GET api/transactions
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<TransactionListItemDTO>>> Get()
+        public async Task<ActionResult<IEnumerable<TransactionListItemDTO>>> Get([FromQuery] TransactionsFilter filter)
         {
-            var transactions = await this.transactionService.GetTransactionsAsync();
+            var transactions = await this.transactionService.GetTransactionsAsync(filter);
             return Ok(transactions.ToList());
         }
 

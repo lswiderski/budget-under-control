@@ -1,5 +1,6 @@
 ﻿using BudgetUnderControl.Common.Contracts;
 using BudgetUnderControl.Infrastructure;
+using BudgetUnderControl.Infrastructure.Commands;
 using BudgetUnderControl.Infrastructure.Services;
 using System;
 using System.Collections.Generic;
@@ -15,6 +16,7 @@ namespace BudgetUnderControl.ViewModel
         public event PropertyChangedEventHandler PropertyChanged;
         IAccountService accountService;
         ITransactionService transactionnService;
+        ICommandDispatcher commandDispatcher;
         public TransactionListItemDTO SelectedTransaction { get; set; }
 
         Guid accountId;
@@ -118,10 +120,11 @@ namespace BudgetUnderControl.ViewModel
             }
         }
 
-        public AccountDetailsViewModel(IAccountService accountService, ITransactionService transactionnService)
+        public AccountDetailsViewModel(IAccountService accountService, ITransactionService transactionnService, ICommandDispatcher commandDispatcher)
         {
             this.accountService = accountService;
             this.transactionnService = transactionnService;
+            this.commandDispatcher = commandDispatcher;
 
             var now = DateTime.UtcNow;
             FromDate = new DateTime(now.Year, now.Month, 1, 0, 0, 0);
@@ -150,7 +153,11 @@ namespace BudgetUnderControl.ViewModel
 
         public async Task RemoveAccount()
         {
-            await accountService.RemoveAccountAsync(accountId);
+            var command = new DeleteAccount { Id = accountId };
+            using (var scope = App.Container.BeginLifetimeScope())
+            {
+                await commandDispatcher.DispatchAsync(command, scope);
+            }
         }
 
         public async Task SetNextMonth()

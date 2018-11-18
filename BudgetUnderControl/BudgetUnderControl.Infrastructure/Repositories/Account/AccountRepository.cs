@@ -102,11 +102,11 @@ namespace BudgetUnderControl.Infrastructure
 
         public async Task<decimal> GetActualBalanceAsync(int accountId)
         {
-            var isCard = IsSubCardAccount(accountId);
+            var isCard = await IsSubCardAccountAsync(accountId);
 
             if (isCard)
             {
-                accountId = this.GetParentAccountId(accountId).Value;
+                accountId = (await this.GetParentAccountIdAsync(accountId)).Value;
             }
 
             var accounts = await this.GetSubAccountsAsync(new List<int> { accountId }, true);
@@ -120,11 +120,11 @@ namespace BudgetUnderControl.Infrastructure
 
         public async Task<decimal> GetIncomeAsync(int accountId, DateTime fromDate, DateTime toDate)
         {
-            var isCard = IsSubCardAccount(accountId);
+            var isCard = await IsSubCardAccountAsync(accountId);
 
             if (isCard)
             {
-                accountId = this.GetParentAccountId(accountId).Value;
+                accountId = (await this.GetParentAccountIdAsync(accountId)).Value;
             }
 
             var accounts = await this.GetSubAccountsAsync(new List<int> { accountId }, true);
@@ -137,11 +137,11 @@ namespace BudgetUnderControl.Infrastructure
 
         public async Task<decimal> GetExpenseAsync(int accountId, DateTime fromDate, DateTime toDate)
         {
-            var isCard = IsSubCardAccount(accountId);
+            var isCard = await IsSubCardAccountAsync(accountId);
 
             if (isCard)
             {
-                accountId = this.GetParentAccountId(accountId).Value;
+                accountId = (await this.GetParentAccountIdAsync(accountId)).Value;
             }
 
             var accounts = await this.GetSubAccountsAsync(new List<int> { accountId }, true);
@@ -204,15 +204,15 @@ namespace BudgetUnderControl.Infrastructure
             return subAccounts;
         }
 
-        private bool IsSubCardAccount(int accountId)
+        private async Task<bool> IsSubCardAccountAsync(int accountId)
         {
-            var result = this.Context.Accounts.Any(x => x.Id == accountId && x.ParentAccountId.HasValue && x.Type == AccountType.Card);
+            var result = await this.Context.Accounts.AnyAsync(x => x.Id == accountId && x.ParentAccountId.HasValue && x.Type == AccountType.Card);
             return result;
         }
 
-        private int? GetParentAccountId(int accountId)
+        private async Task<int?> GetParentAccountIdAsync(int accountId)
         {
-            var result = this.Context.Accounts.Where(x => x.Id == accountId).Select(x => x.ParentAccountId).FirstOrDefault();
+            var result = await this.Context.Accounts.Where(x => x.Id == accountId).Select(x => x.ParentAccountId).FirstOrDefaultAsync();
             return result;
         }
     }

@@ -37,12 +37,12 @@ namespace BudgetUnderControl.API
     {
         public IContainer ApplicationContainer { get; private set; }
 
+        public IConfiguration Configuration { get; }
+
         public Startup(IConfiguration configuration)
         {
             Configuration = configuration;
         }
-
-        public IConfiguration Configuration { get; }
 
         // This method gets called by the runtime. Use this method to add services to the container.
         public IServiceProvider ConfigureServices(IServiceCollection services)
@@ -58,8 +58,8 @@ namespace BudgetUnderControl.API
             var builder = new ContainerBuilder();          
 
             builder.RegisterModule<InfrastructureModule>();
-            builder.RegisterModule<ApiModule>();
-
+            //builder.RegisterModule<ApiModule>();
+            builder.RegisterModule(new ApiModule(Configuration));
             builder.Populate(services);
             ApplicationContainer = builder.Build();
 

@@ -1,6 +1,7 @@
 ﻿using BudgetUnderControl.Common;
 using BudgetUnderControl.Common.Contracts;
 using BudgetUnderControl.Infrastructure.Services;
+using BudgetUnderControl.Infrastructure.Settings;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -90,7 +91,6 @@ namespace BudgetUnderControl.ViewModel
         public TransactionsViewModel(ITransactionService transactionService)
         {
             this.transactionService = transactionService;
-
             var now = DateTime.UtcNow;
             FromDate = new DateTime(now.Year, now.Month, 1,0,0,0);
             ToDate = new DateTime(now.Year, now.Month, DateTime.DaysInMonth(now.Year, now.Month), 23, 59, 59);

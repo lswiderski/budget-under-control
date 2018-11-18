@@ -1,4 +1,6 @@
 ﻿
+using System.Threading.Tasks;
+
 namespace BudgetUnderControl.Common
 {
     public interface IFileHelper
@@ -9,5 +11,6 @@ namespace BudgetUnderControl.Common
         string LoadText(string filename);
         void SaveText(string filename, string[] lines);
         bool CopyFile(string sourcePath, string destinationPath);
+        string ReadFromAssetsAsString(string filename);
     }
 }

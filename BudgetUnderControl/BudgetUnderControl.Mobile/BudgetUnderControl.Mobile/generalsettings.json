@@ -1,0 +1,6 @@
+{
+  "AppName": "BUC",
+  "DbName": "buc.db3",
+  "ApplicationType": "Mobile",
+  "ConnectionString": "Filename="
+}

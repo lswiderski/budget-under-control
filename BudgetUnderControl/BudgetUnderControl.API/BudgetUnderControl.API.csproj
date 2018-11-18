@@ -35,4 +35,10 @@
     <ProjectReference Include="..\Database\BudgetUnderControl.Migrations.SqlServer\BudgetUnderControl.Migrations.SqlServer.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Content Update="appsettings.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+
 </Project>

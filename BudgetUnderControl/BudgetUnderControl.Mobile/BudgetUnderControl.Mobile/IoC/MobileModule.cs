@@ -2,8 +2,11 @@
 using BudgetUnderControl.Common;
 using BudgetUnderControl.Common.Enums;
 using BudgetUnderControl.Domain;
+using BudgetUnderControl.Infrastructure.Settings;
+using BudgetUnderControl.Mobile.Extensions;
 using BudgetUnderControl.Mobile.Services;
 using BudgetUnderControl.ViewModel;
+using Microsoft.Extensions.Configuration;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -13,10 +16,16 @@ namespace BudgetUnderControl.Mobile.IoC
 {
     public class MobileModule : Module
     {
+
         protected override void Load(ContainerBuilder builder)
         {
-            var dbPath = DependencyService.Get<IFileHelper>().GetLocalFilePath(Settings.DB_SQLite_NAME);
-            builder.RegisterInstance(new ContextConfig() { DbName = Settings.DB_SQLite_NAME, DbPath = dbPath, Application = ApplicationType.Mobile }).As<IContextConfig>();
+            var settings = this.GetSettings<GeneralSettings>("generalsettings.json");
+            builder.RegisterInstance(settings)
+              .SingleInstance();
+
+            var dbPath = DependencyService.Get<IFileHelper>().GetLocalFilePath(settings.DbName);
+           
+            builder.RegisterInstance(new ContextConfig() { DbName = settings.DbName, DbPath = dbPath, Application = ApplicationType.Mobile }).As<IContextConfig>();
             builder.RegisterInstance<IFileHelper>(DependencyService.Get<IFileHelper>());
             builder.RegisterType<ContextFacade>().As<IContextFacade>().InstancePerLifetimeScope();
             builder.RegisterType<EditAccountViewModel>().As<IEditAccountViewModel>().InstancePerLifetimeScope();
@@ -29,7 +38,10 @@ namespace BudgetUnderControl.Mobile.IoC
             builder.RegisterType<SettingsViewModel>().As<ISettingsViewModel>().InstancePerLifetimeScope();
             builder.RegisterType<OverviewViewModel>().As<IOverviewViewModel>().InstancePerLifetimeScope();
             builder.RegisterType<SyncMobileService>().As<ISyncMobileService>().InstancePerLifetimeScope();
-            
+
+           
+
         }
+
     }
 }

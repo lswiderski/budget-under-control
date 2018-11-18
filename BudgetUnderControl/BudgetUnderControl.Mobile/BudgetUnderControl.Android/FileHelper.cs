@@ -1,8 +1,11 @@
-﻿using Android.Content.Res;
+﻿
+using Android.Content;
+using Android.Content.Res;
 using BudgetUnderControl.Common;
 using BudgetUnderControl.Droid;
 using System;
 using System.IO;
+using System.Threading.Tasks;
 using Xamarin.Forms;
 [assembly: Dependency(typeof(FileHelper))]
 namespace BudgetUnderControl.Droid
@@ -10,6 +13,17 @@ namespace BudgetUnderControl.Droid
     public class FileHelper : IFileHelper
     {
         private string folderName = "BudgetUnderControl";
+
+        private Context _context = Android.App.Application.Context;
+
+        public string ReadFromAssetsAsString(string filename)
+        {
+            using (var asset = _context.Assets.Open(filename))
+            using (var streamReader = new StreamReader(asset))
+            {
+                return streamReader.ReadToEnd();
+            }
+        }
 
         public string GetLocalFilePath(string filename)
         {

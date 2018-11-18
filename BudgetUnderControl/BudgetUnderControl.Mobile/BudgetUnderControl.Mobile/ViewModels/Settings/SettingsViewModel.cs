@@ -1,5 +1,6 @@
 ﻿using BudgetUnderControl.Infrastructure;
 using BudgetUnderControl.Infrastructure.Services;
+using BudgetUnderControl.Mobile.Services;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,8 +12,8 @@ namespace BudgetUnderControl.ViewModel
     public class SettingsViewModel : ISettingsViewModel
     {
 
-        ISyncService syncService;
-        public SettingsViewModel(ISyncService syncService)
+        ISyncMobileService syncService;
+        public SettingsViewModel(ISyncMobileService syncService)
         {
             this.syncService = syncService;
         }

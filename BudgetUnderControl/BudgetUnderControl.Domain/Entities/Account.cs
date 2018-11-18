@@ -42,7 +42,7 @@ namespace BudgetUnderControl.Domain
 
         public static Account Create(string name, int currencyId, int accountGroupId,
             bool isIncludedToTotal, string comment, int order, AccountType type, 
-            int? parentAccountId, bool isActive, int ownerId)
+            int? parentAccountId, bool isActive, int ownerId, Guid? externalId = null)
         {
             return new Account()
             {
@@ -55,7 +55,7 @@ namespace BudgetUnderControl.Domain
                 Order = order,
                 Type = type,
                 ParentAccountId = parentAccountId,
-                ExternalId = Guid.NewGuid(),
+                ExternalId = externalId ?? Guid.NewGuid(),
                 OwnerId = ownerId
             };
         }
@@ -82,6 +82,15 @@ namespace BudgetUnderControl.Domain
         public void SetId(int id)
         {
             this.Id = id;
+        }
+
+        /// <summary>
+        /// Use for sync/imports
+        /// </summary>
+        /// <param name="id"></param>
+        public void SetParentAccountId(int? id)
+        {
+            this.ParentAccountId = id;
         }
 
         /// <summary>

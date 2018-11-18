@@ -10,6 +10,7 @@ namespace BudgetUnderControl.Common.Contracts
     public class TransactionSyncDTO
     {
         public int Id { get; set; }
+        public Guid? ExternalId { get; set; }
         public int AccountId { get; set; }
         public TransactionType Type { get; set; }
         public decimal Amount { get; set; }

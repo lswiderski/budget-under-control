@@ -2,6 +2,7 @@
 using BudgetUnderControl.Common;
 using BudgetUnderControl.Common.Enums;
 using BudgetUnderControl.Domain;
+using BudgetUnderControl.Mobile.Services;
 using BudgetUnderControl.ViewModel;
 using System;
 using System.Collections.Generic;
@@ -27,6 +28,8 @@ namespace BudgetUnderControl.Mobile.IoC
             builder.RegisterType<EditTransactionViewModel>().As<IEditTransactionViewModel>().InstancePerLifetimeScope();
             builder.RegisterType<SettingsViewModel>().As<ISettingsViewModel>().InstancePerLifetimeScope();
             builder.RegisterType<OverviewViewModel>().As<IOverviewViewModel>().InstancePerLifetimeScope();
+            builder.RegisterType<SyncMobileService>().As<ISyncMobileService>().InstancePerLifetimeScope();
+            
         }
     }
 }

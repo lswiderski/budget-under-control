@@ -108,7 +108,7 @@ namespace BudgetUnderControl.Infrastructure.Services
         public async Task AddAccountAsync(AddAccount command)
         {
             var user = await userRepository.GetFirstUserAsync();
-            var account = Account.Create(command.Name, command.CurrencyId, command.AccountGroupId, command.IsIncludedInTotal, command.Comment, command.Order, command.Type, command.ParentAccountId, true, user.Id);
+            var account = Account.Create(command.Name, command.CurrencyId, command.AccountGroupId, command.IsIncludedInTotal, command.Comment, command.Order, command.Type, command.ParentAccountId, true, user.Id, command.ExternalId);
             await accountRepository.AddAccountAsync(account);
 
             if (account.Id <= 0)

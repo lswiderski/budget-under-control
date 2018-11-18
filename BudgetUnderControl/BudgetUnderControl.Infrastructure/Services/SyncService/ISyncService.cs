@@ -1,4 +1,5 @@
-﻿using System;
+﻿using BudgetUnderControl.Common.Contracts;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -8,12 +9,8 @@ namespace BudgetUnderControl.Infrastructure.Services
 {
     public interface ISyncService
     {
-        Task<string> GetTransactionsJSONAsync();
-        Task ImportBackUpJSONAsync(string json);
-        Task<string> GetBackUpJSONAsync();
-        Task SaveBackupFileAsync();
-        Task LoadBackupFileAsync();
-        Task ExportCSVAsync();
-        Task ExportDBAsync();
+        Task ImportBackUpAsync(BackUpDTO backupDto);
+        Task<BackUpDTO> GetBackUpAsync();
+        Task<IEnumerable<string>> GenerateCSV();
     }
 }

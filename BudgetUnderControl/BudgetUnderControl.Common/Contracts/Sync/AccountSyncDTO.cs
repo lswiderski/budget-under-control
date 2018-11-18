@@ -10,6 +10,7 @@ namespace BudgetUnderControl.Common.Contracts
     public class AccountSyncDTO
     {
         public int Id { get; set; }
+        public Guid? ExternalId { get; set; }
         public string Name { get; set; }
         public int CurrencyId { get; set; }
         public int AccountGroupId { get; set; }
@@ -18,5 +19,6 @@ namespace BudgetUnderControl.Common.Contracts
         public int Order { get; set; }
         public AccountType Type { get; set; }
         public int? ParentAccountId { get; set; }
+        
     }
 }

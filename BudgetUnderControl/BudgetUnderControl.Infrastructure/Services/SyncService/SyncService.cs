@@ -7,14 +7,13 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Transactions;
 
 namespace BudgetUnderControl.Infrastructure.Services
 {
     public class SyncService : ISyncService
     {
-        private static string BACKUP_FILE_NAME = "buc_backup.json";
 
-        IFileHelper fileHelper;
         ITransactionRepository transactionRepository;
         IAccountRepository accountRepository;
         ICurrencyRepository currencyRepository;
@@ -22,16 +21,16 @@ namespace BudgetUnderControl.Infrastructure.Services
         IAccountGroupRepository accountGroupRepository;
         IUserRepository userRepository;
 
-        public SyncService(IFileHelper fileHelper,
-            ITransactionRepository transactionRepository,
+        private Dictionary<int, int> accountsMap; // key - old AccountId, value - new AccountId
+        private Dictionary<int, int> transactionsMap; // key - old TransactionId, value - new TransactionId
+
+        public SyncService(ITransactionRepository transactionRepository,
             IAccountRepository accountRepository,
             ICurrencyRepository currencyRepository,
             ICategoryRepository categoryRepository,
             IAccountGroupRepository accountGroupRepository,
-            IUserRepository userRepository
-            )
+            IUserRepository userRepository)
         {
-            this.fileHelper = fileHelper;
             this.transactionRepository = transactionRepository;
             this.accountRepository = accountRepository;
             this.currencyRepository = currencyRepository;
@@ -40,39 +39,22 @@ namespace BudgetUnderControl.Infrastructure.Services
             this.userRepository = userRepository;
         }
 
-        public async Task<string> GetTransactionsJSONAsync()
+        public async Task ImportBackUpAsync(BackUpDTO backupDto)
         {
-            var transactions = await this.transactionRepository.GetTransactionsAsync();
+            using (TransactionScope transaction = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled))
+            {
+                await CleanDataBaseAsync();
+                //ImportCurrencies(backupDto.Currencies);
+                await ImportAccountsAsync(backupDto.Accounts);
+                await ImportTransactionsAsync(backupDto.Transactions);
+                await ImportTransfersAsync(backupDto.Transfers);
 
-            string output = Newtonsoft.Json.JsonConvert.SerializeObject(transactions);
-            return output;
+                transaction.Complete();
+            }
+          
         }
 
-        public async Task<string> GetTransfersJSON()
-        {
-            var transfers = await this.transactionRepository.GetTransfersAsync();
-
-            string output = Newtonsoft.Json.JsonConvert.SerializeObject(transfers);
-            return output;
-        }
-
-        public async Task<string>  GetAccountsJSON()
-        {
-            var accounts = await this.accountRepository.GetAccountsAsync();
-
-            string output = Newtonsoft.Json.JsonConvert.SerializeObject(accounts);
-            return output;
-        }
-
-        public async Task<string> GetCurrenciesJSON()
-        {
-            var currencies = await this.currencyRepository.GetCurriencesAsync();
-
-            string output = Newtonsoft.Json.JsonConvert.SerializeObject(currencies);
-            return output;
-        }
-
-        public async Task<string> GetBackUpJSONAsync()
+        public async Task<BackUpDTO> GetBackUpAsync()
         {
             var currencies = (await this.currencyRepository.GetCurriencesAsync()).Select(x => new CurrencySyncDTO
             {
@@ -86,6 +68,7 @@ namespace BudgetUnderControl.Infrastructure.Services
             var accounts = (await this.accountRepository.GetAccountsAsync()).Select(x => new AccountSyncDTO
             {
                 Id = x.Id,
+                ExternalId = x.ExternalId,
                 AccountGroupId = x.AccountGroupId,
                 Comment = x.Comment,
                 CurrencyId = x.CurrencyId,
@@ -114,76 +97,37 @@ namespace BudgetUnderControl.Infrastructure.Services
                 CreatedOn = x.CreatedOn,
                 Date = x.Date,
                 Id = x.Id,
+                ExternalId = x.ExternalId,
                 ModifiedOn = x.ModifiedOn,
                 Type = x.Type
             }).ToList();
 
-            var backUp = new
+            var backUp = new BackUpDTO
             {
-                currencies,
-                accounts,
-                transfers,
-                transactions
+                Currencies= currencies,
+                Accounts = accounts,
+                Transfers = transfers,
+                Transactions = transactions
             };
 
-            string output = Newtonsoft.Json.JsonConvert.SerializeObject(backUp);
-            return output;
-
+            return backUp;
         }
 
-
-        public async Task ImportBackUpJSONAsync(string json)
+        public async Task<IEnumerable<string>> GenerateCSV()
         {
-            if (string.IsNullOrEmpty(json))
-            {
-                return;
-            }
-            try
-            {
-                var deserialized = Newtonsoft.Json.JsonConvert.DeserializeObject<BackUpDTO>(json);
-                await CleanDataBaseAsync();
-                //ImportCurrencies(deserialized.Currencies);
-                await ImportAccountsAsync(deserialized.Accounts);
-                await ImportTransactionsAsync(deserialized.Transactions);
-                await ImportTransfersAsync(deserialized.Transfers);
-            }
-            catch (Exception e)
-            {
-                //Problem with JSON file
-                throw;
-            }
-
-        }
-
-        public async Task SaveBackupFileAsync()
-        {
-            var json = await GetBackUpJSONAsync();
-
-            fileHelper.SaveText(BACKUP_FILE_NAME, json);
-        }
-
-        public async Task LoadBackupFileAsync()
-        {
-            var json = fileHelper.LoadText(BACKUP_FILE_NAME);
-            await ImportBackUpJSONAsync(json);
-        }
-
-        public async Task ExportCSVAsync()
-        {
-            var fileName = string.Format("{0}_{1}.txt", "buc", DateTime.UtcNow.Ticks);
             var transactions = (await this.transactionRepository.GetTransactionsAsync())
-                .Select(t => new {
-                    AccountName = t.Account.Name,
-                    CurrencyCode = t.Account.Currency.Code,
-                    Amount = t.Amount,
-                    TransactionId = t.Id,
-                    Category = t.Category != null ? t.Category.Name : "",
-                    TransactionName = t.Name,
-                    Date = t.Date,
-                    Type = t.Type,
-                    Comment = t.Comment
-                }).ToList();
-           
+               .Select(t => new {
+                   AccountName = t.Account.Name,
+                   CurrencyCode = t.Account.Currency.Code,
+                   Amount = t.Amount,
+                   TransactionId = t.Id,
+                   Category = t.Category != null ? t.Category.Name : "",
+                   TransactionName = t.Name,
+                   Date = t.Date,
+                   Type = t.Type,
+                   Comment = t.Comment
+               }).ToList();
+
             var lines = new List<string>();
             var firstLine = "TransactionId;Date;Time;Name;Amount;CurrencyCode;Category;Type;AccountName;Comment";
             var csv = firstLine + Environment.NewLine;
@@ -195,58 +139,8 @@ namespace BudgetUnderControl.Infrastructure.Services
                 lines.Add(line);
                 csv += line + Environment.NewLine;
             }
-            fileHelper.SaveText(fileName, lines.ToArray());
-            //fileHelper.SaveTextExternal(fileName, csv);
-        }
 
-        public async Task ExportDBAsync()
-        {
-            //temporary
-            ExtractDB();
-        }
-
-        private async Task ImportCurrenciesAsync(List<CurrencySyncDTO> currencies)
-        {
-            foreach (var item in currencies)
-            {
-                var currency = Currency.Create(item.Code, item.FullName, item.Number, item.Symbol);
-                currency.SetId(item.Id);
-                await this.currencyRepository.AddCurrencyAsync(currency);
-            }
-        }
-
-        private async Task ImportAccountsAsync(List<AccountSyncDTO> accounts)
-        {
-            var user = await userRepository.GetFirstUserAsync();
-            foreach (var item in accounts)
-            {
-                var account = Account.Create(item.Name, item.CurrencyId, item.AccountGroupId, item.IsIncludedToTotal, item.Comment, item.Order, item.Type, item.ParentAccountId, true, user.Id);
-                account.SetId(item.Id);
-                await this.accountRepository.AddAccountAsync(account);
-            }
-        }
-
-        private async Task ImportTransactionsAsync(List<TransactionSyncDTO> transactions)
-        {
-            var user = await userRepository.GetFirstUserAsync();
-            foreach (var item in transactions)
-            {
-                var transaction = Transaction.Create(item.AccountId, item.Type, item.Amount, item.Date, item.Name, item.Comment, user.Id, item.CategoryId);
-                transaction.SetId(item.Id);
-                transaction.SetCreatedOn(item.CreatedOn);
-                transaction.SetModifiedOn(item.ModifiedOn);
-                await this.transactionRepository.AddTransactionAsync(transaction);
-            }
-        }
-
-        private async Task ImportTransfersAsync(List<TransferSyncDTO> transfers)
-        {
-            foreach (var item in transfers)
-            {
-                var transfer = Transfer.Create(item.FromTransactionId, item.ToTransactionId, item.Rate);
-                transfer.SetId(item.Id);
-                await this.transactionRepository.AddTransferAsync(transfer);
-            }
+            return lines;
         }
 
         private async Task CleanDataBaseAsync()
@@ -263,13 +157,70 @@ namespace BudgetUnderControl.Infrastructure.Services
             //this.Context.Currencies.RemoveRange(this.Context.Currencies);
         }
 
-        public void ExtractDB()
+        private async Task ImportAccountsAsync(List<AccountSyncDTO> accounts)
         {
-            var sourcePath = fileHelper.GetLocalFilePath(Settings.DB_SQLite_NAME);
+            var user = await userRepository.GetFirstUserAsync();
+            accountsMap = new Dictionary<int, int>();
+            foreach (var item in accounts)
+            {
+                var account = Account.Create(item.Name, item.CurrencyId, item.AccountGroupId, item.IsIncludedToTotal, item.Comment, item.Order, item.Type, item.ParentAccountId, true, user.Id, item.ExternalId);
+                await this.accountRepository.AddAccountAsync(account);
 
-            var databaseBackupPath = fileHelper.GetExternalFilePath(string.Format("{0}_{1}.db3", "buc_Backup", DateTime.UtcNow.Ticks));
-            fileHelper.CopyFile(sourcePath, databaseBackupPath);
+                accountsMap.Add(item.Id, account.Id);
+            }
 
+            //need to fix parentsAccountsIds
+            await this.FixParentsAccountsIdsAsync();
+        }
+
+        private async Task FixParentsAccountsIdsAsync()
+        {
+            var accounts = (await this.accountRepository.GetAccountsAsync()).ToArray();
+
+            for (int i = 0; i < accounts.Count(); i++)
+            {
+                if(accounts[i].ParentAccountId != null && accountsMap.ContainsKey(accounts[i].ParentAccountId.Value))
+                {
+                    accounts[i].SetParentAccountId(accountsMap[accounts[i].ParentAccountId.Value]);
+
+                    await this.accountRepository.UpdateAsync(accounts[i]);
+
+                }
+            }
+        }
+
+        private async Task ImportTransactionsAsync(List<TransactionSyncDTO> transactions)
+        {
+            var user = await userRepository.GetFirstUserAsync();
+            transactionsMap = new Dictionary<int, int>();
+            foreach (var item in transactions)
+            {
+                var transaction = Domain.Transaction.Create(accountsMap[item.AccountId], item.Type, item.Amount, item.Date, item.Name, item.Comment, user.Id, item.CategoryId, item.ExternalId);
+                transaction.SetCreatedOn(item.CreatedOn);
+                transaction.SetModifiedOn(item.ModifiedOn);
+                await this.transactionRepository.AddTransactionAsync(transaction);
+
+                transactionsMap.Add(item.Id, transaction.Id);
+            }
+        }
+
+        private async Task ImportTransfersAsync(List<TransferSyncDTO> transfers)
+        {
+            foreach (var item in transfers)
+            {
+                var transfer = Transfer.Create(transactionsMap[item.FromTransactionId], transactionsMap[item.ToTransactionId], item.Rate);
+                await this.transactionRepository.AddTransferAsync(transfer);
+            }
+        }
+
+        private async Task ImportCurrenciesAsync(List<CurrencySyncDTO> currencies)
+        {
+            foreach (var item in currencies)
+            {
+                var currency = Currency.Create(item.Code, item.FullName, item.Number, item.Symbol);
+                currency.SetId(item.Id);
+                await this.currencyRepository.AddCurrencyAsync(currency);
+            }
         }
     }
 }

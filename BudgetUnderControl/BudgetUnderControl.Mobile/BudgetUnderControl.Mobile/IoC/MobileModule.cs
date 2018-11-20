@@ -25,9 +25,9 @@ namespace BudgetUnderControl.Mobile.IoC
 
             var dbPath = DependencyService.Get<IFileHelper>().GetLocalFilePath(settings.DbName);
            
-            builder.RegisterInstance(new ContextConfig() { DbName = settings.DbName, DbPath = dbPath, Application = ApplicationType.Mobile }).As<IContextConfig>();
+            builder.RegisterInstance(new ContextConfig() { DbName = settings.DbName, DbPath = dbPath, Application = ApplicationType.Mobile , ConnectionString = settings.ConnectionString }).As<IContextConfig>();
             builder.RegisterInstance<IFileHelper>(DependencyService.Get<IFileHelper>());
-            builder.RegisterType<ContextFacade>().As<IContextFacade>().InstancePerLifetimeScope();
+            builder.RegisterType<ContextFacade>().As<IContextFacade>().SingleInstance();
             builder.RegisterType<EditAccountViewModel>().As<IEditAccountViewModel>().InstancePerLifetimeScope();
             builder.RegisterType<AddAccountViewModel>().As<IAddAccountViewModel>().InstancePerLifetimeScope();
             builder.RegisterType<AccountsViewModel>().As<IAccountsViewModel>().InstancePerLifetimeScope();

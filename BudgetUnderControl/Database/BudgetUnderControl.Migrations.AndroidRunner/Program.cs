@@ -8,6 +8,7 @@ namespace BudgetUnderControl.Migrations.AndroidRunner
 {
     class Program : IDesignTimeDbContextFactory<Context>
     {
+        //used only for creating migrations for mobile version of project
         static void Main(string[] args)
         {
             Program p = new Program();
@@ -21,7 +22,7 @@ namespace BudgetUnderControl.Migrations.AndroidRunner
         public Context CreateDbContext(string[] args)
         {
 
-            var contextConfig = new ContextConfig() { DbName = Settings.DB_SQLServer_NAME, Application = ApplicationType.SQLiteMigrations, };
+            var contextConfig = new ContextConfig() { DbName = Settings.DB_SQLite_NAME, Application = ApplicationType.SQLiteMigrations, ConnectionString = "Filename="};
             var connectionString = contextConfig.ConnectionString;
 
 

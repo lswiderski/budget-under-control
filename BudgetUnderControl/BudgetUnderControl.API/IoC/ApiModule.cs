@@ -28,10 +28,10 @@ namespace BudgetUnderControl.API.IoC
                 .SingleInstance();
 
             //var contextConfig = new ContextConfig() { DbName = Settings.DB_SQLServer_NAME,  Application = ApplicationType.SqlServerMigrations, DbPassword= "Qwerty!1", DbUser="buc" };
-            var contextConfig = new ContextConfig() { DbName = settings.DbName, Application = settings.ApplicationType, DbPassword = "Qwerty!1", DbUser = "buc" };
+            var contextConfig = new ContextConfig() { DbName = settings.DbName, Application = settings.ApplicationType, ConnectionString = settings.ConnectionString };
 
             builder.RegisterInstance(contextConfig).As<IContextConfig>();
-            builder.RegisterType<WebContextFacade>().As<IContextFacade>().InstancePerLifetimeScope();
+            builder.RegisterType<WebContextFacade>().As<IContextFacade>().SingleInstance();
             
         }
     }

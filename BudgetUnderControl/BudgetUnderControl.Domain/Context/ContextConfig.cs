@@ -9,36 +9,28 @@ namespace BudgetUnderControl.Domain
 {
     public class ContextConfig : IContextConfig
     {
-        private string _dbPath;
-
         public string DbName { get; set; }
-        public string DbUser { get; set; }
-        public string DbPassword { get; set; }
-        public string DbPath { get
-            {   
-                return _dbPath;  
-            }
-        set
-            {
-                _dbPath = value;
-            }
-        }
-
+        public string DbPath { get; set; }
         public ApplicationType Application { get; set; }
-
+        private string connectionString;
         public string ConnectionString { get
             {
                 switch (this.Application)
                 {
                     case ApplicationType.Mobile:
                     case ApplicationType.SQLiteMigrations:
-                        return $"Filename={this.DbPath}";
+                        return string.Format("{0}{1}", this.connectionString, this.DbPath);
                     case ApplicationType.SqlServerMigrations:
                     case ApplicationType.Web:
-                        return $"Data Source=.;Initial Catalog={this.DbName};User ID={this.DbUser};Password={this.DbPassword}";                       
+                        return this.connectionString;
+                        
                     default:
                         return string.Empty;
                 }
+            }
+            set
+            {
+                connectionString = value;
             }
         }
     }

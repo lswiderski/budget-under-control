@@ -25,7 +25,7 @@ namespace BudgetUnderControl.Migrations.SqlServer
         public Context CreateDbContext(string[] args)
         {
 
-            var contextConfig = new ContextConfig() { DbName = Settings.DB_SQLServer_NAME, Application = ApplicationType.SqlServerMigrations, DbPassword = "Qwerty!1", DbUser = "buc" };
+            var contextConfig = new ContextConfig() { DbName = Settings.DB_SQLServer_NAME, Application = ApplicationType.SqlServerMigrations, ConnectionString= "Data Source=.;Initial Catalog=dbBUC;User ID=buc;Password=Qwerty!1" };
             var connectionString = contextConfig.ConnectionString;
 
 

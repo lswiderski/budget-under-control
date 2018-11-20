@@ -22,6 +22,7 @@ namespace BudgetUnderControl.Domain
                         return string.Format("{0}{1}", this.connectionString, this.DbPath);
                     case ApplicationType.SqlServerMigrations:
                     case ApplicationType.Web:
+                    case ApplicationType.Test:
                         return this.connectionString;
                         
                     default:

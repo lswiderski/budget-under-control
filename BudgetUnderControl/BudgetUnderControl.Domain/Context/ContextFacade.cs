@@ -1,9 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data.Common;
 using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using BudgetUnderControl.Common.Enums;
+using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
 
@@ -11,6 +14,8 @@ namespace BudgetUnderControl.Domain
 {
     public class ContextFacade : IContextFacade
     {
+        private DbConnection _connection;
+
         public int SaveChanges() => _context.SaveChanges();
 
         public Task<int> SaveChangesAsync(CancellationToken cancellationToken = default(CancellationToken)) => _context.SaveChangesAsync(cancellationToken);
@@ -27,7 +32,30 @@ namespace BudgetUnderControl.Domain
 
         public ContextFacade(IContextConfig contextConfig)
         {
-            _context = Context.Create(contextConfig);
+            if(contextConfig.Application == ApplicationType.Test)
+            {
+                if(_connection == null)
+                {
+                    _connection = new SqliteConnection("DataSource=:memory:");
+                    _connection.Open();
+                    var optionsBuilder = new DbContextOptionsBuilder<Context>()
+                    .UseSqlite(_connection, options => options.MigrationsAssembly("BudgetUnderControl.Migrations.SQLite")).Options;
+                    _context = Context.CreateTest(optionsBuilder, contextConfig);
+                }
+            }
+            else
+            {
+                _context = Context.Create(contextConfig);
+            }
+        }
+
+        public void Dispose()
+        {
+            if (_connection != null)
+            {
+                _connection.Dispose();
+                _connection = null;
+            }
         }
 
         public DbSet<Account> Accounts

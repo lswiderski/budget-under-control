@@ -9,6 +9,7 @@ namespace BudgetUnderControl.Common.Enums
         Mobile,
         Web,
         SQLiteMigrations,
-        SqlServerMigrations
+        SqlServerMigrations,
+        Test
     }
 }

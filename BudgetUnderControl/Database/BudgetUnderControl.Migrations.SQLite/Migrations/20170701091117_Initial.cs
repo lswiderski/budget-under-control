@@ -155,7 +155,7 @@ namespace Migrations.Migrations
                     Amount = table.Column<decimal>(nullable: false),
                     CategoryId = table.Column<int>(nullable: true),
                     Comment = table.Column<string>(nullable: true),
-                    CreatedOn = table.Column<DateTime>(nullable: false),
+                    Date = table.Column<DateTime>(nullable: false),
                     Name = table.Column<string>(nullable: true),
                     Type = table.Column<byte>(nullable: false)
                 },

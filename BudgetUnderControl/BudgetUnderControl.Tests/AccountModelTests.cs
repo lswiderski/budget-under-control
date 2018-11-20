@@ -25,12 +25,13 @@ namespace BudgetUnderControl.Tests
             var account = Account.Create("test", 1, 1, true, "", 1, Common.Enums.AccountType.Wallet, null, true, 1);
             account.Currency = Currency.Create( "PLN", "Polski zloty", 985, "zl");
            
+            accountRepositoryMock.Setup(x => x.GetAccountAsync(It.IsAny<Guid>())).ReturnsAsync(account);
             accountRepositoryMock.Setup(x => x.GetAccountAsync(It.IsAny<int>())).ReturnsAsync(account);
             accountRepositoryMock.Setup(x => x.GetActualBalanceAsync(It.IsAny<int>())).ReturnsAsync(10);
-            await accountService.ActivateAccountAsync(1);
+            await accountService.ActivateAccountAsync(account.Id);
 
-            var user = await accountService.GetAccountAsync(account.ExternalId);
-            Assert.True(user.IsActive);
+            var accountDTO = await accountService.GetAccountAsync(account.ExternalId);
+            Assert.True(accountDTO.IsActive);
 
         }
     }

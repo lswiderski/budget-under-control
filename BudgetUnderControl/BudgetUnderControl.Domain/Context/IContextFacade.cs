@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace BudgetUnderControl.Domain
 {
-    public interface IContextFacade
+    public interface IContextFacade : IDisposable
     {
         int SaveChanges();
         Task<int> SaveChangesAsync(CancellationToken cancellationToken = default(CancellationToken));

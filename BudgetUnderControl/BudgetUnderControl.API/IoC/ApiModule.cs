@@ -31,7 +31,7 @@ namespace BudgetUnderControl.API.IoC
             var contextConfig = new ContextConfig() { DbName = settings.DbName, Application = settings.ApplicationType, ConnectionString = settings.ConnectionString };
 
             builder.RegisterInstance(contextConfig).As<IContextConfig>();
-            builder.RegisterType<WebContextFacade>().As<IContextFacade>().SingleInstance();
+            builder.RegisterType<ContextFacade>().As<IContextFacade>().SingleInstance();
             
         }
     }

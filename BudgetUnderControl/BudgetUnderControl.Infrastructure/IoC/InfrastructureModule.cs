@@ -49,6 +49,7 @@ namespace BudgetUnderControl.Infrastructure.IoC
             builder.RegisterType<UserRepository>().As<IUserRepository>().InstancePerLifetimeScope();
             builder.RegisterType<SyncService>().As<ISyncService>().InstancePerLifetimeScope();
             builder.RegisterType<UserService>().As<IUserService>().InstancePerLifetimeScope();
+            builder.RegisterType<TestDataSeeder>().As<ITestDataSeeder>().InstancePerLifetimeScope();
 
             builder.Register<Func<IUserIdentityContext>>(c =>
             {

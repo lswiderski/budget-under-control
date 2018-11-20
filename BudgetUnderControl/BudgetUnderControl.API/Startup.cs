@@ -50,6 +50,7 @@ namespace BudgetUnderControl.API
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1)
                 .AddJsonOptions(x => x.SerializerSettings.Formatting = Formatting.Indented)
                 .AddFluentValidation();
+
             services.AddEntityFrameworkSqlServer()
                     .AddEntityFrameworkInMemoryDatabase()
                     .AddDbContext<Context>();
@@ -67,9 +68,13 @@ namespace BudgetUnderControl.API
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env)
+        public void Configure(IApplicationBuilder app, IHostingEnvironment env, IContextConfig contextConfig, ITestDataSeeder testDataSeeder)
         {
-            
+            if(contextConfig.Application == ApplicationType.Test)
+            {
+                testDataSeeder.SeedAsync().Wait();
+            }
+
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();

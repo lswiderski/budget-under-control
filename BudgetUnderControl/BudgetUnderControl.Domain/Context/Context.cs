@@ -6,13 +6,15 @@ using System.Collections.Generic;
 using BudgetUnderControl.Common;
 using System;
 using BudgetUnderControl.Common.Enums;
+using Microsoft.Data.Sqlite;
+using System.Data.Common;
 
 namespace BudgetUnderControl.Domain
 {
     public class Context : DbContext, IDisposable
     {
         private readonly IContextConfig config;
-
+        
         private string databasePath { get; set; }
 
         public virtual DbSet<Account> Accounts { get; set; }
@@ -36,14 +38,25 @@ namespace BudgetUnderControl.Domain
             return context;
         }
 
+        public static Context CreateTest(DbContextOptions options, IContextConfig config)
+        {
+            var context = new Context(options, config);
+
+            return context;
+        }
+
         protected Context()
         {
             
         }
 
-        public Context(DbContextOptions option, IContextConfig config) : base(option)
+        public Context(DbContextOptions options, IContextConfig config) : base(options)
         {
             this.config = config;
+            if (config.Application == ApplicationType.Test)
+            {
+                Database.Migrate();
+            }
         }
 
         public Context(IContextConfig config)
@@ -66,6 +79,10 @@ namespace BudgetUnderControl.Domain
                 else if (config.Application == ApplicationType.Web || config.Application == ApplicationType.SqlServerMigrations)
                 {
                     optionsBuilder.UseSqlServer(config.ConnectionString, options => options.MigrationsAssembly("BudgetUnderControl.Migrations.SqlServer"));
+                }
+                else if(config.Application == ApplicationType.Test)
+                {
+                    
                 }
             }
             

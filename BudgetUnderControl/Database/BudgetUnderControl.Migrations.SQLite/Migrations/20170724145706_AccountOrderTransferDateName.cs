@@ -8,11 +8,6 @@ namespace Migrations.Migrations
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.RenameColumn(
-                name: "CreatedOn",
-                table: "Transaction",
-                newName: "Date");
-
             migrationBuilder.AddColumn<int>(
                 name: "Order",
                 table: "Account",
@@ -25,11 +20,6 @@ namespace Migrations.Migrations
             migrationBuilder.DropColumn(
                 name: "Order",
                 table: "Account");
-
-            migrationBuilder.RenameColumn(
-                name: "Date",
-                table: "Transaction",
-                newName: "CreatedOn");
         }
     }
 }

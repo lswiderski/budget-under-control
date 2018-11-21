@@ -15,5 +15,7 @@ namespace BudgetUnderControl.ViewModel
         Task ExportCSVAsync();
 
         Task ExportDBAsync();
+
+        Task SyncAsync();
     }
 }

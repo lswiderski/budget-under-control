@@ -30,6 +30,8 @@ namespace BudgetUnderControl.Domain
         public virtual DbSet<Transaction> Transactions { get; set; }
         public virtual DbSet<Transfer> Transfers { get; set; }
         public virtual DbSet<User> Users { get; set; }
+        public virtual DbSet<Synchronization> Synchronizations { get; set; }
+        
 
         public static Context Create(IContextConfig contextConfig)
         {
@@ -103,7 +105,7 @@ namespace BudgetUnderControl.Domain
             modelBuilder.Entity<Transaction>().ToTable("Transaction");
             modelBuilder.Entity<Transfer>().ToTable("Transfer");
             modelBuilder.Entity<User>().ToTable("User");
-
+            modelBuilder.Entity<Synchronization>().ToTable("Synchronization");
 
             modelBuilder.Entity<Account>()
                 .HasOne(x => x.AccountGroup)

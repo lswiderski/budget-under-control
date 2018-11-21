@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace BudgetUnderControl.Domain
 {
-    public class Transfer
+    public class Transfer : ISyncable
     {
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
@@ -17,21 +17,28 @@ namespace BudgetUnderControl.Domain
         public int ToTransactionId { get; protected set; }
         public decimal Rate { get; protected set; }
 
+        public DateTime? ModifiedOn { get; protected set; }
+        public Guid ExternalId { get; protected set; }
+        public bool IsDeleted { get; protected set; }
+
         public Transaction FromTransaction { get; set; }
         public Transaction ToTransaction { get; set; }
+
+      
 
         public Transfer()
         {
 
         }
 
-        public static Transfer Create(int fromTransactionId, int toTransactionId, decimal rate)
+        public static Transfer Create(int fromTransactionId, int toTransactionId, decimal rate, Guid? guid = null)
         {
             return new Transfer()
             {
                 FromTransactionId = fromTransactionId,
                 ToTransactionId = toTransactionId,
-                Rate = rate
+                Rate = rate,
+                ExternalId = guid ?? Guid.NewGuid()
             };
         }
 
@@ -51,6 +58,17 @@ namespace BudgetUnderControl.Domain
         public void SetRate(decimal rate)
         {
             this.Rate = rate;
+        }
+
+        public void Delete(bool delete = true)
+        {
+            this.IsDeleted = delete;
+            this.UpdateModify();
+        }
+
+        public void UpdateModify()
+        {
+            this.ModifiedOn = DateTime.UtcNow;
         }
     }
 }

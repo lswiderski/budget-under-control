@@ -30,6 +30,7 @@ namespace BudgetUnderControl.Infrastructure
 
         public async Task UpdateAsync(Transaction transaction)
         {
+            transaction.UpdateModify();
             this.Context.Transactions.Update(transaction);
             await this.Context.SaveChangesAsync();
         }
@@ -42,29 +43,30 @@ namespace BudgetUnderControl.Infrastructure
 
         public async Task UpdateTransferAsync(Transfer transfer)
         {
+            transfer.UpdateModify();
             this.Context.Transfers.Update(transfer);
             await this.Context.SaveChangesAsync();
         }
 
         public async Task RemoveTransactionAsync(Transaction transaction)
         {
-            this.Context.Transactions.Remove(transaction);
+            transaction.Delete();
             await this.Context.SaveChangesAsync();
         }
 
         public async Task RemoveTransferAsync(Transfer transfer)
         {
-            this.Context.Transfers.Remove(transfer);
+            transfer.Delete();
             await this.Context.SaveChangesAsync();
         }
 
-        public async Task RemoveTransactionsAsync(IEnumerable<Transaction> transactions)
+        public async Task HardRemoveTransactionsAsync(IEnumerable<Transaction> transactions)
         {
             this.Context.Transactions.RemoveRange(transactions);
             await this.Context.SaveChangesAsync();
         }
 
-        public async Task RemoveTransfersAsync(IEnumerable<Transfer> transfers)
+        public async Task HardRemoveTransfersAsync(IEnumerable<Transfer> transfers)
         {
             this.Context.Transfers.RemoveRange(transfers);
             await this.Context.SaveChangesAsync();
@@ -101,8 +103,13 @@ namespace BudgetUnderControl.Infrastructure
                 query = query.Where(q => q.Account.OwnerId == userIdentityContext.UserId).AsQueryable();
             }
 
+
             if (filter != null)
             {
+                if(!filter.IncludeDeleted)
+                {
+                    query = query.Where(q => q.IsDeleted == false).AsQueryable();
+                }
                 query = query.Where(q => q.Date >= filter.FromDate).AsQueryable();
                 query = query.Where(q => q.Date <= filter.ToDate).AsQueryable();
             }

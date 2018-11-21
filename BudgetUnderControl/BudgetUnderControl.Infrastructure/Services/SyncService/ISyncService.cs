@@ -1,4 +1,6 @@
 ﻿using BudgetUnderControl.Common.Contracts;
+using BudgetUnderControl.Common.Enums;
+using BudgetUnderControl.Infrastructure.Commands;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,5 +14,8 @@ namespace BudgetUnderControl.Infrastructure.Services
         Task ImportBackUpAsync(BackUpDTO backupDto);
         Task<BackUpDTO> GetBackUpAsync();
         Task<IEnumerable<string>> GenerateCSV();
+
+        Task<SyncRequest> SyncAsync(SyncRequest request);
+        Task<SyncRequest> CreateSyncRequestAsync(SynchronizationComponent source, SynchronizationComponent target);
     }
 }

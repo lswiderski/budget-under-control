@@ -124,6 +124,10 @@ namespace BudgetUnderControl.Domain
             get => _context.Users;
             set => _context.Users = value;
         }
-
+        public DbSet<Synchronization> Synchronizations
+        {
+            get => _context.Synchronizations;
+            set => _context.Synchronizations = value;
+        }
     }
 }

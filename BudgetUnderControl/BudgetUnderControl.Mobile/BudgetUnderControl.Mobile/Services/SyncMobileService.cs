@@ -1,7 +1,9 @@
 ﻿using BudgetUnderControl.Common;
 using BudgetUnderControl.Common.Contracts;
+using BudgetUnderControl.Common.Enums;
 using BudgetUnderControl.Domain;
 using BudgetUnderControl.Domain.Repositiories;
+using BudgetUnderControl.Infrastructure.Commands;
 using BudgetUnderControl.Infrastructure.Services;
 using System;
 using System.Collections.Generic;
@@ -90,6 +92,18 @@ namespace BudgetUnderControl.Mobile.Services
             var databaseBackupPath = fileHelper.GetExternalFilePath(string.Format("{0}_{1}.db3", "buc_Backup", DateTime.UtcNow.Ticks));
             fileHelper.CopyFile(sourcePath, databaseBackupPath);
 
+        }
+
+        public async Task SyncAsync()
+        {
+            //get request
+            var syncRequestDto = await this.syncService.CreateSyncRequestAsync(SynchronizationComponent.Mobile, SynchronizationComponent.Api);
+
+            //call api
+            var apiResponse = new SyncRequest();
+            //do sync with responsedto
+
+            await this.syncService.SyncAsync(apiResponse);
         }
     }
 }

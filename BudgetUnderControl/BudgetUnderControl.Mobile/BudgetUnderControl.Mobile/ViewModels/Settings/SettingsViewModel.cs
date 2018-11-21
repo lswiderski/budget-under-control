@@ -12,30 +12,35 @@ namespace BudgetUnderControl.ViewModel
     public class SettingsViewModel : ISettingsViewModel
     {
 
-        ISyncMobileService syncService;
-        public SettingsViewModel(ISyncMobileService syncService)
+        ISyncMobileService syncMobileService;
+        public SettingsViewModel(ISyncMobileService syncMobileService)
         {
-            this.syncService = syncService;
+            this.syncMobileService = syncMobileService;
         }
 
         public async Task ExportBackupAsync()
         {
-            await syncService.SaveBackupFileAsync();
+            await syncMobileService.SaveBackupFileAsync();
         }
 
         public async Task ImportBackupAsync()
         {
-            await syncService.LoadBackupFileAsync();
+            await syncMobileService.LoadBackupFileAsync();
         }
 
         public async Task ExportCSVAsync()
         {
-            await syncService.ExportCSVAsync();
+            await syncMobileService.ExportCSVAsync();
         }
 
         public async Task ExportDBAsync()
         {
-            await syncService.ExportDBAsync();
+            await syncMobileService.ExportDBAsync();
+        }
+
+        public async Task SyncAsync()
+        {
+            await syncMobileService.SyncAsync();
         }
     }
 }

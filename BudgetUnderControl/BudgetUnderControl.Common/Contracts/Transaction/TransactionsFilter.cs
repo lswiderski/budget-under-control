@@ -10,6 +10,7 @@ namespace BudgetUnderControl.Common.Contracts
         public IEnumerable<Guid> AccountsExternalIds { get; set; }
         public DateTime FromDate { get; set; }
         public DateTime ToDate { get; set; }
+        public bool IncludeDeleted { get; set; }
 
         public TransactionsFilter()
         {

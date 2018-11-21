@@ -31,6 +31,8 @@ namespace Migrations.Migrations
 
                     b.Property<bool>("IsActive");
 
+                    b.Property<bool>("IsDeleted");
+
                     b.Property<bool>("IsIncludedToTotal");
 
                     b.Property<DateTime?>("ModifiedOn");
@@ -63,6 +65,8 @@ namespace Migrations.Migrations
                         .ValueGeneratedOnAdd();
 
                     b.Property<Guid>("ExternalId");
+
+                    b.Property<bool>("IsDeleted");
 
                     b.Property<DateTime?>("ModifiedOn");
 
@@ -114,6 +118,8 @@ namespace Migrations.Migrations
                         .ValueGeneratedOnAdd();
 
                     b.Property<Guid>("ExternalId");
+
+                    b.Property<bool>("IsDeleted");
 
                     b.Property<DateTime?>("ModifiedOn");
 
@@ -194,12 +200,34 @@ namespace Migrations.Migrations
                     b.ToTable("Icon");
                 });
 
+            modelBuilder.Entity("BudgetUnderControl.Domain.Synchronization", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd();
+
+                    b.Property<byte>("Component");
+
+                    b.Property<Guid>("ComponentId");
+
+                    b.Property<DateTime>("LastSyncAt");
+
+                    b.Property<int>("UserId");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("Synchronization");
+                });
+
             modelBuilder.Entity("BudgetUnderControl.Domain.Tag", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd();
 
                     b.Property<Guid>("ExternalId");
+
+                    b.Property<bool>("IsDeleted");
 
                     b.Property<DateTime?>("ModifiedOn");
 
@@ -254,6 +282,8 @@ namespace Migrations.Migrations
 
                     b.Property<Guid>("ExternalId");
 
+                    b.Property<bool>("IsDeleted");
+
                     b.Property<DateTime?>("ModifiedOn");
 
                     b.Property<string>("Name");
@@ -276,7 +306,13 @@ namespace Migrations.Migrations
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd();
 
+                    b.Property<Guid>("ExternalId");
+
                     b.Property<int>("FromTransactionId");
+
+                    b.Property<bool>("IsDeleted");
+
+                    b.Property<DateTime?>("ModifiedOn");
 
                     b.Property<decimal>("Rate");
 
@@ -302,6 +338,8 @@ namespace Migrations.Migrations
                         .HasMaxLength(150);
 
                     b.Property<Guid>("ExternalId");
+
+                    b.Property<bool>("IsDeleted");
 
                     b.Property<DateTime?>("ModifiedOn");
 
@@ -389,6 +427,14 @@ namespace Migrations.Migrations
                         .HasForeignKey("ToCurrencyId")
                         .HasConstraintName("ForeignKey_ExchangeRate_ToCurrency")
                         .OnDelete(DeleteBehavior.Restrict);
+                });
+
+            modelBuilder.Entity("BudgetUnderControl.Domain.Synchronization", b =>
+                {
+                    b.HasOne("BudgetUnderControl.Domain.User", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade);
                 });
 
             modelBuilder.Entity("BudgetUnderControl.Domain.Tag", b =>

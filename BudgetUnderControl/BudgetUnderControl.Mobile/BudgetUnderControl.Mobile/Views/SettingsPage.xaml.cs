@@ -44,5 +44,10 @@ namespace BudgetUnderControl.Views
         {
             await vm.ExportDBAsync();
         }
+
+        private async void SyncButton_Clicked(object sender, EventArgs e)
+        {
+            await vm.SyncAsync();
+        }
     }
 }

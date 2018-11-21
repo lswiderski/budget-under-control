@@ -27,6 +27,7 @@ namespace BudgetUnderControl.Domain
         public int OwnerId { get; protected set; }
         public DateTime? ModifiedOn { get; protected set; }
         public Guid ExternalId { get; protected set; }
+        public bool IsDeleted { get; protected set; }
 
         public AccountGroup AccountGroup { get; protected set; }
         public Currency Currency { get;  set; }
@@ -100,6 +101,17 @@ namespace BudgetUnderControl.Domain
         public void SetActive(bool isActive)
         {
             this.IsActive = IsActive;
+        }
+
+        public void Delete(bool delete = true)
+        {
+            this.IsDeleted = delete;
+            this.UpdateModify();
+        }
+
+        public void UpdateModify()
+        {
+            this.ModifiedOn = DateTime.UtcNow;
         }
     }
 }

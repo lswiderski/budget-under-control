@@ -19,6 +19,7 @@ namespace BudgetUnderControl.Domain
         public int OwnerId { get; protected set; }
         public DateTime? ModifiedOn { get; protected set; }
         public Guid ExternalId { get; protected set; }
+        public bool IsDeleted { get; protected set; }
 
         public virtual User Owner { get; set; }
         public List<Transaction> Transactions { get; set; }
@@ -30,6 +31,17 @@ namespace BudgetUnderControl.Domain
             {
                 return this.ExternalId.ToString();
             }
+        }
+
+        public void Delete(bool delete = true)
+        {
+            this.IsDeleted = delete;
+            this.UpdateModify();
+        }
+
+        public void UpdateModify()
+        {
+            this.ModifiedOn = DateTime.UtcNow;
         }
     }
 }

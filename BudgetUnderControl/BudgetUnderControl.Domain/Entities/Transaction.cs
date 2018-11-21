@@ -22,6 +22,7 @@ namespace BudgetUnderControl.Domain
         public DateTime? ModifiedOn { get; protected set; }
         public Guid ExternalId { get; protected set; }
         public int AddedById { get; protected set; }
+        public bool IsDeleted { get; protected set; }
 
         [NotMapped]
         public bool IsTransfer { get; set; }
@@ -93,6 +94,17 @@ namespace BudgetUnderControl.Domain
         public void SetModifiedOn(DateTime? date)
         {
             this.ModifiedOn = date;
+        }
+
+        public void Delete(bool delete = true)
+        {
+            this.IsDeleted = delete;
+            this.UpdateModify();
+        }
+
+        public void UpdateModify()
+        {
+            this.ModifiedOn = DateTime.UtcNow;
         }
     }
 }

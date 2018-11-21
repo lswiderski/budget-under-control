@@ -64,7 +64,7 @@ namespace BudgetUnderControl.Infrastructure
             await this.Context.SaveChangesAsync();
         }
 
-        public async Task RemoveAccountsAsync(IEnumerable<Account> accounts)
+        public async Task HardRemoveAccountsAsync(IEnumerable<Account> accounts)
         {
             this.Context.Accounts.RemoveRange(accounts);
             await this.Context.SaveChangesAsync();
@@ -96,6 +96,7 @@ namespace BudgetUnderControl.Infrastructure
 
         public async Task UpdateAsync(Account account)
         {
+            account.UpdateModify();
             this.Context.Accounts.Update(account);
             await this.Context.SaveChangesAsync();
         }

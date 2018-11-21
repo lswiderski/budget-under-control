@@ -1,7 +1,10 @@
 ﻿using BudgetUnderControl.Common;
 using BudgetUnderControl.Common.Contracts;
+using BudgetUnderControl.Common.Enums;
 using BudgetUnderControl.Domain;
 using BudgetUnderControl.Domain.Repositiories;
+using BudgetUnderControl.Infrastructure.Commands;
+using BudgetUnderControl.Infrastructure.Settings;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -14,12 +17,15 @@ namespace BudgetUnderControl.Infrastructure.Services
     public class SyncService : ISyncService
     {
 
-        ITransactionRepository transactionRepository;
-        IAccountRepository accountRepository;
-        ICurrencyRepository currencyRepository;
-        ICategoryRepository categoryRepository;
-        IAccountGroupRepository accountGroupRepository;
-        IUserRepository userRepository;
+        private readonly ITransactionRepository transactionRepository;
+        private readonly IAccountRepository accountRepository;
+        private readonly ICurrencyRepository currencyRepository;
+        private readonly ICategoryRepository categoryRepository;
+        private readonly IAccountGroupRepository accountGroupRepository;
+        private readonly IUserRepository userRepository;
+        private readonly ISynchronizationRepository synchronizationRepository;
+        private readonly IUserIdentityContext userIdentityContext;
+        private readonly GeneralSettings settings;
 
         private Dictionary<int, int> accountsMap; // key - old AccountId, value - new AccountId
         private Dictionary<int, int> transactionsMap; // key - old TransactionId, value - new TransactionId
@@ -29,7 +35,10 @@ namespace BudgetUnderControl.Infrastructure.Services
             ICurrencyRepository currencyRepository,
             ICategoryRepository categoryRepository,
             IAccountGroupRepository accountGroupRepository,
-            IUserRepository userRepository)
+            IUserRepository userRepository,
+            ISynchronizationRepository synchronizationRepository,
+            IUserIdentityContext userIdentityContext,
+            GeneralSettings settings)
         {
             this.transactionRepository = transactionRepository;
             this.accountRepository = accountRepository;
@@ -37,6 +46,9 @@ namespace BudgetUnderControl.Infrastructure.Services
             this.categoryRepository = categoryRepository;
             this.accountGroupRepository = accountGroupRepository;
             this.userRepository = userRepository;
+            this.synchronizationRepository = synchronizationRepository;
+            this.userIdentityContext = userIdentityContext;
+            this.settings = settings;
         }
 
         public async Task ImportBackUpAsync(BackUpDTO backupDto)
@@ -84,7 +96,8 @@ namespace BudgetUnderControl.Infrastructure.Services
                 Id = x.Id,
                 FromTransactionId = x.FromTransactionId,
                 Rate = x.Rate,
-                ToTransactionId = x.ToTransactionId
+                ToTransactionId = x.ToTransactionId,
+                ExternalId = x.ExternalId,
             }).ToList();
 
             var transactions = (await this.transactionRepository.GetTransactionsAsync()).Select(x => new TransactionSyncDTO
@@ -146,13 +159,13 @@ namespace BudgetUnderControl.Infrastructure.Services
         private async Task CleanDataBaseAsync()
         {
             var transfers = await this.transactionRepository.GetTransfersAsync();
-            await this.transactionRepository.RemoveTransfersAsync(transfers);
+            await this.transactionRepository.HardRemoveTransfersAsync(transfers);
 
             var transactions = await this.transactionRepository.GetTransactionsAsync();
-            await this.transactionRepository.RemoveTransactionsAsync(transactions);
+            await this.transactionRepository.HardRemoveTransactionsAsync(transactions);
 
             var accounts = await this.accountRepository.GetAccountsAsync();
-            await this.accountRepository.RemoveAccountsAsync(accounts);
+            await this.accountRepository.HardRemoveAccountsAsync(accounts);
 
             //this.Context.Currencies.RemoveRange(this.Context.Currencies);
         }
@@ -208,7 +221,7 @@ namespace BudgetUnderControl.Infrastructure.Services
         {
             foreach (var item in transfers)
             {
-                var transfer = Transfer.Create(transactionsMap[item.FromTransactionId], transactionsMap[item.ToTransactionId], item.Rate);
+                var transfer = Transfer.Create(transactionsMap[item.FromTransactionId], transactionsMap[item.ToTransactionId], item.Rate, item.ExternalId);
                 await this.transactionRepository.AddTransferAsync(transfer);
             }
         }
@@ -221,6 +234,43 @@ namespace BudgetUnderControl.Infrastructure.Services
                 currency.SetId(item.Id);
                 await this.currencyRepository.AddCurrencyAsync(currency);
             }
+        }
+
+        public Task<SyncRequest> SyncAsync(SyncRequest request)
+        {
+            //get requst
+
+            //collect collections to send to update
+            // modified on || created on > LastSync
+
+            //update own collection
+
+            //send responserequest
+            throw new NotImplementedException();
+        }
+
+        public async Task<SyncRequest> CreateSyncRequestAsync(SynchronizationComponent source, SynchronizationComponent target)
+        {
+            //get
+            var synchronizations = await this.synchronizationRepository.GetSynchronizationsAsync();
+            var synchronization = synchronizations.Where(x => x.Component == target && x.UserId == userIdentityContext.UserId).FirstOrDefault();
+
+            var request = new SyncRequest
+            {
+                Component = source,
+                ComponentId = new Guid(settings.ApplicationId),
+                UserId = userIdentityContext.ExternalId
+            };
+
+            if (synchronization != null)
+            {
+                request.LastSync = synchronization.LastSyncAt;
+            }
+
+            //collect collections to send to update
+            // modified on || created on > LastSync
+
+            return request;
         }
     }
 }

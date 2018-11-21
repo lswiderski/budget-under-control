@@ -8,5 +8,9 @@ namespace BudgetUnderControl.Domain
     {
         DateTime? ModifiedOn { get; }
         Guid ExternalId { get; }
+        bool IsDeleted { get; }
+
+        void UpdateModify();
+        void Delete(bool delete = true);
     }
 }

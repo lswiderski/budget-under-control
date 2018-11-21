@@ -42,5 +42,16 @@ namespace BudgetUnderControl.API.Controllers
             var csv = await this.syncService.GenerateCSV();
             return Content(string.Join(System.Environment.NewLine, csv));
         }
+
+        // POST api/sync/sync
+        [HttpPost("backup")]
+        public async Task<IActionResult> Sync([FromBody] SyncRequest request)
+        {
+            //await this.DispatchAsync(request);
+            //temporary no CQRS
+
+            var response = await this.syncService.SyncAsync(request);
+            return Ok(response);
+        }
     }
 }

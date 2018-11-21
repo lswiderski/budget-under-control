@@ -21,9 +21,21 @@ namespace BudgetUnderControl.Domain
         public DateTime CreatedAt { get; protected set; }
         public DateTime? ModifiedOn { get; protected set; }
         public Guid ExternalId { get; protected set; }
+        public bool IsDeleted { get; protected set; }
 
         public List<Account> Accounts { get; protected set; }
         public List<AccountGroup> AccountGroups { get; protected set; }
         public List<Transaction> Transactions { get; protected set; }
+
+        public void Delete(bool delete = true)
+        {
+            this.IsDeleted = delete;
+            this.UpdateModify();
+        }
+
+        public void UpdateModify()
+        {
+            this.ModifiedOn = DateTime.UtcNow;
+        }
     }
 }

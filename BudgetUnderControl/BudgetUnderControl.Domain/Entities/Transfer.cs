@@ -38,7 +38,8 @@ namespace BudgetUnderControl.Domain
                 FromTransactionId = fromTransactionId,
                 ToTransactionId = toTransactionId,
                 Rate = rate,
-                ExternalId = guid ?? Guid.NewGuid()
+                ExternalId = guid ?? Guid.NewGuid(),
+                ModifiedOn = DateTime.UtcNow
             };
         }
 
@@ -64,6 +65,11 @@ namespace BudgetUnderControl.Domain
         {
             this.IsDeleted = delete;
             this.UpdateModify();
+        }
+
+        public void SetModifiedOn(DateTime? dateTime)
+        {
+            this.ModifiedOn = dateTime;
         }
 
         public void UpdateModify()

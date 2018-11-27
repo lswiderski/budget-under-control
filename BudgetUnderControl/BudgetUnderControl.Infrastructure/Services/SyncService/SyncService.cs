@@ -14,7 +14,7 @@ using System.Transactions;
 
 namespace BudgetUnderControl.Infrastructure.Services
 {
-    public class SyncService : ISyncService
+    public partial class SyncService : ISyncService
     {
 
         private readonly ITransactionRepository transactionRepository;
@@ -26,6 +26,8 @@ namespace BudgetUnderControl.Infrastructure.Services
         private readonly ISynchronizationRepository synchronizationRepository;
         private readonly IUserIdentityContext userIdentityContext;
         private readonly GeneralSettings settings;
+        private readonly ISyncRequestBuilder syncRequestBuilder;
+        private readonly ISynchroniser synchroniser;
 
         private Dictionary<int, int> accountsMap; // key - old AccountId, value - new AccountId
         private Dictionary<int, int> transactionsMap; // key - old TransactionId, value - new TransactionId
@@ -38,7 +40,9 @@ namespace BudgetUnderControl.Infrastructure.Services
             IUserRepository userRepository,
             ISynchronizationRepository synchronizationRepository,
             IUserIdentityContext userIdentityContext,
-            GeneralSettings settings)
+            GeneralSettings settings,
+            ISyncRequestBuilder syncRequestBuilder,
+            ISynchroniser synchroniser)
         {
             this.transactionRepository = transactionRepository;
             this.accountRepository = accountRepository;
@@ -49,6 +53,8 @@ namespace BudgetUnderControl.Infrastructure.Services
             this.synchronizationRepository = synchronizationRepository;
             this.userIdentityContext = userIdentityContext;
             this.settings = settings;
+            this.syncRequestBuilder = syncRequestBuilder;
+            this.synchroniser = synchroniser;
         }
 
         public async Task ImportBackUpAsync(BackUpDTO backupDto)
@@ -208,7 +214,7 @@ namespace BudgetUnderControl.Infrastructure.Services
             transactionsMap = new Dictionary<int, int>();
             foreach (var item in transactions)
             {
-                var transaction = Domain.Transaction.Create(accountsMap[item.AccountId], item.Type, item.Amount, item.Date, item.Name, item.Comment, user.Id, item.CategoryId, item.ExternalId);
+                var transaction = Domain.Transaction.Create(accountsMap[item.AccountId], item.Type, item.Amount, item.Date, item.Name, item.Comment, user.Id, false, item.CategoryId, item.ExternalId);
                 transaction.SetCreatedOn(item.CreatedOn);
                 transaction.SetModifiedOn(item.ModifiedOn);
                 await this.transactionRepository.AddTransactionAsync(transaction);
@@ -236,41 +242,15 @@ namespace BudgetUnderControl.Infrastructure.Services
             }
         }
 
-        public Task<SyncRequest> SyncAsync(SyncRequest request)
+        public async Task<SyncRequest> SyncAsync(SyncRequest request)
         {
             //get requst
-
-            //collect collections to send to update
-            // modified on || created on > LastSync
-
+            var newRequest = await this.syncRequestBuilder.CreateSyncRequestAsync(SynchronizationComponent.Api, request.Component); // source = this. TODO on future. For now allow sync only on route mobile -> api -> mobile
             //update own collection
-
+            await this.synchroniser.SynchroniseAsync(request);
             //send responserequest
-            throw new NotImplementedException();
-        }
 
-        public async Task<SyncRequest> CreateSyncRequestAsync(SynchronizationComponent source, SynchronizationComponent target)
-        {
-            //get
-            var synchronizations = await this.synchronizationRepository.GetSynchronizationsAsync();
-            var synchronization = synchronizations.Where(x => x.Component == target && x.UserId == userIdentityContext.UserId).FirstOrDefault();
-
-            var request = new SyncRequest
-            {
-                Component = source,
-                ComponentId = new Guid(settings.ApplicationId),
-                UserId = userIdentityContext.ExternalId
-            };
-
-            if (synchronization != null)
-            {
-                request.LastSync = synchronization.LastSyncAt;
-            }
-
-            //collect collections to send to update
-            // modified on || created on > LastSync
-
-            return request;
+            return newRequest;
         }
     }
 }

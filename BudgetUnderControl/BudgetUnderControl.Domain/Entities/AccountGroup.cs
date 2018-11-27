@@ -24,10 +24,31 @@ namespace BudgetUnderControl.Domain
         public virtual User Owner { get; set; }
         public List<Account> Accounts { get; set; }
 
+        public static AccountGroup Create(string name, int ownerId, Guid? externalId)
+        {
+            return new AccountGroup
+            {
+                Name = name,
+                OwnerId = ownerId,
+                ExternalId = externalId ?? Guid.NewGuid(),
+            };
+        }
+
+        public void Edit(string name, int ownerId)
+        {
+            this.Name = name;
+            this.OwnerId = ownerId;
+        }
+
         public void Delete(bool delete = true)
         {
             this.IsDeleted = delete;
             this.UpdateModify();
+        }
+
+        public void SetModifiedOn(DateTime? dateTime)
+        {
+            this.ModifiedOn = dateTime;
         }
 
         public void UpdateModify()

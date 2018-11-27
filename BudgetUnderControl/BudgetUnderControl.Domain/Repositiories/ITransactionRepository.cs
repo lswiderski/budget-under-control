@@ -22,7 +22,9 @@ namespace BudgetUnderControl.Domain.Repositiories
         Task RemoveTransactionAsync(Transaction transaction);
         Task RemoveTransferAsync(Transfer transfer);
         Task<Transfer> GetTransferAsync(int transactionId);
+        Task<Transfer> GetTransferAsync(Guid transactionId);
         Task HardRemoveTransactionsAsync(IEnumerable<Transaction> transactions);
         Task HardRemoveTransfersAsync(IEnumerable<Transfer> transfers);
+        Task<ICollection<Transfer>> GetTransfersModifiedSinceAsync(DateTime changedSince);
     }
 }

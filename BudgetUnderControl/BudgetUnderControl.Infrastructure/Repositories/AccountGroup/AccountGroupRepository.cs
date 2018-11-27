@@ -32,5 +32,18 @@ namespace BudgetUnderControl.Infrastructure
 
             return accountGroup;
         }
+
+        public async Task UpdateAsync(AccountGroup accountGroup)
+        {
+            accountGroup.UpdateModify();
+            this.Context.AccountGroup.Update(accountGroup);
+            await this.Context.SaveChangesAsync();
+        }
+
+        public async Task AddAccountGroupAsync(AccountGroup accountGroup)
+        {
+            this.Context.AccountGroup.Add(accountGroup);
+            await this.Context.SaveChangesAsync();
+        }
     }
 }

@@ -10,5 +10,7 @@ namespace BudgetUnderControl.Domain.Repositiories
     {
         Task<ICollection<AccountGroup>> GetAccountGroupsAsync();
         Task<AccountGroup> GetAccountGroupAsync(Guid id);
+        Task UpdateAsync(AccountGroup accountGroup);
+        Task AddAccountGroupAsync(AccountGroup accountGroup);
     }
 }

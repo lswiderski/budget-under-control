@@ -24,6 +24,7 @@ namespace BudgetUnderControl.Infrastructure.Commands
         public decimal? TransferAmount { get; set; }
         public decimal? Rate { get; set; }
         public Guid ExternalId { get; set; }
+        public bool IsDeleted { get; set; }
     }
 
     public class EditTransactionValidator : AbstractValidator<EditTransaction>

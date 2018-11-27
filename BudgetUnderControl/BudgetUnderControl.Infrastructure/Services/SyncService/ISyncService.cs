@@ -16,6 +16,5 @@ namespace BudgetUnderControl.Infrastructure.Services
         Task<IEnumerable<string>> GenerateCSV();
 
         Task<SyncRequest> SyncAsync(SyncRequest request);
-        Task<SyncRequest> CreateSyncRequestAsync(SynchronizationComponent source, SynchronizationComponent target);
     }
 }

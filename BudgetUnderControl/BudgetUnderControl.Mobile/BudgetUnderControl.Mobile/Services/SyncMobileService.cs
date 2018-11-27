@@ -17,17 +17,20 @@ namespace BudgetUnderControl.Mobile.Services
     {
         private static string BACKUP_FILE_NAME = "buc_backup.json";
 
-        IFileHelper fileHelper;
-        ISyncService syncService;
-        ITransactionRepository transactionRepository;
+        private readonly IFileHelper fileHelper;
+        private readonly ISyncService syncService;
+        private readonly ITransactionRepository transactionRepository;
+        private readonly ISyncRequestBuilder syncRequestBuilder;
+        private readonly ISynchroniser synchroniser;
         public SyncMobileService(IFileHelper fileHelper,
             ISyncService syncService,
-            ITransactionRepository transactionRepository
-            )
+            ITransactionRepository transactionRepository,
+            ISyncRequestBuilder syncRequestBuilder)
         {
             this.fileHelper = fileHelper;
             this.syncService = syncService;
             this.transactionRepository = transactionRepository;
+            this.syncRequestBuilder = syncRequestBuilder;
         }
 
 
@@ -97,13 +100,12 @@ namespace BudgetUnderControl.Mobile.Services
         public async Task SyncAsync()
         {
             //get request
-            var syncRequestDto = await this.syncService.CreateSyncRequestAsync(SynchronizationComponent.Mobile, SynchronizationComponent.Api);
+            var syncRequestDto = await this.syncRequestBuilder.CreateSyncRequestAsync(SynchronizationComponent.Mobile, SynchronizationComponent.Api);
 
             //call api
             var apiResponse = new SyncRequest();
             //do sync with responsedto
-
-            await this.syncService.SyncAsync(apiResponse);
+            await this.synchroniser.SynchroniseAsync(apiResponse);
         }
     }
 }

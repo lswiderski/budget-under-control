@@ -63,7 +63,7 @@ namespace BudgetUnderControl.Domain
 
         public void Edit(string name, int currencyId, int accountGroupId,
             bool isIncludedToTotal, string comment, int order, AccountType type,
-            int? parentAccountId, bool isActive)
+            int? parentAccountId, bool isActive, int ownerId)
         {
             this.Name = name;
             this.CurrencyId = currencyId;
@@ -74,6 +74,7 @@ namespace BudgetUnderControl.Domain
             this.Order = order;
             this.Type = type;
             this.ParentAccountId = parentAccountId;
+            this.OwnerId = ownerId;
         }
 
         /// <summary>
@@ -107,6 +108,11 @@ namespace BudgetUnderControl.Domain
         {
             this.IsDeleted = delete;
             this.UpdateModify();
+        }
+
+        public void SetModifiedOn(DateTime? dateTime)
+        {
+            this.ModifiedOn = dateTime;
         }
 
         public void UpdateModify()

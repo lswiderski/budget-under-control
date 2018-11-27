@@ -110,8 +110,21 @@ namespace BudgetUnderControl.Infrastructure
                 {
                     query = query.Where(q => q.IsDeleted == false).AsQueryable();
                 }
-                query = query.Where(q => q.Date >= filter.FromDate).AsQueryable();
-                query = query.Where(q => q.Date <= filter.ToDate).AsQueryable();
+
+                if(filter.FromDate != null)
+                {
+                    query = query.Where(q => q.Date >= filter.FromDate).AsQueryable();
+                }
+
+                if (filter.ToDate != null)
+                {
+                    query = query.Where(q => q.Date <= filter.ToDate).AsQueryable();
+                }
+
+                if(filter.ChangedSince != null)
+                {
+                    query = query.Where(q => q.CreatedOn >= filter.ChangedSince || q.ModifiedOn >= filter.ChangedSince).AsQueryable();
+                }
             }
 
             var transactionsWithExtraProperty = (await (from t in query
@@ -147,12 +160,33 @@ namespace BudgetUnderControl.Infrastructure
             return transfer;
         }
 
+        public async Task<Transfer> GetTransferAsync(Guid transactionId)
+        {
+            var transfer = await this.Context.Transfers.Where(t => t.ExternalId == transactionId).SingleOrDefaultAsync();
+            return transfer;
+        }
+
+
         public async Task<ICollection<Transfer>> GetTransfersAsync()
         {
-            var transfers = await this.Context.Transfers.ToListAsync();
+            var transfers = await this.Context.Transfers
+                .Include(t => t.FromTransaction)
+                .Include(t => t.ToTransaction)
+                .ToListAsync();
 
             return transfers;
         }
-            
+
+        public async Task<ICollection<Transfer>> GetTransfersModifiedSinceAsync(DateTime changedSince)
+        {
+            var transfers = await this.Context.Transfers
+                .Include(t => t.FromTransaction)
+                .Include(t => t.ToTransaction)
+                .Where(q => q.ModifiedOn >= changedSince)
+                .ToListAsync();
+
+            return transfers;
+        }
+
     }
 }

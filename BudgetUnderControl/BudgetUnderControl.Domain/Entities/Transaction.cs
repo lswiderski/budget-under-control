@@ -40,7 +40,7 @@ namespace BudgetUnderControl.Domain
 
         }
         
-        public static Transaction Create(int accountId, TransactionType type, decimal amount, DateTime date, string name, string comment, int addedById, int? categoryId = null, Guid? guid = null)
+        public static Transaction Create(int accountId, TransactionType type, decimal amount, DateTime date, string name, string comment, int addedById, bool isDeleted, int? categoryId = null, Guid? guid = null)
         {
             return new Transaction()
             {
@@ -54,10 +54,11 @@ namespace BudgetUnderControl.Domain
                 CreatedOn = DateTime.UtcNow,
                 ExternalId = guid ?? Guid.NewGuid(),
                 AddedById = addedById,
+                IsDeleted = isDeleted,
             };
         }
 
-        public void Edit(int accountId, TransactionType type, decimal amount, DateTime date, string name, string comment, int? categoryId = null)
+        public void Edit(int accountId, TransactionType type, decimal amount, DateTime date, string name, string comment, int addedById, bool isDeleted, int? categoryId = null)
         {
             this.AccountId = accountId;
             this.Type = type;
@@ -67,6 +68,8 @@ namespace BudgetUnderControl.Domain
             this.Comment = comment;
             this.CategoryId = categoryId;
             this.ModifiedOn = DateTime.UtcNow;
+            this.AddedById = addedById;
+            this.IsDeleted = isDeleted;
         }
 
         /// <summary>

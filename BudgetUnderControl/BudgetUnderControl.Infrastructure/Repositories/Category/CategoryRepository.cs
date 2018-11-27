@@ -37,5 +37,18 @@ namespace BudgetUnderControl.Infrastructure
             var category = await this.Context.Categories.Where(x => x.ExternalId == id).FirstOrDefaultAsync();
             return category;
         }
+
+        public async Task UpdateAsync(Category category)
+        {
+            category.UpdateModify();
+            this.Context.Categories.Update(category);
+            await this.Context.SaveChangesAsync();
+        }
+
+        public async Task AddCategoryAsync(Category category)
+        {
+            this.Context.Categories.Add(category);
+            await this.Context.SaveChangesAsync();
+        }
     }
 }

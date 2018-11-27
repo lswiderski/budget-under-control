@@ -27,5 +27,6 @@ namespace BudgetUnderControl.Common.Contracts
         public Guid ExternalId { get; set; }
         public DateTime CreatedOn { get; set; }
         public DateTime? ModifiedOn { get; set; }
+        public bool IsDeleted { get; set; }
     }
 }

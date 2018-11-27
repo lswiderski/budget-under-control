@@ -329,6 +329,7 @@ namespace BudgetUnderControl.ViewModel
         private int? transferId;
         private int? transferTransactionId;
         private Guid externalId;
+        private bool isDeleted;
 
         IList<string> types = new List<string>
         {
@@ -434,6 +435,7 @@ namespace BudgetUnderControl.ViewModel
             transferId = dto.TransferId;
             transferTransactionId = dto.TransferTransactionId;
             externalId = dto.ExternalId;
+            isDeleted = dto.IsDeleted;
         }
 
         private int getCategoryIndex(int? categoryId)
@@ -498,10 +500,11 @@ namespace BudgetUnderControl.ViewModel
                 TransferAmount = transferAmount,
                 Rate = decimal.Parse(TransferRate.Replace(',', '.'), NumberStyles.AllowDecimalPoint, CultureInfo.InvariantCulture),
                 ExtendedType = ExtendedType,
-                Id=id,
-                TransferId=transferId,
-                TransferTransactionId=transferTransactionId,
+                Id = id,
+                TransferId = transferId,
+                TransferTransactionId = transferTransactionId,
                 ExternalId = externalId,
+                IsDeleted = isDeleted,
             };
 
             if(SelectedTransferAccountIndex>=0)

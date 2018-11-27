@@ -1,4 +1,5 @@
-﻿using BudgetUnderControl.Domain;
+﻿using BudgetUnderControl.Common.Enums;
+using BudgetUnderControl.Domain;
 using BudgetUnderControl.Domain.Repositiories;
 using Microsoft.EntityFrameworkCore;
 using System;
@@ -28,14 +29,14 @@ namespace BudgetUnderControl.Infrastructure.Repositories
             await this.Context.SaveChangesAsync();
         }
 
-        public async Task<Synchronization> GetSynchronizationAsync(Guid id)
+        public async Task<Synchronization> GetSynchronizationAsync(SynchronizationComponent component, Guid componentId, int userId)
         {
-            var currency = await this.Context.Synchronizations.FirstOrDefaultAsync(x => x.Id == id);
+            var currency = await this.Context.Synchronizations.FirstOrDefaultAsync(x => x.Component == component && x.ComponentId == componentId && x.UserId == userId);
 
             return currency;
         }
 
-        public async Task UpdateSynchronizationAsync(Synchronization synchronization)
+        public async Task UpdateAsync(Synchronization synchronization)
         {
             this.Context.Synchronizations.Update(synchronization);
             await this.Context.SaveChangesAsync();

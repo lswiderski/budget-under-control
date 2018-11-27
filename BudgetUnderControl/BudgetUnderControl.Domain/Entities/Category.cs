@@ -33,10 +33,31 @@ namespace BudgetUnderControl.Domain
             }
         }
 
+        public static Category Create(string name, int ownerId, Guid? externalId)
+        {
+            return new Category
+            {
+                Name = name,
+                OwnerId = ownerId,
+                ExternalId = externalId ?? Guid.NewGuid(),
+            };
+        }
+
+        public void Edit(string name, int ownerId)
+        {
+            this.Name = name;
+            this.OwnerId = ownerId;
+        }
+
         public void Delete(bool delete = true)
         {
             this.IsDeleted = delete;
             this.UpdateModify();
+        }
+
+        public void SetModifiedOn(DateTime? dateTime)
+        {
+            this.ModifiedOn = dateTime;
         }
 
         public void UpdateModify()

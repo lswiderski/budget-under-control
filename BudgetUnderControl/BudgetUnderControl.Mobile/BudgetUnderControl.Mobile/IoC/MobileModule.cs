@@ -9,6 +9,7 @@ using BudgetUnderControl.ViewModel;
 using Microsoft.Extensions.Configuration;
 using System;
 using System.Collections.Generic;
+using System.Net.Http;
 using System.Text;
 using Xamarin.Forms;
 
@@ -39,7 +40,9 @@ namespace BudgetUnderControl.Mobile.IoC
             builder.RegisterType<OverviewViewModel>().As<IOverviewViewModel>().InstancePerLifetimeScope();
             builder.RegisterType<SyncMobileService>().As<ISyncMobileService>().InstancePerLifetimeScope();
 
-           
+            builder.Register(ctx => new HttpClient() { BaseAddress = new Uri(settings.ApiBaseUri) })
+            .Named<HttpClient>("api")
+            .SingleInstance();
 
         }
 

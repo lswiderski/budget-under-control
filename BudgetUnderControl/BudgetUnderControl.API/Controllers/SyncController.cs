@@ -44,7 +44,7 @@ namespace BudgetUnderControl.API.Controllers
         }
 
         // POST api/sync/sync
-        [HttpPost("backup")]
+        [HttpPost("sync")]
         public async Task<IActionResult> Sync([FromBody] SyncRequest request)
         {
             //await this.DispatchAsync(request);

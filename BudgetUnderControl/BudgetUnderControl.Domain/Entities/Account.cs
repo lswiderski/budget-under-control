@@ -57,13 +57,15 @@ namespace BudgetUnderControl.Domain
                 Type = type,
                 ParentAccountId = parentAccountId,
                 ExternalId = externalId ?? Guid.NewGuid(),
-                OwnerId = ownerId
+                OwnerId = ownerId,
+                ModifiedOn = DateTime.UtcNow,
+                IsDeleted = false,
             };
         }
 
         public void Edit(string name, int currencyId, int accountGroupId,
             bool isIncludedToTotal, string comment, int order, AccountType type,
-            int? parentAccountId, bool isActive, int ownerId)
+            int? parentAccountId, bool isActive, int? ownerId = null )
         {
             this.Name = name;
             this.CurrencyId = currencyId;
@@ -74,7 +76,12 @@ namespace BudgetUnderControl.Domain
             this.Order = order;
             this.Type = type;
             this.ParentAccountId = parentAccountId;
-            this.OwnerId = ownerId;
+            if(ownerId != null)
+            {
+                this.OwnerId = ownerId.Value;
+            }
+
+            this.UpdateModify();
         }
 
         /// <summary>

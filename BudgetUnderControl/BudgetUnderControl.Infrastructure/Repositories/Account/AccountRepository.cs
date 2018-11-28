@@ -119,7 +119,7 @@ namespace BudgetUnderControl.Infrastructure
             return balance;
         }
 
-        public async Task<decimal> GetIncomeAsync(int accountId, DateTime fromDate, DateTime toDate)
+        public async Task<decimal> GetIncomeAsync(int accountId, DateTime? fromDate, DateTime? toDate)
         {
             var isCard = await IsSubCardAccountAsync(accountId);
 
@@ -136,7 +136,7 @@ namespace BudgetUnderControl.Infrastructure
             return balance;
         }
 
-        public async Task<decimal> GetExpenseAsync(int accountId, DateTime fromDate, DateTime toDate)
+        public async Task<decimal> GetExpenseAsync(int accountId, DateTime? fromDate, DateTime? toDate)
         {
             var isCard = await IsSubCardAccountAsync(accountId);
 

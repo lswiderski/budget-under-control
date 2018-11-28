@@ -39,7 +39,8 @@ namespace BudgetUnderControl.Domain
                 ToTransactionId = toTransactionId,
                 Rate = rate,
                 ExternalId = guid ?? Guid.NewGuid(),
-                ModifiedOn = DateTime.UtcNow
+                ModifiedOn = DateTime.UtcNow,
+                IsDeleted = false,
             };
         }
 

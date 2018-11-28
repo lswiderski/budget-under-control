@@ -31,6 +31,8 @@ namespace BudgetUnderControl.Domain
                 Name = name,
                 OwnerId = ownerId,
                 ExternalId = externalId ?? Guid.NewGuid(),
+                ModifiedOn = DateTime.UtcNow,
+                IsDeleted = false,
             };
         }
 
@@ -38,6 +40,7 @@ namespace BudgetUnderControl.Domain
         {
             this.Name = name;
             this.OwnerId = ownerId;
+            this.UpdateModify();
         }
 
         public void Delete(bool delete = true)

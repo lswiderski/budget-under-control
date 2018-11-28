@@ -3,5 +3,6 @@
   "DbName": "buc.db3",
   "ApplicationType": "Mobile",
   "ApplicationId": "f30afe7b-9b74-4fa7-8f0e-cf44db792eea",
-  "ConnectionString": "Filename="
+  "ConnectionString": "Filename=",
+  "ApiBaseUri": "http://192.168.0.73:45455/api/"
 }

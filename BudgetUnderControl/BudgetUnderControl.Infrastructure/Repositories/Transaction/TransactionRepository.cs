@@ -144,13 +144,13 @@ namespace BudgetUnderControl.Infrastructure
 
         public async Task<Transaction> GetTransactionAsync(int id)
         {
-            var transaction = await this.Context.Transactions.Where(t => t.Id == id).SingleAsync();
+            var transaction = await this.Context.Transactions.Where(t => t.Id == id).SingleOrDefaultAsync();
             return transaction;
         }
 
         public async Task<Transaction> GetTransactionAsync(Guid id)
         {
-            var transaction = await this.Context.Transactions.Where(t => t.ExternalId == id).SingleAsync();
+            var transaction = await this.Context.Transactions.Where(t => t.ExternalId == id).SingleOrDefaultAsync();
             return transaction;
         }
 

@@ -1,13 +1,18 @@
-﻿using BudgetUnderControl.Common;
+﻿using Autofac;
+using BudgetUnderControl.Common;
 using BudgetUnderControl.Common.Contracts;
 using BudgetUnderControl.Common.Enums;
 using BudgetUnderControl.Domain;
 using BudgetUnderControl.Domain.Repositiories;
 using BudgetUnderControl.Infrastructure.Commands;
 using BudgetUnderControl.Infrastructure.Services;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
+using System.Net.Http;
+using System.Net.Http.Headers;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -22,15 +27,20 @@ namespace BudgetUnderControl.Mobile.Services
         private readonly ITransactionRepository transactionRepository;
         private readonly ISyncRequestBuilder syncRequestBuilder;
         private readonly ISynchroniser synchroniser;
+        private readonly HttpClient httpClient;
         public SyncMobileService(IFileHelper fileHelper,
             ISyncService syncService,
             ITransactionRepository transactionRepository,
-            ISyncRequestBuilder syncRequestBuilder)
+            ISyncRequestBuilder syncRequestBuilder,
+            ISynchroniser synchroniser
+            )
         {
             this.fileHelper = fileHelper;
             this.syncService = syncService;
             this.transactionRepository = transactionRepository;
             this.syncRequestBuilder = syncRequestBuilder;
+            this.synchroniser = synchroniser;
+            httpClient = App.Container.ResolveNamed<HttpClient>("api");
         }
 
 
@@ -103,9 +113,34 @@ namespace BudgetUnderControl.Mobile.Services
             var syncRequestDto = await this.syncRequestBuilder.CreateSyncRequestAsync(SynchronizationComponent.Mobile, SynchronizationComponent.Api);
 
             //call api
-            var apiResponse = new SyncRequest();
-            //do sync with responsedto
-            await this.synchroniser.SynchroniseAsync(apiResponse);
+            try
+            {
+                var url = "sync/sync";
+                var dataAsString = JsonConvert.SerializeObject(syncRequestDto);
+                var content = new StringContent(dataAsString);
+                content.Headers.ContentType = new MediaTypeHeaderValue("application/json");
+                var response = await httpClient.PostAsync(url, content);
+
+                response.EnsureSuccessStatusCode();
+
+                using (var stream = await response.Content.ReadAsStreamAsync())
+                using (var reader = new StreamReader(stream))
+                using (var json = new JsonTextReader(reader))
+                {
+                    JsonSerializer serializer = new JsonSerializer();
+                    var apiResponse = serializer.Deserialize<SyncRequest>(json);
+
+                    //do sync with responsedto
+                    await this.synchroniser.SynchroniseAsync(apiResponse);
+                }
+            }
+            catch (Exception e)
+            {
+                //just for development purpose
+                throw e;
+            }
+            
+
         }
     }
 }

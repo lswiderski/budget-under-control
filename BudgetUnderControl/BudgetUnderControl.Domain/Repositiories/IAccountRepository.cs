@@ -19,8 +19,8 @@ namespace BudgetUnderControl.Domain.Repositiories
         Task BalanceAdjustmentAsync(int accountId, decimal targetBalance);
         Task<List<int>> GetSubAccountsAsync(IEnumerable<int> accountsIds, bool? active = null);
         Task<List<Guid>> GetSubAccountsAsync(IEnumerable<Guid> accountsExternalIds, bool? active = null);
-        Task<decimal> GetExpenseAsync(int accountId, DateTime fromDate, DateTime toDate);
-        Task<decimal> GetIncomeAsync(int accountId, DateTime fromDate, DateTime toDate);
+        Task<decimal> GetExpenseAsync(int accountId, DateTime? fromDate, DateTime? toDate);
+        Task<decimal> GetIncomeAsync(int accountId, DateTime? fromDate, DateTime? toDate);
         Task HardRemoveAccountsAsync(IEnumerable<Account> accounts);
 
 

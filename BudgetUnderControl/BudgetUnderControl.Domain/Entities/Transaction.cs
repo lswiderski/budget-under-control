@@ -55,6 +55,7 @@ namespace BudgetUnderControl.Domain
                 ExternalId = guid ?? Guid.NewGuid(),
                 AddedById = addedById,
                 IsDeleted = isDeleted,
+                ModifiedOn = DateTime.UtcNow,
             };
         }
 

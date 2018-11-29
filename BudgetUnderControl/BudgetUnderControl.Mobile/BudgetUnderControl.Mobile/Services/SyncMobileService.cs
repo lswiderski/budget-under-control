@@ -6,6 +6,7 @@ using BudgetUnderControl.Domain;
 using BudgetUnderControl.Domain.Repositiories;
 using BudgetUnderControl.Infrastructure.Commands;
 using BudgetUnderControl.Infrastructure.Services;
+using BudgetUnderControl.Infrastructure.Settings;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
@@ -25,14 +26,18 @@ namespace BudgetUnderControl.Mobile.Services
         private readonly IFileHelper fileHelper;
         private readonly ISyncService syncService;
         private readonly ITransactionRepository transactionRepository;
+        private readonly ISynchronizationRepository synchronizationRepository;
         private readonly ISyncRequestBuilder syncRequestBuilder;
         private readonly ISynchroniser synchroniser;
         private readonly HttpClient httpClient;
+        private readonly GeneralSettings settings;
         public SyncMobileService(IFileHelper fileHelper,
             ISyncService syncService,
             ITransactionRepository transactionRepository,
             ISyncRequestBuilder syncRequestBuilder,
-            ISynchroniser synchroniser
+            ISynchroniser synchroniser,
+            ISynchronizationRepository synchronizationRepository,
+            GeneralSettings settings
             )
         {
             this.fileHelper = fileHelper;
@@ -40,9 +45,10 @@ namespace BudgetUnderControl.Mobile.Services
             this.transactionRepository = transactionRepository;
             this.syncRequestBuilder = syncRequestBuilder;
             this.synchroniser = synchroniser;
-            httpClient = App.Container.ResolveNamed<HttpClient>("api");
+            this.synchronizationRepository = synchronizationRepository;
+            this.httpClient = App.Container.ResolveNamed<HttpClient>("api");
+            this.settings = settings;
         }
-
 
         public async Task<string> GetBackUpJSONAsync()
         {
@@ -98,6 +104,11 @@ namespace BudgetUnderControl.Mobile.Services
             ExtractDB();
         }
 
+        public async Task TaskClearSyncDB()
+        {
+            await this.synchronizationRepository.ClearSynchronizationAsync();
+        }
+
         public void ExtractDB()
         {
             var sourcePath = fileHelper.GetLocalFilePath(Settings.DB_SQLite_NAME);
@@ -119,6 +130,8 @@ namespace BudgetUnderControl.Mobile.Services
                 var dataAsString = JsonConvert.SerializeObject(syncRequestDto);
                 var content = new StringContent(dataAsString);
                 content.Headers.ContentType = new MediaTypeHeaderValue("application/json");
+                content.Headers.Add("Api-Key", settings.ApiKey);
+                httpClient.Timeout = TimeSpan.FromMinutes(5);
                 var response = await httpClient.PostAsync(url, content);
 
                 response.EnsureSuccessStatusCode();

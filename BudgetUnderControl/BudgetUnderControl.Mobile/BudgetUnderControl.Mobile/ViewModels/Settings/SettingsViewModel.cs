@@ -38,6 +38,11 @@ namespace BudgetUnderControl.ViewModel
             await syncMobileService.ExportDBAsync();
         }
 
+        public async Task ClearSyncDB()
+        {
+            await syncMobileService.TaskClearSyncDB();
+        }
+
         public async Task SyncAsync()
         {
             await syncMobileService.SyncAsync();

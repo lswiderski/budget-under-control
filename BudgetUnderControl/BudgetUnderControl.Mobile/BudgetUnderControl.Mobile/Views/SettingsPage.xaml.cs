@@ -49,5 +49,10 @@ namespace BudgetUnderControl.Views
         {
             await vm.SyncAsync();
         }
+
+        private async void ClearSyncDBButton_Clicked(object sender, EventArgs e)
+        {
+            await vm.ClearSyncDB();
+        }
     }
 }

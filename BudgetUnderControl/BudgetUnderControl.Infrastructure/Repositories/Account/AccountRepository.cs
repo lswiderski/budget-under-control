@@ -32,8 +32,7 @@ namespace BudgetUnderControl.Infrastructure
 
             var accounts = await (from account in query
                                   join currency in this.Context.Currencies on account.CurrencyId equals currency.Id
-                                  where account.IsActive == true
-                                  && account.OwnerId == userIdentityContext.UserId
+                                  where account.OwnerId == userIdentityContext.UserId
                                   select account)
                                  .Include(p => p.Currency)
                                  .ToListAsync();

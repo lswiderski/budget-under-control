@@ -10,6 +10,7 @@
             <Button Text="Export CSV"  Clicked="ExportCSVButton_Clicked"/>
             <Button Text="Export SQLite DB"  Clicked="ExportSQLDBButton_Clicked"/>
             <Button Text="Sync"  Clicked="SyncButton_Clicked"/>
+            <Button Text="Clear Sync DB"  Clicked="ClearSyncDBButton_Clicked"/>
         </StackLayout>
     </ContentPage.Content>
 </ContentPage>

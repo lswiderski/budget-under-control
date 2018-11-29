@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using BudgetUnderControl.Common.Contracts;
 using BudgetUnderControl.Infrastructure.Commands;
 using BudgetUnderControl.Infrastructure.Services;
+using BudgetUnderControl.Infrastructure.Settings;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -15,9 +16,11 @@ namespace BudgetUnderControl.API.Controllers
     public class SyncController : ApiControllerBase
     {
         private readonly ISyncService syncService;
-        public SyncController(ISyncService syncService, ICommandDispatcher commandDispatcher) : base(commandDispatcher)
+        private readonly GeneralSettings settings;
+        public SyncController(ISyncService syncService, GeneralSettings settings, ICommandDispatcher commandDispatcher) : base(commandDispatcher)
         {
             this.syncService = syncService;
+            this.settings = settings;
         }
         // GET api/sync/export
         [HttpGet("backup")]
@@ -49,6 +52,11 @@ namespace BudgetUnderControl.API.Controllers
         {
             //await this.DispatchAsync(request);
             //temporary no CQRS
+
+            if(Request.Headers["Api-Key"] != settings.ApiKey)
+            {
+                return Unauthorized();
+            }
 
             var response = await this.syncService.SyncAsync(request);
             return Ok(response);

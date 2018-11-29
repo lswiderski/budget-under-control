@@ -41,5 +41,12 @@ namespace BudgetUnderControl.Infrastructure.Repositories
             this.Context.Synchronizations.Update(synchronization);
             await this.Context.SaveChangesAsync();
         }
+
+        public async Task ClearSynchronizationAsync()
+        {
+            var entities = await this.Context.Synchronizations.ToListAsync();
+            this.Context.Synchronizations.RemoveRange(entities);
+            await this.Context.SaveChangesAsync();
+        }
     }
 }

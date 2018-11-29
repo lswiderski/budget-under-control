@@ -8,6 +8,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Transactions;
 
 namespace BudgetUnderControl.Infrastructure.Services
 {
@@ -62,7 +63,7 @@ namespace BudgetUnderControl.Infrastructure.Services
             var userId = (await this.userRepository.GetFirstUserAsync()).Id;
             var syncObject = await this.synchronizationRepository.GetSynchronizationAsync(syncRequest.Component, syncRequest.ComponentId, userId);// syncRequest.UserId)
 
-            if(syncObject != null)
+            if (syncObject != null)
             {
                 syncObject.LastSyncAt = DateTime.UtcNow;
                 await this.synchronizationRepository.UpdateAsync(syncObject);
@@ -90,20 +91,22 @@ namespace BudgetUnderControl.Infrastructure.Services
 
             foreach (var transaction in transactions)
             {
-
                 int? categoryId = transaction.CategoryExternalId.HasValue ? (await this.categoryRepository.GetCategoryAsync(transaction.CategoryExternalId.Value)).Id : (int?)null;
                 var accountId = (await this.accountRepository.GetAccountAsync(transaction.AccountExternalId.Value)).Id;
                 var transactionToUpdate = await this.transactionRepository.GetTransactionAsync(transaction.ExternalId.Value);
                 if (transactionToUpdate != null)
                 {
-                    transactionToUpdate.Edit(accountId, transaction.Type, transaction.Amount, transaction.Date, transaction.Name, transaction.Comment, this.userIdentityContext.UserId, transaction.IsDeleted, categoryId);
-                    transactionToUpdate.SetCreatedOn(transaction.CreatedOn);
-                    transactionToUpdate.SetModifiedOn(transaction.ModifiedOn);
-                    await this.transactionRepository.UpdateAsync(transactionToUpdate);
+                    if(transactionToUpdate.ModifiedOn < transaction.ModifiedOn)
+                    {
+                        transactionToUpdate.Edit(accountId, transaction.Type, transaction.Amount, transaction.Date, transaction.Name, transaction.Comment, this.userIdentityContext.UserId, transaction.IsDeleted, categoryId);
+                        transactionToUpdate.SetCreatedOn(transaction.CreatedOn);
+                        transactionToUpdate.SetModifiedOn(transaction.ModifiedOn);
+                        await this.transactionRepository.UpdateAsync(transactionToUpdate);
+                    }
                 }
                 else
                 {
-                    var transactionToAdd = Transaction.Create(accountId, transaction.Type, transaction.Amount, transaction.Date, transaction.Name, transaction.Comment, this.userIdentityContext.UserId, false, categoryId, transaction.ExternalId);
+                    var transactionToAdd = Domain.Transaction.Create(accountId, transaction.Type, transaction.Amount, transaction.Date, transaction.Name, transaction.Comment, this.userIdentityContext.UserId, false, categoryId, transaction.ExternalId);
                     transactionToAdd.SetCreatedOn(transaction.CreatedOn);
                     transactionToAdd.SetModifiedOn(transaction.ModifiedOn);
                     await this.transactionRepository.AddTransactionAsync(transactionToAdd);
@@ -123,12 +126,13 @@ namespace BudgetUnderControl.Infrastructure.Services
                 var transferToUpdate = await this.transactionRepository.GetTransferAsync(transfer.ExternalId.Value);
                 if (transferToUpdate != null)
                 {
-                    transferToUpdate.SetRate(transfer.Rate);
-                    transferToUpdate.Delete(transfer.IsDeleted);
-                    transferToUpdate.SetModifiedOn(transfer.ModifiedOn);
-                    
-                    
-                    await this.transactionRepository.UpdateTransferAsync(transferToUpdate);
+                    if(transferToUpdate.ModifiedOn < transfer.ModifiedOn)
+                    {
+                        transferToUpdate.SetRate(transfer.Rate);
+                        transferToUpdate.Delete(transfer.IsDeleted);
+                        transferToUpdate.SetModifiedOn(transfer.ModifiedOn);
+                        await this.transactionRepository.UpdateTransferAsync(transferToUpdate);
+                    }
                 }
                 else
                 {
@@ -151,7 +155,7 @@ namespace BudgetUnderControl.Infrastructure.Services
 
             foreach (var user in users)
             {
-               //TODO
+                //TODO
             }
         }
 
@@ -181,10 +185,14 @@ namespace BudgetUnderControl.Infrastructure.Services
                 var categoryToUpdate = await this.categoryRepository.GetCategoryAsync(category.ExternalId);
                 if (categoryToUpdate != null)
                 {
-                    categoryToUpdate.Edit(category.Name, userId);
-                    categoryToUpdate.Delete(category.IsDeleted);
-                    categoryToUpdate.SetModifiedOn(category.ModifiedOn);
-                    await this.categoryRepository.UpdateAsync(categoryToUpdate);
+                    if(categoryToUpdate.ModifiedOn < category.ModifiedOn)
+                    {
+                        categoryToUpdate.Edit(category.Name, userId);
+                        categoryToUpdate.Delete(category.IsDeleted);
+                        categoryToUpdate.SetModifiedOn(category.ModifiedOn);
+                        await this.categoryRepository.UpdateAsync(categoryToUpdate);
+                    }
+                    
                 }
                 else
                 {
@@ -211,10 +219,13 @@ namespace BudgetUnderControl.Infrastructure.Services
                 var accountToUpdate = await this.accountRepository.GetAccountAsync(account.ExternalId.Value);
                 if (accountToUpdate != null)
                 {
-                    accountToUpdate.Edit(account.Name, account.CurrencyId, accountGroupId, account.IsIncludedToTotal, account.Comment, account.Order, account.Type, parentAccountId, account.IsDeleted, userId);
-                    accountToUpdate.Delete(account.IsDeleted);
-                    accountToUpdate.SetModifiedOn(account.ModifiedOn);
-                    await this.accountRepository.UpdateAsync(accountToUpdate);
+                    if(accountToUpdate.ModifiedOn < account.ModifiedOn)
+                    {
+                        accountToUpdate.Edit(account.Name, account.CurrencyId, accountGroupId, account.IsIncludedToTotal, account.Comment, account.Order, account.Type, parentAccountId, !account.IsDeleted, userId);
+                        accountToUpdate.Delete(account.IsDeleted);
+                        accountToUpdate.SetModifiedOn(account.ModifiedOn);
+                        await this.accountRepository.UpdateAsync(accountToUpdate);
+                    }
                 }
                 else
                 {
@@ -237,12 +248,15 @@ namespace BudgetUnderControl.Infrastructure.Services
             {
                 var userId = (await this.userRepository.GetFirstUserAsync()).Id;
                 var accountGroupToUpdate = await this.accountGroupRepository.GetAccountGroupAsync(accountGroup.ExternalId);
-                if (accountGroupToUpdate != null)
+                if (accountGroupToUpdate != null )
                 {
-                    accountGroupToUpdate.Edit(accountGroup.Name, userId);
-                    accountGroupToUpdate.Delete(accountGroup.IsDeleted);
-                    accountGroupToUpdate.SetModifiedOn(accountGroup.ModifiedOn);
-                    await this.accountGroupRepository.UpdateAsync(accountGroupToUpdate);
+                    if(accountGroupToUpdate.ModifiedOn < accountGroup.ModifiedOn)
+                    {
+                        accountGroupToUpdate.Edit(accountGroup.Name, userId);
+                        accountGroupToUpdate.Delete(accountGroup.IsDeleted);
+                        accountGroupToUpdate.SetModifiedOn(accountGroup.ModifiedOn);
+                        await this.accountGroupRepository.UpdateAsync(accountGroupToUpdate);
+                    }
                 }
                 else
                 {

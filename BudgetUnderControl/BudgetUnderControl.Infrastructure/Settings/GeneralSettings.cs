@@ -13,5 +13,6 @@ namespace BudgetUnderControl.Infrastructure.Settings
         public string ApplicationId { get; set; }
         public string ConnectionString { get; set; }
         public string ApiBaseUri { get; set; }
+        public string ApiKey { get; set; }
     }
 }

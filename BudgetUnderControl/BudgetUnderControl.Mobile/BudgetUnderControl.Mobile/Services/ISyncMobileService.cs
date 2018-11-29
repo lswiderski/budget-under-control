@@ -13,5 +13,6 @@ namespace BudgetUnderControl.Mobile.Services
         Task ExportCSVAsync();
         Task ExportDBAsync();
         Task SyncAsync();
+        Task TaskClearSyncDB();
     }
 }

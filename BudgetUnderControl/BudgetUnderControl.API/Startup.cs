@@ -30,6 +30,8 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
+using NLog.Extensions.Logging;
+using NLog.Web;
 
 namespace BudgetUnderControl.API
 {
@@ -68,7 +70,7 @@ namespace BudgetUnderControl.API
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env, IContextConfig contextConfig, ITestDataSeeder testDataSeeder)
+        public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory, IContextConfig contextConfig, ITestDataSeeder testDataSeeder)
         {
             if(contextConfig.Application == ApplicationType.Test)
             {
@@ -83,6 +85,9 @@ namespace BudgetUnderControl.API
             {
                 app.UseHsts();
             }
+
+            loggerFactory.AddNLog();
+            env.ConfigureNLog("nlog.config");
 
             //app.UseHttpsRedirection();
             app.UseCustomExceptionHandler();

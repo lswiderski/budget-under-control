@@ -10,14 +10,19 @@ using System.Threading.Tasks;
 using BudgetUnderControl.Views;
 using System.Diagnostics;
 using System.IO;
+using Xamarin.Forms;
+using BudgetUnderControl.Mobile;
 
 namespace BudgetUnderControl.Droid
 {
     [Activity(Label = "Budget Under Control", Icon = "@drawable/icon", Theme = "@style/MainTheme", MainLauncher = true, ConfigurationChanges = ConfigChanges.ScreenSize | ConfigChanges.Orientation)]
     public class MainActivity : global::Xamarin.Forms.Platform.Android.FormsAppCompatActivity
     {
+        private static ILogger logger;
+
         protected override void OnCreate(Bundle bundle)
         {
+           
             TabLayoutResource = Resource.Layout.Tabbar;
             ToolbarResource = Resource.Layout.Toolbar;
             base.OnCreate(bundle);
@@ -28,6 +33,7 @@ namespace BudgetUnderControl.Droid
             global::Xamarin.Forms.Forms.Init(this, bundle);
             DisplayCrashReport();
             var app = new App();
+            logger = DependencyService.Get<ILogManager>().GetLog();
             LoadApplication(app);
         }
 
@@ -46,6 +52,8 @@ namespace BudgetUnderControl.Droid
         {
             try
             {
+                logger.Error(exception);
+
                 const string errorFileName = "Fatal.log";
                 var libraryPath = System.Environment.GetFolderPath(System.Environment.SpecialFolder.Personal);
                 var errorFilePath = Path.Combine(libraryPath, errorFileName);

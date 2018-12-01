@@ -28,6 +28,8 @@ namespace BudgetUnderControl.Mobile.IoC
            
             builder.RegisterInstance(new ContextConfig() { DbName = settings.DbName, DbPath = dbPath, Application = ApplicationType.Mobile , ConnectionString = settings.ConnectionString }).As<IContextConfig>();
             builder.RegisterInstance<IFileHelper>(DependencyService.Get<IFileHelper>());
+            builder.RegisterInstance<ILogManager>(DependencyService.Get<ILogManager>());
+            builder.RegisterInstance<ILogger>(DependencyService.Get<ILogManager>().GetLog());
             builder.RegisterType<ContextFacade>().As<IContextFacade>().SingleInstance();
             builder.RegisterType<EditAccountViewModel>().As<IEditAccountViewModel>().InstancePerLifetimeScope();
             builder.RegisterType<AddAccountViewModel>().As<IAddAccountViewModel>().InstancePerLifetimeScope();

@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Newtonsoft.Json;
+using NLog;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,6 +12,8 @@ namespace BudgetUnderControl.API.Framework
     public class ExceptionHandlerMiddleware
     {
         private readonly RequestDelegate next;
+
+        private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
 
         public ExceptionHandlerMiddleware(RequestDelegate next)
         {
@@ -31,6 +34,7 @@ namespace BudgetUnderControl.API.Framework
 
         private static Task HandleExceptionAsync(HttpContext context, Exception exception)
         {
+            Logger.Error(exception, string.Format("{0} Request: {2}{3} | StackTrace: {1}", exception.Message, exception.StackTrace, context.Request.Path.ToString(), context.Request.QueryString.ToString()));
             var errorCode = "error";
             var statusCode = HttpStatusCode.InternalServerError;
             var exceptionType = exception.GetType();

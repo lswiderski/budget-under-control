@@ -1,7 +1,7 @@
 ﻿
 using System.Threading.Tasks;
 
-namespace BudgetUnderControl.Common
+namespace BudgetUnderControl.Mobile
 {
     public interface IFileHelper
     {

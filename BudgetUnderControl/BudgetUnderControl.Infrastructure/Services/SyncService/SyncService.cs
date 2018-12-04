@@ -59,17 +59,11 @@ namespace BudgetUnderControl.Infrastructure.Services
 
         public async Task ImportBackUpAsync(BackUpDTO backupDto)
         {
-            using (TransactionScope transaction = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled))
-            {
                 await CleanDataBaseAsync();
                 //ImportCurrencies(backupDto.Currencies);
                 await ImportAccountsAsync(backupDto.Accounts);
                 await ImportTransactionsAsync(backupDto.Transactions);
                 await ImportTransfersAsync(backupDto.Transfers);
-
-                transaction.Complete();
-            }
-          
         }
 
         public async Task<BackUpDTO> GetBackUpAsync()

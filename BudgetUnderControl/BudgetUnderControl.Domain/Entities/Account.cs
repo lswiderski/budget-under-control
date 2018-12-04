@@ -59,7 +59,7 @@ namespace BudgetUnderControl.Domain
                 ExternalId = externalId ?? Guid.NewGuid(),
                 OwnerId = ownerId,
                 ModifiedOn = DateTime.UtcNow,
-                IsDeleted = false,
+                IsDeleted = !isActive,
             };
         }
 
@@ -76,6 +76,7 @@ namespace BudgetUnderControl.Domain
             this.Order = order;
             this.Type = type;
             this.ParentAccountId = parentAccountId;
+            this.IsDeleted = !isActive;
             if(ownerId != null)
             {
                 this.OwnerId = ownerId.Value;

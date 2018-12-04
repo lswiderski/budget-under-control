@@ -152,6 +152,20 @@ namespace BudgetUnderControl.ViewModel
             }
         }
 
+        private bool isActive;
+        public bool IsActive
+        {
+            get => isActive;
+            set
+            {
+                if (isActive != value)
+                {
+                    isActive = value;
+                    PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(IsActive)));
+                }
+            }
+        }
+
         private string amount;
         public string Amount
         {
@@ -191,6 +205,7 @@ namespace BudgetUnderControl.ViewModel
             Name = account.Name;
             Comment = account.Comment;
             IsInTotal = account.IsIncludedInTotal;
+            IsActive = account.IsActive;
             SelectedAccountGroupIndex = AccountGroups.IndexOf(AccountGroups.FirstOrDefault(y => y.Id == account.AccountGroupId));
             SelectedCurrencyIndex = Currencies.IndexOf(Currencies.FirstOrDefault(y => y.Id == account.CurrencyId));
             SelectedAccountIndex = account.ParentAccountId.HasValue ? Accounts.IndexOf(Accounts.FirstOrDefault(y => y.Id == account.ParentAccountId)) : -1;
@@ -217,7 +232,7 @@ namespace BudgetUnderControl.ViewModel
                 CurrencyId = Currencies[SelectedCurrencyIndex].Id,
                 IsIncludedInTotal = IsInTotal,
                 Id = accountId,
-                IsActive = true,
+                IsActive = IsActive,
                 Type = (AccountType)AccountTypes[SelectedAccountTypeIndex].Id,
                 ParentAccountId = selectedAccountIndex > -1 ? Accounts[SelectedAccountIndex].Id : (int?)null,
                 ExternalId = ExternalId

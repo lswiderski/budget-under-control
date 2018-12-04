@@ -19,7 +19,9 @@
             </Entry>
             <Label x:Name="switchLabel" Text="Is Counted in Total"></Label>
             <Switch x:Name="isTotal" IsToggled="{Binding IsInTotal}"></Switch>
-            <Picker x:Name="type" ItemsSource="{Binding AccountTypes}" ItemDisplayBinding="{Binding Name}" SelectedIndex="{Binding  SelectedAccountTypeIndex, Mode=TwoWay}" Title="Type"/>
+             <Label x:Name="switchLabelActive" Text="Is Active"></Label>
+            <Switch x:Name="isActive" IsToggled="{Binding IsActive}"></Switch>
+                <Picker x:Name="type" ItemsSource="{Binding AccountTypes}" ItemDisplayBinding="{Binding Name}" SelectedIndex="{Binding  SelectedAccountTypeIndex, Mode=TwoWay}" Title="Type"/>
             <Label Text="Parent Account"></Label>
             <StackLayout Orientation="Horizontal">
                 <Picker x:Name="account" ItemsSource="{Binding Accounts}" ItemDisplayBinding="{Binding Name}"  SelectedIndex="{Binding  SelectedAccountIndex, Mode=TwoWay}" Title="Account" />

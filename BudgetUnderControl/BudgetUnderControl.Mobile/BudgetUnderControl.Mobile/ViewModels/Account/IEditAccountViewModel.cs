@@ -15,6 +15,7 @@ namespace BudgetUnderControl.ViewModel
         string Name { get; set; }
         string Comment { get; set; }
         bool IsInTotal { get; set; }
+        bool IsActive { get; set; }
         string Amount { get; set; }
         string Order { get; set; }
         int SelectedCurrencyIndex { get; set; }

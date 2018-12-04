@@ -229,7 +229,7 @@ namespace BudgetUnderControl.Infrastructure.Services
                 }
                 else
                 {
-                    var accountToAdd = Account.Create(account.Name, account.CurrencyId, accountGroupId, account.IsIncludedToTotal, account.Comment, account.Order, account.Type, parentAccountId, account.IsDeleted, userId, account.ExternalId);
+                    var accountToAdd = Account.Create(account.Name, account.CurrencyId, accountGroupId, account.IsIncludedToTotal, account.Comment, account.Order, account.Type, parentAccountId, !account.IsDeleted, userId, account.ExternalId);
                     accountToAdd.Delete(account.IsDeleted);
                     accountToAdd.SetModifiedOn(account.ModifiedOn);
                     await this.accountRepository.AddAccountAsync(accountToAdd);

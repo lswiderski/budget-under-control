@@ -1,15 +1,13 @@
-﻿using System;
-using System.IO;
+﻿using BudgetUnderControl.Common;
 using NLog;
-using NLog.Config;
-using NLog.Targets;
-using BudgetUnderControl.Droid;
-using Xamarin.Forms;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 
-[assembly: Dependency(typeof(NLogLogger))]
-namespace BudgetUnderControl.Droid
+namespace BudgetUnderControl.API
 {
-    public class NLogLogger : Mobile.ILogger
+    public class NLogLogger : Common.ILogger
     {
         private Logger log;
 

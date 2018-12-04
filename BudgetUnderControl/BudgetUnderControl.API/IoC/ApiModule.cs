@@ -32,7 +32,10 @@ namespace BudgetUnderControl.API.IoC
 
             builder.RegisterInstance(contextConfig).As<IContextConfig>();
             builder.RegisterType<ContextFacade>().As<IContextFacade>().SingleInstance();
-            
+            var logManager = new NLogManager();
+            builder.RegisterInstance(logManager).As<ILogManager>().SingleInstance();
+            builder.RegisterInstance(logManager.GetLog()).As<ILogger>();
+
         }
     }
 }

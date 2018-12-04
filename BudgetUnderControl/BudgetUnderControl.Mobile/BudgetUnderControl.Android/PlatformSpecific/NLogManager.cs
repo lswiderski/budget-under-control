@@ -1,10 +1,11 @@
 ﻿
+using BudgetUnderControl.Common;
 using BudgetUnderControl.Droid;
-using BudgetUnderControl.Mobile;
 using NLog;
 using NLog.Config;
 using NLog.Targets;
 using System;
+using System.Globalization;
 using System.IO;
 using Xamarin.Forms;
 
@@ -26,16 +27,18 @@ namespace BudgetUnderControl.Droid
             var fileTarget = new FileTarget();
 
             string folder = Android.OS.Environment.ExternalStorageDirectory.Path;
-            fileTarget.FileName = Path.Combine(folder, "BudgetUnderControl", "buc-Log.txt");
+
+            var date = DateTime.UtcNow.Date.ToString("dd.MM.yyyy");
+            fileTarget.FileName = Path.Combine(folder, "BudgetUnderControl", string.Format("buc-Log-{0}.txt", date));
             config.AddTarget("file", fileTarget);
 
-            var fileRule = new LoggingRule("*", LogLevel.Warn, fileTarget);
+            var fileRule = new LoggingRule("*", LogLevel.Info, fileTarget);
             config.LoggingRules.Add(fileRule);
 
             LogManager.Configuration = config;
         }
 
-        public Mobile.ILogger GetLog([System.Runtime.CompilerServices.CallerFilePath] string callerFilePath = "")
+        public Common.ILogger GetLog([System.Runtime.CompilerServices.CallerFilePath] string callerFilePath = "")
         {
             string fileName = callerFilePath;
 

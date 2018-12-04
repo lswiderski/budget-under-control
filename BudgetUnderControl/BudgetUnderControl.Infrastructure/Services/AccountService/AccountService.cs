@@ -9,6 +9,7 @@ using System.Text;
 using System.Threading.Tasks;
 using BudgetUnderControl.Infrastructure.Commands;
 using FluentValidation;
+using BudgetUnderControl.Common;
 
 namespace BudgetUnderControl.Infrastructure.Services
 {
@@ -16,11 +17,13 @@ namespace BudgetUnderControl.Infrastructure.Services
     {
         private readonly IAccountRepository accountRepository;
         private readonly IUserRepository userRepository;
+        private readonly ILogger logger;
 
-        public AccountService(IAccountRepository accountRepository, IUserRepository userRepository)
+        public AccountService(IAccountRepository accountRepository, IUserRepository userRepository, ILogger logger)
         {
             this.accountRepository = accountRepository;
             this.userRepository = userRepository;
+            this.logger = logger;
         }
 
         public async Task<EditAccountDTO> GetAccountAsync(Guid id)
@@ -69,6 +72,7 @@ namespace BudgetUnderControl.Infrastructure.Services
 
         public async Task<AccountDetailsDTO> GetAccountDetailsAsync(TransactionsFilter filter)
         {
+
             Account account;
             if (filter != null && filter.AccountsIds != null && filter.AccountsIds.Any())
             {

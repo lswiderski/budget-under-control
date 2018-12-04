@@ -11,7 +11,7 @@ using BudgetUnderControl.Views;
 using System.Diagnostics;
 using System.IO;
 using Xamarin.Forms;
-using BudgetUnderControl.Mobile;
+using BudgetUnderControl.Common;
 
 namespace BudgetUnderControl.Droid
 {

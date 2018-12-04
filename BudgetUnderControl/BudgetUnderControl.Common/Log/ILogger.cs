@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace BudgetUnderControl.Mobile
+namespace BudgetUnderControl.Common
 {
     public interface ILogger
     {

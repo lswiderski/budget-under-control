@@ -9,15 +9,20 @@ namespace BudgetUnderControl.API
 {
     public class NLogManager : ILogManager
     {
-        private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
+        private static Logger Logger = LogManager.GetCurrentClassLogger();
         public NLogManager()
         {
 
         }
-
-        public Common.ILogger GetLog(string callerFilePath = "")
+        /// <summary>
+        /// Returning Nlog logger. Param useless at Web implementation
+        /// </summary>
+        /// <param name="callerFilePath">leave empty</param>
+        /// <returns></returns>
+        public ILogger GetLog(string callerFilePath = "")
         {
-            return new NLogLogger(Logger);
+
+            return Logger;
         }
 
        

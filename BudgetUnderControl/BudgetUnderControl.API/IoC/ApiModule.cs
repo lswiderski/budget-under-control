@@ -5,6 +5,7 @@ using BudgetUnderControl.Common.Enums;
 using BudgetUnderControl.Domain;
 using BudgetUnderControl.Infrastructure.Settings;
 using Microsoft.Extensions.Configuration;
+using NLog;
 using System;
 using System.Collections.Generic;
 using System.Linq;

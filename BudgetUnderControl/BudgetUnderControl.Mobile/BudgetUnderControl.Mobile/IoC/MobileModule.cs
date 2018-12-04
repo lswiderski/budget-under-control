@@ -7,6 +7,7 @@ using BudgetUnderControl.Mobile.Extensions;
 using BudgetUnderControl.Mobile.Services;
 using BudgetUnderControl.ViewModel;
 using Microsoft.Extensions.Configuration;
+using NLog;
 using System;
 using System.Collections.Generic;
 using System.Net.Http;

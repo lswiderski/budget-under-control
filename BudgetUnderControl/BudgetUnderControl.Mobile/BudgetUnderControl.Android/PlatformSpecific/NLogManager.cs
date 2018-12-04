@@ -14,6 +14,7 @@ namespace BudgetUnderControl.Droid
 {
     public class NLogManager : ILogManager
     {
+        private static Logger Logger;
         public NLogManager()
         {
             var config = new LoggingConfiguration();
@@ -38,7 +39,7 @@ namespace BudgetUnderControl.Droid
             LogManager.Configuration = config;
         }
 
-        public Common.ILogger GetLog([System.Runtime.CompilerServices.CallerFilePath] string callerFilePath = "")
+        public ILogger GetLog([System.Runtime.CompilerServices.CallerFilePath] string callerFilePath = "")
         {
             string fileName = callerFilePath;
 
@@ -47,8 +48,8 @@ namespace BudgetUnderControl.Droid
                 fileName = fileName.Substring(fileName.LastIndexOf("/", StringComparison.CurrentCultureIgnoreCase) + 1);
             }
 
-            var logger = LogManager.GetLogger(fileName);
-            return new NLogLogger(logger);
+            Logger = LogManager.GetLogger(fileName);
+            return Logger;
         }
     }
 }

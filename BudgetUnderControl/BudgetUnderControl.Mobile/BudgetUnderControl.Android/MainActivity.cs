@@ -12,6 +12,7 @@ using System.Diagnostics;
 using System.IO;
 using Xamarin.Forms;
 using BudgetUnderControl.Common;
+using NLog;
 
 namespace BudgetUnderControl.Droid
 {

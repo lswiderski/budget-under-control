@@ -10,6 +10,7 @@ using System.Threading.Tasks;
 using BudgetUnderControl.Infrastructure.Commands;
 using FluentValidation;
 using BudgetUnderControl.Common;
+using NLog;
 
 namespace BudgetUnderControl.Infrastructure.Services
 {

@@ -110,6 +110,20 @@ namespace BudgetUnderControl.ViewModel
             }
         }
 
+        private string numberOfTransactions;
+        public string NumberOfTransactions
+        {
+            get => numberOfTransactions;
+            set
+            {
+                if (numberOfTransactions != value)
+                {
+                    numberOfTransactions = value;
+                    PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(NumberOfTransactions)));
+                }
+            }
+        }
+
         public DateTime FromDate { get; set; }
         public DateTime ToDate { get; set; }
         public string ActualRange
@@ -149,6 +163,8 @@ namespace BudgetUnderControl.ViewModel
             var account = await this.accountService.GetAccountDetailsAsync(new TransactionsFilter { AccountsExternalIds = new HashSet<Guid> { accountId },  FromDate = FromDate, ToDate = ToDate });
             Expense = account.Expense.ToString();
             Income = account.Income.ToString();
+
+            NumberOfTransactions = Transactions.Count.ToString();
         }
 
         public async Task RemoveAccount()

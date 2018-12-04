@@ -6,7 +6,7 @@
              Title="{Binding Name, Mode=TwoWay}">
     <ContentPage.Content>
         <AbsoluteLayout x:Name="absoluteLayout" VerticalOptions="FillAndExpand" HorizontalOptions="FillAndExpand">
-            <StackLayout>
+            <StackLayout Padding="0,0,0,0" AbsoluteLayout.LayoutFlags="All" AbsoluteLayout.LayoutBounds="0,0,1,1">
                 <StackLayout Orientation="Horizontal">
                     <Label Text="Balance: " />
                     <Label Text="{Binding ValueWithCurrency, Mode=TwoWay}" x:Name="valueLabel" PropertyChanged="valueLabel_PropertyChanged"/>
@@ -15,7 +15,11 @@
                     <Label Text="Income: "/>
                     <Label Text="{Binding Income, Mode=TwoWay}" TextColor="Green"/>
                 </StackLayout>
-                
+                <StackLayout Orientation="Horizontal">
+
+                    <Label Text="No. Trans: "/>
+                    <Label Text="{Binding NumberOfTransactions, Mode=TwoWay}" />
+                </StackLayout>
                 <Grid>
                     <Grid.RowDefinitions>
                         <RowDefinition Height="*" />

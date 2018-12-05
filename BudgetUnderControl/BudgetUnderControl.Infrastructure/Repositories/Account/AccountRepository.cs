@@ -35,6 +35,7 @@ namespace BudgetUnderControl.Infrastructure
                                   where account.OwnerId == userIdentityContext.UserId
                                   select account)
                                  .Include(p => p.Currency)
+                                 .OrderBy(a => a.Order)
                                  .ToListAsync();
             return accounts;
         }
@@ -53,6 +54,7 @@ namespace BudgetUnderControl.Infrastructure
                                   && account.OwnerId == userIdentityContext.UserId
                                   select account)
                                  .Include(p => p.Currency)
+                                 .OrderBy(a => a.Order)
                                  .ToListAsync();
             return accounts;
         }

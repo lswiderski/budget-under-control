@@ -35,7 +35,7 @@
             </Entry>
             <Label x:Name="commentLabel" Text="Comment"></Label>
             <Editor x:Name="comment"  Text="{Binding Comment}" ></Editor>
-            <Button x:Name="addButton" Text="Save" Clicked="OnEditButtonClicked" />
+            <Button x:Name="addButton" Text="Save" Clicked="OnEditButtonClicked"  />
         </StackLayout>
             </ScrollView>
     </ContentPage.Content>

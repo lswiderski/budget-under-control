@@ -10,5 +10,6 @@ namespace BudgetUnderControl.Common
     {
         public static string DB_SQLite_NAME = "buc.db3";
         public static string DB_SQLServer_NAME = "dbBUC";
+
     }
 }

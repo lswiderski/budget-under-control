@@ -65,6 +65,7 @@
     <Compile Include="PlatformSpecific\FileHelper.cs" />
     <Compile Include="FloatingActionButtonViewRenderer.cs" />
     <Compile Include="MainActivity.cs" />
+    <Compile Include="PlatformSpecific\LocalNotificationService.cs" />
     <Compile Include="PlatformSpecific\NLogManager.cs" />
     <Compile Include="PlatformSpecific\NLService.cs" />
     <Compile Include="Resources\Resource.Designer.cs" />
@@ -213,6 +214,12 @@
     </Reference>
     <Reference Include="NLog, Version=4.0.0.0, Culture=neutral, PublicKeyToken=5120e14c03d0593c, processorArchitecture=MSIL">
       <HintPath>..\..\packages\NLog.4.5.11\lib\monoandroid44\NLog.dll</HintPath>
+    </Reference>
+    <Reference Include="Plugin.LocalNotifications, Version=3.0.1.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Xam.Plugins.Notifier.3.0.1\lib\MonoAndroid10\Plugin.LocalNotifications.dll</HintPath>
+    </Reference>
+    <Reference Include="Plugin.LocalNotifications.Abstractions, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Xam.Plugins.Notifier.3.0.1\lib\MonoAndroid10\Plugin.LocalNotifications.Abstractions.dll</HintPath>
     </Reference>
     <Reference Include="Refractored.Fab, Version=2.1.0.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\..\packages\Refractored.FloatingActionButton.2.1.0\lib\MonoAndroid10\Refractored.Fab.dll</HintPath>

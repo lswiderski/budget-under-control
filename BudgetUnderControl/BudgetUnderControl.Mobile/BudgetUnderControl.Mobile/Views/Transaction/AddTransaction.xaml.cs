@@ -29,6 +29,12 @@ namespace BudgetUnderControl.Views
             account.Unfocused += (object sender, FocusEventArgs e) => { categories.Focus(); };
         }
 
+        public AddTransaction(string amount, string title) : this()
+        {
+            vm.Amount = amount;
+            vm.Name = title;
+        }
+
         async void OnAddButtonClicked(object sender, EventArgs args)
         {
             await vm.AddTransacionAsync();

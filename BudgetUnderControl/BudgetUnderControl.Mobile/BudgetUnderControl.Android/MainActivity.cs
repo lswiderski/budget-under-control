@@ -13,6 +13,8 @@ using System.IO;
 using Xamarin.Forms;
 using BudgetUnderControl.Common;
 using NLog;
+using BudgetUnderControl.Mobile.PlatformSpecific;
+using BudgetUnderControl.Common.Enums;
 
 namespace BudgetUnderControl.Droid
 {
@@ -35,7 +37,33 @@ namespace BudgetUnderControl.Droid
             DisplayCrashReport();
             var app = new App();
             logger = DependencyService.Get<ILogManager>().GetLog();
+
             LoadApplication(app);
+            CheckIfComeFromNotification();
+        }
+
+        private void CheckIfComeFromNotification()
+        {
+            var extras = Intent.Extras;
+            if (extras != null)
+            {
+                var redirectTo = extras.GetInt(PropertyKeys.REDIRECT_TO);
+                var add_value = extras.GetString(PropertyKeys.ADD_TRANSACTION_VALUE);
+                var add_title = extras.GetString(PropertyKeys.ADD_TRANSACTION_TITLE);
+
+                if (!string.IsNullOrEmpty(add_value))
+                {
+                    Properties.ADD_TRANSACTION_VALUE = add_value;
+                }
+                if (!string.IsNullOrEmpty(add_title))
+                {
+                    Properties.ADD_TRANSACTION_TITLE = add_title;
+                }
+                if (redirectTo != 0)
+                {
+                    Properties.REDIRECT_TO = (ActivityPage)redirectTo;
+                }
+            }
         }
 
         private static void TaskSchedulerOnUnobservedTaskException(object sender, UnobservedTaskExceptionEventArgs unobservedTaskExceptionEventArgs)
@@ -101,7 +129,6 @@ namespace BudgetUnderControl.Droid
                 .SetTitle("Crash Report")
                 .Show();
         }
-
     }
 }
 

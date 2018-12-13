@@ -31,9 +31,24 @@ namespace BudgetUnderControl
 
         protected override void OnStart()
         {
-
+            
             AutoFacInit();
-            MainPage = MasterPage = new BudgetUnderControl.Views.MasterPage();
+            MainPage = MasterPage = new MasterPage();
+
+            if(Mobile.PlatformSpecific.Properties.REDIRECT_TO.HasValue )
+            {
+                switch (Mobile.PlatformSpecific.Properties.REDIRECT_TO.Value)
+                {
+                    case Common.Enums.ActivityPage.AddTransaction:
+                        var value = Mobile.PlatformSpecific.Properties.ADD_TRANSACTION_VALUE;
+                        var title = Mobile.PlatformSpecific.Properties.ADD_TRANSACTION_TITLE;
+                        MasterPage.NavigateTo(typeof(AddTransaction), value.ToString(), title);
+                        break;
+                    default:
+                        break;
+                }
+            }
+          
         }
 
         protected override void OnSleep()

@@ -1,5 +1,10 @@
 ﻿using Autofac;
+using BudgetUnderControl.Common;
+using BudgetUnderControl.Common.Contracts.System;
+using BudgetUnderControl.Common.Enums;
+using BudgetUnderControl.Mobile.PlatformSpecific;
 using BudgetUnderControl.ViewModel;
+using Plugin.LocalNotifications;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -54,5 +59,6 @@ namespace BudgetUnderControl.Views
         {
             await vm.ClearSyncDB();
         }
+
     }
 }

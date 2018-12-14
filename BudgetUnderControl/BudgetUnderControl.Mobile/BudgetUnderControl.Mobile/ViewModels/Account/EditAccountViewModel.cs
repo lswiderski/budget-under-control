@@ -237,16 +237,12 @@ namespace BudgetUnderControl.ViewModel
                 ParentAccountId = selectedAccountIndex > -1 ? Accounts[SelectedAccountIndex].Id : (int?)null,
                 ExternalId = ExternalId
             };
-            try {
-                using (var scope = App.Container.BeginLifetimeScope())
-                {
-                    await commandDispatcher.DispatchAsync(command, scope);
-                }
-                
-        }catch (Exception e)
+           
+            using (var scope = App.Container.BeginLifetimeScope())
             {
-
+                await commandDispatcher.DispatchAsync(command, scope);
             }
+
         }
 
         private string order;

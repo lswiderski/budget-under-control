@@ -21,5 +21,12 @@ namespace BudgetUnderControl.Infrastructure.Repositories
 
             return user;
         }
+
+        public async Task<User> GetAsync(string username)
+        {
+            var user = await this.Context.Users.FirstOrDefaultAsync(u => u.Username.Equals(username));
+
+            return user;
+        }
     }
 }

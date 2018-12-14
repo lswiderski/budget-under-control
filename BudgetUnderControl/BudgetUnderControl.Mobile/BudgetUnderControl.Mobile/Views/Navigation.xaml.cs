@@ -50,6 +50,12 @@ namespace BudgetUnderControl.Views
                 IconSource = "Settings.png",
                 TargetType = typeof(SettingsPage)
             });
+            masterPageItems.Add(new MasterPageItem
+            {
+                Title = "Login",
+                IconSource = "hamburger.png",
+                TargetType = typeof(Login)
+            });
 
             listView.ItemsSource = masterPageItems;
         }

@@ -53,6 +53,8 @@ namespace BudgetUnderControl.Infrastructure.IoC
             builder.RegisterType<SynchronizationRepository>().As<ISynchronizationRepository>().InstancePerLifetimeScope();
             builder.RegisterType<Synchroniser>().As<ISynchroniser>().InstancePerLifetimeScope();
             builder.RegisterType<SyncRequestBuilder>().As<ISyncRequestBuilder>().InstancePerLifetimeScope();
+            builder.RegisterType<LoginService>().As<ILoginService>().InstancePerLifetimeScope();
+            builder.RegisterType<Encrypter>().As<IEncrypter>().InstancePerLifetimeScope();
             
 
 

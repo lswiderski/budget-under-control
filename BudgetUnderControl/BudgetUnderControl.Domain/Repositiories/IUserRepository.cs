@@ -8,5 +8,7 @@ namespace BudgetUnderControl.Domain.Repositiories
     public interface IUserRepository
     {
         Task<User> GetFirstUserAsync();
+
+        Task<User> GetAsync(string username);
     }
 }

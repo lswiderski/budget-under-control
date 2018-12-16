@@ -10,5 +10,6 @@ namespace BudgetUnderControl.Domain.Repositiories
         Task<User> GetFirstUserAsync();
 
         Task<User> GetAsync(string username);
+        Task UpdateUserAsync(User user);
     }
 }

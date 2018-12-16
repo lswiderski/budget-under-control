@@ -14,5 +14,6 @@ namespace BudgetUnderControl.Mobile.Services
         Task ExportDBAsync();
         Task SyncAsync();
         Task TaskClearSyncDB();
+        Task CleanDataBaseAsync();
     }
 }

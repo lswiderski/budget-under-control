@@ -1,5 +1,8 @@
 ﻿using Autofac;
+using BudgetUnderControl.Domain.Repositiories;
 using BudgetUnderControl.Infrastructure.Settings;
+using BudgetUnderControl.Mobile.Keys;
+using BudgetUnderControl.Views;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
@@ -8,6 +11,7 @@ using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Text;
 using System.Threading.Tasks;
+using Xamarin.Essentials;
 
 namespace BudgetUnderControl.Mobile.Services
 {
@@ -17,10 +21,18 @@ namespace BudgetUnderControl.Mobile.Services
         private readonly HttpClient httpClient;
         private readonly GeneralSettings settings;
 
-        public LoginMobileService(GeneralSettings settings)
+        private readonly INavigationViewModel navigationViewModel;
+        private readonly ISyncMobileService syncMobileService;
+        private readonly IUserRepository userRepository;
+
+        public LoginMobileService(GeneralSettings settings, INavigationViewModel navigationViewModel, ISyncMobileService syncMobileService,
+            IUserRepository userRepository)
         {
             this.httpClient = App.Container.ResolveNamed<HttpClient>("api");
             this.settings = settings;
+            this.navigationViewModel = navigationViewModel;
+            this.syncMobileService = syncMobileService;
+            this.userRepository = userRepository;
         }
 
         public async Task<bool> LoginAsync(string username, string password, bool clearLocalData)
@@ -30,12 +42,23 @@ namespace BudgetUnderControl.Mobile.Services
             //if logged
             if(userExternalId != Guid.Empty)
             {
+                Preferences.Set(PreferencesKeys.IsUserLogged, true);
+                Preferences.Set(PreferencesKeys.UserExternalId, userExternalId.ToString());
+                navigationViewModel.RefreshUserButtons();
+
                 if (clearLocalData)
                 {
                     //clear DB
+                    await syncMobileService.CleanDataBaseAsync();
                 }
 
+                //set externalId
+                var user = await this.userRepository.GetFirstUserAsync();
+                user.EditExternalId(userExternalId);
+                await userRepository.UpdateUserAsync(user);
+
                 //sync
+                //await syncMobileService.SyncAsync();
 
                 return true;
             }
@@ -44,6 +67,14 @@ namespace BudgetUnderControl.Mobile.Services
                 return false;
             }
 
+        }
+
+        public async Task LogoutAsync()
+        {
+            Preferences.Set(PreferencesKeys.IsUserLogged, false);
+            Preferences.Remove(PreferencesKeys.UserExternalId);
+            navigationViewModel.RefreshUserButtons();
+            App.MasterPage.NavigateTo(typeof(OverviewPage));
         }
 
        private async Task<Guid> RemoteLoginAsync(string username, string password)

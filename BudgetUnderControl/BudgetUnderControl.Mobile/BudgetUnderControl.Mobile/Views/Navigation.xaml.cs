@@ -6,58 +6,38 @@ using System.Threading.Tasks;
 
 using Xamarin.Forms;
 using Xamarin.Forms.Xaml;
+using Xamarin.Essentials;
+using BudgetUnderControl.Mobile.Keys;
+using Autofac;
+using BudgetUnderControl.Mobile;
 
 namespace BudgetUnderControl.Views
 {
     [XamlCompilation(XamlCompilationOptions.Compile)]
     public partial class Navigation : ContentPage
     {
-        public ListView ListView { get { return listView; } }
 
+        INavigationViewModel vm;
         public Navigation()
         {
+            using (var scope = App.Container.BeginLifetimeScope())
+            {
+                this.BindingContext = vm = scope.Resolve<INavigationViewModel>();
+            }
+
             InitializeComponent();
+        }
 
-            var masterPageItems = new List<MasterPageItem>();
-            masterPageItems.Add(new MasterPageItem
-            {
-                Title = "Overview",
-                IconSource = "Overview.png",
-                TargetType = typeof(OverviewPage)
-            });
-            masterPageItems.Add(new MasterPageItem
-            {
-                Title = "Accounts",
-                IconSource = "Accounts.png",
-                TargetType = typeof(Accounts)
-            });
-            masterPageItems.Add(new MasterPageItem
-            {
-                Title = "Transactions",
-                IconSource = "Transactions.png",
-                TargetType = typeof(Transactions)
-            });
-            
-            masterPageItems.Add(new MasterPageItem
-            {
-                Title = "Currencies",
-                IconSource = "Currencies.png",
-                TargetType = typeof(Currencies)
-            });
-            masterPageItems.Add(new MasterPageItem
-            {
-                Title = "Settings",
-                IconSource = "Settings.png",
-                TargetType = typeof(SettingsPage)
-            });
-            masterPageItems.Add(new MasterPageItem
-            {
-                Title = "Login",
-                IconSource = "hamburger.png",
-                TargetType = typeof(Login)
-            });
+        public ListView ListView { get { return listView; } }
 
-            listView.ItemsSource = masterPageItems;
+        async void OnLoginButtonClicked(object sender, EventArgs args)
+        {
+             App.MasterPage.NavigateTo(typeof(Login));
+        }
+
+        async void OnLogoutButtonClicked(object sender, EventArgs args)
+        {
+            App.MasterPage.NavigateTo(typeof(Logout));
         }
     }
 }

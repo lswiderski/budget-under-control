@@ -16,5 +16,6 @@ namespace BudgetUnderControl.Mobile.ViewModels
         bool IsError { get; set; }
 
         Task LoginAsync();
+        Task LogoutAsync();
     }
 }

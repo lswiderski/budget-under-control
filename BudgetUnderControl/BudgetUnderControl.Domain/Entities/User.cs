@@ -37,5 +37,11 @@ namespace BudgetUnderControl.Domain
         {
             this.ModifiedOn = DateTime.UtcNow;
         }
+
+        public void EditExternalId(Guid newId)
+        {
+            this.ExternalId = newId;
+            this.UpdateModify();
+        }
     }
 }

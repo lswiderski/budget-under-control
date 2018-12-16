@@ -5,15 +5,21 @@
              Icon="hamburger.png"
 			 Title="Budget Under Control">
     <ContentPage.Content>
-        <StackLayout VerticalOptions="FillAndExpand">
-            <Label Text="Budget Under Control" HorizontalOptions="Center" VerticalOptions="CenterAndExpand" />
-            <ListView x:Name="listView" VerticalOptions="FillAndExpand" SeparatorVisibility="None">
-                <ListView.ItemTemplate>
-                    <DataTemplate>
-                        <ImageCell Text="{Binding Title}" ImageSource="{Binding IconSource}" />
-                    </DataTemplate>
-                </ListView.ItemTemplate>
-            </ListView>
+        <StackLayout>
+            <StackLayout VerticalOptions="FillAndExpand">
+                <Label Text="Budget Under Control" HorizontalOptions="Center" VerticalOptions="CenterAndExpand" />
+                <ListView x:Name="listView" VerticalOptions="FillAndExpand" SeparatorVisibility="None" ItemsSource="{Binding MasterPageItems}">
+                    <ListView.ItemTemplate>
+                        <DataTemplate>
+                            <ImageCell Text="{Binding Title}" ImageSource="{Binding IconSource}" />
+                        </DataTemplate>
+                    </ListView.ItemTemplate>
+                </ListView>
+            </StackLayout>
+            <StackLayout Orientation="Horizontal" VerticalOptions="End">
+                <Button x:Name="login" Text="Login" Clicked="OnLoginButtonClicked" IsVisible="{Binding IsNotLogged}"/>
+                <Button x:Name="logout" Text="Logout" Clicked="OnLogoutButtonClicked" IsVisible="{Binding IsLogged}" />
+            </StackLayout>
         </StackLayout>
     </ContentPage.Content>
 </ContentPage>

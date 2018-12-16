@@ -28,5 +28,12 @@ namespace BudgetUnderControl.Infrastructure.Repositories
 
             return user;
         }
+
+        public async Task UpdateUserAsync(User user)
+        {
+            user.UpdateModify();
+            this.Context.Users.Update(user);
+            await this.Context.SaveChangesAsync();
+        }
     }
 }

@@ -78,6 +78,11 @@ namespace BudgetUnderControl.Mobile.Services
 
         }
 
+        public async Task CleanDataBaseAsync()
+        {
+            await this.syncService.CleanDataBaseAsync();
+        }
+
         public async Task SaveBackupFileAsync()
         {
             var json = await GetBackUpJSONAsync();

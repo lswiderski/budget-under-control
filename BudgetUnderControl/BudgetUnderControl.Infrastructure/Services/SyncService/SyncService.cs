@@ -156,7 +156,7 @@ namespace BudgetUnderControl.Infrastructure.Services
             return lines;
         }
 
-        private async Task CleanDataBaseAsync()
+        public async Task CleanDataBaseAsync()
         {
             var transfers = await this.transactionRepository.GetTransfersAsync();
             await this.transactionRepository.HardRemoveTransfersAsync(transfers);

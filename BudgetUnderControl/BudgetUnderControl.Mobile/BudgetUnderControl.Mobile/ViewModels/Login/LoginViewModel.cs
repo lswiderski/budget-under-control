@@ -90,5 +90,10 @@ namespace BudgetUnderControl.Mobile.ViewModels
                 IsError = true;
             }
         }
+
+        public async Task LogoutAsync()
+        {
+            await loginMobileService.LogoutAsync();
+        }
     }
 }

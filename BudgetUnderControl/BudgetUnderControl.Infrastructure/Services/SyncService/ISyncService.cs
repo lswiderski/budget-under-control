@@ -12,6 +12,7 @@ namespace BudgetUnderControl.Infrastructure.Services
     public interface ISyncService
     {
         Task ImportBackUpAsync(BackUpDTO backupDto);
+        Task CleanDataBaseAsync();
         Task<BackUpDTO> GetBackUpAsync();
         Task<IEnumerable<string>> GenerateCSV();
 

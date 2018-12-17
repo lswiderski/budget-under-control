@@ -89,29 +89,69 @@ namespace BudgetUnderControl.Infrastructure.Services
                 return;
             }
 
-            foreach (var transaction in transactions)
+            var transactionsToUpdate = new List<Domain.Transaction>();
+            var transactionsToAdd = new List<Domain.Transaction>();
+
+            const int packageSize = 200;
+            var categories = (await this.categoryRepository.GetCategoriesAsync()).GroupBy(x => x.ExternalId).Select(x => x.FirstOrDefault()).ToList();
+            var dictCategories = categories
+                .ToDictionary(c => c.ExternalId, c => c.Id);
+
+            var accounts = (await this.accountRepository.GetAccountsAsync()).Distinct().ToList();
+            var dictAccounts = accounts
+                .ToDictionary(c => c.ExternalId, c => c.Id);
+
+            while (transactions.Any())
             {
-                int? categoryId = transaction.CategoryExternalId.HasValue ? (await this.categoryRepository.GetCategoryAsync(transaction.CategoryExternalId.Value)).Id : (int?)null;
-                var accountId = (await this.accountRepository.GetAccountAsync(transaction.AccountExternalId.Value)).Id;
-                var transactionToUpdate = await this.transactionRepository.GetTransactionAsync(transaction.ExternalId.Value);
-                if (transactionToUpdate != null)
+                var package = this.GetPartOfTransactions(transactions, packageSize);
+                transactions = transactions.Skip(packageSize);
+
+                foreach (var transaction in package)
                 {
-                    if(transactionToUpdate.ModifiedOn < transaction.ModifiedOn)
+                    int? categoryId = transaction.CategoryExternalId.HasValue ? dictCategories.ContainsKey(transaction.CategoryExternalId.Value) ? dictCategories[transaction.CategoryExternalId.Value]: (int?)null : (int?)null;
+                    var accountId = dictAccounts[transaction.AccountExternalId.Value];
+                    var transactionToUpdate = await this.transactionRepository.GetTransactionAsync(transaction.ExternalId.Value);
+
+                    if (transactionToUpdate != null)
                     {
-                        transactionToUpdate.Edit(accountId, transaction.Type, transaction.Amount, transaction.Date, transaction.Name, transaction.Comment, this.userIdentityContext.UserId, transaction.IsDeleted, categoryId);
-                        transactionToUpdate.SetCreatedOn(transaction.CreatedOn);
-                        transactionToUpdate.SetModifiedOn(transaction.ModifiedOn);
-                        await this.transactionRepository.UpdateAsync(transactionToUpdate);
+                        if (transactionToUpdate.ModifiedOn < transaction.ModifiedOn)
+                        {
+                            transactionToUpdate.Edit(accountId, transaction.Type, transaction.Amount, transaction.Date, transaction.Name, transaction.Comment, this.userIdentityContext.UserId, transaction.IsDeleted, categoryId);
+                            transactionToUpdate.SetCreatedOn(transaction.CreatedOn);
+                            transactionToUpdate.SetModifiedOn(transaction.ModifiedOn);
+                            transactionsToUpdate.Add(transactionToUpdate);
+                        }
+                    }
+                    else
+                    {
+                        var transactionToAdd = Domain.Transaction.Create(accountId, transaction.Type, transaction.Amount, transaction.Date, transaction.Name, transaction.Comment, this.userIdentityContext.UserId, false, categoryId, transaction.ExternalId);
+                        transactionToAdd.SetCreatedOn(transaction.CreatedOn);
+                        transactionToAdd.SetModifiedOn(transaction.ModifiedOn);
+                        transactionsToAdd.Add(transactionToAdd);
                     }
                 }
-                else
+
+                if (transactionsToUpdate.Any())
                 {
-                    var transactionToAdd = Domain.Transaction.Create(accountId, transaction.Type, transaction.Amount, transaction.Date, transaction.Name, transaction.Comment, this.userIdentityContext.UserId, false, categoryId, transaction.ExternalId);
-                    transactionToAdd.SetCreatedOn(transaction.CreatedOn);
-                    transactionToAdd.SetModifiedOn(transaction.ModifiedOn);
-                    await this.transactionRepository.AddTransactionAsync(transactionToAdd);
+                    await this.transactionRepository.UpdateAsync(transactionsToUpdate);
+                    transactionsToUpdate.Clear();
+                }
+
+                if (transactionsToAdd.Any())
+                {
+                    await this.transactionRepository.AddTransactionsAsync(transactionsToAdd);
+                    transactionsToAdd.Clear();
                 }
             }
+
+           
+           
+           
+        }
+
+        private IEnumerable<TransactionSyncDTO> GetPartOfTransactions(IEnumerable<TransactionSyncDTO> transactions, int packageSize)
+        {
+            return transactions.Take(packageSize);
         }
 
         private async Task UpdateTransfersAsync(IEnumerable<TransferSyncDTO> transfers)
@@ -211,11 +251,13 @@ namespace BudgetUnderControl.Infrastructure.Services
                 return;
             }
 
+            accounts = accounts.OrderBy(a => a.ParentAccountId);
+
             foreach (var account in accounts)
             {
                 var parentAccountId = account.ParentAccountExternalId.HasValue ? (await this.accountRepository.GetAccountAsync(account.ParentAccountExternalId.Value)).Id : (int?)null;
                 var accountGroupId = (await this.accountGroupRepository.GetAccountGroupAsync(account.AccountGroupExternalId)).Id;
-                var userId = (await this.userRepository.GetFirstUserAsync()).Id;
+                var userId = this.userIdentityContext.UserId;
                 var accountToUpdate = await this.accountRepository.GetAccountAsync(account.ExternalId.Value);
                 if (accountToUpdate != null)
                 {

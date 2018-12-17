@@ -28,10 +28,27 @@ namespace BudgetUnderControl.Infrastructure
             await this.Context.SaveChangesAsync();
         }
 
+        public async Task AddTransactionsAsync(IEnumerable<Transaction> transactions)
+        {
+            this.Context.Transactions.AddRange(transactions);
+            await this.Context.SaveChangesAsync();
+        }
+
         public async Task UpdateAsync(Transaction transaction)
         {
             transaction.UpdateModify();
             this.Context.Transactions.Update(transaction);
+            await this.Context.SaveChangesAsync();
+        }
+
+        public async Task UpdateAsync(IEnumerable<Transaction> transactions)
+        {
+            foreach (var transaction in transactions)
+            {
+                transaction.UpdateModify();
+            }
+            
+            this.Context.Transactions.UpdateRange(transactions);
             await this.Context.SaveChangesAsync();
         }
 

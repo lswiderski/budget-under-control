@@ -16,7 +16,9 @@ namespace BudgetUnderControl.Domain.Repositiories
         Task<Transaction> GetTransactionAsync(int id);
         Task<Transaction> GetTransactionAsync(Guid id);
         Task AddTransactionAsync(Transaction transaction);
+        Task AddTransactionsAsync(IEnumerable<Transaction> transactions);
         Task UpdateAsync(Transaction transaction);
+        Task UpdateAsync(IEnumerable<Transaction> transactions);
         Task AddTransferAsync(Transfer transfer);
         Task UpdateTransferAsync(Transfer transfer);
         Task RemoveTransactionAsync(Transaction transaction);

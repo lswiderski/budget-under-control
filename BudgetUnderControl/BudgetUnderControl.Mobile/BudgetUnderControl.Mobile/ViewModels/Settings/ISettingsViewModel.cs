@@ -18,6 +18,14 @@ namespace BudgetUnderControl.ViewModel
 
         Task SyncAsync();
 
+        Task ClearLocalData();
+
         Task ClearSyncDB();
+
+        string ApiUrl { get; set; }
+
+        void OnApiUrlChange();
+
+        bool IsLogged { get; set; }
     }
 }

@@ -28,6 +28,7 @@ namespace BudgetUnderControl.Views
             }
 
             InitializeComponent();
+            apiUrl.Unfocused += (object sender, FocusEventArgs e) => { vm.OnApiUrlChange(); };
         }
 
         private async void ExportButton_Clicked(object sender, EventArgs e)
@@ -58,6 +59,11 @@ namespace BudgetUnderControl.Views
         private async void ClearSyncDBButton_Clicked(object sender, EventArgs e)
         {
             await vm.ClearSyncDB();
+        }
+
+        private async void ClearLocalDataButton_Clicked(object sender, EventArgs e)
+        {
+            await vm.ClearLocalData();
         }
 
     }

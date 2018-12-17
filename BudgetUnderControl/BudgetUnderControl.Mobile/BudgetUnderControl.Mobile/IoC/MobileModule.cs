@@ -4,6 +4,7 @@ using BudgetUnderControl.Common.Enums;
 using BudgetUnderControl.Domain;
 using BudgetUnderControl.Infrastructure.Settings;
 using BudgetUnderControl.Mobile.Extensions;
+using BudgetUnderControl.Mobile.Keys;
 using BudgetUnderControl.Mobile.PlatformSpecific;
 using BudgetUnderControl.Mobile.Services;
 using BudgetUnderControl.Mobile.ViewModels;
@@ -14,6 +15,7 @@ using System;
 using System.Collections.Generic;
 using System.Net.Http;
 using System.Text;
+using Xamarin.Essentials;
 using Xamarin.Forms;
 
 namespace BudgetUnderControl.Mobile.IoC
@@ -48,9 +50,10 @@ namespace BudgetUnderControl.Mobile.IoC
             builder.RegisterType<SyncMobileService>().As<ISyncMobileService>().InstancePerLifetimeScope();
             builder.RegisterType<LoginMobileService>().As<ILoginMobileService>().InstancePerLifetimeScope();
             builder.RegisterType<LoginViewModel>().As<ILoginViewModel>().InstancePerLifetimeScope();
-           
 
-            builder.Register(ctx => new HttpClient() { BaseAddress = new Uri(settings.ApiBaseUri) })
+            var url = Preferences.Get(PreferencesKeys.APIURL, string.Empty);
+            var apiUrl = string.IsNullOrEmpty(url) || string.IsNullOrWhiteSpace(url) ? settings.ApiBaseUri : url;
+            builder.Register(ctx => new HttpClient() { BaseAddress = new Uri(apiUrl) })
             .Named<HttpClient>("api")
             .SingleInstance();
 

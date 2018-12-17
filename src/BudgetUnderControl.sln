@@ -7,7 +7,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BudgetUnderControl.Android"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Targets", "Targets", "{43FFCFAA-62AC-4355-BDF0-97F7A093AA3D}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BudgetUnderControl.Tests", "BudgetUnderControl.Tests\BudgetUnderControl.Tests.csproj", "{5061A042-5EEE-4F19-9827-CBB8AC8666F6}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BudgetUnderControl.Tests", "..\tests\BudgetUnderControl.Tests\BudgetUnderControl.Tests.csproj", "{5061A042-5EEE-4F19-9827-CBB8AC8666F6}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BudgetUnderControl.Domain", "BudgetUnderControl.Domain\BudgetUnderControl.Domain.csproj", "{298A3723-97DB-436C-A016-F8D00228DFB4}"
 EndProject

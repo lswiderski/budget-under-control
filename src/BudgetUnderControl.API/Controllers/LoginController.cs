@@ -25,7 +25,7 @@ namespace BudgetUnderControl.API.Controllers
         }
 
         [HttpPost("Mobile")]
-        public async Task<IActionResult> Post([FromBody]MobileLoginCommand command)
+        public async Task<IActionResult> LoginMobile([FromBody]MobileLoginCommand command)
         {
             if (Request.Headers["Api-Key"] != settings.ApiKey)
             {
@@ -34,14 +34,29 @@ namespace BudgetUnderControl.API.Controllers
 
             command.TokenId = Guid.NewGuid();
             await DispatchAsync(command);
-            var userId = cache.Get<Guid>(command.TokenId);
+            var token = cache.Get<string>(command.TokenId);
 
-            if(userId == null || userId == Guid.Empty)
+            if(string.IsNullOrEmpty(token) || string.IsNullOrWhiteSpace(token))
             {
                 return Unauthorized();
             }
 
-            return Ok(userId);
+            return Ok(token);
+        }
+
+        [HttpPost("Authenticate")]
+        public async Task<IActionResult> Login([FromBody]MobileLoginCommand command)
+        {
+            command.TokenId = Guid.NewGuid();
+            await DispatchAsync(command);
+            var token = cache.Get<string>(command.TokenId);
+
+            if (string.IsNullOrEmpty(token) || string.IsNullOrWhiteSpace(token))
+            {
+                return Unauthorized();
+            }
+
+            return Ok(token);
         }
     }
 }

@@ -5,5 +5,7 @@
   "ApplicationId": "f30afe7b-9b74-4fa7-8f0e-cf44db792eea",
   "ConnectionString": "Filename=",
   "ApiBaseUri": "http://192.168.0.73:45455/api/",
-  "ApiKey": "f00ff00f-0011-1100-1001-0ff00ff00ff0"
+  "ApiKey": "f00ff00f-0011-1100-1001-0ff00ff00ff0",
+  "SecretKey": "SecretKey",
+  "JWTExpiresDays": 7
 }

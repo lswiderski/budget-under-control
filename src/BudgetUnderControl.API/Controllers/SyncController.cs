@@ -6,11 +6,12 @@ using BudgetUnderControl.Common.Contracts;
 using BudgetUnderControl.Infrastructure.Commands;
 using BudgetUnderControl.Infrastructure.Services;
 using BudgetUnderControl.Infrastructure.Settings;
-using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace BudgetUnderControl.API.Controllers
 {
+    [Authorize]
     [Route("api/[controller]")]
     [ApiController]
     public class SyncController : ApiControllerBase

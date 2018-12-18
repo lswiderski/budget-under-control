@@ -3,10 +3,13 @@ using BudgetUnderControl.Domain.Repositiories;
 using BudgetUnderControl.Infrastructure.Settings;
 using BudgetUnderControl.Mobile.Keys;
 using BudgetUnderControl.Views;
+using Microsoft.IdentityModel.Tokens;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
+using System.IdentityModel.Tokens.Jwt;
 using System.IO;
+using System.Linq;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Text;
@@ -38,12 +41,20 @@ namespace BudgetUnderControl.Mobile.Services
         public async Task<bool> LoginAsync(string username, string password, bool clearLocalData)
         {
             // login
-            var userExternalId = await RemoteLoginAsync(username, password);
+            var token = await RemoteLoginAsync(username, password);
             //if logged
-            if(userExternalId != Guid.Empty)
+            if(!string.IsNullOrEmpty(token))
             {
+                var tokenHandler = new JwtSecurityTokenHandler();
+                SecurityToken validatedToken;
+                var tokenValidationParameters = new TokenValidationParameters();
+                var readToken =  tokenHandler.ReadJwtToken(token);
+                var claim = readToken.Claims.First(c => c.Type == "unique_name");
+
+                var userId = Guid.Parse(claim.Value);
+                Preferences.Set(PreferencesKeys.JWTTOKEN, token);
                 Preferences.Set(PreferencesKeys.IsUserLogged, true);
-                Preferences.Set(PreferencesKeys.UserExternalId, userExternalId.ToString());
+                Preferences.Set(PreferencesKeys.UserExternalId, userId.ToString());
                 navigationViewModel.RefreshUserButtons();
 
                 if (clearLocalData)
@@ -54,7 +65,7 @@ namespace BudgetUnderControl.Mobile.Services
 
                 //set externalId
                 var user = await this.userRepository.GetFirstUserAsync();
-                user.EditExternalId(userExternalId);
+                user.EditExternalId(userId);
                 await userRepository.UpdateUserAsync(user);
 
                 //sync
@@ -69,15 +80,20 @@ namespace BudgetUnderControl.Mobile.Services
 
         }
 
+        public async Task LogoutAsync(Type redirectToPage)
+        {
+            await this.LogoutAsync();
+            App.MasterPage.NavigateTo(redirectToPage);
+        }
         public async Task LogoutAsync()
         {
             Preferences.Set(PreferencesKeys.IsUserLogged, false);
             Preferences.Remove(PreferencesKeys.UserExternalId);
+            Preferences.Remove(PreferencesKeys.JWTTOKEN);
             navigationViewModel.RefreshUserButtons();
-            App.MasterPage.NavigateTo(typeof(OverviewPage));
         }
 
-       private async Task<Guid> RemoteLoginAsync(string username, string password)
+        private async Task<string> RemoteLoginAsync(string username, string password)
         {
             //call api
             try
@@ -91,18 +107,15 @@ namespace BudgetUnderControl.Mobile.Services
                 var response = await httpClient.PostAsync(url, content);
                 if(!response.IsSuccessStatusCode)
                 {
-                    return Guid.Empty;
+                    return string.Empty;
                 }
                var statusCode = response.EnsureSuccessStatusCode();
 
                 using (var stream = await response.Content.ReadAsStreamAsync())
                 using (var reader = new StreamReader(stream))
-                using (var json = new JsonTextReader(reader))
                 {
-                    JsonSerializer serializer = new JsonSerializer();
-                    var apiResponse = serializer.Deserialize<Guid>(json);
-
-                    return apiResponse;
+                    var token = await reader.ReadToEndAsync();
+                    return token;
                 }
             }
             catch (Exception e)

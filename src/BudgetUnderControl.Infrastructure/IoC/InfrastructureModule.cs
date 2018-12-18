@@ -55,6 +55,7 @@ namespace BudgetUnderControl.Infrastructure.IoC
             builder.RegisterType<SyncRequestBuilder>().As<ISyncRequestBuilder>().InstancePerLifetimeScope();
             builder.RegisterType<LoginService>().As<ILoginService>().InstancePerLifetimeScope();
             builder.RegisterType<Encrypter>().As<IEncrypter>().InstancePerLifetimeScope();
+            builder.RegisterType<JwtHandlerService>().As<IJwtHandlerService>().InstancePerLifetimeScope();
             
 
 

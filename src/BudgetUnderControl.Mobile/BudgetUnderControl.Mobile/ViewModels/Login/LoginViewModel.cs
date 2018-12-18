@@ -91,6 +91,10 @@ namespace BudgetUnderControl.Mobile.ViewModels
             }
         }
 
+        public async Task LogoutAsync(Type redirectToPage)
+        {
+            await loginMobileService.LogoutAsync(typeof(OverviewPage));
+        }
         public async Task LogoutAsync()
         {
             await loginMobileService.LogoutAsync();

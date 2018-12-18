@@ -1,5 +1,6 @@
 ﻿using BudgetUnderControl.Domain.Repositiories;
 using BudgetUnderControl.Infrastructure.Commands;
+using Microsoft.Extensions.Caching.Memory;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -11,36 +12,36 @@ namespace BudgetUnderControl.Infrastructure.Services
     {
         private readonly IUserRepository userRepository;
         private readonly IEncrypter encrypter;
-        public LoginService(IUserRepository userRepository, IEncrypter encrypter)
+        private readonly IJwtHandlerService jwtHandlerService;
+        private readonly IMemoryCache cache;
+        public LoginService(IUserRepository userRepository, IEncrypter encrypter, 
+            IJwtHandlerService jwtHandlerService, IMemoryCache cache)
         {
             this.userRepository = userRepository;
             this.encrypter = encrypter;
+            this.jwtHandlerService = jwtHandlerService;
+            this.cache = cache;
         }
 
-        public async Task<bool> ValidateLoginAsync(MobileLoginCommand command)
+        public async Task ValidateLoginAsync(MobileLoginCommand command)
         {
             var user = await userRepository.GetAsync(command.Username);
 
             if(user == null)
             {
-                return false;
+                return;
             }
 
             var hash = encrypter.GetHash(command.Password, user.Salt);
 
             if(hash != user.Password)
             {
-                return false;
+                return;
             }
 
-            return true;
+            var token = jwtHandlerService.CreateToken(user.ExternalId);
+            cache.Set(command.TokenId, token);
         }
 
-        public async Task<Guid> GetUserId(string username)
-        {
-            var user = await userRepository.GetAsync(username);
-
-            return user.ExternalId;
-        }
     }
 }

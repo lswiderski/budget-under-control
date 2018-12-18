@@ -14,5 +14,7 @@ namespace BudgetUnderControl.Infrastructure.Settings
         public string ConnectionString { get; set; }
         public string ApiBaseUri { get; set; }
         public string ApiKey { get; set; }
+        public string SecretKey { get; set; }
+        public int JWTExpiresDays { get; set; }
     }
 }

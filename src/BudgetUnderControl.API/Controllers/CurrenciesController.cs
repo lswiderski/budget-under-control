@@ -4,13 +4,12 @@ using System.Linq;
 using System.Threading.Tasks;
 using BudgetUnderControl.Common.Contracts;
 using BudgetUnderControl.Infrastructure.Services;
-using BudgetUnderControl.Infrastructure.Services.UserService;
-using BudgetUnderControl.Infrastructure.Services;
-using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace BudgetUnderControl.API.Controllers
 {
+    [Authorize]
     [Route("api/[controller]")]
     [ApiController]
     public class CurrenciesController : ControllerBase

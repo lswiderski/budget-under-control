@@ -9,5 +9,6 @@ namespace BudgetUnderControl.Mobile.Keys
         public static string IsUserLogged = "IsUserLogged";
         public static string UserExternalId = "UserExternalId";
         public static string APIURL= "APIURL";
+        public static string JWTTOKEN = "JWTTOKEN";
     }
 }

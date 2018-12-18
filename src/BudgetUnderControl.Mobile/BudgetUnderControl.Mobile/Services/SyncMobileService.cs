@@ -7,6 +7,8 @@ using BudgetUnderControl.Domain.Repositiories;
 using BudgetUnderControl.Infrastructure.Commands;
 using BudgetUnderControl.Infrastructure.Services;
 using BudgetUnderControl.Infrastructure.Settings;
+using BudgetUnderControl.Mobile.Keys;
+using BudgetUnderControl.Views;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
@@ -16,6 +18,7 @@ using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Text;
 using System.Threading.Tasks;
+using Xamarin.Essentials;
 
 namespace BudgetUnderControl.Mobile.Services
 {
@@ -137,8 +140,20 @@ namespace BudgetUnderControl.Mobile.Services
                 content.Headers.ContentType = new MediaTypeHeaderValue("application/json");
                 content.Headers.Add("Api-Key", settings.ApiKey);
                 httpClient.Timeout = TimeSpan.FromMinutes(5);
+                var token = Preferences.Get(PreferencesKeys.JWTTOKEN, string.Empty);
+                if(string.IsNullOrEmpty(token))
+                {
+                    App.MasterPage.NavigateTo(typeof(Login));
+                    return;
+                }
+                httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
                 var response = await httpClient.PostAsync(url, content);
 
+                if(response.StatusCode == System.Net.HttpStatusCode.Unauthorized)
+                {
+                    App.MasterPage.NavigateTo(typeof(Login));
+                    return;
+                }
                 response.EnsureSuccessStatusCode();
 
                 using (var stream = await response.Content.ReadAsStreamAsync())

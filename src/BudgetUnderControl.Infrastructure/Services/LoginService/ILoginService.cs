@@ -8,7 +8,6 @@ namespace BudgetUnderControl.Infrastructure.Services
 {
     public interface ILoginService
     {
-        Task<bool> ValidateLoginAsync(MobileLoginCommand command);
-        Task<Guid> GetUserId(string username);
+        Task ValidateLoginAsync(MobileLoginCommand command);
     }
 }

@@ -24,6 +24,11 @@ namespace BudgetUnderControl.Views
             InitializeComponent(); 
         }
 
+        protected override async void OnAppearing()
+        {
+            await vm.LogoutAsync();
+        }
+
         async void OnLoginButtonClickedAsync(object sender, EventArgs args)
         {
             await vm.LoginAsync();

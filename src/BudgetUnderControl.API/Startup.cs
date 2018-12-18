@@ -32,6 +32,11 @@ using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
 using NLog.Extensions.Logging;
 using NLog.Web;
+using Microsoft.IdentityModel.Tokens;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using BudgetUnderControl.Infrastructure.Settings;
+using BudgetUnderControl.API.Extensions;
+using System.Text;
 
 namespace BudgetUnderControl.API
 {
@@ -56,6 +61,28 @@ namespace BudgetUnderControl.API
             services.AddEntityFrameworkSqlServer()
                     .AddEntityFrameworkInMemoryDatabase()
                     .AddDbContext<Context>();
+
+            services.AddMemoryCache();
+
+            var settings = Configuration.GetSettings<GeneralSettings>();
+            var key = Encoding.ASCII.GetBytes(settings.SecretKey);
+            services.AddAuthentication(x =>
+            {
+                x.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+                x.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+            })
+           .AddJwtBearer(x =>
+           {
+               x.RequireHttpsMetadata = false;
+               x.SaveToken = true;
+               x.TokenValidationParameters = new TokenValidationParameters
+               {
+                   ValidateIssuerSigningKey = true,
+                   IssuerSigningKey = new SymmetricSecurityKey(key),
+                   ValidateIssuer = false,
+                   ValidateAudience = false
+               };
+           });
 
             // Initialize Autofac builder
             var builder = new ContainerBuilder();          
@@ -91,6 +118,7 @@ namespace BudgetUnderControl.API
 
             //app.UseHttpsRedirection();
             app.UseCustomExceptionHandler();
+            app.UseAuthentication();
             app.UseMvc();
             //;
         }

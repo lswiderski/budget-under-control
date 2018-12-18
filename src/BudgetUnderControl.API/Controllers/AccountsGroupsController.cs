@@ -5,11 +5,12 @@ using System.Threading.Tasks;
 using BudgetUnderControl.Infrastructure.Commands;
 using BudgetUnderControl.Infrastructure;
 using BudgetUnderControl.Infrastructure.Services;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Authorization;
 
 namespace BudgetUnderControl.API.Controllers
 {
+    [Authorize]
     [Route("api/[controller]")]
     [ApiController]
     public class AccountsGroupsController : ApiControllerBase

@@ -8,7 +8,6 @@ namespace BudgetUnderControl.Infrastructure.Services.UserService
 {
     public class UserService : IUserService
     {
-
         private readonly IUserRepository userRepository;
         public UserService(IUserRepository userRepository)
         {

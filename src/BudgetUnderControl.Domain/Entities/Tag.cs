@@ -34,5 +34,25 @@ namespace BudgetUnderControl.Domain
         {
             this.ModifiedOn = DateTime.UtcNow;
         }
+
+        public static Tag Create(string name, int ownerId, bool isDeleted, Guid? externalId)
+        {
+            return new Tag
+            {
+                Name = name,
+                ExternalId = externalId ?? Guid.NewGuid(),
+                OwnerId = ownerId,
+                IsDeleted = isDeleted,
+                ModifiedOn = DateTime.UtcNow,
+            };
+        }
+
+        public void Edit(string name, int ownerId, bool isDeleted)
+        {
+            this.Name = name;
+            this.OwnerId = ownerId;
+            this.IsDeleted = isDeleted;
+            this.UpdateModify();
+        }
     }
 }

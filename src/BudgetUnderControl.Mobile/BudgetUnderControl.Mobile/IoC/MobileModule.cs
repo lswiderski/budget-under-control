@@ -50,6 +50,7 @@ namespace BudgetUnderControl.Mobile.IoC
             builder.RegisterType<SyncMobileService>().As<ISyncMobileService>().InstancePerLifetimeScope();
             builder.RegisterType<LoginMobileService>().As<ILoginMobileService>().InstancePerLifetimeScope();
             builder.RegisterType<LoginViewModel>().As<ILoginViewModel>().InstancePerLifetimeScope();
+            builder.RegisterType<TagViewModel>().As<ITagViewModel>().InstancePerLifetimeScope();
 
             var url = Preferences.Get(PreferencesKeys.APIURL, string.Empty);
             var apiUrl = string.IsNullOrEmpty(url) || string.IsNullOrWhiteSpace(url) ? settings.ApiBaseUri : url;

@@ -63,12 +63,17 @@ namespace BudgetUnderControl.Mobile
                 IconSource = "Transactions.png",
                 TargetType = typeof(Transactions)
             });
-
             masterPageItems.Add(new MasterPageItem
             {
                 Title = "Currencies",
                 IconSource = "Currencies.png",
                 TargetType = typeof(Currencies)
+            });
+            masterPageItems.Add(new MasterPageItem
+            {
+                Title = "Tags",
+                IconSource = "Currencies.png",
+                TargetType = typeof(Tags)
             });
             masterPageItems.Add(new MasterPageItem
             {

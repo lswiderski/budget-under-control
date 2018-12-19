@@ -6,7 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 
 namespace BudgetUnderControl.Common.Contracts
-{ 
+{
     public class EditTransactionDTO
     {
         public int Id { get; set; }
@@ -28,5 +28,11 @@ namespace BudgetUnderControl.Common.Contracts
         public DateTime CreatedOn { get; set; }
         public DateTime? ModifiedOn { get; set; }
         public bool IsDeleted { get; set; }
+        public List<TagDTO> Tags {get;set;}
+
+        public EditTransactionDTO()
+        {
+            this.Tags = new List<TagDTO>();
+        }
     }
 }

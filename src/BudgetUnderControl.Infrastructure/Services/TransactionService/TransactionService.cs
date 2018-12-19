@@ -19,15 +19,19 @@ namespace BudgetUnderControl.Infrastructure.Services
     public class TransactionService : ITransactionService
     {
         private readonly ITransactionRepository transactionRepository;
+        private readonly ITagRepository tagRepository;
         private readonly IUserRepository userRepository;
         private readonly IValidator<AddTransaction> addTransactionValidator;
         private readonly IValidator<EditTransaction> editTransactionValidator;
-        public TransactionService(ITransactionRepository transactionRepository, IUserRepository userRepository, 
+        public TransactionService(ITransactionRepository transactionRepository,
+            IUserRepository userRepository,
+            ITagRepository tagRepository,
             IValidator<AddTransaction> addTransactionValidator,
             IValidator<EditTransaction> editTransactionValidator)
         {
             this.transactionRepository = transactionRepository;
             this.userRepository = userRepository;
+            this.tagRepository = tagRepository;
             this.addTransactionValidator = addTransactionValidator;
             this.editTransactionValidator = editTransactionValidator;
         }
@@ -84,6 +88,7 @@ namespace BudgetUnderControl.Infrastructure.Services
 
                 var transfer = Transfer.Create(transactionExpense.Id, transactionIncome.Id, command.Rate);
                 await transactionRepository.AddTransferAsync(transfer);
+                await this.CreateTagsToTransaction(command.Tags, transactionExpense.Id);
             }
             else
             {
@@ -97,8 +102,21 @@ namespace BudgetUnderControl.Infrastructure.Services
                     command.Amount *= (-1);
                 }
                 var transaction = Transaction.Create(command.AccountId, type, command.Amount, command.Date, command.Name, command.Comment, user.Id, false, command.CategoryId, command.ExternalId);
-
                 await this.transactionRepository.AddTransactionAsync(transaction);
+                await this.CreateTagsToTransaction(command.Tags, transaction.Id);
+            }
+        }
+
+        private async Task CreateTagsToTransaction(IEnumerable<int> tagsId, int transactionId)
+        {
+            if (tagsId.Any())
+            {
+                var tags2Transactions = tagsId.Select(x => new TagToTransaction
+                {
+                    TagId = x,
+                    TransactionId = transactionId,
+                });
+                await this.tagRepository.AddAsync(tags2Transactions);
             }
         }
 
@@ -116,6 +134,16 @@ namespace BudgetUnderControl.Infrastructure.Services
             Transaction secondTransaction = null;
 
             await transactionRepository.UpdateAsync(firstTransaction);
+
+            //merge tags
+            var tags2Transactions = await this.tagRepository.GetTagToTransactionsAsync(command.Id);
+            var tags2Add = command.Tags.Except(tags2Transactions.Select(t => t.TagId));
+            var tags2Remove = tags2Transactions.Select(t => t.TagId).Except(command.Tags);
+            var tags2Transactions2Remove = tags2Transactions.Where(t => tags2Remove.Contains(t.TagId));
+            //add new
+            await this.CreateTagsToTransaction(tags2Add, firstTransaction.Id);
+            //delete removed
+            await this.tagRepository.RemoveAsync(tags2Transactions2Remove);
 
             var transfer = await transactionRepository.GetTransferAsync(command.Id); 
 
@@ -204,11 +232,14 @@ namespace BudgetUnderControl.Infrastructure.Services
 
             Transaction secondTransaction = null;
             var transfer = await this.transactionRepository.GetTransferAsync(firstTransaction.Id);
-
+            var tags2Transaction = await this.tagRepository.GetTagToTransactionsAsync(firstTransaction.Id);
+            await this.tagRepository.RemoveAsync(tags2Transaction);
             if (transfer != null)
             {
                 var secondTRansactionId = transfer.ToTransactionId != firstTransaction.Id ? transfer.ToTransactionId : transfer.FromTransactionId;
                 secondTransaction = await this.transactionRepository.GetTransactionAsync(secondTRansactionId);
+                tags2Transaction = await this.tagRepository.GetTagToTransactionsAsync(secondTRansactionId);
+                await this.tagRepository.RemoveAsync(tags2Transaction);
                 await transactionRepository.RemoveTransferAsync(transfer);
                 await transactionRepository.RemoveTransactionAsync(secondTransaction);
             }
@@ -246,6 +277,16 @@ namespace BudgetUnderControl.Infrastructure.Services
             };
 
             transaction.ExtendedType = transaction.Type == TransactionType.Income ? ExtendedTransactionType.Income : ExtendedTransactionType.Expense;
+
+            var tags2Transactions = await this.tagRepository.GetTagToTransactionsAsync(transaction.Id);
+            var tags = await this.tagRepository.GetAsync(tags2Transactions.Select(t => t.TagId).ToList());
+            transaction.Tags = tags.Select(t => new TagDTO
+            {
+                Id = t.Id,
+                Name = t.Name,
+                IsDeleted = t.IsDeleted,
+                ExternalId = t.ExternalId
+            }).ToList();
 
             var transfer = await this.transactionRepository.GetTransferAsync(transaction.Id);
 

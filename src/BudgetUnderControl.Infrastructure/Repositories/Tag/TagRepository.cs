@@ -21,11 +21,21 @@ namespace BudgetUnderControl.Infrastructure.Repositories
 
         public async Task AddAsync(Tag tag)
         {
-            this.Context.Tags.Add(tag);
+            await this.Context.Tags.AddAsync(tag);
             await this.Context.SaveChangesAsync();
         }
 
         public async Task<ICollection<Tag>> GetAsync()
+        {
+            var list = await this.Context.Tags
+                .Where(t => t.OwnerId == userIdentityContext.UserId)
+                .OrderByDescending(t => t.ModifiedOn)
+                .ToListAsync();
+
+            return list;
+        }
+
+        public async Task<ICollection<Tag>> GetAsync(List<int> tagIds)
         {
             var list = await this.Context.Tags
                 .Where(t => t.OwnerId == userIdentityContext.UserId)
@@ -59,7 +69,7 @@ namespace BudgetUnderControl.Infrastructure.Repositories
 
         public async Task RemoveAsync(Tag tag)
         {
-            this.Context.Tags.Add(tag);
+            this.Context.Tags.Remove(tag);
             await this.Context.SaveChangesAsync();
         }
 
@@ -69,27 +79,47 @@ namespace BudgetUnderControl.Infrastructure.Repositories
             return tagToTransaction;
         }
 
-        public async Task<ICollection<TagToTransaction>> GetTagToTransactionAsync()
+        public async Task<ICollection<TagToTransaction>> GetTagToTransactionsAsync()
         {
             var list = await this.Context.TagsToTransactions.ToListAsync();
             return list;
         }
 
-        public async Task AddAsync(TagToTransaction tagsToTransaction)
+        public async Task<ICollection<TagToTransaction>> GetTagToTransactionsAsync(int transactionId)
         {
-            this.Context.TagsToTransactions.Add(tagsToTransaction);
+            var list = await this.Context.TagsToTransactions
+                .Where(t => t.TransactionId == transactionId)
+                .ToListAsync();
+            return list;
+        }
+
+        public async Task AddAsync(TagToTransaction tagToTransaction)
+        {
+            await this.Context.TagsToTransactions.AddAsync(tagToTransaction);
             await this.Context.SaveChangesAsync();
         }
 
-        public async Task UpdateAsync(TagToTransaction tagsToTransaction)
+        public async Task AddAsync(IEnumerable<TagToTransaction> tagsToTransaction)
         {
-            this.Context.TagsToTransactions.Update(tagsToTransaction);
+            await this.Context.TagsToTransactions.AddRangeAsync(tagsToTransaction);
             await this.Context.SaveChangesAsync();
         }
 
-        public async Task RemoveAsync(TagToTransaction tagsToTransaction)
+        public async Task UpdateAsync(TagToTransaction tagToTransaction)
         {
-            this.Context.TagsToTransactions.Add(tagsToTransaction);
+            this.Context.TagsToTransactions.Update(tagToTransaction);
+            await this.Context.SaveChangesAsync();
+        }
+
+        public async Task RemoveAsync(TagToTransaction tagToTransaction)
+        {
+            this.Context.TagsToTransactions.Remove(tagToTransaction);
+            await this.Context.SaveChangesAsync();
+        }
+
+        public async Task RemoveAsync(IEnumerable<TagToTransaction> tagsToTransaction)
+        {
+            this.Context.TagsToTransactions.RemoveRange(tagsToTransaction);
             await this.Context.SaveChangesAsync();
         }
     }

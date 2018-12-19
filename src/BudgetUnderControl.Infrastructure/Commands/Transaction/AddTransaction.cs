@@ -25,6 +25,7 @@ namespace BudgetUnderControl.Infrastructure.Commands
         public decimal TransferAmount { get; set; }
         public decimal Rate { get; set; }
         public Guid ExternalId { get; }
+        public List<int> Tags { get; set; }
 
         public AddTransaction()
         {

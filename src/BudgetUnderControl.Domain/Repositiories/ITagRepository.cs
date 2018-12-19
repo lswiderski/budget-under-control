@@ -9,15 +9,19 @@ namespace BudgetUnderControl.Domain.Repositiories
     {
         Task AddAsync(Tag tag);
         Task<ICollection<Tag>> GetAsync();
+        Task<ICollection<Tag>> GetAsync(List<int> tagIds);
         Task<Tag> GetAsync(int id);
         Task<Tag> GetAsync(Guid id);
         Task UpdateAsync(Tag tag);
         Task RemoveAsync(Tag tag);
 
-        Task AddAsync(TagToTransaction tagsToTransaction);
-        Task<ICollection<TagToTransaction>> GetTagToTransactionAsync();
+        Task AddAsync(TagToTransaction tagToTransaction);
+        Task AddAsync(IEnumerable<TagToTransaction> tagsToTransaction);
+        Task<ICollection<TagToTransaction>> GetTagToTransactionsAsync();
+        Task<ICollection<TagToTransaction>> GetTagToTransactionsAsync(int transactionId);
         Task<TagToTransaction> GetTagToTransactionAsync(int tagToTransactionId);        
-        Task UpdateAsync(TagToTransaction tagsToTransaction);
-        Task RemoveAsync(TagToTransaction tagsToTransaction);
+        Task UpdateAsync(TagToTransaction tagToTransaction);
+        Task RemoveAsync(TagToTransaction tagToTransaction);
+        Task RemoveAsync(IEnumerable<TagToTransaction> tagsToTransaction);
     }
 }

@@ -11,7 +11,8 @@ namespace BudgetUnderControl.Mobile.ViewModels
         TagDTO SelectedTag { get; set; }
         ICollection<TagDTO> Tags { get; set; }
         string Name { get; set; }
-        Task LoadTags();
+        Task LoadTagsAsync();
+        Task LoadActiveTagsAsync();
         Task LoadTagAsync(Guid tagId);
         Task AddTagAsync();
         Task EditTagAsync();

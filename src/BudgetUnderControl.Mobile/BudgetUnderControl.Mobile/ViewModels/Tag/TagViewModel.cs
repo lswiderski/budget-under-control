@@ -90,11 +90,17 @@ namespace BudgetUnderControl.Mobile.ViewModels
             this.commandDispatcher = commandDispatcher;
         }
 
-        public async Task LoadTags()
+        public async Task LoadTagsAsync()
         {
             Tags = await tagService.GetTagsAsync();
         }
-        
+
+        public async Task LoadActiveTagsAsync()
+        {
+            Tags = await tagService.GetActiveTagsAsync();
+        }
+
+
         public async Task LoadTagAsync(Guid tagId)
         {
             externalId = tagId;

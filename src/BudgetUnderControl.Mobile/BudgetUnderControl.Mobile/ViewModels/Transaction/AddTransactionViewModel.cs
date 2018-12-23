@@ -11,6 +11,8 @@ using System.Text;
 using System.Threading.Tasks;
 using BudgetUnderControl.Infrastructure.Commands;
 using BudgetUnderControl.Common.Extensions;
+using System.Collections.ObjectModel;
+using System.Runtime.CompilerServices;
 
 namespace BudgetUnderControl.ViewModel
 {
@@ -338,28 +340,85 @@ namespace BudgetUnderControl.ViewModel
             }
         }
 
+        ObservableCollection<TagDTO> tags;
+        public ObservableCollection<TagDTO> Tags
+        {
+            get
+            {
+                return tags;
+            }
+            set
+            {
+                if (tags != value)
+                {
+                    tags = value;
+                    PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(Tags)));
+                    TagListHeight = (tags.Count * 40) + (tags.Count * 10);
+                }
+
+            }
+        }
+
+        TagDTO selectedTag;
+        public TagDTO SelectedTag
+        {
+            get
+            {
+                return selectedTag;
+            }
+            set
+            {
+                if (selectedTag != value)
+                {
+                    selectedTag = value;
+                    PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(SelectedTag)));
+                    TagListHeight = (tags.Count * 40) + (tags.Count * 10);
+                }
+
+            }
+        }
+
+        private int tagListHeight;
+        public int TagListHeight
+        {
+            get
+            {
+                return tagListHeight;
+            }
+            set
+            {
+                tagListHeight = value;
+                OnPropertyChanged();
+            }
+        }
+
+
         List<AccountListItemDTO> accounts;
         public List<AccountListItemDTO> Accounts => accounts;
 
         List<CategoryListItemDTO> categories;
         public List<CategoryListItemDTO> Categories => categories;
 
-        IAccountService accountService;
+        void OnPropertyChanged([CallerMemberName]string propertyName = "") =>
+        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+
+    IAccountService accountService;
         ICategoryService categoryService;
         ICommandDispatcher commandDispatcher;
-        public AddTransactionViewModel(IAccountService accountRepository, ICategoryService categoryService, ICommandDispatcher commandDispatcher)
+        ITagService tagService;
+        public AddTransactionViewModel(IAccountService accountRepository, ICategoryService categoryService, ICommandDispatcher commandDispatcher, ITagService tagService)
         {
             this.accountService = accountRepository;
             this.categoryService = categoryService;
             this.commandDispatcher = commandDispatcher;
+            this.tagService = tagService;
             SelectedTypeIndex = 0;
             SelectedCategoryIndex = -1;
             SelectedAccountIndex = -1;
             SelectedTransferAccountIndex = -1;
             Date = DateTime.Now;
             Time = DateTime.Now.TimeOfDay;
-            
-
+            Tags = new ObservableCollection<TagDTO>();
             GetDropdowns();
         }
 
@@ -375,6 +434,22 @@ namespace BudgetUnderControl.ViewModel
             TransferTime = Time;
             TransferRate = 1.ToString();
             TransferAmount = Amount;
+        }
+
+        public async Task AddTagAsync(Guid tagId)
+        {
+            var tag = await this.tagService.GetTagAsync(tagId);
+            if (Tags.All(x => x.Id != tag.Id))
+            {
+                this.Tags.Add(tag);
+                TagListHeight = (tags.Count * 40) + (tags.Count * 10);
+            }
+        }
+
+        public async Task RemoveTagFromListAsync(Guid tagId)
+        {
+            this.Tags.Remove(this.Tags.FirstOrDefault(x => x.ExternalId == tagId));
+            TagListHeight = (tags.Count * 40) + (tags.Count * 10);
         }
 
         public async Task AddTransacionAsync()
@@ -404,6 +479,7 @@ namespace BudgetUnderControl.ViewModel
                     CategoryId = SelectedCategoryIndex >= 0  ? Categories[SelectedCategoryIndex].Id : (int?)null,
                     AccountId = Accounts[selectedAccountIndex].Id,
                     Type = Type.ToExtendedTransactionType(),
+                    Tags = Tags.Select(x => x.Id).ToList()
                 };
 
                 using (var scope = App.Container.BeginLifetimeScope())
@@ -445,6 +521,7 @@ namespace BudgetUnderControl.ViewModel
                 Rate = decimal.Parse(TransferRate.Replace(',', '.'), NumberStyles.AllowDecimalPoint, CultureInfo.InvariantCulture),
                 TransferAccountId = Accounts[selectedTransferAccountIndex].Id,
                 Type = ExtendedTransactionType.Transfer,
+                Tags = Tags.Select(x => x.Id).ToList()
             };
 
             using (var scope = App.Container.BeginLifetimeScope())

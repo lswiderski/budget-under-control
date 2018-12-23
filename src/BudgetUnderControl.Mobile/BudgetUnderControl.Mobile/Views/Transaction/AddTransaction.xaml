@@ -7,7 +7,7 @@
              >
     <ContentPage.Content>
         <ScrollView>
-            <StackLayout>
+            <StackLayout VerticalOptions="Start">
                 <Label Text="Amount"></Label>
                 <Entry x:Name="amount" Text="{Binding Amount}" Placeholder="Amount"  Keyboard="Numeric">
                     <Entry.Behaviors>
@@ -19,15 +19,15 @@
                 <Label Text="Type"></Label>
                 <Picker x:Name="type" ItemsSource="{Binding Types}" SelectedIndex="{Binding  SelectedTypeIndex, Mode=TwoWay}" Title="Type" />
                 <Label Text="Account"></Label>
-            <Picker x:Name="account" ItemsSource="{Binding Accounts}" ItemDisplayBinding="{Binding Name}"  SelectedIndex="{Binding  SelectedAccountIndex, Mode=TwoWay}" Title="Account" />
+                <Picker x:Name="account" ItemsSource="{Binding Accounts}" ItemDisplayBinding="{Binding Name}"  SelectedIndex="{Binding  SelectedAccountIndex, Mode=TwoWay}" Title="Account" />
                 <Label Text="Category"></Label>
-            <Picker x:Name="categories" ItemsSource="{Binding Categories}" ItemDisplayBinding="{Binding Name}"  SelectedIndex="{Binding  SelectedCategoryIndex, Mode=TwoWay}" Title="Category" />
+                <Picker x:Name="categories" ItemsSource="{Binding Categories}" ItemDisplayBinding="{Binding Name}"  SelectedIndex="{Binding  SelectedCategoryIndex, Mode=TwoWay}" Title="Category" />
                
                 <Label Text="Date"></Label>
                 <StackLayout Orientation="Horizontal">
                 <DatePicker Date="{Binding Date}" Format="d"></DatePicker>
                 <TimePicker Time="{Binding Time}"></TimePicker>
-            </StackLayout>
+                </StackLayout>
             <StackLayout Orientation="Vertical" IsVisible="{Binding IsTransferOptionsVisible, Mode=TwoWay}">
                 <Label Text="Transfer" />
                     <Label Text="Account transfer to"></Label>
@@ -49,7 +49,15 @@
                     <TimePicker Time="{Binding TransferTime}"></TimePicker>
                 </StackLayout>
             </StackLayout>
-            <Label Text="Comment"></Label>
+                <Button x:Name="selectTags" Text="Add Tags" Clicked="OnSelectTagsButtonClicked" />
+                <ListView x:Name="tags" ItemSelected="OnDeleteTagButtonClicked" ItemsSource="{Binding Tags}" SelectedItem="{Binding SelectedTag}" HasUnevenRows="True" HeightRequest="{Binding TagListHeight}">
+                    <ListView.ItemTemplate>
+                        <DataTemplate>
+                            <local:TagListItem Name="{Binding Name}" />
+                        </DataTemplate>
+                    </ListView.ItemTemplate>
+                </ListView>
+                <Label Text="Comment"></Label>
             <Editor x:Name="comment"  Text="{Binding Comment}" ></Editor>
                 <Button x:Name="addButton" Text="Add" Clicked="OnAddButtonClicked" IsEnabled="{Binding IsValid}" />
         </StackLayout>

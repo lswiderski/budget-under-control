@@ -49,6 +49,14 @@
                         <TimePicker Time="{Binding TransferTime, Mode=TwoWay}"></TimePicker>
                     </StackLayout>
                 </StackLayout>
+                <Button x:Name="selectTags" Text="Add Tags" Clicked="OnSelectTagsButtonClicked" />
+                <ListView x:Name="tags" ItemSelected="OnDeleteTagButtonClicked" ItemsSource="{Binding Tags}" SelectedItem="{Binding SelectedTag}" HasUnevenRows="True"  HeightRequest="{Binding TagListHeight}">
+                    <ListView.ItemTemplate>
+                        <DataTemplate>
+                            <local:TagListItem Name="{Binding Name}" />
+                        </DataTemplate>
+                    </ListView.ItemTemplate>
+                </ListView>
                 <Label Text="Comment"></Label>
                 <Editor x:Name="comment"  Text="{Binding Comment}" ></Editor>
                 <Button x:Name="addButton" Text="Save" Clicked="OnEditButtonClicked" IsEnabled="{Binding IsValid}" />

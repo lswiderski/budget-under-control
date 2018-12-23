@@ -1,4 +1,5 @@
 ﻿using Autofac;
+using BudgetUnderControl.Mobile.Markers;
 using BudgetUnderControl.ViewModel;
 using System;
 using System.Collections.Generic;
@@ -12,10 +13,11 @@ using Xamarin.Forms.Xaml;
 namespace BudgetUnderControl.Views
 {
     [XamlCompilation(XamlCompilationOptions.Compile)]
-    public partial class EditTransaction : ContentPage
+    public partial class EditTransaction : ContentPage, ITagSelectablePage
     {
         IEditTransactionViewModel vm;
         Guid transactionId;
+        bool isLoaded = false;
         public EditTransaction(Guid transactionId)
         {
             using (var scope = App.Container.BeginLifetimeScope())
@@ -35,7 +37,11 @@ namespace BudgetUnderControl.Views
         protected override async void OnAppearing()
         {
             base.OnAppearing();
-            await vm.GetTransactionAsync(transactionId);
+            if (!isLoaded)
+            {
+                await vm.GetTransactionAsync(transactionId);
+                isLoaded = true;
+            }
         }
 
         async void OnDeleteButtonClicked(object sender, EventArgs args)
@@ -45,5 +51,23 @@ namespace BudgetUnderControl.Views
             await vm.DeleteTransactionAsync();
             await Navigation.PopModalAsync();
         }
+
+        async void OnSelectTagsButtonClicked(object sender, EventArgs args)
+        {
+            var selectTags = new SelectTags(this);
+            await Navigation.PushModalAsync(selectTags);
+        }
+
+        async void OnDeleteTagButtonClicked(object sender, SelectedItemChangedEventArgs e)
+        {
+            Guid tagId = vm.SelectedTag.ExternalId;
+            await vm.RemoveTagFromListAsync(tagId);
+        }
+
+        public async void AddTagToList(Guid tagId)
+        {
+            await vm.AddTagAsync(tagId);
+        }
+
     }
 }

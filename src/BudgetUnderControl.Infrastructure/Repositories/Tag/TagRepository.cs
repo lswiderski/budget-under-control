@@ -38,7 +38,8 @@ namespace BudgetUnderControl.Infrastructure.Repositories
         public async Task<ICollection<Tag>> GetAsync(List<int> tagIds)
         {
             var list = await this.Context.Tags
-                .Where(t => t.OwnerId == userIdentityContext.UserId)
+                .Where(t => t.OwnerId == userIdentityContext.UserId
+                && tagIds.Contains(t.Id))
                 .OrderByDescending(t => t.ModifiedOn)
                 .ToListAsync();
 

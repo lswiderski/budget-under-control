@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Collections.ObjectModel;
 
 namespace BudgetUnderControl.ViewModel
 {
@@ -30,6 +31,11 @@ namespace BudgetUnderControl.ViewModel
         DateTime Date { get; set; }
         TimeSpan Time { get; set; }
         TransactionType Type { get; }
+
+        TagDTO SelectedTag { get; set; }
+        ObservableCollection<TagDTO> Tags { get; set; }
+        Task AddTagAsync(Guid tagId);
+        Task RemoveTagFromListAsync(Guid tagId);
 
         bool IsItTransfer { get; }
         bool IsTransferOptionsVisible { get; }

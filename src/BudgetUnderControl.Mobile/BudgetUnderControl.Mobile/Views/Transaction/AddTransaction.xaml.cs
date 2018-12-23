@@ -1,4 +1,5 @@
 ﻿using Autofac;
+using BudgetUnderControl.Mobile.Markers;
 using BudgetUnderControl.ViewModel;
 using System;
 using System.Collections.Generic;
@@ -12,7 +13,7 @@ using Xamarin.Forms.Xaml;
 namespace BudgetUnderControl.Views
 {
     [XamlCompilation(XamlCompilationOptions.Compile)]
-    public partial class AddTransaction : ContentPage
+    public partial class AddTransaction : ContentPage, ITagSelectablePage
     {
         IAddTransactionViewModel vm;
         public AddTransaction()
@@ -45,6 +46,23 @@ namespace BudgetUnderControl.Views
         {
             base.OnAppearing();
             amount.Focus();
+        }
+
+        async void OnSelectTagsButtonClicked(object sender, EventArgs args)
+        {
+            var selectTags = new SelectTags(this);
+            await Navigation.PushModalAsync(selectTags);
+        }
+
+        async void OnDeleteTagButtonClicked(object sender, SelectedItemChangedEventArgs e)
+        {
+            Guid tagId = vm.SelectedTag.ExternalId;
+            await vm.RemoveTagFromListAsync(tagId);
+        }
+
+        public async void AddTagToList(Guid tagId)
+        {
+            await vm.AddTagAsync(tagId);
         }
 
     }

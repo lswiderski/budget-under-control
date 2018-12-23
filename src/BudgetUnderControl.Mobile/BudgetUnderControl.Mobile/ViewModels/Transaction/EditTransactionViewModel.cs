@@ -9,6 +9,8 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using BudgetUnderControl.Infrastructure.Commands;
+using System.Collections.ObjectModel;
+using System.Runtime.CompilerServices;
 
 namespace BudgetUnderControl.ViewModel
 {
@@ -361,31 +363,87 @@ namespace BudgetUnderControl.ViewModel
             }
         }
 
+        ObservableCollection<TagDTO> tags;
+        public ObservableCollection<TagDTO> Tags
+        {
+            get
+            {
+                return tags;
+            }
+            set
+            {
+                if (tags != value)
+                {
+                    tags = value;
+                    PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(Tags)));
+                    TagListHeight = (tags.Count * 40) + (tags.Count * 10);
+                }
+
+            }
+        }
+
+        TagDTO selectedTag;
+        public TagDTO SelectedTag
+        {
+            get
+            {
+                return selectedTag;
+            }
+            set
+            {
+                if (selectedTag != value)
+                {
+                    selectedTag = value;
+                    PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(SelectedTag)));
+                    TagListHeight = (tags.Count * 40) + (tags.Count * 10);
+                }
+
+            }
+        }
+
+        private int tagListHeight;
+        public int TagListHeight
+        {
+            get
+            {
+                return tagListHeight;
+            }
+            set
+            {
+                tagListHeight = value;
+                OnPropertyChanged();
+            }
+        }
+
         List<AccountListItemDTO> accounts;
         public List<AccountListItemDTO> Accounts => accounts;
 
         List<CategoryListItemDTO> categories;
         public List<CategoryListItemDTO> Categories => categories;
 
+        void OnPropertyChanged([CallerMemberName]string propertyName = "") =>
+        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+
         ITransactionService transactionService;
         IAccountService accountService;
         ICategoryService categoryService;
         ICommandDispatcher commandDispatcher;
+        ITagService tagService;
 
         public EditTransactionViewModel(ITransactionService transactionService, IAccountService accountService, 
-            ICategoryService categoryService, ICommandDispatcher commandDispatcher)
+            ICategoryService categoryService, ICommandDispatcher commandDispatcher, ITagService tagService)
         {
             this.transactionService = transactionService;
             this.accountService = accountService;
             this.categoryService = categoryService;
             this.commandDispatcher = commandDispatcher;
+            this.tagService = tagService;
             SelectedTypeIndex = 0;
             SelectedCategoryIndex = -1;
             SelectedAccountIndex = -1;
             SelectedTransferAccountIndex = -1;
             Date = DateTime.Now;
             Time = DateTime.Now.TimeOfDay;
-
 
             GetDropdowns();
         }
@@ -401,6 +459,22 @@ namespace BudgetUnderControl.ViewModel
             TransferTime = Time;
            // TransferRate = 1.ToString();
             TransferAmount = Amount;
+        }
+
+        public async Task AddTagAsync(Guid tagId)
+        {
+            var tag = await this.tagService.GetTagAsync(tagId);
+            if(Tags.All(x => x.Id != tag.Id))
+            {
+                this.Tags.Add(tag);
+                TagListHeight = (tags.Count * 40) + (tags.Count * 10);
+            }
+        }
+
+        public async Task RemoveTagFromListAsync(Guid tagId)
+        {
+            this.Tags.Remove(this.Tags.FirstOrDefault(x => x.ExternalId == tagId));
+            TagListHeight = (tags.Count * 40) + (tags.Count * 10);
         }
 
         public async Task GetTransactionAsync(Guid transactionId)
@@ -436,6 +510,7 @@ namespace BudgetUnderControl.ViewModel
             transferTransactionId = dto.TransferTransactionId;
             externalId = dto.ExternalId;
             isDeleted = dto.IsDeleted;
+            Tags = new ObservableCollection<TagDTO>(dto.Tags);
         }
 
         private int getCategoryIndex(int? categoryId)
@@ -505,6 +580,7 @@ namespace BudgetUnderControl.ViewModel
                 TransferTransactionId = transferTransactionId,
                 ExternalId = externalId,
                 IsDeleted = isDeleted,
+                Tags = Tags.Select(x => x.Id).ToList()
             };
 
             if(SelectedTransferAccountIndex>=0)

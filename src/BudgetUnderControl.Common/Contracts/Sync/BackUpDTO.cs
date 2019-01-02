@@ -12,5 +12,7 @@ namespace BudgetUnderControl.Common.Contracts
         public List<AccountSyncDTO> Accounts { get; set; }
         public List<TransactionSyncDTO> Transactions { get; set; }
         public List<TransferSyncDTO> Transfers { get; set; }
+        public List<TagSyncDTO> Tags { get; set; }
+        public List<TagToTransactionSyncDTO> TagsToTransactions { get; set; }
     }
 }

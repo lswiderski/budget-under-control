@@ -28,6 +28,7 @@ namespace BudgetUnderControl.Infrastructure.Services
         private readonly GeneralSettings settings;
         private readonly ISyncRequestBuilder syncRequestBuilder;
         private readonly ISynchroniser synchroniser;
+        private readonly ITagRepository tagRepository;
 
         private Dictionary<int, int> accountsMap; // key - old AccountId, value - new AccountId
         private Dictionary<int, int> transactionsMap; // key - old TransactionId, value - new TransactionId
@@ -39,6 +40,7 @@ namespace BudgetUnderControl.Infrastructure.Services
             IAccountGroupRepository accountGroupRepository,
             IUserRepository userRepository,
             ISynchronizationRepository synchronizationRepository,
+            ITagRepository tagRepository,
             IUserIdentityContext userIdentityContext,
             GeneralSettings settings,
             ISyncRequestBuilder syncRequestBuilder,
@@ -55,15 +57,18 @@ namespace BudgetUnderControl.Infrastructure.Services
             this.settings = settings;
             this.syncRequestBuilder = syncRequestBuilder;
             this.synchroniser = synchroniser;
+            this.tagRepository = tagRepository;
         }
 
         public async Task ImportBackUpAsync(BackUpDTO backupDto)
         {
-                await CleanDataBaseAsync();
-                //ImportCurrencies(backupDto.Currencies);
-                await ImportAccountsAsync(backupDto.Accounts);
-                await ImportTransactionsAsync(backupDto.Transactions);
-                await ImportTransfersAsync(backupDto.Transfers);
+            await CleanDataBaseAsync();
+            //ImportCurrencies(backupDto.Currencies);
+            await ImportAccountsAsync(backupDto.Accounts);
+            await ImportTransactionsAsync(backupDto.Transactions);
+            await ImportTransfersAsync(backupDto.Transfers);
+            await ImportTagsAsync(backupDto.Tags);
+            await ImportTagsToTransactionsAsync(backupDto.TagsToTransactions);
         }
 
         public async Task<BackUpDTO> GetBackUpAsync()
@@ -115,12 +120,32 @@ namespace BudgetUnderControl.Infrastructure.Services
                 Type = x.Type
             }).ToList();
 
+            var tags = (await this.tagRepository.GetAsync())
+                .Select(x => new TagSyncDTO
+                {
+                    Id = x.Id,
+                    ExternalId = x.ExternalId,
+                    Name = x.Name,
+                    ModifiedOn = x.ModifiedOn,
+                    IsDeleted = x.IsDeleted
+                }).ToList();
+
+            var t2t = (await this.tagRepository.GetTagToTransactionsAsync())
+                .Select(x => new TagToTransactionSyncDTO
+                {
+                    Id = x.Id,
+                    TagId = x.Tag.ExternalId,
+                    TransactionId = x.Transaction.ExternalId,
+                }).ToList();
+
             var backUp = new BackUpDTO
             {
-                Currencies= currencies,
+                Currencies = currencies,
                 Accounts = accounts,
                 Transfers = transfers,
-                Transactions = transactions
+                Transactions = transactions,
+                Tags = tags,
+                TagsToTransactions = t2t,
             };
 
             return backUp;
@@ -129,7 +154,8 @@ namespace BudgetUnderControl.Infrastructure.Services
         public async Task<IEnumerable<string>> GenerateCSV()
         {
             var transactions = (await this.transactionRepository.GetTransactionsAsync())
-               .Select(t => new {
+               .Select(t => new
+               {
                    AccountName = t.Account.Name,
                    CurrencyCode = t.Account.Currency.Code,
                    Amount = t.Amount,
@@ -167,6 +193,9 @@ namespace BudgetUnderControl.Infrastructure.Services
             var accounts = await this.accountRepository.GetAccountsAsync();
             await this.accountRepository.HardRemoveAccountsAsync(accounts);
 
+            var tags = await this.tagRepository.GetAsync();
+            await this.tagRepository.RemoveAsync(tags);
+
             //this.Context.Currencies.RemoveRange(this.Context.Currencies);
         }
 
@@ -192,7 +221,7 @@ namespace BudgetUnderControl.Infrastructure.Services
 
             for (int i = 0; i < accounts.Count(); i++)
             {
-                if(accounts[i].ParentAccountId != null && accountsMap.ContainsKey(accounts[i].ParentAccountId.Value))
+                if (accounts[i].ParentAccountId != null && accountsMap.ContainsKey(accounts[i].ParentAccountId.Value))
                 {
                     accounts[i].SetParentAccountId(accountsMap[accounts[i].ParentAccountId.Value]);
 
@@ -223,6 +252,39 @@ namespace BudgetUnderControl.Infrastructure.Services
             {
                 var transfer = Transfer.Create(transactionsMap[item.FromTransactionId], transactionsMap[item.ToTransactionId], item.Rate, item.ExternalId);
                 await this.transactionRepository.AddTransferAsync(transfer);
+            }
+        }
+
+        private async Task ImportTagsAsync(List<TagSyncDTO> tags)
+        {
+            var user = await userRepository.GetFirstUserAsync();
+            foreach (var item in tags)
+            {
+                var tag = Tag.Create(item.Name, user.Id, item.IsDeleted, item.ExternalId);
+                tag.SetModifiedOn(item.ModifiedOn);
+                await this.tagRepository.AddAsync(tag);
+            }
+        }
+
+        private async Task ImportTagsToTransactionsAsync(List<TagToTransactionSyncDTO> t2ts)
+        {
+            var tagIds = t2ts.Select(x => x.TagId).ToList();
+            var transactionIds = t2ts.Select(x => x.TransactionId).ToList();
+            var tags = (await this.tagRepository.GetAsync(tagIds))
+                .ToDictionary(x => x.ExternalId, x => x);
+            var transactions = (await this.transactionRepository.GetTransactionsAsync())
+                .Where(x => transactionIds.Contains(x.ExternalId)).ToList()
+                 .ToDictionary(x => x.ExternalId, x => x);
+
+            foreach (var item in t2ts)
+            {
+                var t2t = new TagToTransaction
+                {
+                    Tag = tags[item.TagId],
+                    Transaction = transactions[item.TransactionId],
+                };
+
+                await this.tagRepository.AddAsync(t2t);
             }
         }
 

@@ -46,6 +46,17 @@ namespace BudgetUnderControl.Infrastructure.Repositories
             return list;
         }
 
+        public async Task<ICollection<Tag>> GetAsync(List<Guid> tagIds)
+        {
+            var list = await this.Context.Tags
+                .Where(t => t.OwnerId == userIdentityContext.UserId
+                && tagIds.Contains(t.ExternalId))
+                .OrderByDescending(t => t.ModifiedOn)
+                .ToListAsync();
+
+            return list;
+        }
+
         public async Task<Tag> GetAsync(int id)
         {
             var tag = await this.Context.Tags
@@ -71,6 +82,15 @@ namespace BudgetUnderControl.Infrastructure.Repositories
         public async Task RemoveAsync(Tag tag)
         {
             this.Context.Tags.Remove(tag);
+            await this.Context.SaveChangesAsync();
+        }
+
+        public async Task RemoveAsync(IEnumerable<Tag> tags)
+        {
+            var tagIds = tags.Select(x => x.Id).ToList();
+            var t2t = await this.Context.TagsToTransactions.Where(t => tagIds.Contains(t.TagId)).ToListAsync();
+            await this.RemoveAsync(t2t);
+            this.Context.Tags.RemoveRange(tags);
             await this.Context.SaveChangesAsync();
         }
 

@@ -23,7 +23,10 @@ namespace BudgetUnderControl.Infrastructure.Services
         private readonly IUserRepository userRepository;
         private readonly ISynchronizationRepository synchronizationRepository;
         private readonly IUserIdentityContext userIdentityContext;
+        private readonly ITagRepository tagRepository;
+        private readonly ITransactionService transactionService;
         private readonly GeneralSettings settings;
+        private Dictionary<Guid, int> _tags;
 
         public Synchroniser(ITransactionRepository transactionRepository,
             IAccountRepository accountRepository,
@@ -33,6 +36,8 @@ namespace BudgetUnderControl.Infrastructure.Services
             IUserRepository userRepository,
             ISynchronizationRepository synchronizationRepository,
             IUserIdentityContext userIdentityContext,
+            ITagRepository tagRepository,
+            ITransactionService transactionService,
             GeneralSettings settings)
         {
             this.transactionRepository = transactionRepository;
@@ -44,6 +49,8 @@ namespace BudgetUnderControl.Infrastructure.Services
             this.synchronizationRepository = synchronizationRepository;
             this.userIdentityContext = userIdentityContext;
             this.settings = settings;
+            this.tagRepository = tagRepository;
+            this.transactionService = transactionService;
         }
 
         public async Task SynchroniseAsync(SyncRequest syncRequest)
@@ -54,6 +61,7 @@ namespace BudgetUnderControl.Infrastructure.Services
             await this.UpdateCategoriesAsync(syncRequest.Categories);
             await this.UpdateAccountGroupsAsync(syncRequest.AccountGroups);
             await this.UpdateAccountsAsync(syncRequest.Accounts);
+            _tags = (await this.tagRepository.GetAsync()).ToDictionary(x => x.ExternalId, x => x.Id);
             await this.UpdateTransactionsAsync(syncRequest.Transactions);
             await this.UpdateTransfersAsync(syncRequest.Transfers);
         }
@@ -120,6 +128,7 @@ namespace BudgetUnderControl.Infrastructure.Services
                             transactionToUpdate.SetCreatedOn(transaction.CreatedOn);
                             transactionToUpdate.SetModifiedOn(transaction.ModifiedOn);
                             transactionsToUpdate.Add(transactionToUpdate);
+                            await this.DealWithTransactionToTagsAsync(transactionToUpdate.Id, transaction.Tags);
                         }
                     }
                     else
@@ -140,13 +149,36 @@ namespace BudgetUnderControl.Infrastructure.Services
                 if (transactionsToAdd.Any())
                 {
                     await this.transactionRepository.AddTransactionsAsync(transactionsToAdd);
+                    foreach (var item in transactionsToAdd)
+                    {
+                        var tags = package.Where(x => x.ExternalId == item.ExternalId).Select(x => x.Tags).FirstOrDefault();
+                        await this.DealWithTransactionToTagsAsync(item.Id, tags);
+                    }
                     transactionsToAdd.Clear();
                 }
-            }
+            } 
+           
+        }
 
-           
-           
-           
+        private async Task DealWithTransactionToTagsAsync(int transactionId, List<TagSyncDTO> tagsToSync)
+        {
+            var tagIds = tagsToSync.Select(x => _tags[x.ExternalId]).ToList(); 
+            var tags2Transactions = await this.tagRepository.GetTagToTransactionsAsync(transactionId);
+            var tags2Add = tagIds.Except(tags2Transactions.Select(t => t.TagId));
+            var tags2Remove = tags2Transactions.Select(t => t.TagId).Except(tagIds);
+            var tags2Transactions2Remove = tags2Transactions.Where(t => tags2Remove.Contains(t.TagId));
+            //add new
+            if(tags2Add.Any())
+            {
+                await transactionService.CreateTagsToTransaction(tags2Add, transactionId);
+            }
+            
+            //delete removed
+            if(tags2Transactions2Remove.Any())
+            {
+                await this.tagRepository.RemoveAsync(tags2Transactions2Remove);
+            }
+            
         }
 
         private IEnumerable<TransactionSyncDTO> GetPartOfTransactions(IEnumerable<TransactionSyncDTO> transactions, int packageSize)
@@ -206,9 +238,29 @@ namespace BudgetUnderControl.Infrastructure.Services
                 return;
             }
 
+            var userId = (await this.userRepository.GetFirstUserAsync()).Id;
             foreach (var tag in tags)
             {
-                //TODO
+               
+                var tagToUpdate = await this.tagRepository.GetAsync(tag.ExternalId);
+                if (tagToUpdate != null)
+                {
+                    if (tagToUpdate.ModifiedOn < tag.ModifiedOn)
+                    {
+                        tagToUpdate.Edit(tag.Name, userId, tag.IsDeleted);
+                        tagToUpdate.Delete(tag.IsDeleted);
+                        tagToUpdate.SetModifiedOn(tag.ModifiedOn);
+                        await this.tagRepository.UpdateAsync(tagToUpdate);
+                    }
+
+                }
+                else
+                {
+                    var tagToAdd = Tag.Create(tag.Name, userId, tag.IsDeleted ,tag.ExternalId);
+                    tagToAdd.Delete(tag.IsDeleted);
+                    tagToAdd.SetModifiedOn(tag.ModifiedOn);
+                    await this.tagRepository.AddAsync(tagToAdd);
+                }
             }
         }
 
@@ -219,9 +271,11 @@ namespace BudgetUnderControl.Infrastructure.Services
                 return;
             }
 
+            var userId = (await this.userRepository.GetFirstUserAsync()).Id;
+
             foreach (var category in categories)
             {
-                var userId = (await this.userRepository.GetFirstUserAsync()).Id;
+               
                 var categoryToUpdate = await this.categoryRepository.GetCategoryAsync(category.ExternalId);
                 if (categoryToUpdate != null)
                 {

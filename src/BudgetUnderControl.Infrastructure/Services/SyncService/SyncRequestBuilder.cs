@@ -22,6 +22,7 @@ namespace BudgetUnderControl.Infrastructure.Services
         private readonly IUserRepository userRepository;
         private readonly ISynchronizationRepository synchronizationRepository;
         private readonly IUserIdentityContext userIdentityContext;
+        private readonly ITagRepository tagRepository;
         private readonly GeneralSettings settings;
         public SyncRequestBuilder(ITransactionRepository transactionRepository,
             IAccountRepository accountRepository,
@@ -31,6 +32,7 @@ namespace BudgetUnderControl.Infrastructure.Services
             IUserRepository userRepository,
             ISynchronizationRepository synchronizationRepository,
             IUserIdentityContext userIdentityContext,
+            ITagRepository tagRepository,
             GeneralSettings settings)
         {
             this.transactionRepository = transactionRepository;
@@ -42,6 +44,7 @@ namespace BudgetUnderControl.Infrastructure.Services
             this.synchronizationRepository = synchronizationRepository;
             this.userIdentityContext = userIdentityContext;
             this.settings = settings;
+            this.tagRepository = tagRepository;
         }
 
         public async Task<SyncRequest> CreateSyncRequestAsync(SynchronizationComponent source, SynchronizationComponent target)
@@ -96,10 +99,19 @@ namespace BudgetUnderControl.Infrastructure.Services
                     ModifiedOn = x.ModifiedOn,
                     Type = x.Type,
                     IsDeleted = x.IsDeleted,
+                    Tags = x.TagsToTransaction.Select(y => new TagSyncDTO
+                    {
+                        ExternalId = y.Tag.ExternalId,
+                        Id = y.Tag.Id,
+                        IsDeleted = y.Tag.IsDeleted,
+                        ModifiedOn = y.Tag.ModifiedOn,
+                        Name = y.Tag.Name
+                    }).ToList()
                 }).ToList();
 
             var accounts = (await this.accountRepository.GetAccountsAsync()).ToDictionary(x => x.Id, x => x.ExternalId);
             var categories = (await this.categoryRepository.GetCategoriesAsync()).ToDictionary(x => x.Id, x => x.ExternalId);
+
 
             foreach (var transaction in transactions)
             {
@@ -238,8 +250,18 @@ namespace BudgetUnderControl.Infrastructure.Services
 
         private async Task<IEnumerable<TagSyncDTO>> GetTagsToSyncAsync(DateTime changedSince)
         {
-            //todo in future;
-            return new List<TagSyncDTO>();
+            var tags = (await this.tagRepository.GetAsync())
+                .Where(x => x.ModifiedOn >= changedSince)
+                .Select(x => new TagSyncDTO
+                {
+                    Id = x.Id,
+                    ExternalId = x.ExternalId,
+                    Name = x.Name,
+                    ModifiedOn = x.ModifiedOn,
+                    IsDeleted = x.IsDeleted
+                }).ToList();
+
+            return tags;
         }
     }
 }

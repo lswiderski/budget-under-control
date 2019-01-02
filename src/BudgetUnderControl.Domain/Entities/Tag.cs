@@ -22,7 +22,7 @@ namespace BudgetUnderControl.Domain
         public bool IsDeleted { get; protected set; }
 
         public virtual User Owner { get; set; }
-        public List<TagToTransaction> TagToTransactions { get; set; }
+        public ICollection<TagToTransaction> TagToTransactions { get; set; }
 
         public void Delete(bool delete = true)
         {
@@ -33,6 +33,15 @@ namespace BudgetUnderControl.Domain
         public void UpdateModify()
         {
             this.ModifiedOn = DateTime.UtcNow;
+        }
+
+        /// <summary>
+        /// Use for sync/imports
+        /// </summary>
+        /// <param name="date"></param>
+        public void SetModifiedOn(DateTime? date)
+        {
+            this.ModifiedOn = date;
         }
 
         public static Tag Create(string name, int ownerId, bool isDeleted, Guid? externalId)

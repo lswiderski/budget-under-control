@@ -14,7 +14,7 @@ namespace BudgetUnderControl.Infrastructure
     {
         private readonly IAccountRepository accountRepository;
         private readonly IUserIdentityContext userIdentityContext;
-    
+
         public TransactionRepository(IContextFacade context, IAccountRepository accountRepository,
             IUserIdentityContext userIdentityContext) : base(context)
         {
@@ -47,7 +47,7 @@ namespace BudgetUnderControl.Infrastructure
             {
                 transaction.UpdateModify();
             }
-            
+
             this.Context.Transactions.UpdateRange(transactions);
             await this.Context.SaveChangesAsync();
         }
@@ -95,7 +95,11 @@ namespace BudgetUnderControl.Infrastructure
             var query = this.Context.Transactions
                         .Include(p => p.Category)
                         .Include(p => p.Account)
-                        .ThenInclude(p => p.Currency)
+                            .ThenInclude(p => p.Currency)
+                        .Include(p => p.TagsToTransaction)
+                            .ThenInclude(p => p.Tag)
+                        .Include(p => p.ToTransfers)
+                        .Include(p => p.FromTransfers)
                         .AsQueryable();
 
 
@@ -107,7 +111,7 @@ namespace BudgetUnderControl.Infrastructure
 
                 query = query.Where(q => accounts.Contains(q.AccountId)).AsQueryable();
             }
-            else if(filter != null && filter.AccountsExternalIds != null && filter.AccountsExternalIds.Any())
+            else if (filter != null && filter.AccountsExternalIds != null && filter.AccountsExternalIds.Any())
             {
                 var accounts = await this.accountRepository.GetSubAccountsAsync(filter.AccountsExternalIds);
                 accounts.AddRange(filter.AccountsExternalIds);
@@ -123,12 +127,12 @@ namespace BudgetUnderControl.Infrastructure
 
             if (filter != null)
             {
-                if(!filter.IncludeDeleted)
+                if (!filter.IncludeDeleted)
                 {
                     query = query.Where(q => q.IsDeleted == false).AsQueryable();
                 }
 
-                if(filter.FromDate != null)
+                if (filter.FromDate != null)
                 {
                     query = query.Where(q => q.Date >= filter.FromDate).AsQueryable();
                 }
@@ -138,25 +142,27 @@ namespace BudgetUnderControl.Infrastructure
                     query = query.Where(q => q.Date <= filter.ToDate).AsQueryable();
                 }
 
-                if(filter.ChangedSince != null)
+                if (filter.ChangedSince != null)
                 {
                     query = query.Where(q => q.CreatedOn >= filter.ChangedSince || q.ModifiedOn >= filter.ChangedSince).AsQueryable();
                 }
             }
 
+            var temporary = await query.ToListAsync();
             var transactionsWithExtraProperty = (await (from t in query
-                                                        from transferFrom in this.Context.Transfers.Where(x => x.FromTransactionId == t.Id).DefaultIfEmpty()
-                                                        from transferTo in this.Context.Transfers.Where(x => x.ToTransactionId == t.Id).DefaultIfEmpty()
                                                         orderby t.Date descending
                                                         select new
                                                         {
                                                             t,
-                                                            IsTransfer = transferTo != null || transferFrom != null
+                                                            IsTransfer = t.ToTransfers != null || t.FromTransfers != null,
                                                         })
-                                                        .ToListAsync());
+                                                   .ToListAsync());
             transactionsWithExtraProperty.ForEach(x => x.t.IsTransfer = x.IsTransfer);
             var transactions = transactionsWithExtraProperty.Select(x => x.t).ToList();
             return transactions;
+
+
+
         }
 
         public async Task<Transaction> GetTransactionAsync(int id)
@@ -167,7 +173,7 @@ namespace BudgetUnderControl.Infrastructure
 
         public async Task<Transaction> GetTransactionAsync(Guid id)
         {
-            var transaction = await this.Context.Transactions.Where(t => t.ExternalId == id).SingleOrDefaultAsync();
+            var transaction = await this.Context.Transactions.Where(t => t.ExternalId.ToString() == id.ToString()).SingleOrDefaultAsync();
             return transaction;
         }
 

@@ -83,7 +83,7 @@ namespace BudgetUnderControl.Infrastructure.Services
                 var transactionExpense = Transaction.Create(command.AccountId, TransactionType.Expense, command.Amount, command.Date, command.Name, command.Comment, user.Id, false, command.CategoryId, command.ExternalId);
                 await transactionRepository.AddTransactionAsync(transactionExpense);
 
-                var transactionIncome = Transaction.Create(command.TransferAccountId, TransactionType.Income, command.TransferAmount, command.TransferDate, command.Name, command.Comment, user.Id, false, command.CategoryId, command.ExternalId);
+                var transactionIncome = Transaction.Create(command.TransferAccountId, TransactionType.Income, command.TransferAmount, command.TransferDate, command.Name, command.Comment, user.Id, false, command.CategoryId, command.TransferExternalId);
                 await transactionRepository.AddTransactionAsync(transactionIncome);
 
                 var transfer = Transfer.Create(transactionExpense.Id, transactionIncome.Id, command.Rate);
@@ -107,7 +107,7 @@ namespace BudgetUnderControl.Infrastructure.Services
             }
         }
 
-        private async Task CreateTagsToTransaction(IEnumerable<int> tagsId, int transactionId)
+        public async Task CreateTagsToTransaction(IEnumerable<int> tagsId, int transactionId)
         {
             if (tagsId.Any())
             {
@@ -169,7 +169,7 @@ namespace BudgetUnderControl.Infrastructure.Services
                 firstTransaction.Edit(command.AccountId, TransactionType.Expense, command.Amount, command.Date, command.Name, command.Comment, user.Id, command.IsDeleted, command.CategoryId);
                 await this.transactionRepository.UpdateAsync(firstTransaction);
 
-                var transactionIncome = Transaction.Create(command.TransferAccountId.Value, TransactionType.Income, command.TransferAmount.Value, command.TransferDate.Value, command.Name, command.Comment, user.Id, command.IsDeleted, command.CategoryId, command.ExternalId);
+                var transactionIncome = Transaction.Create(command.TransferAccountId.Value, TransactionType.Income, command.TransferAmount.Value, command.TransferDate.Value, command.Name, command.Comment, user.Id, command.IsDeleted, command.CategoryId);
                 await transactionRepository.AddTransactionAsync(transactionIncome);
 
                 var newTransfer = Transfer.Create(firstTransaction.Id, transactionIncome.Id, command.Rate.Value);

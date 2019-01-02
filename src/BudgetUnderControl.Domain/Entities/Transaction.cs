@@ -27,17 +27,19 @@ namespace BudgetUnderControl.Domain
         [NotMapped]
         public bool IsTransfer { get; set; }
 
+        [NotMapped]
+        public string ExternalIdAsString => ExternalId.ToString();
+
         public List<AccountSnapshot> AccountSnapshots { get; set; }
-        public List<TagToTransaction> TagsToTransaction { get; set; }
+        public ICollection<TagToTransaction> TagsToTransaction { get; set; }
         public Category Category { get; set; }
         public Account Account { get; set; }
-        public List<Transfer> ToTransfers { get; set; }
-        public List<Transfer> FromTransfers { get; set; }
+        public ICollection<Transfer> ToTransfers { get; set; }
+        public ICollection<Transfer> FromTransfers { get; set; }
         public User AddedBy { get; protected set; }
 
         public Transaction()
         {
-
         }
         
         public static Transaction Create(int accountId, TransactionType type, decimal amount, DateTime date, string name, string comment, int addedById, bool isDeleted, int? categoryId = null, Guid? guid = null)

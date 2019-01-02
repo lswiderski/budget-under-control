@@ -16,6 +16,7 @@ namespace BudgetUnderControl.Infrastructure.Services
         Task<EditTransactionDTO> GetTransactionAsync(Guid transactionId);
         Task EditTransactionAsync(EditTransaction command);
         Task AddTransactionAsync(AddTransaction command);
-        Task DeleteTransactionAsync(DeleteTransaction command); 
+        Task DeleteTransactionAsync(DeleteTransaction command);
+        Task CreateTagsToTransaction(IEnumerable<int> tagsId, int transactionId);
     }
 }

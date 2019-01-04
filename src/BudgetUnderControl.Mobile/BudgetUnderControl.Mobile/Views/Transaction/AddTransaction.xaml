@@ -7,7 +7,7 @@
              >
     <ContentPage.Content>
         <ScrollView>
-            <StackLayout VerticalOptions="Start">
+            <StackLayout VerticalOptions="Start" Padding="5,0">
                 <Label Text="Amount"></Label>
                 <Entry x:Name="amount" Text="{Binding Amount}" Placeholder="Amount"  Keyboard="Numeric">
                     <Entry.Behaviors>

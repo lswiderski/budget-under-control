@@ -39,7 +39,15 @@ namespace BudgetUnderControl.Views
         async void OnAddButtonClicked(object sender, EventArgs args)
         {
             await vm.AddTransacionAsync();
-            await Navigation.PopModalAsync();
+
+            if(Navigation.ModalStack.Any())
+            {
+                await Navigation.PopModalAsync();
+            }
+            else
+            {
+                App.MasterPage.NavigateTo(typeof(Transactions));
+            }
         }
 
         protected override void OnAppearing()

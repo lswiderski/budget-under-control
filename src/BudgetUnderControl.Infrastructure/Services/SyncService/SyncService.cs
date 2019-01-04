@@ -234,16 +234,19 @@ namespace BudgetUnderControl.Infrastructure.Services
         private async Task ImportTransactionsAsync(List<TransactionSyncDTO> transactions)
         {
             var user = await userRepository.GetFirstUserAsync();
+            var tempTransactionsMap = new Dictionary<int, Domain.Transaction>();
             transactionsMap = new Dictionary<int, int>();
             foreach (var item in transactions)
             {
                 var transaction = Domain.Transaction.Create(accountsMap[item.AccountId], item.Type, item.Amount, item.Date, item.Name, item.Comment, user.Id, false, item.CategoryId, item.ExternalId);
                 transaction.SetCreatedOn(item.CreatedOn);
                 transaction.SetModifiedOn(item.ModifiedOn);
-                await this.transactionRepository.AddTransactionAsync(transaction);
-
-                transactionsMap.Add(item.Id, transaction.Id);
+                tempTransactionsMap.Add(item.Id, transaction);
+                //await this.transactionRepository.AddTransactionAsync(transaction);
+                //transactionsMap.Add(item.Id, transaction.Id);
             }
+            await this.transactionRepository.AddTransactionsAsync(tempTransactionsMap.Select(x => x.Value));
+            transactionsMap = tempTransactionsMap.ToDictionary(x => x.Key, x => x.Value.Id);
         }
 
         private async Task ImportTransfersAsync(List<TransferSyncDTO> transfers)

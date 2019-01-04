@@ -61,7 +61,6 @@ namespace BudgetUnderControl.Views
         async void OnItemSelected(object sender, SelectedItemChangedEventArgs e)
         {
             var transactionId = vm.SelectedTransaction.ExternalId;
-            //App.MasterPage.NavigateTo(typeof(EditTransaction), transactionId);
             var editTransaction = new EditTransaction(transactionId);
             await Navigation.PushModalAsync(editTransaction);
         }

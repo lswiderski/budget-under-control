@@ -114,7 +114,7 @@ namespace BudgetUnderControl.Infrastructure
             var accounts = await this.GetSubAccountsAsync(new List<int> { accountId }, true);
             accounts.Add(accountId);
             accounts = accounts.Distinct().ToList();
-            var transactions = await this.Context.Transactions.Where(x => accounts.Contains(x.AccountId)).Select(x => (decimal)x.Amount).ToListAsync();
+            var transactions = await this.Context.Transactions.Where(x => accounts.Contains(x.AccountId) && !x.IsDeleted).Select(x => (decimal)x.Amount).ToListAsync();
             var balance = transactions.Sum(x => (decimal)x);
 
             return balance;
@@ -133,7 +133,7 @@ namespace BudgetUnderControl.Infrastructure
             accounts.Add(accountId);
             accounts = accounts.Distinct().ToList();
 
-            var balance = this.Context.Transactions.Where(x => accounts.Contains(x.AccountId) && x.Amount > 0 && x.Date >= fromDate && x.Date <= toDate).Select(x => (decimal)x.Amount).ToList().Sum(x => (decimal)x);
+            var balance = this.Context.Transactions.Where(x => accounts.Contains(x.AccountId) && x.Amount > 0 && x.Date >= fromDate && x.Date <= toDate && !x.IsDeleted).Select(x => (decimal)x.Amount).ToList().Sum(x => (decimal)x);
             return balance;
         }
 
@@ -150,7 +150,7 @@ namespace BudgetUnderControl.Infrastructure
             accounts.Add(accountId);
             accounts = accounts.Distinct().ToList();
 
-            var balance = this.Context.Transactions.Where(x => accounts.Contains(x.AccountId) && x.Amount < 0 && x.Date >= fromDate && x.Date <= toDate).Select(x => (decimal)x.Amount).ToList().Sum(x => (decimal)x);
+            var balance = this.Context.Transactions.Where(x => accounts.Contains(x.AccountId) && x.Amount < 0 && x.Date >= fromDate && x.Date <= toDate && !x.IsDeleted).Select(x => (decimal)x.Amount).ToList().Sum(x => (decimal)x);
             return balance;
         }
 

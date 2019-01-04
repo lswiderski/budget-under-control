@@ -132,6 +132,7 @@ namespace BudgetUnderControl.Infrastructure
                     query = query.Where(q => q.IsDeleted == false).AsQueryable();
                 }
 
+
                 if (filter.FromDate != null)
                 {
                     query = query.Where(q => q.Date >= filter.FromDate).AsQueryable();
@@ -146,6 +147,10 @@ namespace BudgetUnderControl.Infrastructure
                 {
                     query = query.Where(q => q.CreatedOn >= filter.ChangedSince || q.ModifiedOn >= filter.ChangedSince).AsQueryable();
                 }
+            }
+            else
+            {
+                query = query.Where(q => q.IsDeleted == false).AsQueryable();
             }
 
             var temporary = await query.ToListAsync();

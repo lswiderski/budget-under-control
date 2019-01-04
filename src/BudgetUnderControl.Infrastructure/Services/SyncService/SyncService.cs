@@ -154,6 +154,7 @@ namespace BudgetUnderControl.Infrastructure.Services
         public async Task<IEnumerable<string>> GenerateCSV()
         {
             var transactions = (await this.transactionRepository.GetTransactionsAsync())
+                .Where(t => t.IsDeleted == false)
                .Select(t => new
                {
                    AccountName = t.Account.Name,
@@ -164,17 +165,18 @@ namespace BudgetUnderControl.Infrastructure.Services
                    TransactionName = t.Name,
                    Date = t.Date,
                    Type = t.Type,
-                   Comment = t.Comment
+                   Comment = t.Comment,
+                   Tags = string.Join(",",t.TagsToTransaction.Select(x => x.Tag.Name))
                }).ToList();
 
             var lines = new List<string>();
-            var firstLine = "TransactionId;Date;Time;Name;Amount;CurrencyCode;Category;Type;AccountName;Comment";
+            var firstLine = "TransactionId;Date;Time;Name;Amount;CurrencyCode;Category;Type;AccountName;Comment;Tags";
             var csv = firstLine + Environment.NewLine;
             lines.Add(firstLine);
             foreach (var item in transactions)
             {
-                var line = string.Format("{0};{1};{2};{3};{4};{5};{6};{7};{8};{9}",
-                    item.TransactionId, item.Date.ToLocalTime().ToString("dd/MM/yyyy"), item.Date.ToLocalTime().ToString("HH:mm"), item.TransactionName, item.Amount, item.CurrencyCode, item.Category, item.Type.ToString(), item.AccountName, item.Comment);
+                var line = string.Format("{0};{1};{2};{3};{4};{5};{6};{7};{8};{9};{10}",
+                    item.TransactionId, item.Date.ToLocalTime().ToString("dd/MM/yyyy"), item.Date.ToLocalTime().ToString("HH:mm"), item.TransactionName, item.Amount, item.CurrencyCode, item.Category, item.Type.ToString(), item.AccountName, item.Comment, item.Tags);
                 lines.Add(line);
                 csv += line + Environment.NewLine;
             }

@@ -154,7 +154,7 @@ namespace BudgetUnderControl.Infrastructure
                                                         select new
                                                         {
                                                             t,
-                                                            IsTransfer = t.ToTransfers != null || t.FromTransfers != null,
+                                                            IsTransfer = t.ToTransfers.Any() || t.FromTransfers.Any(),
                                                         })
                                                    .ToListAsync());
             transactionsWithExtraProperty.ForEach(x => x.t.IsTransfer = x.IsTransfer);

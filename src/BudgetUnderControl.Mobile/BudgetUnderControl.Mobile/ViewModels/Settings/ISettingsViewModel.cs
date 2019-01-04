@@ -27,5 +27,7 @@ namespace BudgetUnderControl.ViewModel
         void OnApiUrlChange();
 
         bool IsLogged { get; set; }
+
+        bool IsLoading { get; set; }
     }
 }

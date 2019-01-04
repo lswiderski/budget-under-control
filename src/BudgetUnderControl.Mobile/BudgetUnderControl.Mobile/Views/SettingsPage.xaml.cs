@@ -38,7 +38,10 @@ namespace BudgetUnderControl.Views
 
         private async void ImportButton_Clicked(object sender, EventArgs e)
         {
-            await vm.ImportBackupAsync();
+            vm.IsLoading = true;
+           
+            vm.ImportBackupAsync().Wait();
+            vm.IsLoading = false;
         }
 
         private async void ExportCSVButton_Clicked(object sender, EventArgs e)

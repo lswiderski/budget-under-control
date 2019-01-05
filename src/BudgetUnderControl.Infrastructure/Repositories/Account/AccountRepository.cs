@@ -163,7 +163,8 @@ namespace BudgetUnderControl.Infrastructure
                 decimal amount = (decimal.Subtract(targetBalance, actualBalance));
                 var user = await this.Context.Users.FirstOrDefaultAsync();
                 var type = Math.Sign(amount) < 0 ? TransactionType.Expense : TransactionType.Income;
-                var transaction = Transaction.Create(accountId, type, amount, DateTime.UtcNow, "BalanceAdjustment", string.Empty, user.Id, false);
+                var defaultCategoryId = this.Context.Categories.Where(x => x.IsDefault && !x.IsDeleted).Select(x => (int?)x.Id).FirstOrDefault();
+                var transaction = Transaction.Create(accountId, type, amount, DateTime.UtcNow, "BalanceAdjustment", string.Empty, user.Id, false, defaultCategoryId);
 
                 this.Context.Transactions.Add(transaction);
                 await this.Context.SaveChangesAsync();

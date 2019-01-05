@@ -126,6 +126,8 @@ namespace BudgetUnderControl.Migrations.SqlServer.Migrations
 
                     b.Property<Guid>("ExternalId");
 
+                    b.Property<bool>("IsDefault");
+
                     b.Property<bool>("IsDeleted");
 
                     b.Property<DateTime?>("ModifiedOn");

@@ -15,6 +15,7 @@ namespace BudgetUnderControl.Domain
         public int Id { get; set; }
         [StringLength(100)]
         public string Name { get; set; }
+        public bool IsDefault { get; set; }
 
         public int OwnerId { get; protected set; }
         public DateTime? ModifiedOn { get; protected set; }
@@ -42,6 +43,7 @@ namespace BudgetUnderControl.Domain
                 ExternalId = externalId ?? Guid.NewGuid(),
                 ModifiedOn = DateTime.UtcNow,
                 IsDeleted = false,
+                IsDefault = false
             };
         }
 

@@ -32,13 +32,18 @@ namespace BudgetUnderControl.Views
         {
             base.OnAppearing();
             var dict = await vm.GetTotalsAsync();
-            pln.Text = dict.ContainsKey("PLN") ? dict["PLN"].ToString() : "0";
-            usd.Text = dict.ContainsKey("USD") ? dict["USD"].ToString() : "0";
-            eur.Text = dict.ContainsKey("EUR") ? dict["EUR"].ToString() : "0";
+            string plnCode = "PLN";
+            string eurCode = "EUR";
+            string usdCode = "USD";
+            string format = "0.##";
+            string defaultValue = "0";
+            pln.Text = dict.ContainsKey(plnCode) ? dict[plnCode].ToString(format) : defaultValue;
+            usd.Text = dict.ContainsKey(usdCode) ? dict[usdCode].ToString(format) : defaultValue;
+            eur.Text = dict.ContainsKey(eurCode) ? dict[eurCode].ToString(format) : defaultValue;
 
-            total.Text = ((dict.ContainsKey("PLN") ? dict["PLN"] : 0)
-                + ((dict.ContainsKey("USD") ? dict["USD"] : 0) * 3.54m)
-                + ((dict.ContainsKey("EUR") ? dict["EUR"] : 0) * 4.20m)).ToString();
+            total.Text = ((dict.ContainsKey(plnCode) ? dict[plnCode] : 0)
+                + (await vm.CalculateValueAsync(dict.ContainsKey(usdCode) ? dict[usdCode] : 0, usdCode, plnCode))
+                + (await vm.CalculateValueAsync(dict.ContainsKey(eurCode) ? dict[eurCode] : 0, eurCode, plnCode))).ToString("0.##");
         }
 
 

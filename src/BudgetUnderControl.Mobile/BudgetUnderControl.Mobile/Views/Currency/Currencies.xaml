@@ -16,4 +16,7 @@
         <Button Text="load" Clicked="OnButtonClicked" />
         </StackLayout>
     </ContentPage.Content>
+    <ContentPage.ToolbarItems>
+        <ToolbarItem Text="Exchange Rates" Order="Secondary" Clicked="OnExchangeRatesButtonClicked"/>
+    </ContentPage.ToolbarItems>
 </ContentPage>

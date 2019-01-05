@@ -1,4 +1,5 @@
 ﻿using BudgetUnderControl.Common.Contracts;
+using BudgetUnderControl.Infrastructure.Commands;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,6 +12,12 @@ namespace BudgetUnderControl.Infrastructure.Services
     {
         Task<ICollection<CurrencyDTO>> GetCurriencesAsync();
         Task<CurrencyDTO> GetCurrencyAsync(int id);
+        Task<CurrencyDTO> GetCurrencyAsync(string code);
         Task<bool> IsValidAsync(int currencyId);
+
+        Task<IEnumerable<ExchangeRateDTO>> GetExchangeRatesAsync();
+        Task AddExchangeRateAsync(AddExchangeRate command);
+        Task<decimal> TransformAmountAsync(decimal amount, int fromCurrencyId, int toCurrencyId);
+        Task<decimal> TransformAmountAsync(decimal amount, string fromCurrencyCode, string toCurrencyCode);
     }
 }

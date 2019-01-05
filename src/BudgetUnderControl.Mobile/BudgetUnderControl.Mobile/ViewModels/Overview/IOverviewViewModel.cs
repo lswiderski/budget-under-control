@@ -9,5 +9,6 @@ namespace BudgetUnderControl.ViewModel
     public interface IOverviewViewModel
     {
         Task<Dictionary<string, decimal>> GetTotalsAsync();
+        Task<decimal> CalculateValueAsync(decimal amount, string fromCurrencyCode, string toCurrencyCode);
     }
 }

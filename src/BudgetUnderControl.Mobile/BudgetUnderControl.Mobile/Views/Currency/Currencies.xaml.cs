@@ -2,6 +2,7 @@
 using BudgetUnderControl.Domain.Repositiories;
 using BudgetUnderControl.Infrastructure;
 using BudgetUnderControl.Infrastructure.Services;
+using BudgetUnderControl.Mobile.Views;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -40,6 +41,11 @@ namespace BudgetUnderControl.Views
             var model = await currencyService.GetCurriencesAsync();
 
             curriences.ItemsSource =  model;
+        }
+
+        private void OnExchangeRatesButtonClicked(object sender, EventArgs e)
+        {
+            App.MasterPage.NavigateTo(typeof(ExchangeRates));
         }
     }
 }

@@ -10,10 +10,13 @@ namespace BudgetUnderControl.ViewModel
     public class OverviewViewModel : IOverviewViewModel
     {
         IAccountService accountService;
-        public OverviewViewModel(IAccountService accountModel)
+        ICurrencyService currencyService;
+        public OverviewViewModel(IAccountService accountModel, ICurrencyService currencyService)
         {
             this.accountService = accountModel;
+            this.currencyService = currencyService;
         }
+
 
         public async Task<Dictionary<string, decimal>> GetTotalsAsync()
         {
@@ -37,6 +40,12 @@ namespace BudgetUnderControl.ViewModel
             }
 
             return result;
+        }
+
+        public async Task<decimal> CalculateValueAsync(decimal amount, string fromCurrencyCode, string toCurrencyCode)
+        {
+            var value = await this.currencyService.TransformAmountAsync(amount, fromCurrencyCode, toCurrencyCode);
+            return value;
         }
     }
 }

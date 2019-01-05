@@ -172,6 +172,8 @@ namespace BudgetUnderControl.Migrations.SqlServer.Migrations
                         .ValueGeneratedOnAdd()
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
+                    b.Property<DateTime>("Date");
+
                     b.Property<int>("FromCurrencyId");
 
                     b.Property<double>("Rate");

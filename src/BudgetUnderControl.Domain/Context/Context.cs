@@ -36,14 +36,14 @@ namespace BudgetUnderControl.Domain
         public static Context Create(IContextConfig contextConfig)
         {
             var context = new Context(contextConfig);
-            
+            context.Database.EnsureCreated();
             return context;
         }
 
         public static Context CreateTest(DbContextOptions options, IContextConfig config)
         {
             var context = new Context(options, config);
-
+            context.Database.EnsureCreated();
             return context;
         }
 
@@ -64,7 +64,7 @@ namespace BudgetUnderControl.Domain
         public Context(IContextConfig config)
         {
             this.config = config;
-            if (config.Application == ApplicationType.Mobile)
+            if (config.Application == ApplicationType.Mobile || config.Application == ApplicationType.Web)
             {
                 Database.Migrate();
             }

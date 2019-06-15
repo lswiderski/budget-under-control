@@ -1,0 +1,17 @@
+version: '3.4'
+
+services:
+  budgetundercontrol.api:
+    image: ${DOCKER_REGISTRY}budgetundercontrolapi
+    build:
+      context: .
+      dockerfile: BudgetUnderControl.API/Dockerfile
+    depends_on:
+      - budgetundercontrol.db
+  budgetundercontrol.db:
+    image: microsoft/mssql-server-linux
+    environment:
+      ACCEPT_EULA: "Y"
+      SA_PASSWORD: Password1
+    ports:
+      - "1433:1433"

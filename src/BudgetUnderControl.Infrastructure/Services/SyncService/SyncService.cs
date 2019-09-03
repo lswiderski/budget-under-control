@@ -255,8 +255,11 @@ namespace BudgetUnderControl.Infrastructure.Services
         {
             foreach (var item in transfers)
             {
-                var transfer = Transfer.Create(transactionsMap[item.FromTransactionId], transactionsMap[item.ToTransactionId], item.Rate, item.ExternalId);
-                await this.transactionRepository.AddTransferAsync(transfer);
+                if(transactionsMap.ContainsKey(item.FromTransactionId) && transactionsMap.ContainsKey(item.ToTransactionId))
+                {
+                    var transfer = Transfer.Create(transactionsMap[item.FromTransactionId], transactionsMap[item.ToTransactionId], item.Rate, item.ExternalId);
+                    await this.transactionRepository.AddTransferAsync(transfer);
+                }
             }
         }
 

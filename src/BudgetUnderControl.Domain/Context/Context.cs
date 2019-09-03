@@ -36,7 +36,7 @@ namespace BudgetUnderControl.Domain
         public static Context Create(IContextConfig contextConfig)
         {
             var context = new Context(contextConfig);
-            context.Database.EnsureCreated();
+           // context.Database.EnsureCreated();
             return context;
         }
 

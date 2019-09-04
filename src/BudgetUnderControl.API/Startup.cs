@@ -17,7 +17,7 @@ using BudgetUnderControl.Infrastructure.Repositories;
 using BudgetUnderControl.Infrastructure.Services;
 using BudgetUnderControl.Infrastructure.Services.UserService;
 using BudgetUnderControl.Infrastructure;
-using BudgetUnderControl.Infrastructure.Services;
+using Microsoft.AspNetCore.Cors;
 using CommonServiceLocator;
 using FluentValidation;
 using FluentValidation.AspNetCore;
@@ -63,6 +63,7 @@ namespace BudgetUnderControl.API
                     .AddDbContext<Context>();
 
             services.AddMemoryCache();
+            services.AddCors();
 
             var settings = Configuration.GetSettings<GeneralSettings>();
             var key = Encoding.ASCII.GetBytes(settings.SecretKey);
@@ -119,6 +120,12 @@ namespace BudgetUnderControl.API
             //app.UseHttpsRedirection();
             app.UseCustomExceptionHandler();
             app.UseAuthentication();
+            app.UseCors(options =>
+                    options
+                        .AllowAnyOrigin()
+                        .AllowAnyMethod()
+                        .AllowAnyHeader()
+                        .AllowCredentials());
             app.UseMvc();
             //;
         }

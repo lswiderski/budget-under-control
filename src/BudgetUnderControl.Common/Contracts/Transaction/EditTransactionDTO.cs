@@ -28,6 +28,8 @@ namespace BudgetUnderControl.Common.Contracts
         public DateTime CreatedOn { get; set; }
         public DateTime? ModifiedOn { get; set; }
         public bool IsDeleted { get; set; }
+        public double? Longitude { get; set; }
+        public double? Latitude { get; set; }
         public List<TagDTO> Tags {get;set;}
 
         public EditTransactionDTO()

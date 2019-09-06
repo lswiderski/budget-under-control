@@ -302,6 +302,10 @@ namespace BudgetUnderControl.Migrations.SqlServer.Migrations
 
                     b.Property<bool>("IsDeleted");
 
+                    b.Property<double?>("Latitude");
+
+                    b.Property<double?>("Longitude");
+
                     b.Property<DateTime?>("ModifiedOn");
 
                     b.Property<string>("Name");

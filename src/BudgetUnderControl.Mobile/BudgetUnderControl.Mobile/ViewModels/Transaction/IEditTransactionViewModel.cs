@@ -10,6 +10,9 @@ namespace BudgetUnderControl.ViewModel
 {
     public interface IEditTransactionViewModel
     {
+        double? Longitude { get; set; }
+        double? Latitude { get; set; }
+
         Task EditTransactionAsync();
         Task GetTransactionAsync(Guid transactionId);
         Task DeleteTransactionAsync();

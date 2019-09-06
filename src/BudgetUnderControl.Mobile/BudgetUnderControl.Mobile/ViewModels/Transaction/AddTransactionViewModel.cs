@@ -13,6 +13,8 @@ using BudgetUnderControl.Infrastructure.Commands;
 using BudgetUnderControl.Common.Extensions;
 using System.Collections.ObjectModel;
 using System.Runtime.CompilerServices;
+using Xamarin.Forms.PlatformConfiguration;
+using Xamarin.Essentials;
 
 namespace BudgetUnderControl.ViewModel
 {
@@ -113,6 +115,37 @@ namespace BudgetUnderControl.ViewModel
 
         public DateTime Date { get; set; }
         public TimeSpan Time { get; set; }
+
+
+        private double? longitude;
+        public double? Longitude
+        {
+            get => longitude;
+            set
+            {
+                if (longitude != value)
+                {
+                    longitude = value;
+                    PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(Longitude)));
+                }
+            }
+        }
+
+        private double? latitude;
+
+        public double? Latitude
+        {
+            get => latitude;
+            set
+            {
+              
+                if (latitude != value)
+                {
+                    latitude = value;
+                    PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(Latitude)));
+                }
+            }
+        }
 
         private string name;
         public string Name
@@ -479,7 +512,9 @@ namespace BudgetUnderControl.ViewModel
                     CategoryId = SelectedCategoryIndex >= 0  ? Categories[SelectedCategoryIndex].Id : (int?)null,
                     AccountId = Accounts[selectedAccountIndex].Id,
                     Type = Type.ToExtendedTransactionType(),
-                    Tags = Tags.Select(x => x.Id).ToList()
+                    Tags = Tags.Select(x => x.Id).ToList(),
+                    Longitude = Longitude,
+                    Latitude = Latitude,
                 };
 
                 using (var scope = App.Container.BeginLifetimeScope())
@@ -521,7 +556,9 @@ namespace BudgetUnderControl.ViewModel
                 Rate = decimal.Parse(TransferRate.Replace(',', '.'), NumberStyles.AllowDecimalPoint, CultureInfo.InvariantCulture),
                 TransferAccountId = Accounts[selectedTransferAccountIndex].Id,
                 Type = ExtendedTransactionType.Transfer,
-                Tags = Tags.Select(x => x.Id).ToList()
+                Tags = Tags.Select(x => x.Id).ToList(),
+                Longitude = Longitude,
+                Latitude = Latitude,
             };
 
             using (var scope = App.Container.BeginLifetimeScope())
@@ -529,5 +566,6 @@ namespace BudgetUnderControl.ViewModel
                 await commandDispatcher.DispatchAsync(addTransactionCommand, scope);
             }
         }
+
     }
 }

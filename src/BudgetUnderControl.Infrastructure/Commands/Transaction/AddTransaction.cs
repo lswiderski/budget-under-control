@@ -16,10 +16,8 @@ namespace BudgetUnderControl.Infrastructure.Commands
         public decimal Amount { get; set; }
         public DateTime Date { get; set; }
         public string Name { get; set; }
-
         public string Comment { get; set; }
         public ExtendedTransactionType Type { get; set; }
-
         public int TransferAccountId { get; set; }
         public DateTime TransferDate { get; set; }
         public decimal TransferAmount { get; set; }
@@ -27,6 +25,8 @@ namespace BudgetUnderControl.Infrastructure.Commands
         public Guid ExternalId { get; }
         public Guid TransferExternalId { get; }
         public List<int> Tags { get; set; }
+        public double? Latitude { get; set; }
+        public double? Longitude { get; set; }
 
         public AddTransaction()
         {

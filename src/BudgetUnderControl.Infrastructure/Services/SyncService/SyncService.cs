@@ -117,7 +117,10 @@ namespace BudgetUnderControl.Infrastructure.Services
                 Id = x.Id,
                 ExternalId = x.ExternalId,
                 ModifiedOn = x.ModifiedOn,
-                Type = x.Type
+                Type = x.Type,
+                Latitude = x.Latitude,
+                Longitude = x.Longitude,
+                IsDeleted = x.IsDeleted,
             }).ToList();
 
             var tags = (await this.tagRepository.GetAsync())
@@ -240,7 +243,7 @@ namespace BudgetUnderControl.Infrastructure.Services
             transactionsMap = new Dictionary<int, int>();
             foreach (var item in transactions)
             {
-                var transaction = Domain.Transaction.Create(accountsMap[item.AccountId], item.Type, item.Amount, item.Date, item.Name, item.Comment, user.Id, false, item.CategoryId, item.ExternalId);
+                var transaction = Domain.Transaction.Create(accountsMap[item.AccountId], item.Type, item.Amount, item.Date, item.Name, item.Comment, user.Id, item.IsDeleted, item.CategoryId, item.ExternalId, item.Latitude, item.Longitude);
                 transaction.SetCreatedOn(item.CreatedOn);
                 transaction.SetModifiedOn(item.ModifiedOn);
                 tempTransactionsMap.Add(item.Id, transaction);

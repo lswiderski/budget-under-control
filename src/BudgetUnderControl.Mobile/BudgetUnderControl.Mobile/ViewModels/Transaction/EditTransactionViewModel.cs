@@ -178,6 +178,35 @@ namespace BudgetUnderControl.ViewModel
             }
         }
 
+        private double? longitude;
+        public double? Longitude
+        {
+            get => longitude;
+            set
+            {
+                if (longitude != value)
+                {
+                    longitude = value;
+                    PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(Longitude)));
+                }
+            }
+        }
+
+        private double? latitude;
+
+        public double? Latitude
+        {
+            get => latitude;
+            set
+            {
+                if (latitude != value)
+                {
+                    latitude = value;
+                    PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(Latitude)));
+                }
+            }
+        }
+
         int selectedCategoryIndex;
         public int SelectedCategoryIndex
         {
@@ -510,6 +539,8 @@ namespace BudgetUnderControl.ViewModel
             transferTransactionId = dto.TransferTransactionId;
             externalId = dto.ExternalId;
             isDeleted = dto.IsDeleted;
+            Longitude = dto.Longitude;
+            Latitude = dto.Latitude;
             Tags = new ObservableCollection<TagDTO>(dto.Tags);
         }
 
@@ -580,7 +611,9 @@ namespace BudgetUnderControl.ViewModel
                 TransferTransactionId = transferTransactionId,
                 ExternalId = externalId,
                 IsDeleted = isDeleted,
-                Tags = Tags.Select(x => x.Id).ToList()
+                Tags = Tags.Select(x => x.Id).ToList(),
+                Longitude = Longitude,
+                Latitude = Latitude,
             };
 
             if(SelectedTransferAccountIndex>=0)

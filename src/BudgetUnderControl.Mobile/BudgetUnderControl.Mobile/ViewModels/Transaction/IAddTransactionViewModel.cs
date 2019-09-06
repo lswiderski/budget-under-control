@@ -31,6 +31,8 @@ namespace BudgetUnderControl.ViewModel
         DateTime Date { get; set; }
         TimeSpan Time { get; set; }
         TransactionType Type { get; }
+        double? Longitude { get; set; }
+        double? Latitude { get; set; }
 
         TagDTO SelectedTag { get; set; }
         ObservableCollection<TagDTO> Tags { get; set; }

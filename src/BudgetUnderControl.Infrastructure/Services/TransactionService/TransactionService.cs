@@ -80,10 +80,10 @@ namespace BudgetUnderControl.Infrastructure.Services
                 {
                     command.TransferAmount *= (-1);
                 }
-                var transactionExpense = Transaction.Create(command.AccountId, TransactionType.Expense, command.Amount, command.Date, command.Name, command.Comment, user.Id, false, command.CategoryId, command.ExternalId);
+                var transactionExpense = Transaction.Create(command.AccountId, TransactionType.Expense, command.Amount, command.Date, command.Name, command.Comment, user.Id, false, command.CategoryId, command.ExternalId, command.Latitude, command.Longitude);
                 await transactionRepository.AddTransactionAsync(transactionExpense);
 
-                var transactionIncome = Transaction.Create(command.TransferAccountId, TransactionType.Income, command.TransferAmount, command.TransferDate, command.Name, command.Comment, user.Id, false, command.CategoryId, command.TransferExternalId);
+                var transactionIncome = Transaction.Create(command.TransferAccountId, TransactionType.Income, command.TransferAmount, command.TransferDate, command.Name, command.Comment, user.Id, false, command.CategoryId, command.TransferExternalId, command.Latitude, command.Longitude);
                 await transactionRepository.AddTransactionAsync(transactionIncome);
 
                 var transfer = Transfer.Create(transactionExpense.Id, transactionIncome.Id, command.Rate);
@@ -101,7 +101,7 @@ namespace BudgetUnderControl.Infrastructure.Services
                 {
                     command.Amount *= (-1);
                 }
-                var transaction = Transaction.Create(command.AccountId, type, command.Amount, command.Date, command.Name, command.Comment, user.Id, false, command.CategoryId, command.ExternalId);
+                var transaction = Transaction.Create(command.AccountId, type, command.Amount, command.Date, command.Name, command.Comment, user.Id, false, command.CategoryId, command.ExternalId, command.Latitude, command.Longitude);
                 await this.transactionRepository.AddTransactionAsync(transaction);
                 await this.CreateTagsToTransaction(command.Tags, transaction.Id);
             }
@@ -169,7 +169,7 @@ namespace BudgetUnderControl.Infrastructure.Services
                 firstTransaction.Edit(command.AccountId, TransactionType.Expense, command.Amount, command.Date, command.Name, command.Comment, user.Id, command.IsDeleted, command.CategoryId);
                 await this.transactionRepository.UpdateAsync(firstTransaction);
 
-                var transactionIncome = Transaction.Create(command.TransferAccountId.Value, TransactionType.Income, command.TransferAmount.Value, command.TransferDate.Value, command.Name, command.Comment, user.Id, command.IsDeleted, command.CategoryId);
+                var transactionIncome = Transaction.Create(command.TransferAccountId.Value, TransactionType.Income, command.TransferAmount.Value, command.TransferDate.Value, command.Name, command.Comment, user.Id, command.IsDeleted, command.CategoryId, null, command.Latitude, command.Longitude);
                 await transactionRepository.AddTransactionAsync(transactionIncome);
 
                 var newTransfer = Transfer.Create(firstTransaction.Id, transactionIncome.Id, command.Rate.Value);
@@ -274,6 +274,8 @@ namespace BudgetUnderControl.Infrastructure.Services
                 ModifiedOn = entity.ModifiedOn,
                 CreatedOn = entity.CreatedOn,
                 IsDeleted = entity.IsDeleted,
+                Longitude = entity.Longitude,
+                Latitude = entity.Latitude
             };
 
             transaction.ExtendedType = transaction.Type == TransactionType.Income ? ExtendedTransactionType.Income : ExtendedTransactionType.Expense;

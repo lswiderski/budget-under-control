@@ -26,6 +26,8 @@ namespace BudgetUnderControl.Infrastructure.Commands
         public Guid ExternalId { get; set; }
         public bool IsDeleted { get; set; }
         public List<int> Tags { get; set; }
+        public double? Latitude { get; set; }
+        public double? Longitude { get; set; }
     }
 
     public class EditTransactionValidator : AbstractValidator<EditTransaction>

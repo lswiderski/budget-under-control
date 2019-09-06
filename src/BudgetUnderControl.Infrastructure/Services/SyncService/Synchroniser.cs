@@ -124,7 +124,7 @@ namespace BudgetUnderControl.Infrastructure.Services
                     {
                         if (transactionToUpdate.ModifiedOn < transaction.ModifiedOn)
                         {
-                            transactionToUpdate.Edit(accountId, transaction.Type, transaction.Amount, transaction.Date, transaction.Name, transaction.Comment, this.userIdentityContext.UserId, transaction.IsDeleted, categoryId);
+                            transactionToUpdate.Edit(accountId, transaction.Type, transaction.Amount, transaction.Date, transaction.Name, transaction.Comment, this.userIdentityContext.UserId, transaction.IsDeleted, categoryId, transaction.Latitude, transaction.Longitude);
                             transactionToUpdate.SetCreatedOn(transaction.CreatedOn);
                             transactionToUpdate.SetModifiedOn(transaction.ModifiedOn);
                             transactionsToUpdate.Add(transactionToUpdate);
@@ -133,7 +133,7 @@ namespace BudgetUnderControl.Infrastructure.Services
                     }
                     else
                     {
-                        var transactionToAdd = Domain.Transaction.Create(accountId, transaction.Type, transaction.Amount, transaction.Date, transaction.Name, transaction.Comment, this.userIdentityContext.UserId, false, categoryId, transaction.ExternalId);
+                        var transactionToAdd = Domain.Transaction.Create(accountId, transaction.Type, transaction.Amount, transaction.Date, transaction.Name, transaction.Comment, this.userIdentityContext.UserId, false, categoryId, transaction.ExternalId, transaction.Latitude, transaction.Longitude);
                         transactionToAdd.SetCreatedOn(transaction.CreatedOn);
                         transactionToAdd.SetModifiedOn(transaction.ModifiedOn);
                         transactionsToAdd.Add(transactionToAdd);

@@ -28,7 +28,12 @@
                 <DatePicker Date="{Binding Date}" Format="d"></DatePicker>
                 <TimePicker Time="{Binding Time}"></TimePicker>
                 </StackLayout>
-            <StackLayout Orientation="Vertical" IsVisible="{Binding IsTransferOptionsVisible, Mode=TwoWay}">
+                <Label Text="Latitude"></Label>
+                <Entry x:Name="latitude" Text="{Binding Latitude}" Placeholder="Latitude"></Entry>
+                <Label Text="Longitude"></Label>
+                <Entry x:Name="longitude" Text="{Binding Longitude}" Placeholder="Longitude"></Entry>
+                <Button x:Name="getLocation" Text="Get Location" Clicked="OnGetLocationButtonClicked" />
+                <StackLayout Orientation="Vertical" IsVisible="{Binding IsTransferOptionsVisible, Mode=TwoWay}">
                 <Label Text="Transfer" />
                     <Label Text="Account transfer to"></Label>
                     <Picker x:Name="transferAccount" ItemsSource="{Binding Accounts}" ItemDisplayBinding="{Binding Name}"  SelectedIndex="{Binding SelectedTransferAccountIndex, Mode=TwoWay}" Title="Account" />

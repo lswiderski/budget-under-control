@@ -23,6 +23,8 @@ namespace BudgetUnderControl.Domain
         public Guid ExternalId { get; protected set; }
         public int AddedById { get; protected set; }
         public bool IsDeleted { get; protected set; }
+        public double? Latitude { get; set; }
+        public double? Longitude { get; set; }
 
         [NotMapped]
         public bool IsTransfer { get; set; }
@@ -42,7 +44,7 @@ namespace BudgetUnderControl.Domain
         {
         }
         
-        public static Transaction Create(int accountId, TransactionType type, decimal amount, DateTime date, string name, string comment, int addedById, bool isDeleted, int? categoryId = null, Guid? guid = null)
+        public static Transaction Create(int accountId, TransactionType type, decimal amount, DateTime date, string name, string comment, int addedById, bool isDeleted, int? categoryId = null, Guid? guid = null, double? latitude = null, double? longitude = null)
         {
             return new Transaction()
             {
@@ -58,10 +60,12 @@ namespace BudgetUnderControl.Domain
                 AddedById = addedById,
                 IsDeleted = isDeleted,
                 ModifiedOn = DateTime.UtcNow,
+                Latitude = latitude,
+                Longitude = longitude
             };
         }
 
-        public void Edit(int accountId, TransactionType type, decimal amount, DateTime date, string name, string comment, int addedById, bool isDeleted, int? categoryId = null)
+        public void Edit(int accountId, TransactionType type, decimal amount, DateTime date, string name, string comment, int addedById, bool isDeleted, int? categoryId = null, double? latitude = null, double? longitude = null)
         {
             this.AccountId = accountId;
             this.Type = type;
@@ -73,6 +77,8 @@ namespace BudgetUnderControl.Domain
             this.ModifiedOn = DateTime.UtcNow;
             this.AddedById = addedById;
             this.IsDeleted = isDeleted;
+            this.Latitude = latitude;
+            this.Longitude = longitude;
         }
 
         /// <summary>

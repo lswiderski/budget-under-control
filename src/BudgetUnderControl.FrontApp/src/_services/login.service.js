@@ -1,7 +1,7 @@
 import config from 'config';
 import { authHeader } from '../_helpers';
 
-export const userService = {
+export const loginService = {
     login,
     logout,
     getAll

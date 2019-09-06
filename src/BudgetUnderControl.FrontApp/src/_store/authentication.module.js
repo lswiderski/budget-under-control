@@ -1,10 +1,10 @@
-import { userService } from '../_services';
+import { loginService } from '../_services';
 import { router } from '../_helpers';
 
-const user = JSON.parse(localStorage.getItem('jwt-token'));
-const initialState = user
-    ? { status: { loggedIn: true }, user }
-    : { status: {}, user: null };
+const token = JSON.parse(localStorage.getItem('jwt-token'));
+const initialState = token
+    ? { status: { loggedIn: true }, token }
+    : { status: {}, token: null };
 
 export const authentication = {
     namespaced: true,
@@ -13,10 +13,10 @@ export const authentication = {
         login({ dispatch, commit }, { username, password }) {
             commit('loginRequest', { username });
 
-            userService.login(username, password)
+            loginService.login(username, password)
                 .then(
-                    user => {
-                        commit('loginSuccess', user);
+                    token => {
+                        commit('loginSuccess', token);
                         router.push('/');
                     },
                     error => {
@@ -26,26 +26,26 @@ export const authentication = {
                 );
         },
         logout({ commit }) {
-            userService.logout();
+            loginService.logout();
             commit('logout');
         }
     },
     mutations: {
-        loginRequest(state, user) {
+        loginRequest(state, token) {
             state.status = { loggingIn: true };
-            state.user = user;
+            state.token = token;
         },
-        loginSuccess(state, user) {
+        loginSuccess(state, token) {
             state.status = { loggedIn: true };
-            state.user = user;
+            state.token = token;
         },
         loginFailure(state) {
             state.status = {};
-            state.user = null;
+            state.token = null;
         },
         logout(state) {
             state.status = {};
-            state.user = null;
+            state.token = null;
         }
     }
 }

@@ -3,7 +3,7 @@ import Vuex from 'vuex';
 
 import { alert } from './alert.module';
 import { authentication } from './authentication.module';
-import { accounts } from './users.module';
+import { accounts } from './login.module';
 
 Vue.use(Vuex);
 

@@ -137,9 +137,9 @@
     </AndroidResource>
   </ItemGroup>
   <ItemGroup>
-    <AndroidResource Include="Resources\drawable\Settings.png">
+    <None Include="Resources\drawable\Settings.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </AndroidResource>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <AndroidResource Include="Resources\drawable-hdpi\ic_add.png" />
@@ -151,7 +151,9 @@
     <AndroidResource Include="Resources\drawable-xxhdpi\ic_add.png" />
   </ItemGroup>
   <ItemGroup>
-    <AndroidResource Include="Resources\drawable\Accounts.png" />
+    <AndroidResource Include="Resources\drawable\Accounts.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </AndroidResource>
   </ItemGroup>
   <ItemGroup>
     <AndroidResource Include="Resources\drawable\Currencies.png">

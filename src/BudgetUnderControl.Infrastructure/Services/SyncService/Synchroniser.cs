@@ -3,6 +3,7 @@ using BudgetUnderControl.Domain;
 using BudgetUnderControl.Domain.Repositiories;
 using BudgetUnderControl.Infrastructure.Commands;
 using BudgetUnderControl.Infrastructure.Settings;
+using NLog;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -14,7 +15,7 @@ namespace BudgetUnderControl.Infrastructure.Services
 {
     public class Synchroniser : ISynchroniser
     {
-
+        private static ILogger logger;
         private readonly ITransactionRepository transactionRepository;
         private readonly IAccountRepository accountRepository;
         private readonly ICurrencyRepository currencyRepository;
@@ -285,6 +286,7 @@ namespace BudgetUnderControl.Infrastructure.Services
                         categoryToUpdate.Delete(category.IsDeleted);
                         categoryToUpdate.SetModifiedOn(category.ModifiedOn);
                         await this.categoryRepository.UpdateAsync(categoryToUpdate);
+                        logger.Info("Category Updated:" + category.ExternalId.ToString());
                     }
                     
                 }
@@ -294,6 +296,7 @@ namespace BudgetUnderControl.Infrastructure.Services
                     categoryToAdd.Delete(category.IsDeleted);
                     categoryToAdd.SetModifiedOn(category.ModifiedOn);
                     await this.categoryRepository.AddCategoryAsync(categoryToAdd);
+                    logger.Info("Category Created:" + category.ExternalId.ToString());
                 }
             }
         }

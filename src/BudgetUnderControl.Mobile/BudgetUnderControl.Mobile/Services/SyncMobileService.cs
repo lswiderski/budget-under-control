@@ -10,6 +10,7 @@ using BudgetUnderControl.Infrastructure.Settings;
 using BudgetUnderControl.Mobile.Keys;
 using BudgetUnderControl.Views;
 using Newtonsoft.Json;
+using NLog;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -25,6 +26,7 @@ namespace BudgetUnderControl.Mobile.Services
     public class SyncMobileService : ISyncMobileService
     {
         private static string BACKUP_FILE_NAME = "buc_backup.json";
+        private static ILogger logger;
 
         private readonly IFileHelper fileHelper;
         private readonly ISyncService syncService;
@@ -170,6 +172,7 @@ namespace BudgetUnderControl.Mobile.Services
             catch (Exception e)
             {
                 //just for development purpose
+                logger.Error(e);
                 throw e;
             }
             

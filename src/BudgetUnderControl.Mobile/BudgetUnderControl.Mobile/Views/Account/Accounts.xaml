@@ -17,4 +17,7 @@
         </StackLayout>
         </AbsoluteLayout>
     </ContentPage.Content>
+    <ContentPage.ToolbarItems>
+        <ToolbarItem Text="Add" Order="Secondary" Clicked="OnAddButtonClicked"/>
+    </ContentPage.ToolbarItems>
 </ContentPage>

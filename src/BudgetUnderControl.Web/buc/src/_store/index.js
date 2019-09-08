@@ -5,7 +5,8 @@ import { alert } from './alert.module';
 import { authentication } from './authentication.module';
 import { login } from './login.module';
 import { categories } from './categories.module';
-
+import { accounts } from './accounts.module';
+import { transactions } from './transactions.module';
 Vue.use(Vuex);
 
 export default new Vuex.Store({
@@ -13,6 +14,8 @@ export default new Vuex.Store({
         alert,
         authentication,
         login,
-        categories
+        categories,
+        accounts,
+        transactions
     }
 });

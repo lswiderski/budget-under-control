@@ -14,6 +14,22 @@
             <v-list-item-title>Home</v-list-item-title>
           </v-list-item-content>
         </v-list-item>
+         <v-list-item  to="/transactions">
+          <v-list-item-action>
+            <v-icon>mdi-file-document-box-check-outline</v-icon>
+          </v-list-item-action>
+          <v-list-item-content>
+            <v-list-item-title>Transactions</v-list-item-title>
+          </v-list-item-content>
+        </v-list-item>
+          <v-list-item  to="/accounts">
+          <v-list-item-action>
+            <v-icon>mdi-cash-100</v-icon>
+          </v-list-item-action>
+          <v-list-item-content>
+            <v-list-item-title>Accounts</v-list-item-title>
+          </v-list-item-content>
+        </v-list-item>
          <v-list-item  to="/categories">
           <v-list-item-action>
             <v-icon>mdi-shape</v-icon>
@@ -49,7 +65,6 @@
 
     <v-content>
       <v-container
-        class="fill-height"
         fluid
       >
       <router-view></router-view>

@@ -4,6 +4,8 @@ import Router from 'vue-router';
 import HelloWorld from '../components/HelloWorld';
 import LoginPage from '../components/login/LoginPage'
 import Categories from '../components/categories/Categories'
+import Accounts from '../components/accounts/Accounts'
+import Transactions from '../components/transactions/Transactions'
 Vue.use(Router);
 
 let router = new Router({
@@ -12,6 +14,8 @@ let router = new Router({
     { path: '/', component: HelloWorld },
     { path: '/login', component: LoginPage },
     { path: '/categories', component: Categories },
+    { path: '/accounts', component: Accounts },
+    { path: '/transactions', component: Transactions },
     {  path: '/about',
     name: 'about',
     // route level code-splitting

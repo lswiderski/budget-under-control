@@ -12,6 +12,8 @@ namespace BudgetUnderControl.Domain.Repositiories
         Task<ICollection<Category>> GetCategoriesAsync();
         Task<ICollection<Category>> GetAllCategoriesAsync();
         Task<Category> GetCategoryAsync(Guid id);
+
+        Task<Category> GetCategoryAsync(string name);
         Task UpdateAsync(Category category);
         Task AddCategoryAsync(Category category);
     }

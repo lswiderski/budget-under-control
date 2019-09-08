@@ -38,6 +38,12 @@ namespace BudgetUnderControl.Infrastructure
             return category;
         }
 
+        public async Task<Category> GetCategoryAsync(string name)
+        {
+            var category = await this.Context.Categories.Where(x => x.Name == name).FirstOrDefaultAsync();
+            return category;
+        }
+
         public async Task UpdateAsync(Category category)
         {
             category.UpdateModify();

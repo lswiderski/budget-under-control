@@ -26,8 +26,8 @@ namespace BudgetUnderControl.Mobile.Services
     public class SyncMobileService : ISyncMobileService
     {
         private static string BACKUP_FILE_NAME = "buc_backup.json";
-        private static ILogger logger;
 
+        private readonly ILogger logger;
         private readonly IFileHelper fileHelper;
         private readonly ISyncService syncService;
         private readonly ITransactionRepository transactionRepository;
@@ -42,6 +42,7 @@ namespace BudgetUnderControl.Mobile.Services
             ISyncRequestBuilder syncRequestBuilder,
             ISynchroniser synchroniser,
             ISynchronizationRepository synchronizationRepository,
+            ILogger logger,
             GeneralSettings settings
             )
         {
@@ -53,6 +54,7 @@ namespace BudgetUnderControl.Mobile.Services
             this.synchronizationRepository = synchronizationRepository;
             this.httpClient = App.Container.ResolveNamed<HttpClient>("api");
             this.settings = settings;
+            this.logger = logger;
         }
 
         public async Task<string> GetBackUpJSONAsync()

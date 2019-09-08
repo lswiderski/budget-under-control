@@ -15,7 +15,7 @@ namespace BudgetUnderControl.Infrastructure.Services
 {
     public class Synchroniser : ISynchroniser
     {
-        private static ILogger logger;
+        private readonly ILogger logger;
         private readonly ITransactionRepository transactionRepository;
         private readonly IAccountRepository accountRepository;
         private readonly ICurrencyRepository currencyRepository;
@@ -39,6 +39,7 @@ namespace BudgetUnderControl.Infrastructure.Services
             IUserIdentityContext userIdentityContext,
             ITagRepository tagRepository,
             ITransactionService transactionService,
+            ILogger logger,
             GeneralSettings settings)
         {
             this.transactionRepository = transactionRepository;
@@ -52,6 +53,7 @@ namespace BudgetUnderControl.Infrastructure.Services
             this.settings = settings;
             this.tagRepository = tagRepository;
             this.transactionService = transactionService;
+            this.logger = logger;
         }
 
         public async Task SynchroniseAsync(SyncRequest syncRequest)
@@ -277,7 +279,7 @@ namespace BudgetUnderControl.Infrastructure.Services
             foreach (var category in categories)
             {
                
-                var categoryToUpdate = await this.categoryRepository.GetCategoryAsync(category.ExternalId);
+                var categoryToUpdate = await this.categoryRepository.GetCategoryAsync(category.Name);
                 if (categoryToUpdate != null)
                 {
                     if(categoryToUpdate.ModifiedOn < category.ModifiedOn)

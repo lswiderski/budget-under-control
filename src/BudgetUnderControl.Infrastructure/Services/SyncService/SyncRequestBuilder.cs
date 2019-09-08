@@ -14,7 +14,7 @@ namespace BudgetUnderControl.Infrastructure.Services
 {
     public class SyncRequestBuilder : ISyncRequestBuilder
     {
-        private static ILogger logger;
+        private readonly ILogger logger;
         private readonly ITransactionRepository transactionRepository;
         private readonly IAccountRepository accountRepository;
         private readonly ICurrencyRepository currencyRepository;
@@ -34,6 +34,7 @@ namespace BudgetUnderControl.Infrastructure.Services
             ISynchronizationRepository synchronizationRepository,
             IUserIdentityContext userIdentityContext,
             ITagRepository tagRepository,
+            ILogger logger,
             GeneralSettings settings)
         {
             this.transactionRepository = transactionRepository;
@@ -46,6 +47,7 @@ namespace BudgetUnderControl.Infrastructure.Services
             this.userIdentityContext = userIdentityContext;
             this.settings = settings;
             this.tagRepository = tagRepository;
+            this.logger = logger;
         }
 
         public async Task<SyncRequest> CreateSyncRequestAsync(SynchronizationComponent source, SynchronizationComponent target)
@@ -245,7 +247,7 @@ namespace BudgetUnderControl.Infrastructure.Services
             {
                 category.OwnerExternalId = userExternalId;
             }
-            logger.Info("Sent Categories" + string.Join("; ", categories.Select(x => x.ExternalId)));
+            //logger.Info("Sent Categories" + string.Join("; ", categories.Select(x => x.ExternalId)));
             return categories;
         }
 

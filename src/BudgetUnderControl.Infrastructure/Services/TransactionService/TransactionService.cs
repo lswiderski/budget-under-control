@@ -109,7 +109,7 @@ namespace BudgetUnderControl.Infrastructure.Services
 
         public async Task CreateTagsToTransaction(IEnumerable<int> tagsId, int transactionId)
         {
-            if (tagsId.Any())
+            if (tagsId != null && tagsId.Any())
             {
                 var tags2Transactions = tagsId.Select(x => new TagToTransaction
                 {

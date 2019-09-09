@@ -1,7 +1,8 @@
 
 export function handleResponse(response) {
-    if(response.status !== 200)
+    if(response.status !== 200 && response.status !== 204 && response.status !== 201)
     {
+        debugger;
         if (response.status === 401) {
             // auto logout if 401 response returned from api
             logout();

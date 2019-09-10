@@ -54,6 +54,7 @@ namespace BudgetUnderControl.Infrastructure.Services
                 ExternalId = t.ExternalId,
                 ModifiedOn = t.ModifiedOn,
                 CreatedOn = t.CreatedOn,
+                Tags = t.TagsToTransaction.Where(x => !x.Tag.IsDeleted).Select(x => new TagDTO {ExternalId =x.Tag.ExternalId, Id = x.Tag.Id, IsDeleted = x.Tag.IsDeleted, Name = x.Tag.Name}).ToList()
 
             }).OrderByDescending(t => t.Date)
             .ToList();

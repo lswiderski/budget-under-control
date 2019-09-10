@@ -25,36 +25,27 @@ function add(transaction) {
 
     return axios.post(`${config.apiUrl}/transactions`, transaction, { headers: authHeader()})
     .then(handleResponse)
-    .then(data => {
-        debugger;
-        return data;
-    }).catch(catchError);
+    .catch(catchError);
 }
 
 function get(guid) {
 
     return axios.get(`${config.apiUrl}/transactions/${guid}`, { params:{}, headers: authHeader()})
     .then(handleResponse)
-    .then(data => {
-        return data;
-    }).catch(catchError);
+    .catch(catchError);
 }
 
 function edit(guid, transaction) {
 
     return axios.put(`${config.apiUrl}/transactions/${guid}`,transaction, { params:{}, headers: authHeader()})
     .then(handleResponse)
-    .then(data => {
-        return data;
-    }).catch(catchError);
+    .catch(catchError);
 }
 
 function remove(guid) {
 
     return axios.delete(`${config.apiUrl}/transactions/${guid}`, { params:{}, headers: authHeader()})
     .then(handleResponse)
-    .then(data => {
-        return data;
-    }).catch(catchError);
+    .catch(catchError);
 }
 

@@ -1,15 +1,14 @@
-import { accountsService } from '../_services';
-
-export const accounts = {
+import { tagsService } from '../_services';
+export const tags = {
     namespaced: true,
     state: {
-        accounts: {}
+        tags: {}
     },
     actions: {
         getAll({ commit }) {
             commit('getAllRequest');
 
-            accountsService.getAll()
+            tagsService.getAll()
                 .then(
                     data => commit('getAllSuccess', data),
                     error => commit('getAllFailure', error)
@@ -18,13 +17,13 @@ export const accounts = {
     },
     mutations: {
         getAllRequest(state) {
-            state.accounts = { loading: true };
+            state.tags = { loading: true };
         },
         getAllSuccess(state, data) {
-            state.accounts = { items: data};
+            state.tags = { items: data};
         },
         getAllFailure(state, error) {
-            state.accounts = { error };
+            state.tags = { error };
         }
     }
 }

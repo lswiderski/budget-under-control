@@ -30,6 +30,14 @@
             <v-list-item-title>Accounts</v-list-item-title>
           </v-list-item-content>
         </v-list-item>
+         <v-list-item  to="/tags">
+          <v-list-item-action>
+            <v-icon>mdi-tag</v-icon>
+          </v-list-item-action>
+          <v-list-item-content>
+            <v-list-item-title>Tags</v-list-item-title>
+          </v-list-item-content>
+        </v-list-item>
          <v-list-item  to="/categories">
           <v-list-item-action>
             <v-icon>mdi-shape</v-icon>

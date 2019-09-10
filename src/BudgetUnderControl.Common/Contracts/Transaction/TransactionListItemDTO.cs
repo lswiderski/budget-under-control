@@ -22,12 +22,18 @@ namespace BudgetUnderControl.Common.Contracts
         public Guid ExternalId { get; set; }
         public DateTime CreatedOn { get; set; }
         public DateTime? ModifiedOn { get; set; }
+        public List<TagDTO> Tags {get;set;}
 
         public DateTime JustDate {
             get
             {
                 return Date.Date;
             }
+        }
+
+        public TransactionListItemDTO()
+        {
+            this.Tags = new List<TagDTO>();
         }
     }
 }

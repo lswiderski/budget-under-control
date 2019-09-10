@@ -7,6 +7,7 @@ import { login } from './login.module';
 import { categories } from './categories.module';
 import { accounts } from './accounts.module';
 import { transactions } from './transactions.module';
+import { tags } from './tags.module';
 Vue.use(Vuex);
 
 export default new Vuex.Store({
@@ -16,6 +17,7 @@ export default new Vuex.Store({
         login,
         categories,
         accounts,
-        transactions
+        transactions,
+        tags
     }
 });

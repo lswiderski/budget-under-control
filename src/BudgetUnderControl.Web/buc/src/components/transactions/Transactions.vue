@@ -14,6 +14,14 @@
     <template v-slot:item.date="{ item }">
       <div>{{item.date | formatDate}}</div>
     </template>
+    <template v-slot:item.tags="{ item }">
+      <v-chip v-for="(tag, i) in item.tags" :key="i"
+      class="ma-2"
+      color="primary"
+    >
+      {{tag.name}}
+    </v-chip>
+    </template>
     <template v-slot:item.action="{ item }">
       <v-icon small class="mr-2" @click="editItem(item)">mdi-pencil</v-icon>
       <v-icon small @click="deleteItem(item)">mdi-delete</v-icon>
@@ -39,12 +47,10 @@
                   <v-col cols="12" md="12">
                     <div v-if="errors.length">
                       <b>Please correct the following error(s):</b>
-                             <ul>
-                                        <li 
-                                        v-for="(error, i) in errors"
-                                            :key="i">{{ error }}</li>
-                                       </ul>
-                      </div>
+                      <ul>
+                        <li v-for="(error, i) in errors" :key="i">{{ error }}</li>
+                      </ul>
+                    </div>
                   </v-col>
                   <v-col cols="12" md="12">
                     <v-select :items="types" :value="1" v-model="editedItem.type" label="Type"></v-select>
@@ -207,6 +213,19 @@
                   <v-col cols="12" md="6">
                     <v-text-field v-model="editedItem.longtitude" label="Longtitude"></v-text-field>
                   </v-col>
+                  <v-col cols="12" md="12">
+                    <v-select
+          v-model="editedItem.tags"
+          :items="tags"
+          item-text="name"
+          item-value="id"
+          label="Tags"
+          multiple
+          chips
+          hint="multiple selects"
+          persistent-hint
+        ></v-select>
+                  </v-col>
                 </v-row>
               </v-container>
             </v-card-text>
@@ -241,7 +260,7 @@ export default {
     menuTransferTimePicker: false,
     categories: [],
     accounts: [],
-    errors:[],
+    errors: [],
     editedIndex: -1,
     editedItem: null,
     defaultItem: {
@@ -283,6 +302,7 @@ export default {
       { text: "Name", value: "name" },
       { text: "Value", value: "value" },
       { text: "Currency", value: "currencyCode" },
+      { text: "Tags", value: "tags" },
       { text: "Actions", sortable: false, value: "action" }
     ]
   }),
@@ -290,12 +310,16 @@ export default {
     transactions() {
       return this.$store.state.transactions.transactions;
     },
+    tags() {
+      return this.$store.state.tags.tags.items;
+    },
     formTitle() {
       return this.editedIndex === -1 ? "New Transaction" : "Edit Transaction";
     }
   },
   created() {
     this.$store.dispatch("transactions/getAll");
+    this.$store.dispatch("tags/getAll");
     this.editedItem = this.defaultItem;
   },
   methods: {
@@ -313,20 +337,23 @@ export default {
     },
     editItem(item) {
       const _self = this;
-      transactionsService.get(item.externalId).then(data => {
-        let dto = _self.mapAPIDTOToEditDTO(data);
-        _self.editedIndex = _self.transactions.items.indexOf(item);
-        _self.editedItem = Object.assign({}, dto);
-        _self.dialog = true;
-      }).catch(errors => {
-       _self.errors = errors;
-      });
+      transactionsService
+        .get(item.externalId)
+        .then(data => {
+          let dto = _self.mapAPIDTOToEditDTO(data);
+          _self.editedIndex = _self.transactions.items.indexOf(item);
+          _self.editedItem = Object.assign({}, dto);
+          _self.dialog = true;
+        })
+        .catch(errors => {
+          _self.errors = errors;
+        });
     },
     mapEditDTOToAPIDTO(data) {
       let dto = Object.assign({}, data);
       dto.date = new Date(dto.date + " " + dto.time);
       dto.transferDate = new Date(dto.transferDate + " " + dto.transferTime);
-        return dto;
+      return dto;
     },
     mapAPIDTOToEditDTO(data) {
       let dto = Object.assign({}, data);
@@ -354,22 +381,27 @@ export default {
       let dto = _self.mapEditDTOToAPIDTO(this.editedItem);
 
       if (this.editedIndex > -1) {
-        transactionsService.edit(this.editedItem.externalId, dto).then(data => {
-          this.$store.dispatch("transactions/getAll");
+        transactionsService
+          .edit(this.editedItem.externalId, dto)
+          .then(data => {
+            this.$store.dispatch("transactions/getAll");
             this.close();
-        }).catch(data => {
-       _self.errors = data;
-      });
+          })
+          .catch(data => {
+            _self.errors = data;
+          });
       } else {
-        transactionsService.add(dto).then(data => {
-          this.transactions.items.push(_self.editedItem);
-          this.$store.dispatch("transactions/getAll");
+        transactionsService
+          .add(dto)
+          .then(data => {
+            this.transactions.items.push(_self.editedItem);
+            this.$store.dispatch("transactions/getAll");
             this.close();
-        }).catch(errors => {
-       _self.errors = errors;
-      });
+          })
+          .catch(errors => {
+            _self.errors = errors;
+          });
       }
-    
     }
   },
   mounted() {

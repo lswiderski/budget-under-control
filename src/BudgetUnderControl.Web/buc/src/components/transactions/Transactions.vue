@@ -37,6 +37,16 @@
               <v-container>
                 <v-row>
                   <v-col cols="12" md="12">
+                    <div v-if="errors.length">
+                      <b>Please correct the following error(s):</b>
+                             <ul>
+                                        <li 
+                                        v-for="(error, i) in errors"
+                                            :key="i">{{ error }}</li>
+                                       </ul>
+                      </div>
+                  </v-col>
+                  <v-col cols="12" md="12">
                     <v-select :items="types" :value="1" v-model="editedItem.type" label="Type"></v-select>
                   </v-col>
                   <v-col cols="12" md="6">
@@ -231,6 +241,7 @@ export default {
     menuTransferTimePicker: false,
     categories: [],
     accounts: [],
+    errors:[],
     editedIndex: -1,
     editedItem: null,
     defaultItem: {
@@ -301,25 +312,37 @@ export default {
         });
     },
     editItem(item) {
-       const _self = this;
+      const _self = this;
       transactionsService.get(item.externalId).then(data => {
-        let dto = data;
-
-        dto.time =
-          new Date(dto.date).getHours() + ":" + new Date(dto.date).getMinutes();
-          dto.date = new Date(dto.date).toISOString().substr(0, 10);
-        dto.transferTime =
-          new Date(dto.transferDate).getHours() +
-          ":" +
-          new Date(dto.transferDate).getMinutes();
-           dto.transferDate = new Date(dto.transferDate).toISOString().substr(0, 10);
+        let dto = _self.mapAPIDTOToEditDTO(data);
         _self.editedIndex = _self.transactions.items.indexOf(item);
         _self.editedItem = Object.assign({}, dto);
         _self.dialog = true;
+      }).catch(errors => {
+       _self.errors = errors;
       });
+    },
+    mapEditDTOToAPIDTO(data) {
+      let dto = Object.assign({}, data);
+      dto.date = new Date(dto.date + " " + dto.time);
+      dto.transferDate = new Date(dto.transferDate + " " + dto.transferTime);
+        return dto;
+    },
+    mapAPIDTOToEditDTO(data) {
+      let dto = Object.assign({}, data);
+      dto.time =
+        new Date(dto.date).getHours() + ":" + new Date(dto.date).getMinutes();
+      dto.date = new Date(dto.date).toISOString().substr(0, 10);
+      dto.transferTime =
+        new Date(dto.transferDate).getHours() +
+        ":" +
+        new Date(dto.transferDate).getMinutes();
+      dto.transferDate = new Date(dto.transferDate).toISOString().substr(0, 10);
+      return dto;
     },
     close() {
       this.dialog = false;
+      this.errors = [];
       setTimeout(() => {
         this.editedItem = Object.assign({}, this.defaultItem);
         this.editedIndex = -1;
@@ -327,23 +350,26 @@ export default {
     },
 
     save() {
-        const _self = this;
-       let dto = this.editedItem;
-        dto.date = new Date(dto.date + " " + dto.time);
-        dto.transferDate = new Date(dto.transferDate + " " + dto.transferTime);
+      const _self = this;
+      let dto = _self.mapEditDTOToAPIDTO(this.editedItem);
+
       if (this.editedIndex > -1) {
-        
-        transactionsService.edit(this.editedItem.externalId,dto).then(data => {
+        transactionsService.edit(this.editedItem.externalId, dto).then(data => {
           this.$store.dispatch("transactions/getAll");
-        });
+            this.close();
+        }).catch(data => {
+       _self.errors = data;
+      });
       } else {
-       
         transactionsService.add(dto).then(data => {
           this.transactions.items.push(_self.editedItem);
           this.$store.dispatch("transactions/getAll");
-        });
+            this.close();
+        }).catch(errors => {
+       _self.errors = errors;
+      });
       }
-      this.close();
+    
     }
   },
   mounted() {

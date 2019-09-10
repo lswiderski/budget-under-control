@@ -55,7 +55,8 @@ namespace BudgetUnderControl.Infrastructure.Services
                 ModifiedOn = t.ModifiedOn,
                 CreatedOn = t.CreatedOn,
 
-            }).ToList();
+            }).OrderByDescending(t => t.Date)
+            .ToList();
 
             return dtos;
         }

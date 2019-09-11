@@ -240,10 +240,16 @@ namespace BudgetUnderControl.Infrastructure.Services
         {
             var user = await userRepository.GetFirstUserAsync();
             var tempTransactionsMap = new Dictionary<int, Domain.Transaction>();
+            var categories = await categoryRepository.GetAllCategoriesAsync();
             transactionsMap = new Dictionary<int, int>();
             foreach (var item in transactions)
             {
-                var transaction = Domain.Transaction.Create(accountsMap[item.AccountId], item.Type, item.Amount, item.Date, item.Name, item.Comment, user.Id, item.IsDeleted, item.CategoryId, item.ExternalId, item.Latitude, item.Longitude);
+                int? categoryId = null;
+                if(categories.Any(x => x.Id == item.CategoryId))
+                {
+                    categoryId = item.CategoryId;
+                }
+                var transaction = Domain.Transaction.Create(accountsMap[item.AccountId], item.Type, item.Amount, item.Date, item.Name, item.Comment, user.Id, item.IsDeleted, categoryId, item.ExternalId, item.Latitude, item.Longitude);
                 transaction.SetCreatedOn(item.CreatedOn);
                 transaction.SetModifiedOn(item.ModifiedOn);
                 tempTransactionsMap.Add(item.Id, transaction);

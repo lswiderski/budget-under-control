@@ -8,6 +8,7 @@ import { categories } from './categories.module';
 import { accounts } from './accounts.module';
 import { transactions } from './transactions.module';
 import { tags } from './tags.module';
+import { transactionFilters } from './transactionFilters.module';
 Vue.use(Vuex);
 
 export default new Vuex.Store({
@@ -18,6 +19,7 @@ export default new Vuex.Store({
         categories,
         accounts,
         transactions,
-        tags
+        tags,
+        transactionFilters
     }
 });

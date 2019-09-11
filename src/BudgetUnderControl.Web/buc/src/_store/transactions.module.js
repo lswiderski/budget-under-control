@@ -7,10 +7,10 @@ export const transactions = {
         transactions: {}
     },
     actions: {
-        getAll({ commit }) {
+        getAll({ commit },filters) {
             commit('getAllRequest');
 
-            transactionsService.getAll()
+            transactionsService.getAll(filters)
                 .then(
                     data => commit('getAllSuccess', data),
                     error => commit('getAllFailure', error)

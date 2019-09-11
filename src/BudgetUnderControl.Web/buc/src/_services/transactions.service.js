@@ -12,9 +12,11 @@ export const transactionsService = {
     remove
 };
 
-function getAll() {
-
-    return axios.get(`${config.apiUrl}/transactions`, { params:{}, headers: authHeader()})
+function getAll(filters) {
+    const Qs = require('qs');
+    return axios.get(`${config.apiUrl}/transactions`, { params:filters, headers: authHeader(),paramsSerializer: function(params) {
+        return Qs.stringify(params, {arrayFormat: 'repeat'})
+    }})
     .then(handleResponse)
     .then(data => {
         return data;

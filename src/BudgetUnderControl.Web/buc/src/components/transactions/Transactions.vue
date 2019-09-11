@@ -1,245 +1,245 @@
 <template>
-  <v-data-table
-    id="transactionsTable"
-    :headers="headers"
-    :items="transactions.items"
-    :items-per-page="5"
-  >
-    <template v-slot:item.id="{ item }">
-      <div class="handle" style="max-width: 28px;">::</div>
-    </template>
-    <template v-slot:item.value="{ item }">
-      <span :style="{color: getColor(item.value)}">{{ item.value }}</span>
-    </template>
-    <template v-slot:item.date="{ item }">
-      <div>{{item.date | formatDate}}</div>
-    </template>
-    <template v-slot:item.tags="{ item }">
-      <v-chip v-for="(tag, i) in item.tags" :key="i"
-      class="ma-2"
-      color="primary"
+  <div>
+    <div>
+      <TransactionFilters></TransactionFilters>
+    </div>
+    <v-data-table
+      id="transactionsTable"
+      :headers="headers"
+      :items="transactions.items"
+      :items-per-page="5"
     >
-      {{tag.name}}
-    </v-chip>
-    </template>
-    <template v-slot:item.action="{ item }">
-      <v-icon small class="mr-2" @click="editItem(item)">mdi-pencil</v-icon>
-      <v-icon small @click="deleteItem(item)">mdi-delete</v-icon>
-    </template>
+      <template v-slot:item.id="{ item }">
+        <div class="handle" style="max-width: 28px;">::</div>
+      </template>
+      <template v-slot:item.value="{ item }">
+        <span :style="{color: getColor(item.value)}">{{ item.value }}</span>
+      </template>
+      <template v-slot:item.date="{ item }">
+        <div>{{item.date | formatDate}}</div>
+      </template>
+      <template v-slot:item.tags="{ item }">
+        <v-chip v-for="(tag, i) in item.tags" :key="i" class="ma-2" color="primary">{{tag.name}}</v-chip>
+      </template>
+      <template v-slot:item.action="{ item }">
+        <v-icon small class="mr-2" @click="editItem(item)">mdi-pencil</v-icon>
+        <v-icon small @click="deleteItem(item)">mdi-delete</v-icon>
+      </template>
 
-    <template v-slot:top>
-      <v-toolbar flat color="white">
-        <v-toolbar-title>Transactions</v-toolbar-title>
-        <v-divider class="mx-6" inset vertical></v-divider>
-        <div class="flex-grow-1"></div>
-        <v-dialog v-model="dialog" max-width="500px">
-          <template v-slot:activator="{ on }">
-            <v-btn color="primary" dark class="mb-2" v-on="on">New transaction</v-btn>
-          </template>
-          <v-card>
-            <v-card-title>
-              <span class="headline">{{ formTitle }}</span>
-            </v-card-title>
+      <template v-slot:top>
+        <v-toolbar flat color="white">
+          <v-toolbar-title>Transactions</v-toolbar-title>
+          <v-divider class="mx-6" inset vertical></v-divider>
+          <div class="flex-grow-1"></div>
+          <v-dialog v-model="dialog" max-width="500px">
+            <template v-slot:activator="{ on }">
+              <v-btn color="primary" dark class="mb-2" v-on="on">New transaction</v-btn>
+            </template>
+            <v-card>
+              <v-card-title>
+                <span class="headline">{{ formTitle }}</span>
+              </v-card-title>
 
-            <v-card-text>
-              <v-container>
-                <v-row>
-                  <v-col cols="12" md="12">
-                    <div v-if="errors.length">
-                      <b>Please correct the following error(s):</b>
-                      <ul>
-                        <li v-for="(error, i) in errors" :key="i">{{ error }}</li>
-                      </ul>
-                    </div>
-                  </v-col>
-                  <v-col cols="12" md="12">
-                    <v-select :items="types" :value="1" v-model="editedItem.type" label="Type"></v-select>
-                  </v-col>
-                  <v-col cols="12" md="6">
-                    <v-text-field v-model="editedItem.amount" label="Amount"></v-text-field>
-                  </v-col>
-                  <v-col cols="12" md="6">
-                    <v-text-field v-model="editedItem.name" label="name"></v-text-field>
-                  </v-col>
+              <v-card-text>
+                <v-container>
+                  <v-row>
+                    <v-col cols="12" md="12">
+                      <div v-if="errors.length">
+                        <b>Please correct the following error(s):</b>
+                        <ul>
+                          <li v-for="(error, i) in errors" :key="i">{{ error }}</li>
+                        </ul>
+                      </div>
+                    </v-col>
+                    <v-col cols="12" md="12">
+                      <v-select :items="types" :value="1" v-model="editedItem.type" label="Type"></v-select>
+                    </v-col>
+                    <v-col cols="12" md="6">
+                      <v-text-field v-model="editedItem.amount" label="Amount"></v-text-field>
+                    </v-col>
+                    <v-col cols="12" md="6">
+                      <v-text-field v-model="editedItem.name" label="name"></v-text-field>
+                    </v-col>
 
-                  <v-col cols="12" md="6">
-                    <v-select
-                      v-model="editedItem.accountId"
-                      :items="accounts"
-                      item-text="name"
-                      item-value="id"
-                      label="Account"
-                    ></v-select>
-                  </v-col>
-                  <v-col cols="12" md="6">
-                    <v-select
-                      :items="categories"
-                      v-model="editedItem.categoryId"
-                      item-text="name"
-                      item-value="id"
-                      label="Category"
-                    ></v-select>
-                  </v-col>
-                  <v-col cols="12" md="6">
-                    <v-menu
-                      v-model="dateMenu"
-                      :close-on-content-click="false"
-                      :nudge-right="40"
-                      transition="scale-transition"
-                      offset-y
-                      full-width
-                      min-width="290px"
-                    >
-                      <template v-slot:activator="{ on }">
-                        <v-text-field
-                          v-model="editedItem.date"
-                          label="Date"
-                          prepend-icon="mdi-calendar"
-                          readonly
-                          v-on="on"
-                        ></v-text-field>
-                      </template>
-                      <v-date-picker v-model="editedItem.date" @input="dateMenu = false"></v-date-picker>
-                    </v-menu>
-                  </v-col>
-                  <v-col cols="12" md="6">
-                    <v-menu
-                      ref="menu"
-                      v-model="menuTimePicker"
-                      :close-on-content-click="false"
-                      :nudge-right="40"
-                      :return-value.sync="editedItem.time"
-                      transition="scale-transition"
-                      offset-y
-                      full-width
-                      max-width="290px"
-                      min-width="290px"
-                    >
-                      <template v-slot:activator="{ on }">
-                        <v-text-field
+                    <v-col cols="12" md="6">
+                      <v-select
+                        v-model="editedItem.accountId"
+                        :items="accounts"
+                        item-text="name"
+                        item-value="id"
+                        label="Account"
+                      ></v-select>
+                    </v-col>
+                    <v-col cols="12" md="6">
+                      <v-select
+                        :items="categories"
+                        v-model="editedItem.categoryId"
+                        item-text="name"
+                        item-value="id"
+                        label="Category"
+                      ></v-select>
+                    </v-col>
+                    <v-col cols="12" md="6">
+                      <v-menu
+                        v-model="dateMenu"
+                        :close-on-content-click="false"
+                        :nudge-right="40"
+                        transition="scale-transition"
+                        offset-y
+                        full-width
+                        min-width="290px"
+                      >
+                        <template v-slot:activator="{ on }">
+                          <v-text-field
+                            v-model="editedItem.date"
+                            label="Date"
+                            prepend-icon="mdi-calendar"
+                            readonly
+                            v-on="on"
+                          ></v-text-field>
+                        </template>
+                        <v-date-picker v-model="editedItem.date" @input="dateMenu = false"></v-date-picker>
+                      </v-menu>
+                    </v-col>
+                    <v-col cols="12" md="6">
+                      <v-menu
+                        ref="menu"
+                        v-model="menuTimePicker"
+                        :close-on-content-click="false"
+                        :nudge-right="40"
+                        :return-value.sync="editedItem.time"
+                        transition="scale-transition"
+                        offset-y
+                        full-width
+                        max-width="290px"
+                        min-width="290px"
+                      >
+                        <template v-slot:activator="{ on }">
+                          <v-text-field
+                            v-model="editedItem.time"
+                            label="Time"
+                            prepend-icon="mdi-clock-outline"
+                            readonly
+                            v-on="on"
+                          ></v-text-field>
+                        </template>
+                        <v-time-picker
+                          v-if="menuTimePicker"
                           v-model="editedItem.time"
-                          label="Time"
-                          prepend-icon="mdi-clock-outline"
-                          readonly
-                          v-on="on"
-                        ></v-text-field>
-                      </template>
-                      <v-time-picker
-                        v-if="menuTimePicker"
-                        v-model="editedItem.time"
-                        full-width
-                        @click:minute="$refs.menu.save(editedItem.time)"
-                      ></v-time-picker>
-                    </v-menu>
-                  </v-col>
+                          full-width
+                          @click:minute="$refs.menu.save(editedItem.time)"
+                        ></v-time-picker>
+                      </v-menu>
+                    </v-col>
 
-                  <v-col cols="12" md="6" v-if="editedItem.type === 2">
-                    <v-menu
-                      v-model="dateTransferMenu"
-                      :close-on-content-click="false"
-                      :nudge-right="40"
-                      transition="scale-transition"
-                      offset-y
-                      full-width
-                      min-width="290px"
-                    >
-                      <template v-slot:activator="{ on }">
-                        <v-text-field
+                    <v-col cols="12" md="6" v-if="editedItem.type === 2">
+                      <v-menu
+                        v-model="dateTransferMenu"
+                        :close-on-content-click="false"
+                        :nudge-right="40"
+                        transition="scale-transition"
+                        offset-y
+                        full-width
+                        min-width="290px"
+                      >
+                        <template v-slot:activator="{ on }">
+                          <v-text-field
+                            v-model="editedItem.transferDate"
+                            label="Transfer Date"
+                            prepend-icon="mdi-calendar"
+                            readonly
+                            v-on="on"
+                          ></v-text-field>
+                        </template>
+                        <v-date-picker
                           v-model="editedItem.transferDate"
-                          label="Transfer Date"
-                          prepend-icon="mdi-calendar"
-                          readonly
-                          v-on="on"
-                        ></v-text-field>
-                      </template>
-                      <v-date-picker
-                        v-model="editedItem.transferDate"
-                        @input="dateTransferMenu = false"
-                      ></v-date-picker>
-                    </v-menu>
-                  </v-col>
-                  <v-col cols="12" md="6" v-if="editedItem.type === 2">
-                    <v-menu
-                      ref="menu2"
-                      v-model="menuTransferTimePicker"
-                      :close-on-content-click="false"
-                      :nudge-right="40"
-                      :return-value.sync="editedItem.transferTime"
-                      transition="scale-transition"
-                      offset-y
-                      full-width
-                      max-width="290px"
-                      min-width="290px"
-                    >
-                      <template v-slot:activator="{ on }">
-                        <v-text-field
-                          v-model="editedItem.transferTime"
-                          label="Transfer Time"
-                          prepend-icon="mdi-clock-outline"
-                          readonly
-                          v-on="on"
-                        ></v-text-field>
-                      </template>
-                      <v-time-picker
-                        v-if="menuTransferTimePicker"
-                        v-model="editedItem.transferTime"
+                          @input="dateTransferMenu = false"
+                        ></v-date-picker>
+                      </v-menu>
+                    </v-col>
+                    <v-col cols="12" md="6" v-if="editedItem.type === 2">
+                      <v-menu
+                        ref="menu2"
+                        v-model="menuTransferTimePicker"
+                        :close-on-content-click="false"
+                        :nudge-right="40"
+                        :return-value.sync="editedItem.transferTime"
+                        transition="scale-transition"
+                        offset-y
                         full-width
-                        @click:minute="$refs.menu2.save(editedItem.transferTime)"
-                      ></v-time-picker>
-                    </v-menu>
-                  </v-col>
-                  <v-col cols="12" md="6" v-if="editedItem.type === 2">
-                    <v-select
-                      v-model="editedItem.transferAccountId"
-                      :items="accounts"
-                      item-text="name"
-                      item-value="id"
-                      label="Transfer Account"
-                    ></v-select>
-                  </v-col>
-                  <v-col cols="12" md="6" v-if="editedItem.type === 2">
-                    <v-text-field v-model="editedItem.transferAmount" label="Transfer Amount"></v-text-field>
-                  </v-col>
-                  <v-col cols="12" md="6" v-if="editedItem.type === 2">
-                    <v-text-field v-model="editedItem.rate" label="Rate"></v-text-field>
-                  </v-col>
+                        max-width="290px"
+                        min-width="290px"
+                      >
+                        <template v-slot:activator="{ on }">
+                          <v-text-field
+                            v-model="editedItem.transferTime"
+                            label="Transfer Time"
+                            prepend-icon="mdi-clock-outline"
+                            readonly
+                            v-on="on"
+                          ></v-text-field>
+                        </template>
+                        <v-time-picker
+                          v-if="menuTransferTimePicker"
+                          v-model="editedItem.transferTime"
+                          full-width
+                          @click:minute="$refs.menu2.save(editedItem.transferTime)"
+                        ></v-time-picker>
+                      </v-menu>
+                    </v-col>
+                    <v-col cols="12" md="6" v-if="editedItem.type === 2">
+                      <v-select
+                        v-model="editedItem.transferAccountId"
+                        :items="accounts"
+                        item-text="name"
+                        item-value="id"
+                        label="Transfer Account"
+                      ></v-select>
+                    </v-col>
+                    <v-col cols="12" md="6" v-if="editedItem.type === 2">
+                      <v-text-field v-model="editedItem.transferAmount" label="Transfer Amount"></v-text-field>
+                    </v-col>
+                    <v-col cols="12" md="6" v-if="editedItem.type === 2">
+                      <v-text-field v-model="editedItem.rate" label="Rate"></v-text-field>
+                    </v-col>
 
-                  <v-col cols="12" md="12">
-                    <v-textarea v-model="editedItem.comment" label="Comment"></v-textarea>
-                  </v-col>
-                  <v-col cols="12" md="6">
-                    <v-text-field v-model="editedItem.latitude" label="latitude"></v-text-field>
-                  </v-col>
-                  <v-col cols="12" md="6">
-                    <v-text-field v-model="editedItem.longtitude" label="Longtitude"></v-text-field>
-                  </v-col>
-                  <v-col cols="12" md="12">
-                    <v-select
-          v-model="editedItem.tags"
-          :items="tags"
-          item-text="name"
-          item-value="id"
-          label="Tags"
-          multiple
-          chips
-          hint="multiple selects"
-          persistent-hint
-        ></v-select>
-                  </v-col>
-                </v-row>
-              </v-container>
-            </v-card-text>
+                    <v-col cols="12" md="12">
+                      <v-textarea v-model="editedItem.comment" label="Comment"></v-textarea>
+                    </v-col>
+                    <v-col cols="12" md="6">
+                      <v-text-field v-model="editedItem.latitude" label="latitude"></v-text-field>
+                    </v-col>
+                    <v-col cols="12" md="6">
+                      <v-text-field v-model="editedItem.longtitude" label="Longtitude"></v-text-field>
+                    </v-col>
+                    <v-col cols="12" md="12">
+                      <v-select
+                        v-model="editedItem.tags"
+                        :items="tags"
+                        item-text="name"
+                        item-value="id"
+                        label="Tags"
+                        multiple
+                        chips
+                        hint="multiple selects"
+                        persistent-hint
+                      ></v-select>
+                    </v-col>
+                  </v-row>
+                </v-container>
+              </v-card-text>
 
-            <v-card-actions>
-              <div class="flex-grow-1"></div>
-              <v-btn color="blue darken-1" text @click="close">Cancel</v-btn>
-              <v-btn color="blue darken-1" text @click="save">Save</v-btn>
-            </v-card-actions>
-          </v-card>
-        </v-dialog>
-      </v-toolbar>
-    </template>
-  </v-data-table>
+              <v-card-actions>
+                <div class="flex-grow-1"></div>
+                <v-btn color="blue darken-1" text @click="close">Cancel</v-btn>
+                <v-btn color="blue darken-1" text @click="save">Save</v-btn>
+              </v-card-actions>
+            </v-card>
+          </v-dialog>
+        </v-toolbar>
+      </template>
+    </v-data-table>
+  </div>
 </template>
 
 <script>
@@ -251,7 +251,10 @@ import { handleResponse } from "../../_helpers";
 import { catchError } from "../../_helpers";
 import axios from "axios";
 import { transactionsService } from "../../_services";
+import TransactionFilters from "./TransactionFilters";
 export default {
+   name: "Transactions",
+
   data: () => ({
     dialog: false,
     dateMenu: false,
@@ -306,6 +309,9 @@ export default {
       { text: "Actions", sortable: false, value: "action" }
     ]
   }),
+  components: {
+    TransactionFilters
+  },
   computed: {
     transactions() {
       return this.$store.state.transactions.transactions;
@@ -318,7 +324,7 @@ export default {
     }
   },
   created() {
-    this.$store.dispatch("transactions/getAll");
+
     this.$store.dispatch("tags/getAll");
     this.editedItem = this.defaultItem;
   },
@@ -406,6 +412,7 @@ export default {
   },
   mounted() {
     let table = document.querySelector("#transactionsTable tbody");
+        this.$store.dispatch("transactions/getAll",this.$store.state.transactionFilters);
     const _self = this;
     Sortable.create(table, {
       handle: ".handle",

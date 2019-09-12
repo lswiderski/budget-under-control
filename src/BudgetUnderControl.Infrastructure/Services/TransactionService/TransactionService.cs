@@ -161,14 +161,14 @@ namespace BudgetUnderControl.Infrastructure.Services
             {
                 await this.transactionRepository.RemoveTransferAsync(transfer);
                 await this.transactionRepository.RemoveTransactionAsync(secondTransaction);
-                firstTransaction.Edit(command.AccountId, command.ExtendedType.ToTransactionType(), command.Amount, command.Date, command.Name, command.Comment, user.Id, command.IsDeleted, command.CategoryId);
+                firstTransaction.Edit(command.AccountId, command.ExtendedType.ToTransactionType(), command.Amount, command.Date, command.Name, command.Comment, user.Id, command.IsDeleted, command.CategoryId, command.Latitude, command.Longitude);
                 await this.transactionRepository.UpdateAsync(firstTransaction);
             }
             //new Transfer, no transfer before
             else if (command.ExtendedType == ExtendedTransactionType.Transfer
                 && transfer == null && secondTransaction == null)
             {
-                firstTransaction.Edit(command.AccountId, TransactionType.Expense, command.Amount, command.Date, command.Name, command.Comment, user.Id, command.IsDeleted, command.CategoryId);
+                firstTransaction.Edit(command.AccountId, TransactionType.Expense, command.Amount, command.Date, command.Name, command.Comment, user.Id, command.IsDeleted, command.CategoryId, command.Latitude, command.Longitude);
                 await this.transactionRepository.UpdateAsync(firstTransaction);
 
                 var transactionIncome = Transaction.Create(command.TransferAccountId.Value, TransactionType.Income, command.TransferAmount.Value, command.TransferDate.Value, command.Name, command.Comment, user.Id, command.IsDeleted, command.CategoryId, null, command.Latitude, command.Longitude);
@@ -183,10 +183,10 @@ namespace BudgetUnderControl.Infrastructure.Services
             else if (command.ExtendedType == ExtendedTransactionType.Transfer
                 && transfer != null && secondTransaction != null)
             {
-                firstTransaction.Edit(command.AccountId, TransactionType.Expense, command.Amount, command.Date, command.Name, command.Comment, user.Id, command.IsDeleted, command.CategoryId);
+                firstTransaction.Edit(command.AccountId, TransactionType.Expense, command.Amount, command.Date, command.Name, command.Comment, user.Id, command.IsDeleted, command.CategoryId, command.Latitude, command.Longitude);
                 await this.transactionRepository.UpdateAsync(firstTransaction);
 
-                secondTransaction.Edit(command.TransferAccountId.Value, TransactionType.Income, command.TransferAmount.Value, command.TransferDate.Value, command.Name, command.Comment, user.Id, command.IsDeleted, command.CategoryId);
+                secondTransaction.Edit(command.TransferAccountId.Value, TransactionType.Income, command.TransferAmount.Value, command.TransferDate.Value, command.Name, command.Comment, user.Id, command.IsDeleted, command.CategoryId, command.Latitude, command.Longitude);
                 await this.transactionRepository.UpdateAsync(firstTransaction);
 
                 transfer.SetRate(command.Rate.Value);
@@ -211,7 +211,7 @@ namespace BudgetUnderControl.Infrastructure.Services
                     amount = command.Amount;
                 }
 
-                firstTransaction.Edit(command.AccountId, command.ExtendedType.ToTransactionType(), amount, command.Date, command.Name, command.Comment, user.Id, command.IsDeleted, command.CategoryId);
+                firstTransaction.Edit(command.AccountId, command.ExtendedType.ToTransactionType(), amount, command.Date, command.Name, command.Comment, user.Id, command.IsDeleted, command.CategoryId, command.Latitude, command.Longitude);
                 await this.transactionRepository.UpdateAsync(firstTransaction);
             }
         }

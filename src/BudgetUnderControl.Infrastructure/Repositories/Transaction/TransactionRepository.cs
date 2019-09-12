@@ -124,6 +124,19 @@ namespace BudgetUnderControl.Infrastructure
                 query = query.Where(q => q.Account.OwnerId == userIdentityContext.UserId).AsQueryable();
             }
 
+            if (filter != null && filter.CategoryIds != null && filter.CategoryIds.Any())
+            {
+                query = query.Where(q => filter.CategoryIds.Contains(q.CategoryId)).AsQueryable();
+            }
+
+            if (filter != null && filter.TagIds != null && filter.TagIds.Any())
+            {
+                query = (from transaction in query
+                         join t2t in this.Context.TagsToTransactions on transaction.Id equals t2t.TransactionId
+                         where filter.TagIds.Contains(t2t.TagId)
+                         select transaction).AsQueryable();
+            }
+
 
             if (filter != null)
             {

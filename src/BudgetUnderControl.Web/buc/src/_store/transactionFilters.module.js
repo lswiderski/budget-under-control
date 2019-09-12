@@ -4,7 +4,9 @@ export const transactionFilters = {
     state: {
         fromDate: null,
         toDate: null,
-        accountsIds: []
+        accountsIds: [],
+        categoryIds: [],
+        tagIds: [],
     },
     actions: {
         setFrom({ commit }, date ){
@@ -15,6 +17,12 @@ export const transactionFilters = {
         },
         setAccountsIds({ commit }, ids ){
             commit('setAccountsIds', ids);
+        },
+        setCategoryIds({ commit }, ids ){
+            commit('setCategoryIds', ids);
+        },
+        setTagIds({ commit }, ids ){
+            commit('setTagIds', ids);
         }
     },
     mutations: {
@@ -26,6 +34,12 @@ export const transactionFilters = {
         },
         setAccountsIds(state, ids) {
             state.accountsIds = ids;
+        },
+        setCategoryIds(state, ids) {
+            state.categoryIds = ids;
+        },
+        setTagIds(state, ids) {
+            state.tagIds = ids;
         }
        
     }

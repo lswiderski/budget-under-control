@@ -57,6 +57,32 @@
                         persistent-hint
                       ></v-select>
                     </v-col>
+                    <v-col cols="4" md="2">
+                      <v-select
+                        v-model="categoryIds"
+                        :items="categories"
+                        item-text="name"
+                        item-value="id"
+                        label="Categories"
+                        multiple
+                        chips
+                        hint="include all if empty"
+                        persistent-hint
+                      ></v-select>
+                    </v-col>
+                    <v-col cols="4" md="2">
+                      <v-select
+                        v-model="tagIds"
+                        :items="tags"
+                        item-text="name"
+                        item-value="id"
+                        label="Tags"
+                        multiple
+                        chips
+                        hint="include all if empty"
+                        persistent-hint
+                      ></v-select>
+                    </v-col>
                     </v-row>
                     </div>
 </template>
@@ -93,8 +119,28 @@ export default {
                     this.$store.dispatch("transactions/getAll",this.$store.state.transactionFilters);
             }
         },
+        categoryIds: {
+            get: function () {return this.$store.state.transactionFilters.categoryIds },
+            set: function (value){
+                    this.$store.dispatch("transactionFilters/setCategoryIds", value);
+                    this.$store.dispatch("transactions/getAll",this.$store.state.transactionFilters);
+            }
+        },
+        tagIds: {
+            get: function () {return this.$store.state.transactionFilters.tagIds },
+            set: function (value){
+                    this.$store.dispatch("transactionFilters/setTagIds", value);
+                    this.$store.dispatch("transactions/getAll",this.$store.state.transactionFilters);
+            }
+        },
         accounts() {
       return this.$store.state.accounts.accounts.items;
+    },
+        categories() {
+      return this.$store.state.categories.categories.items;
+    },
+        tags() {
+      return this.$store.state.tags.tags.items;
     },
     },
     created () {
@@ -105,6 +151,8 @@ export default {
          this.$store.dispatch("transactionFilters/setFrom", firstDay.toISOString().substr(0, 10));
          this.$store.dispatch("transactionFilters/setTo", lastDay.toISOString().substr(0, 10));
          this.$store.dispatch("accounts/getAll");
+          this.$store.dispatch("categories/getAll");
+           this.$store.dispatch("tags/getAll");
     },
     methods: {
     }

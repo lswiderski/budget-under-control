@@ -23,7 +23,8 @@ namespace BudgetUnderControl.Common.Contracts
         public DateTime CreatedOn { get; set; }
         public DateTime? ModifiedOn { get; set; }
         public List<TagDTO> Tags {get;set;}
-
+        public int? CategoryId { get; set; }
+        public string Category { get; set; }
         public DateTime JustDate {
             get
             {

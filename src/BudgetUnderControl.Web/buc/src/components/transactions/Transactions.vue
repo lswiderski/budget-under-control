@@ -305,6 +305,7 @@ export default {
       { text: "Name", value: "name" },
       { text: "Value", value: "value" },
       { text: "Currency", value: "currencyCode" },
+      { text: "Category", value: "category" },
       { text: "Tags", value: "tags" },
       { text: "Actions", sortable: false, value: "action" }
     ]

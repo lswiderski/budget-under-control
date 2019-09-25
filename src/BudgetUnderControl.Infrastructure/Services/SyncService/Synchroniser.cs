@@ -213,7 +213,7 @@ namespace BudgetUnderControl.Infrastructure.Services
                 {
                     var toTransferId = (await this.transactionRepository.GetTransactionAsync(transfer.ToTransactionExternalId)).Id;
                     var fromTransferId = (await this.transactionRepository.GetTransactionAsync(transfer.FromTransactionExternalId)).Id;
-                    var transferToAdd = Transfer.Create(toTransferId, fromTransferId, transfer.Rate, transfer.ExternalId);
+                    var transferToAdd = Transfer.Create(fromTransferId, toTransferId, transfer.Rate, transfer.ExternalId);
                     transferToAdd.Delete(transfer.IsDeleted);
                     transferToAdd.SetModifiedOn(transfer.ModifiedOn);
                     await this.transactionRepository.AddTransferAsync(transferToAdd);

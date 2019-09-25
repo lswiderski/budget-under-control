@@ -7,7 +7,7 @@
       id="transactionsTable"
       :headers="headers"
       :items="transactions.items"
-      :items-per-page="5"
+      :items-per-page="50"
     >
       <template v-slot:item.id="{ item }">
         <div class="handle" style="max-width: 28px;">::</div>
@@ -197,9 +197,9 @@
                       ></v-select>
                     </v-col>
                     <v-col cols="12" md="6" v-if="editedItem.type === 2">
-                      <v-text-field v-model="editedItem.transferAmount" label="Transfer Amount"></v-text-field>
+                      <v-text-field v-model="editedItem.transferAmount" label="Transfer Amount" @change="transferAmountChanged"></v-text-field>
                     </v-col>
-                    <v-col cols="12" md="6" v-if="editedItem.type === 2">
+                    <v-col cols="12" md="6" v-if="editedItem.type === 2 && isTransferInOtherCurrency">
                       <v-text-field v-model="editedItem.rate" label="Rate"></v-text-field>
                     </v-col>
 
@@ -322,6 +322,11 @@ export default {
     },
     formTitle() {
       return this.editedIndex === -1 ? "New Transaction" : "Edit Transaction";
+    },
+    isTransferInOtherCurrency(){
+      let accountIndex = this.getAccountIndex(this.editedItem.accountId);
+      let transferAccountIndex = this.getAccountIndex(this.editedItem.transferAccountId);
+      return transferAccountIndex > -1 && this.accounts[accountIndex].currencyId != this.accounts[transferAccountIndex].currencyId;
     }
   },
   created() {
@@ -360,10 +365,24 @@ export default {
       let dto = Object.assign({}, data);
       dto.date = new Date(dto.date + " " + dto.time);
       dto.transferDate = new Date(dto.transferDate + " " + dto.transferTime);
+      if(dto.amount > 0){
+          dto.amount *= (-1);
+      }
+
+      if(dto.transferAmount < 0){
+          dto.transferAmount *= (-1);
+      }
       return dto;
     },
     mapAPIDTOToEditDTO(data) {
       let dto = Object.assign({}, data);
+      dto.type = dto.extendedType;
+      dto.amount = Math.abs(dto.amount);
+      if(dto.transferAmount != null)
+      {
+         dto.transferAmount = Math.abs(dto.transferAmount);
+      }
+      
       dto.time =
         new Date(dto.date).getHours() + ":" + new Date(dto.date).getMinutes();
       dto.date = new Date(dto.date).toISOString().substr(0, 10);
@@ -373,6 +392,25 @@ export default {
         new Date(dto.transferDate).getMinutes();
       dto.transferDate = new Date(dto.transferDate).toISOString().substr(0, 10);
       return dto;
+    },
+    getAccountIndex(accountId){
+          for (let i = 0; i < this.accounts.length; i++)
+            {
+                if (this.accounts[i].id == accountId)
+                {
+                    return i;
+                }
+            }
+
+            return -1;
+    },
+
+    transferAmountChanged(e){
+      if(this.editedItem.transferAmount != 0 && this.editedItem.transferAmount != "0")
+      {
+        this.editedItem.rate = this.editedItem.amount / this.editedItem.transferAmount ; 
+      }
+     
     },
     close() {
       this.dialog = false;

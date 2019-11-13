@@ -3,27 +3,25 @@ using System;
 using BudgetUnderControl.Domain;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
-using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
-namespace BudgetUnderControl.Migrations.SqlServer.Migrations
+namespace Migrations.Migrations
 {
     [DbContext(typeof(Context))]
-    partial class ContextModelSnapshot : ModelSnapshot
+    [Migration("20191113002616_currencies")]
+    partial class currencies
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "2.1.11-servicing-32099")
-                .HasAnnotation("Relational:MaxIdentifierLength", 128)
-                .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+                .HasAnnotation("ProductVersion", "2.1.4-rtm-31024");
 
             modelBuilder.Entity("BudgetUnderControl.Domain.Account", b =>
                 {
                     b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+                        .ValueGeneratedOnAdd();
 
                     b.Property<int>("AccountGroupId");
 
@@ -66,8 +64,7 @@ namespace BudgetUnderControl.Migrations.SqlServer.Migrations
             modelBuilder.Entity("BudgetUnderControl.Domain.AccountGroup", b =>
                 {
                     b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+                        .ValueGeneratedOnAdd();
 
                     b.Property<Guid>("ExternalId");
 
@@ -90,8 +87,7 @@ namespace BudgetUnderControl.Migrations.SqlServer.Migrations
             modelBuilder.Entity("BudgetUnderControl.Domain.AccountSnapshot", b =>
                 {
                     b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+                        .ValueGeneratedOnAdd();
 
                     b.Property<int>("AccountId");
 
@@ -121,8 +117,7 @@ namespace BudgetUnderControl.Migrations.SqlServer.Migrations
             modelBuilder.Entity("BudgetUnderControl.Domain.Category", b =>
                 {
                     b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+                        .ValueGeneratedOnAdd();
 
                     b.Property<Guid>("ExternalId");
 
@@ -147,8 +142,7 @@ namespace BudgetUnderControl.Migrations.SqlServer.Migrations
             modelBuilder.Entity("BudgetUnderControl.Domain.Currency", b =>
                 {
                     b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+                        .ValueGeneratedOnAdd();
 
                     b.Property<string>("Code")
                         .HasMaxLength(3);
@@ -169,8 +163,7 @@ namespace BudgetUnderControl.Migrations.SqlServer.Migrations
             modelBuilder.Entity("BudgetUnderControl.Domain.ExchangeRate", b =>
                 {
                     b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+                        .ValueGeneratedOnAdd();
 
                     b.Property<DateTime>("Date");
 
@@ -192,8 +185,7 @@ namespace BudgetUnderControl.Migrations.SqlServer.Migrations
             modelBuilder.Entity("BudgetUnderControl.Domain.File", b =>
                 {
                     b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+                        .ValueGeneratedOnAdd();
 
                     b.Property<string>("FileName");
 
@@ -205,8 +197,7 @@ namespace BudgetUnderControl.Migrations.SqlServer.Migrations
             modelBuilder.Entity("BudgetUnderControl.Domain.Icon", b =>
                 {
                     b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+                        .ValueGeneratedOnAdd();
 
                     b.Property<int>("FileId");
 
@@ -238,8 +229,7 @@ namespace BudgetUnderControl.Migrations.SqlServer.Migrations
             modelBuilder.Entity("BudgetUnderControl.Domain.Tag", b =>
                 {
                     b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+                        .ValueGeneratedOnAdd();
 
                     b.Property<Guid>("ExternalId");
 
@@ -262,8 +252,7 @@ namespace BudgetUnderControl.Migrations.SqlServer.Migrations
             modelBuilder.Entity("BudgetUnderControl.Domain.TagToTransaction", b =>
                 {
                     b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+                        .ValueGeneratedOnAdd();
 
                     b.Property<int>("TagId");
 
@@ -281,8 +270,7 @@ namespace BudgetUnderControl.Migrations.SqlServer.Migrations
             modelBuilder.Entity("BudgetUnderControl.Domain.Transaction", b =>
                 {
                     b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+                        .ValueGeneratedOnAdd();
 
                     b.Property<int>("AccountId");
 
@@ -326,8 +314,7 @@ namespace BudgetUnderControl.Migrations.SqlServer.Migrations
             modelBuilder.Entity("BudgetUnderControl.Domain.Transfer", b =>
                 {
                     b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+                        .ValueGeneratedOnAdd();
 
                     b.Property<Guid>("ExternalId");
 
@@ -353,8 +340,7 @@ namespace BudgetUnderControl.Migrations.SqlServer.Migrations
             modelBuilder.Entity("BudgetUnderControl.Domain.User", b =>
                 {
                     b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+                        .ValueGeneratedOnAdd();
 
                     b.Property<DateTime>("CreatedAt");
 

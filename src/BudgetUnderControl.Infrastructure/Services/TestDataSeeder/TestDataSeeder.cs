@@ -1,5 +1,6 @@
 ﻿using BudgetUnderControl.Common.Enums;
-using BudgetUnderControl.Infrastructure.Commands;
+using BudgetUnderControl.CommonInfrastructure;
+using BudgetUnderControl.CommonInfrastructure.Commands;
 using System;
 using System.Collections.Generic;
 using System.Linq;

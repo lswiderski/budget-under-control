@@ -2,11 +2,11 @@
 using BudgetUnderControl.Common;
 using BudgetUnderControl.Common.Contracts;
 using BudgetUnderControl.Common.Enums;
-using BudgetUnderControl.Domain;
-using BudgetUnderControl.Domain.Repositiories;
-using BudgetUnderControl.Infrastructure.Commands;
-using BudgetUnderControl.Infrastructure.Services;
-using BudgetUnderControl.Infrastructure.Settings;
+using BudgetUnderControl.MobileDomain;
+using BudgetUnderControl.MobileDomain.Repositiories;
+using BudgetUnderControl.CommonInfrastructure.Commands;
+using BudgetUnderControl.CommonInfrastructure;
+using BudgetUnderControl.CommonInfrastructure.Settings;
 using BudgetUnderControl.Mobile.Keys;
 using BudgetUnderControl.Views;
 using Newtonsoft.Json;

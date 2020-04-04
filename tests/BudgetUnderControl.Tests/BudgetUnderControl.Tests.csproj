@@ -20,7 +20,7 @@
   <ItemGroup>
     <ProjectReference Include="..\..\src\BudgetUnderControl.Common\BudgetUnderControl.Common.csproj" />
     <ProjectReference Include="..\..\src\BudgetUnderControl.Domain\BudgetUnderControl.Domain.csproj" />
-    <ProjectReference Include="..\..\src\BudgetUnderControl.Infrastructure\BudgetUnderControl.Infrastructure.csproj" />
+    <ProjectReference Include="..\..\src\BudgetUnderControl.Infrastructure\BudgetUnderControl.ApiInfrastructure.csproj" />
   </ItemGroup>
 
 </Project>

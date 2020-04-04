@@ -109,13 +109,13 @@
     <AndroidResource Include="Resources\values\styles.xml" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\..\BudgetUnderControl.Commands\BudgetUnderControl.CommonInfrastructure.csproj">
+      <Project>{e24deaa2-0fd4-4d9e-bbce-82ec36433075}</Project>
+      <Name>BudgetUnderControl.CommonInfrastructure</Name>
+    </ProjectReference>
     <ProjectReference Include="..\..\BudgetUnderControl.Common\BudgetUnderControl.Common.csproj">
       <Project>{1dd8730a-719c-4cee-a54d-aa1e5d6d2c84}</Project>
       <Name>BudgetUnderControl.Common</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\BudgetUnderControl.Infrastructure\BudgetUnderControl.Infrastructure.csproj">
-      <Project>{87755B9F-917A-43D7-80E4-1CE9E813B660}</Project>
-      <Name>BudgetUnderControl.Infrastructure</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\Database\BudgetUnderControl.Migrations.SQLite\BudgetUnderControl.Migrations.SQLite.csproj">
       <Project>{bcd5202a-0dd5-4e05-8d54-305980336ddf}</Project>

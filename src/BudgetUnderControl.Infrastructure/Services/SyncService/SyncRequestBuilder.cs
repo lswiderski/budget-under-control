@@ -1,14 +1,15 @@
 ﻿using BudgetUnderControl.Common.Contracts;
 using BudgetUnderControl.Common.Enums;
 using BudgetUnderControl.Domain.Repositiories;
-using BudgetUnderControl.Infrastructure.Commands;
-using BudgetUnderControl.Infrastructure.Settings;
+using BudgetUnderControl.CommonInfrastructure.Commands;
+using BudgetUnderControl.CommonInfrastructure.Settings;
 using NLog;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using BudgetUnderControl.CommonInfrastructure;
 
 namespace BudgetUnderControl.Infrastructure.Services
 {

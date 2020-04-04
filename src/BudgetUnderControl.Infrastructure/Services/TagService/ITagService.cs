@@ -1,5 +1,5 @@
 ﻿using BudgetUnderControl.Common.Contracts;
-using BudgetUnderControl.Infrastructure.Commands;
+using BudgetUnderControl.CommonInfrastructure.Commands;
 using System;
 using System.Collections.Generic;
 using System.Text;

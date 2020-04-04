@@ -6,7 +6,6 @@ using BudgetUnderControl.Views;
 
 using Autofac.Extras.CommonServiceLocator;
 using CommonServiceLocator;
-using BudgetUnderControl.Infrastructure.IoC;
 using Microsoft.Extensions.Configuration;
 using BudgetUnderControl.Mobile.IoC;
 
@@ -67,7 +66,6 @@ namespace BudgetUnderControl
             var builder = new ContainerBuilder();
 
             // Register services
-            builder.RegisterModule<InfrastructureModule>();
             builder.RegisterModule<MobileModule>();
 
             App.Container = builder.Build();

@@ -1,4 +1,4 @@
-﻿using BudgetUnderControl.Infrastructure.Commands;
+﻿using BudgetUnderControl.CommonInfrastructure.Commands;
 using BudgetUnderControl.Mobile.Services;
 using BudgetUnderControl.Views;
 using System;

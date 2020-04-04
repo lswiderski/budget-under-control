@@ -3,14 +3,15 @@ using BudgetUnderControl.Common.Contracts;
 using BudgetUnderControl.Common.Enums;
 using BudgetUnderControl.Domain;
 using BudgetUnderControl.Domain.Repositiories;
-using BudgetUnderControl.Infrastructure.Commands;
-using BudgetUnderControl.Infrastructure.Settings;
+using BudgetUnderControl.CommonInfrastructure.Commands;
+using BudgetUnderControl.CommonInfrastructure.Settings;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Transactions;
+using BudgetUnderControl.CommonInfrastructure;
 
 namespace BudgetUnderControl.Infrastructure.Services
 {

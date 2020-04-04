@@ -88,7 +88,7 @@ namespace BudgetUnderControl.API
             // Initialize Autofac builder
             var builder = new ContainerBuilder();          
 
-            builder.RegisterModule<InfrastructureModule>();
+            builder.RegisterModule<ApiInfrastructureModule>();
             //builder.RegisterModule<ApiModule>();
             builder.RegisterModule(new ApiModule(Configuration));
             builder.Populate(services);

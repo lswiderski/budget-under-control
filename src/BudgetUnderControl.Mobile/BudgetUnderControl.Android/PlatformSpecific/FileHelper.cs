@@ -1,8 +1,6 @@
-﻿
-using Android.Content;
+﻿using Android.Content;
 using Android.Content.Res;
 using BudgetUnderControl.Droid;
-using BudgetUnderControl.Infrastructure.Settings;
 using BudgetUnderControl.Mobile;
 using System;
 using System.IO;

@@ -1,5 +1,6 @@
 ﻿using BudgetUnderControl.Common.Extensions;
-using BudgetUnderControl.Infrastructure.Settings;
+using BudgetUnderControl.CommonInfrastructure.Commands;
+using BudgetUnderControl.CommonInfrastructure.Settings;
 using Microsoft.IdentityModel.Tokens;
 using System;
 using System.Collections.Generic;

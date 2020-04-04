@@ -50,10 +50,10 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\BudgetUnderControl.Commands\BudgetUnderControl.CommonInfrastructure.csproj" />
     <ProjectReference Include="..\BudgetUnderControl.Common\BudgetUnderControl.Common.csproj" />
     <ProjectReference Include="..\BudgetUnderControl.Domain\BudgetUnderControl.Domain.csproj" />
-    <ProjectReference Include="..\BudgetUnderControl.Infrastructure\BudgetUnderControl.Infrastructure.csproj" />
-    <ProjectReference Include="..\Database\BudgetUnderControl.Migrations.SQLite\BudgetUnderControl.Migrations.SQLite.csproj" />
+    <ProjectReference Include="..\BudgetUnderControl.Infrastructure\BudgetUnderControl.ApiInfrastructure.csproj" />
     <ProjectReference Include="..\Database\BudgetUnderControl.Migrations.SqlServer\BudgetUnderControl.Migrations.SqlServer.csproj" />
   </ItemGroup>
 

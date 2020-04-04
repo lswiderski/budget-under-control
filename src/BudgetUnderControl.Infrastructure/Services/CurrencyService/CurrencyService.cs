@@ -1,7 +1,7 @@
 ﻿using BudgetUnderControl.Common.Contracts;
 using BudgetUnderControl.Domain;
 using BudgetUnderControl.Domain.Repositiories;
-using BudgetUnderControl.Infrastructure.Commands;
+using BudgetUnderControl.CommonInfrastructure.Commands;
 using BudgetUnderControl.Infrastructure.Services;
 using System;
 using System.Collections.Generic;

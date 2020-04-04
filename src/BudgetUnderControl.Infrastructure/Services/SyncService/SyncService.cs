@@ -208,6 +208,7 @@ namespace BudgetUnderControl.Infrastructure.Services
         {
             var user = await userRepository.GetFirstUserAsync();
             accountsMap = new Dictionary<int, int>();
+            
             foreach (var item in accounts)
             {
                 var account = Account.Create(item.Name, item.CurrencyId, item.AccountGroupId, item.IsIncludedToTotal, item.Comment, item.Order, item.Type, item.ParentAccountId, true, user.Id, item.ExternalId);

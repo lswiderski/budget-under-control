@@ -102,6 +102,8 @@ namespace BudgetUnderControl.Infrastructure.Services
                     ModifiedOn = x.ModifiedOn,
                     Type = x.Type,
                     IsDeleted = x.IsDeleted,
+                    Latitude = x.Latitude,
+                    Longitude = x.Longitude,
                     Tags = x.TagsToTransaction.Select(y => new TagSyncDTO
                     {
                         ExternalId = y.Tag.ExternalId,

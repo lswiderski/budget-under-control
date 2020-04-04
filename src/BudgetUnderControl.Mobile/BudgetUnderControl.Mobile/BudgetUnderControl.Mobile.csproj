@@ -16,7 +16,7 @@
     <PackageReference Include="NLog" Version="4.5.11" />
     <PackageReference Include="Xam.Plugins.Notifier" Version="3.0.1" />
     <PackageReference Include="Xamarin.Essentials" Version="1.3.0" />
-    <PackageReference Include="Xamarin.Forms" Version="3.4.0.1008975" />
+    <PackageReference Include="Xamarin.Forms" Version="4.5.0.530" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\BudgetUnderControl.Common\BudgetUnderControl.Common.csproj" />

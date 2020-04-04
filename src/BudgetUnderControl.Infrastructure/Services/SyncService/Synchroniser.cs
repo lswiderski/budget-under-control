@@ -211,12 +211,15 @@ namespace BudgetUnderControl.Infrastructure.Services
                 }
                 else
                 {
-                    var toTransferId = (await this.transactionRepository.GetTransactionAsync(transfer.ToTransactionExternalId)).Id;
-                    var fromTransferId = (await this.transactionRepository.GetTransactionAsync(transfer.FromTransactionExternalId)).Id;
-                    var transferToAdd = Transfer.Create(fromTransferId, toTransferId, transfer.Rate, transfer.ExternalId);
-                    transferToAdd.Delete(transfer.IsDeleted);
-                    transferToAdd.SetModifiedOn(transfer.ModifiedOn);
-                    await this.transactionRepository.AddTransferAsync(transferToAdd);
+                    var toTransferId = (await this.transactionRepository.GetTransactionAsync(transfer.ToTransactionExternalId))?.Id;
+                    var fromTransferId = (await this.transactionRepository.GetTransactionAsync(transfer.FromTransactionExternalId))?.Id;
+                    if(toTransferId != null && fromTransferId != null)
+                    {
+                        var transferToAdd = Transfer.Create(fromTransferId.Value, toTransferId.Value, transfer.Rate, transfer.ExternalId);
+                        transferToAdd.Delete(transfer.IsDeleted);
+                        transferToAdd.SetModifiedOn(transfer.ModifiedOn);
+                        await this.transactionRepository.AddTransferAsync(transferToAdd);
+                    }
                 }
             }
         }

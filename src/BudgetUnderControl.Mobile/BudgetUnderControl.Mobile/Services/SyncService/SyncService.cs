@@ -86,7 +86,7 @@ namespace BudgetUnderControl.Mobile.Services
             var accounts = (await this.accountRepository.GetAccountsAsync()).Select(x => new AccountSyncDTO
             {
                 Id = x.Id,
-                ExternalId = x.ExternalId,
+                ExternalId = Guid.Parse(x.ExternalId),
                 AccountGroupId = x.AccountGroupId,
                 Comment = x.Comment,
                 CurrencyId = x.CurrencyId,
@@ -103,7 +103,7 @@ namespace BudgetUnderControl.Mobile.Services
                 FromTransactionId = x.FromTransactionId,
                 Rate = x.Rate,
                 ToTransactionId = x.ToTransactionId,
-                ExternalId = x.ExternalId,
+                ExternalId = Guid.Parse(x.ExternalId),
             }).ToList();
 
             var transactions = (await this.transactionRepository.GetTransactionsAsync()).Select(x => new TransactionSyncDTO
@@ -116,7 +116,7 @@ namespace BudgetUnderControl.Mobile.Services
                 CreatedOn = x.CreatedOn,
                 Date = x.Date,
                 Id = x.Id,
-                ExternalId = x.ExternalId,
+                ExternalId = Guid.Parse(x.ExternalId),
                 ModifiedOn = x.ModifiedOn,
                 Type = x.Type,
                 Latitude = x.Latitude,
@@ -128,7 +128,7 @@ namespace BudgetUnderControl.Mobile.Services
                 .Select(x => new TagSyncDTO
                 {
                     Id = x.Id,
-                    ExternalId = x.ExternalId,
+                    ExternalId = Guid.Parse(x.ExternalId),
                     Name = x.Name,
                     ModifiedOn = x.ModifiedOn,
                     IsDeleted = x.IsDeleted
@@ -138,8 +138,8 @@ namespace BudgetUnderControl.Mobile.Services
                 .Select(x => new TagToTransactionSyncDTO
                 {
                     Id = x.Id,
-                    TagId = x.Tag.ExternalId,
-                    TransactionId = x.Transaction.ExternalId,
+                    TagId = Guid.Parse(x.Tag.ExternalId),
+                    TransactionId = Guid.Parse(x.Transaction.ExternalId),
                 }).ToList();
 
             var backUp = new BackUpDTO
@@ -212,7 +212,7 @@ namespace BudgetUnderControl.Mobile.Services
             
             foreach (var item in accounts)
             {
-                var account = Account.Create(item.Name, item.CurrencyId, item.AccountGroupId, item.IsIncludedToTotal, item.Comment, item.Order, item.Type, item.ParentAccountId, true, user.Id, item.ExternalId);
+                var account = Account.Create(item.Name, item.CurrencyId, item.AccountGroupId, item.IsIncludedToTotal, item.Comment, item.Order, item.Type, item.ParentAccountId, true, user.Id, item.ExternalId?.ToString());
                 await this.accountRepository.AddAccountAsync(account);
 
                 accountsMap.Add(item.Id, account.Id);
@@ -251,7 +251,7 @@ namespace BudgetUnderControl.Mobile.Services
                 {
                     categoryId = item.CategoryId;
                 }
-                var transaction = MobileDomain.Transaction.Create(accountsMap[item.AccountId], item.Type, item.Amount, item.Date, item.Name, item.Comment, user.Id, item.IsDeleted, categoryId, item.ExternalId, item.Latitude, item.Longitude);
+                var transaction = MobileDomain.Transaction.Create(accountsMap[item.AccountId], item.Type, item.Amount, item.Date, item.Name, item.Comment, user.Id, item.IsDeleted, categoryId, item.ExternalId?.ToString(), item.Latitude, item.Longitude);
                 transaction.SetCreatedOn(item.CreatedOn);
                 transaction.SetModifiedOn(item.ModifiedOn);
                 tempTransactionsMap.Add(item.Id, transaction);
@@ -268,7 +268,7 @@ namespace BudgetUnderControl.Mobile.Services
             {
                 if(transactionsMap.ContainsKey(item.FromTransactionId) && transactionsMap.ContainsKey(item.ToTransactionId))
                 {
-                    var transfer = Transfer.Create(transactionsMap[item.FromTransactionId], transactionsMap[item.ToTransactionId], item.Rate, item.ExternalId);
+                    var transfer = Transfer.Create(transactionsMap[item.FromTransactionId], transactionsMap[item.ToTransactionId], item.Rate, item.ExternalId?.ToString());
                     await this.transactionRepository.AddTransferAsync(transfer);
                 }
             }
@@ -279,7 +279,7 @@ namespace BudgetUnderControl.Mobile.Services
             var user = await userRepository.GetFirstUserAsync();
             foreach (var item in tags)
             {
-                var tag = Tag.Create(item.Name, user.Id, item.IsDeleted, item.ExternalId);
+                var tag = Tag.Create(item.Name, user.Id, item.IsDeleted, item.ExternalId.ToString());
                 tag.SetModifiedOn(item.ModifiedOn);
                 await this.tagRepository.AddAsync(tag);
             }
@@ -287,8 +287,8 @@ namespace BudgetUnderControl.Mobile.Services
 
         private async Task ImportTagsToTransactionsAsync(List<TagToTransactionSyncDTO> t2ts)
         {
-            var tagIds = t2ts.Select(x => x.TagId).ToList();
-            var transactionIds = t2ts.Select(x => x.TransactionId).ToList();
+            var tagIds = t2ts.Select(x => x.TagId.ToString()).ToList();
+            var transactionIds = t2ts.Select(x => x.TransactionId.ToString()).ToList();
             var tags = (await this.tagRepository.GetAsync(tagIds))
                 .ToDictionary(x => x.ExternalId, x => x);
             var transactions = (await this.transactionRepository.GetTransactionsAsync())
@@ -299,8 +299,8 @@ namespace BudgetUnderControl.Mobile.Services
             {
                 var t2t = new TagToTransaction
                 {
-                    Tag = tags[item.TagId],
-                    Transaction = transactions[item.TransactionId],
+                    Tag = tags[item.TagId.ToString()],
+                    Transaction = transactions[item.TransactionId.ToString()],
                 };
 
                 await this.tagRepository.AddAsync(t2t);

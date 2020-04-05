@@ -104,7 +104,7 @@ namespace BudgetUnderControl.Mobile.ViewModels
         public async Task LoadTagAsync(Guid tagId)
         {
             externalId = tagId;
-            SelectedTag = await tagService.GetTagAsync(tagId);
+            SelectedTag = await tagService.GetTagAsync(tagId.ToString());
             Name = SelectedTag.Name;
             IsDeleted = SelectedTag.IsDeleted;
         }

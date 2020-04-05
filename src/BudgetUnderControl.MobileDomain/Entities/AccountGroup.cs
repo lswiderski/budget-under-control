@@ -18,19 +18,19 @@ namespace BudgetUnderControl.MobileDomain
 
         public int OwnerId { get; protected set; }
         public DateTime? ModifiedOn { get; protected set; }
-        public Guid ExternalId { get; protected set; }
+        public string ExternalId { get; protected set; }
         public bool IsDeleted { get; protected set; }
 
         public virtual User Owner { get; set; }
         public List<Account> Accounts { get; set; }
 
-        public static AccountGroup Create(string name, int ownerId, Guid? externalId)
+        public static AccountGroup Create(string name, int ownerId, string externalId)
         {
             return new AccountGroup
             {
                 Name = name,
                 OwnerId = ownerId,
-                ExternalId = externalId ?? Guid.NewGuid(),
+                ExternalId = !string.IsNullOrEmpty(externalId) ? externalId : Guid.NewGuid().ToString(),
                 ModifiedOn = DateTime.UtcNow,
                 IsDeleted = false,
             };

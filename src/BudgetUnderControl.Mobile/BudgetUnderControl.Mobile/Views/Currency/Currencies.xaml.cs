@@ -1,7 +1,5 @@
 ﻿using Autofac;
-using BudgetUnderControl.Domain.Repositiories;
-using BudgetUnderControl.Infrastructure;
-using BudgetUnderControl.Infrastructure.Services;
+using BudgetUnderControl.Mobile.Services;
 using BudgetUnderControl.Mobile.Views;
 using System;
 using System.Collections.Generic;

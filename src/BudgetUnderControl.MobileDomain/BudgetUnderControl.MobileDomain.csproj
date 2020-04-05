@@ -18,7 +18,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\src\BudgetUnderControl.Common\BudgetUnderControl.Common.csproj" />
+    <ProjectReference Include="..\BudgetUnderControl.Common\BudgetUnderControl.Common.csproj" />
   </ItemGroup>
 
 </Project>

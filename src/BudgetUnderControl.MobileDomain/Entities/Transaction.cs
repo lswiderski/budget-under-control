@@ -20,7 +20,7 @@ namespace BudgetUnderControl.MobileDomain
         public string Comment { get; protected set; }
         public DateTime CreatedOn { get; protected set; }
         public DateTime? ModifiedOn { get; protected set; }
-        public Guid ExternalId { get; protected set; }
+        public string ExternalId { get; protected set; }
         public int AddedById { get; protected set; }
         public bool IsDeleted { get; protected set; }
         public double? Latitude { get; set; }
@@ -44,7 +44,7 @@ namespace BudgetUnderControl.MobileDomain
         {
         }
         
-        public static Transaction Create(int accountId, TransactionType type, decimal amount, DateTime date, string name, string comment, int addedById, bool isDeleted, int? categoryId = null, Guid? guid = null, double? latitude = null, double? longitude = null)
+        public static Transaction Create(int accountId, TransactionType type, decimal amount, DateTime date, string name, string comment, int addedById, bool isDeleted, int? categoryId = null, string guid = null, double? latitude = null, double? longitude = null)
         {
             return new Transaction()
             {
@@ -56,7 +56,7 @@ namespace BudgetUnderControl.MobileDomain
                 Comment = comment,
                 CategoryId = categoryId,
                 CreatedOn = DateTime.UtcNow,
-                ExternalId = guid ?? Guid.NewGuid(),
+                ExternalId = !string.IsNullOrEmpty(guid) ? guid : Guid.NewGuid().ToString(),
                 AddedById = addedById,
                 IsDeleted = isDeleted,
                 ModifiedOn = DateTime.UtcNow,

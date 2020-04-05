@@ -470,7 +470,7 @@ namespace BudgetUnderControl.ViewModel
 
         public async Task AddTagAsync(Guid tagId)
         {
-            var tag = await this.tagService.GetTagAsync(tagId);
+            var tag = await this.tagService.GetTagAsync(tagId.ToString());
             if (Tags.All(x => x.Id != tag.Id))
             {
                 this.Tags.Add(tag);

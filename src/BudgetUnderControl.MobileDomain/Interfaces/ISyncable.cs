@@ -7,7 +7,7 @@ namespace BudgetUnderControl.MobileDomain
     public interface ISyncable
     {
         DateTime? ModifiedOn { get; }
-        Guid ExternalId { get; }
+        string ExternalId { get; }
         bool IsDeleted { get; }
 
         void UpdateModify();

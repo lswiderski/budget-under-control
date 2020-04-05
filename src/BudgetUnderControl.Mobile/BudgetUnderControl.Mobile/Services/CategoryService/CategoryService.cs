@@ -27,7 +27,7 @@ namespace BudgetUnderControl.Mobile.Services
             {
                 Id = x.Id,
                 Name = x.Name,
-                ExternalId = x.ExternalId
+                ExternalId = Guid.Parse(x.ExternalId)
             })
                .ToList();
 
@@ -36,13 +36,13 @@ namespace BudgetUnderControl.Mobile.Services
 
         public async Task<CategoryListItemDTO> GetCategoryAsync(Guid id)
         {
-            var category = await this.categoryRepository.GetCategoryAsync(id);
+            var category = await this.categoryRepository.GetCategoryAsync(id.ToString());
 
             var dto = new CategoryListItemDTO
             {
                 Id = category.Id,
                 Name = category.Name,
-                ExternalId = category.ExternalId
+                ExternalId = Guid.Parse(category.ExternalId)
             };
 
             return dto;

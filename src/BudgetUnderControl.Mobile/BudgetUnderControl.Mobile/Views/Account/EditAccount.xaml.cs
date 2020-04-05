@@ -1,5 +1,4 @@
 ﻿using Autofac;
-using BudgetUnderControl.Infrastructure;
 using BudgetUnderControl.ViewModel;
 using System;
 using System.Collections.Generic;

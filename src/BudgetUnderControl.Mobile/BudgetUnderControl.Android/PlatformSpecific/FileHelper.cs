@@ -11,7 +11,7 @@ namespace BudgetUnderControl.Droid
 {
     public class FileHelper : IFileHelper
     {
-        private string folderName = "BudgetUnderControlDEV";
+        private string folderName = "BudgetUnderControl";
 
         private Context _context = Android.App.Application.Context;
 

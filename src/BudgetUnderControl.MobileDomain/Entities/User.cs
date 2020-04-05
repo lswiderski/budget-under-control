@@ -20,7 +20,7 @@ namespace BudgetUnderControl.MobileDomain
         public string Salt { get; protected set; }
         public DateTime CreatedAt { get; protected set; }
         public DateTime? ModifiedOn { get; protected set; }
-        public Guid ExternalId { get; protected set; }
+        public string ExternalId { get; protected set; }
         public bool IsDeleted { get; protected set; }
 
         public List<Account> Accounts { get; protected set; }
@@ -38,7 +38,7 @@ namespace BudgetUnderControl.MobileDomain
             this.ModifiedOn = DateTime.UtcNow;
         }
 
-        public void EditExternalId(Guid newId)
+        public void EditExternalId(string newId)
         {
             this.ExternalId = newId;
             this.UpdateModify();

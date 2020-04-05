@@ -16,7 +16,7 @@ namespace BudgetUnderControl.MobileDomain
         public DateTime LastSyncAt { get; set; }
         public int UserId { get; set; }
         public SynchronizationComponent Component { get; set; }
-        public Guid ComponentId { get; set; }
+        public string ComponentId { get; set; }
         public virtual User User { get; set; }
     }
 }

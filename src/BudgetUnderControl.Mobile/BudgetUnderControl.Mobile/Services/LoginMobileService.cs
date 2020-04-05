@@ -1,13 +1,10 @@
 ﻿using Autofac;
-using BudgetUnderControl.Domain.Repositiories;
-using BudgetUnderControl.Infrastructure.Settings;
+using BudgetUnderControl.MobileDomain.Repositiories;
 using BudgetUnderControl.Mobile.Keys;
 using BudgetUnderControl.Views;
-using Microsoft.IdentityModel.Tokens;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
-using System.IdentityModel.Tokens.Jwt;
 using System.IO;
 using System.Linq;
 using System.Net.Http;
@@ -15,6 +12,9 @@ using System.Net.Http.Headers;
 using System.Text;
 using System.Threading.Tasks;
 using Xamarin.Essentials;
+using BudgetUnderControl.CommonInfrastructure.Settings;
+using System.IdentityModel.Tokens.Jwt;
+using Microsoft.IdentityModel.Tokens;
 
 namespace BudgetUnderControl.Mobile.Services
 {
@@ -65,7 +65,7 @@ namespace BudgetUnderControl.Mobile.Services
 
                 //set externalId
                 var user = await this.userRepository.GetFirstUserAsync();
-                user.EditExternalId(userId);
+                user.EditExternalId(userId.ToString());
                 await userRepository.UpdateUserAsync(user);
 
                 //sync

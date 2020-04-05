@@ -47,11 +47,11 @@ namespace Migrations.Migrations
                 name: "Synchronization",
                 columns: table => new
                 {
-                    Id = table.Column<Guid>(nullable: false),
+                    Id = table.Column<string>(nullable: false),
                     LastSyncAt = table.Column<DateTime>(nullable: false),
                     UserId = table.Column<int>(nullable: false),
                     Component = table.Column<byte>(nullable: false),
-                    ComponentId = table.Column<Guid>(nullable: false)
+                    ComponentId = table.Column<string>(nullable: false)
                 },
                 constraints: table =>
                 {

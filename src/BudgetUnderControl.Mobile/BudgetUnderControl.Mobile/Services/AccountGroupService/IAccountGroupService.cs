@@ -10,7 +10,7 @@ namespace BudgetUnderControl.Mobile.Services
     public interface IAccountGroupService
     {
         Task<ICollection<AccountGroupItemDTO>> GetAccountGroupsAsync();
-        Task<AccountGroupItemDTO> GetAccountGroupAsync(Guid id);
+        Task<AccountGroupItemDTO> GetAccountGroupAsync(string id);
         Task<bool> IsValidAsync(int id);
     }
 }

@@ -99,7 +99,7 @@ namespace BudgetUnderControl.Mobile.Services
                     CreatedOn = x.CreatedOn,
                     Date = x.Date,
                     Id = x.Id,
-                    ExternalId = x.ExternalId,
+                    ExternalId = Guid.Parse(x.ExternalId),
                     ModifiedOn = x.ModifiedOn,
                     Type = x.Type,
                     IsDeleted = x.IsDeleted,
@@ -107,7 +107,7 @@ namespace BudgetUnderControl.Mobile.Services
                     Longitude = x.Longitude,
                     Tags = x.TagsToTransaction.Select(y => new TagSyncDTO
                     {
-                        ExternalId = y.Tag.ExternalId,
+                        ExternalId = Guid.Parse(y.Tag.ExternalId),
                         Id = y.Tag.Id,
                         IsDeleted = y.Tag.IsDeleted,
                         ModifiedOn = y.Tag.ModifiedOn,
@@ -121,10 +121,10 @@ namespace BudgetUnderControl.Mobile.Services
 
             foreach (var transaction in transactions)
             {
-                transaction.AccountExternalId = accounts[transaction.AccountId];
+                transaction.AccountExternalId = Guid.Parse(accounts[transaction.AccountId]);
                 if (transaction.CategoryId.HasValue)
                 {
-                    transaction.CategoryExternalId = categories[transaction.CategoryId.Value];
+                    transaction.CategoryExternalId = Guid.Parse(categories[transaction.CategoryId.Value]);
                 }
             }
 
@@ -139,11 +139,11 @@ namespace BudgetUnderControl.Mobile.Services
                 FromTransactionId = x.FromTransactionId,
                 Rate = x.Rate,
                 ToTransactionId = x.ToTransactionId,
-                ExternalId = x.ExternalId,
+                ExternalId = Guid.Parse(x.ExternalId),
                 IsDeleted = x.IsDeleted,
                 ModifiedOn = x.ModifiedOn,
-                ToTransactionExternalId = x.ToTransaction.ExternalId,
-                FromTransactionExternalId = x.FromTransaction.ExternalId,
+                ToTransactionExternalId = Guid.Parse(x.ToTransaction.ExternalId),
+                FromTransactionExternalId = Guid.Parse(x.FromTransaction.ExternalId),
                  
             }).ToList();
 
@@ -157,7 +157,7 @@ namespace BudgetUnderControl.Mobile.Services
                 .Select(x => new AccountSyncDTO
             {
                 Id = x.Id,
-                ExternalId = x.ExternalId,
+                ExternalId = Guid.Parse(x.ExternalId),
                 AccountGroupId = x.AccountGroupId,
                 Comment = x.Comment,
                 CurrencyId = x.CurrencyId,
@@ -174,10 +174,10 @@ namespace BudgetUnderControl.Mobile.Services
             var accountGroups = (await this.accountGroupRepository.GetAccountGroupsAsync()).ToDictionary(x => x.Id, x => x.ExternalId);
             foreach (var account in accounts)
             {
-                account.AccountGroupExternalId = accountGroups[account.AccountGroupId];
+                account.AccountGroupExternalId = Guid.Parse(accountGroups[account.AccountGroupId]);
                 if (account.ParentAccountId.HasValue)
                 {
-                    account.ParentAccountExternalId = allAccounts[account.ParentAccountId.Value];
+                    account.ParentAccountExternalId = Guid.Parse(allAccounts[account.ParentAccountId.Value]);
                 }
             }
 
@@ -191,7 +191,7 @@ namespace BudgetUnderControl.Mobile.Services
                 .Select(x => new AccountGroupSyncDTO
                 {
                     Id = x.Id,
-                    ExternalId = x.ExternalId,
+                    ExternalId = Guid.Parse(x.ExternalId),
                     Name = x.Name,
                     ModifiedOn = x.ModifiedOn,
                     IsDeleted = x.IsDeleted,
@@ -202,7 +202,7 @@ namespace BudgetUnderControl.Mobile.Services
 
             foreach (var account in accountgroups)
             {
-                account.OwnerExternalId = userExternalId;
+                account.OwnerExternalId = Guid.Parse(userExternalId);
             }
 
             return accountgroups;
@@ -216,7 +216,7 @@ namespace BudgetUnderControl.Mobile.Services
 
             result.Add(new UserSyncDTO
             {
-                ExternalId = user.ExternalId,
+                ExternalId = Guid.Parse(user.ExternalId),
                 Email = user.Email,
                 ModifiedOn = user.ModifiedOn,
                 CreatedAt = user.CreatedAt,
@@ -237,7 +237,7 @@ namespace BudgetUnderControl.Mobile.Services
                 .Select(x => new CategorySyncDTO
                 {
                     Id = x.Id,
-                    ExternalId = x.ExternalId,
+                    ExternalId = Guid.Parse(x.ExternalId),
                     Name = x.Name,
                     ModifiedOn = x.ModifiedOn,
                     IsDeleted = x.IsDeleted,
@@ -248,9 +248,8 @@ namespace BudgetUnderControl.Mobile.Services
 
             foreach (var category in categories)
             {
-                category.OwnerExternalId = userExternalId;
+                category.OwnerExternalId = Guid.Parse(userExternalId);
             }
-            //logger.Info("Sent Categories" + string.Join("; ", categories.Select(x => x.ExternalId)));
             return categories;
         }
 
@@ -261,7 +260,7 @@ namespace BudgetUnderControl.Mobile.Services
                 .Select(x => new TagSyncDTO
                 {
                     Id = x.Id,
-                    ExternalId = x.ExternalId,
+                    ExternalId = Guid.Parse(x.ExternalId),
                     Name = x.Name,
                     ModifiedOn = x.ModifiedOn,
                     IsDeleted = x.IsDeleted

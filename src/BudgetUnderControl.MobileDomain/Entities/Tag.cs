@@ -18,7 +18,7 @@ namespace BudgetUnderControl.MobileDomain
 
         public int OwnerId { get; protected set; }
         public DateTime? ModifiedOn { get; protected set; }
-        public Guid ExternalId { get; protected set; }
+        public string ExternalId { get; protected set; }
         public bool IsDeleted { get; protected set; }
 
         public virtual User Owner { get; set; }
@@ -44,12 +44,12 @@ namespace BudgetUnderControl.MobileDomain
             this.ModifiedOn = date;
         }
 
-        public static Tag Create(string name, int ownerId, bool isDeleted, Guid? externalId)
+        public static Tag Create(string name, int ownerId, bool isDeleted, string externalId)
         {
             return new Tag
             {
                 Name = name,
-                ExternalId = externalId ?? Guid.NewGuid(),
+                ExternalId = !string.IsNullOrEmpty(externalId) ? externalId : Guid.NewGuid().ToString(),
                 OwnerId = ownerId,
                 IsDeleted = isDeleted,
                 ModifiedOn = DateTime.UtcNow,

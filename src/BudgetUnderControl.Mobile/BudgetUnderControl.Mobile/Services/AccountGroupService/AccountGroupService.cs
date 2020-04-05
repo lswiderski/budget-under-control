@@ -28,20 +28,20 @@ namespace BudgetUnderControl.Mobile.Services
                         {
                             Id = ag.Id,
                             Name = ag.Name,
-                            ExternalId = ag.ExternalId,
+                            ExternalId = Guid.Parse(ag.ExternalId),
                         }
                         ).ToList();
 
             return list;
         }
 
-        public async Task<AccountGroupItemDTO> GetAccountGroupAsync(Guid id)
+        public async Task<AccountGroupItemDTO> GetAccountGroupAsync(string id)
         {
             var group = await this.accountGroupRepository.GetAccountGroupAsync(id);
             var dto = new AccountGroupItemDTO
             {
                 Id = group.Id,
-                ExternalId = group.ExternalId,
+                ExternalId = Guid.Parse(group.ExternalId),
                 Name = group.Name,
             };
 

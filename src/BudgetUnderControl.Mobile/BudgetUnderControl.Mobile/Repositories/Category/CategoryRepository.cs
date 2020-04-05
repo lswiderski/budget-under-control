@@ -32,13 +32,13 @@ namespace BudgetUnderControl.Mobile.Repositories
             return list;
         }
 
-        public async Task<Category> GetCategoryAsync(Guid id)
+        public async Task<Category> GetCategoryAsync(string externalId)
         {
-            var category = await this.Context.Categories.Where(x => x.ExternalId == id).FirstOrDefaultAsync();
+            var category = await this.Context.Categories.Where(x => x.ExternalId == externalId).FirstOrDefaultAsync();
             return category;
         }
 
-        public async Task<Category> GetCategoryAsync(string name)
+        public async Task<Category> GetCategoryByNameAsync(string name)
         {
             var category = await this.Context.Categories.Where(x => x.Name == name).FirstOrDefaultAsync();
             return category;

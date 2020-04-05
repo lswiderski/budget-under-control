@@ -109,7 +109,7 @@
     <AndroidResource Include="Resources\values\styles.xml" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\..\BudgetUnderControl.Commands\BudgetUnderControl.CommonInfrastructure.csproj">
+    <ProjectReference Include="..\..\BudgetUnderControl.Commands\BudgetUnderControl.CommonInfrastructure.csproj">
       <Project>{e24deaa2-0fd4-4d9e-bbce-82ec36433075}</Project>
       <Name>BudgetUnderControl.CommonInfrastructure</Name>
     </ProjectReference>

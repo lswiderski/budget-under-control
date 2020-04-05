@@ -50,12 +50,12 @@ namespace BudgetUnderControl.Mobile.Services
                 Name = t.Name,
                 CurrencyCode = t.Account.Currency.Code,
                 IsTransfer = t.IsTransfer,
-                ExternalId = t.ExternalId,
+                ExternalId = Guid.Parse(t.ExternalId),
                 ModifiedOn = t.ModifiedOn,
                 CreatedOn = t.CreatedOn,
                 CategoryId = t.CategoryId,
                 Category = t.Category?.Name,
-                Tags = t.TagsToTransaction.Where(x => !x.Tag.IsDeleted).Select(x => new TagDTO {ExternalId =x.Tag.ExternalId, Id = x.Tag.Id, IsDeleted = x.Tag.IsDeleted, Name = x.Tag.Name}).ToList()
+                Tags = t.TagsToTransaction.Where(x => !x.Tag.IsDeleted).Select(x => new TagDTO {ExternalId = Guid.Parse(x.Tag.ExternalId), Id = x.Tag.Id, IsDeleted = x.Tag.IsDeleted, Name = x.Tag.Name}).ToList()
 
             }).OrderByDescending(t => t.Date)
             .ToList();
@@ -83,10 +83,10 @@ namespace BudgetUnderControl.Mobile.Services
                 {
                     command.TransferAmount *= (-1);
                 }
-                var transactionExpense = Transaction.Create(command.AccountId, TransactionType.Expense, command.Amount, command.Date, command.Name, command.Comment, user.Id, false, command.CategoryId, command.ExternalId, command.Latitude, command.Longitude);
+                var transactionExpense = Transaction.Create(command.AccountId, TransactionType.Expense, command.Amount, command.Date, command.Name, command.Comment, user.Id, false, command.CategoryId, command.ExternalId.ToString(), command.Latitude, command.Longitude);
                 await transactionRepository.AddTransactionAsync(transactionExpense);
 
-                var transactionIncome = Transaction.Create(command.TransferAccountId, TransactionType.Income, command.TransferAmount, command.TransferDate, command.Name, command.Comment, user.Id, false, command.CategoryId, command.TransferExternalId, command.Latitude, command.Longitude);
+                var transactionIncome = Transaction.Create(command.TransferAccountId, TransactionType.Income, command.TransferAmount, command.TransferDate, command.Name, command.Comment, user.Id, false, command.CategoryId, command.TransferExternalId.ToString(), command.Latitude, command.Longitude);
                 await transactionRepository.AddTransactionAsync(transactionIncome);
 
                 var transfer = Transfer.Create(transactionExpense.Id, transactionIncome.Id, command.Rate);
@@ -104,7 +104,7 @@ namespace BudgetUnderControl.Mobile.Services
                 {
                     command.Amount *= (-1);
                 }
-                var transaction = Transaction.Create(command.AccountId, type, command.Amount, command.Date, command.Name, command.Comment, user.Id, false, command.CategoryId, command.ExternalId, command.Latitude, command.Longitude);
+                var transaction = Transaction.Create(command.AccountId, type, command.Amount, command.Date, command.Name, command.Comment, user.Id, false, command.CategoryId, command.ExternalId.ToString(), command.Latitude, command.Longitude);
                 await this.transactionRepository.AddTransactionAsync(transaction);
                 await this.CreateTagsToTransaction(command.Tags, transaction.Id);
             }
@@ -226,7 +226,7 @@ namespace BudgetUnderControl.Mobile.Services
             }
             else if(command.ExternalId != null)
             {
-                firstTransaction = await this.transactionRepository.GetTransactionAsync(command.ExternalId.Value);
+                firstTransaction = await this.transactionRepository.GetTransactionAsync(command.ExternalId.Value.ToString());
             }
             else
             {
@@ -251,7 +251,7 @@ namespace BudgetUnderControl.Mobile.Services
 
         public async Task<EditTransactionDTO> GetTransactionAsync(Guid id)
         {
-            var transaction = await this.transactionRepository.GetTransactionAsync(id);
+            var transaction = await this.transactionRepository.GetTransactionAsync(id.ToString());
             return await this.EntityToEditQueryAsync(transaction);
         }
 
@@ -273,7 +273,7 @@ namespace BudgetUnderControl.Mobile.Services
                 Id = entity.Id,
                 Name = entity.Name,
                 Type = entity.Type,
-                ExternalId = entity.ExternalId,
+                ExternalId = Guid.Parse(entity.ExternalId),
                 ModifiedOn = entity.ModifiedOn,
                 CreatedOn = entity.CreatedOn,
                 IsDeleted = entity.IsDeleted,
@@ -290,7 +290,7 @@ namespace BudgetUnderControl.Mobile.Services
                 Id = t.Id,
                 Name = t.Name,
                 IsDeleted = t.IsDeleted,
-                ExternalId = t.ExternalId
+                ExternalId = Guid.Parse(t.ExternalId)
             }).ToList();
 
             var transfer = await this.transactionRepository.GetTransferAsync(transaction.Id);

@@ -26,7 +26,7 @@ namespace BudgetUnderControl.MobileDomain
         public bool IsActive { get; protected set; }
         public int OwnerId { get; protected set; }
         public DateTime? ModifiedOn { get; protected set; }
-        public Guid ExternalId { get; protected set; }
+        public string ExternalId { get; protected set; }
         public bool IsDeleted { get; protected set; }
 
         public AccountGroup AccountGroup { get; protected set; }
@@ -43,7 +43,7 @@ namespace BudgetUnderControl.MobileDomain
 
         public static Account Create(string name, int currencyId, int accountGroupId,
             bool isIncludedToTotal, string comment, int order, AccountType type, 
-            int? parentAccountId, bool isActive, int ownerId, Guid? externalId = null)
+            int? parentAccountId, bool isActive, int ownerId, string externalId = null)
         {
             return new Account()
             {
@@ -56,7 +56,7 @@ namespace BudgetUnderControl.MobileDomain
                 Order = order,
                 Type = type,
                 ParentAccountId = parentAccountId,
-                ExternalId = externalId ?? Guid.NewGuid(),
+                ExternalId = !string.IsNullOrEmpty(externalId) ? externalId: Guid.NewGuid().ToString(),
                 OwnerId = ownerId,
                 ModifiedOn = DateTime.UtcNow,
                 IsDeleted = !isActive,

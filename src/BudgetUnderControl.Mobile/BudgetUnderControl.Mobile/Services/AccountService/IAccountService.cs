@@ -14,7 +14,7 @@ namespace BudgetUnderControl.Mobile.Services
         Task DeactivateAccountAsync(int id);
 
         Task<ICollection<AccountListItemDTO>> GetAccountsWithBalanceAsync();
-        Task<EditAccountDTO> GetAccountAsync(Guid id);
+        Task<EditAccountDTO> GetAccountAsync(string id);
         Task<AccountDetailsDTO> GetAccountDetailsAsync(TransactionsFilter filter);
 
         Task AddAccountAsync(AddAccount account);

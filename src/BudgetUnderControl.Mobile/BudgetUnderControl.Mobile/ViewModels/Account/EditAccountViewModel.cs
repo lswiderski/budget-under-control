@@ -199,7 +199,7 @@ namespace BudgetUnderControl.ViewModel
 
         public async void LoadAccount(Guid accountId)
         {
-            var account = await this.accountService.GetAccountAsync(accountId);
+            var account = await this.accountService.GetAccountAsync(accountId.ToString());
             Amount = account.Amount.ToString();
             Name = account.Name;
             Comment = account.Comment;

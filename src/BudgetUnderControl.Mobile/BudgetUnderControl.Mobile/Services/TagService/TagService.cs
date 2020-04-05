@@ -31,7 +31,7 @@ namespace BudgetUnderControl.Mobile.Services
                 Id = t.Id,
                 Name = t.Name,
                 IsDeleted = t.IsDeleted,
-                ExternalId = t.ExternalId
+                ExternalId = Guid.Parse(t.ExternalId)
             }).ToList();
             return result;
         }
@@ -47,12 +47,12 @@ namespace BudgetUnderControl.Mobile.Services
                 Id = t.Id,
                 Name = t.Name,
                 IsDeleted = t.IsDeleted,
-                ExternalId = t.ExternalId
+                ExternalId = Guid.Parse(t.ExternalId)
             }).ToList();
             return result;
         }
 
-        public async Task<TagDTO> GetTagAsync(Guid tagId)
+        public async Task<TagDTO> GetTagAsync(string tagId)
         {
             var tag = await this.tagRepository.GetAsync(tagId);
 
@@ -61,20 +61,20 @@ namespace BudgetUnderControl.Mobile.Services
                 Id = tag.Id,
                 Name = tag.Name,
                 IsDeleted = tag.IsDeleted,
-                ExternalId = tag.ExternalId
+                ExternalId = Guid.Parse(tag.ExternalId)
             };
             return result;
         }
 
         public async Task AddTagAsync(AddTag command)
         {
-            var tag = Tag.Create(command.Name, userIdentityContext.UserId, false, command.ExternalId);
+            var tag = Tag.Create(command.Name, userIdentityContext.UserId, false, command.ExternalId.ToString());
             await this.tagRepository.AddAsync(tag);
         }
 
         public async Task EditTagAsync(EditTag command)
         {
-            var tag = await this.tagRepository.GetAsync(command.ExternalId);
+            var tag = await this.tagRepository.GetAsync(command.ExternalId.ToString());
             tag.Edit(command.Name, tag.OwnerId,  command.IsDeleted);
             await this.tagRepository.UpdateAsync(tag);
         }

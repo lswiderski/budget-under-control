@@ -18,7 +18,7 @@ namespace BudgetUnderControl.MobileDomain
         public decimal Rate { get; protected set; }
 
         public DateTime? ModifiedOn { get; protected set; }
-        public Guid ExternalId { get; protected set; }
+        public string ExternalId { get; protected set; }
         public bool IsDeleted { get; protected set; }
 
         public Transaction FromTransaction { get; set; }
@@ -31,14 +31,14 @@ namespace BudgetUnderControl.MobileDomain
 
         }
 
-        public static Transfer Create(int fromTransactionId, int toTransactionId, decimal rate, Guid? guid = null)
+        public static Transfer Create(int fromTransactionId, int toTransactionId, decimal rate, string guid = null)
         {
             return new Transfer()
             {
                 FromTransactionId = fromTransactionId,
                 ToTransactionId = toTransactionId,
                 Rate = rate,
-                ExternalId = guid ?? Guid.NewGuid(),
+                ExternalId = !string.IsNullOrEmpty(guid) ? guid :Guid.NewGuid().ToString(),
                 ModifiedOn = DateTime.UtcNow,
                 IsDeleted = false,
             };

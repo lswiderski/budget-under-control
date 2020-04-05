@@ -27,14 +27,14 @@ namespace BudgetUnderControl.Mobile.Services
             this.logger = logger;
         }
 
-        public async Task<EditAccountDTO> GetAccountAsync(Guid id)
+        public async Task<EditAccountDTO> GetAccountAsync(string id)
         {
             var account = await accountRepository.GetAccountAsync(id);
             var balance = await accountRepository.GetActualBalanceAsync(account.Id);
             var dto = new EditAccountDTO
             {
                 Id = account.Id,
-                ExternalId = account.ExternalId,
+                ExternalId = Guid.Parse(account.ExternalId),
                 Name = account.Name,
                 Comment = account.Comment,
                 IsActive = account.IsActive,
@@ -58,7 +58,7 @@ namespace BudgetUnderControl.Mobile.Services
             var accountsWithBalance = accounts.Select(y => new AccountListItemDTO
             {
                 Id = y.Id,
-                ExternalId = y.ExternalId,
+                ExternalId = Guid.Parse(y.ExternalId),
                 Currency = y.Currency.Code,
                 CurrencyId = y.CurrencyId,
                 CurrencySymbol = y.Currency.Symbol,
@@ -81,7 +81,7 @@ namespace BudgetUnderControl.Mobile.Services
             }
             else if (filter != null && filter.AccountsExternalIds != null && filter.AccountsExternalIds.Any())
             {
-                account = await accountRepository.GetAccountAsync(filter.AccountsExternalIds.First());
+                account = await accountRepository.GetAccountAsync(filter.AccountsExternalIds.First().ToString());
             }
             else
             {
@@ -94,7 +94,7 @@ namespace BudgetUnderControl.Mobile.Services
                 CurrencyId = account.CurrencyId,
                 CurrencySymbol = account.Currency.Symbol,
                 Id = account.Id,
-                ExternalId = account.ExternalId,
+                ExternalId = Guid.Parse(account.ExternalId),
                 IsIncludedInTotal = account.IsIncludedToTotal,
                 Name = account.Name,
                 Comment = account.Comment,
@@ -113,7 +113,7 @@ namespace BudgetUnderControl.Mobile.Services
         public async Task AddAccountAsync(AddAccount command)
         {
             var user = await userRepository.GetFirstUserAsync();
-            var account = Account.Create(command.Name, command.CurrencyId, command.AccountGroupId, command.IsIncludedInTotal, command.Comment, command.Order, command.Type, command.ParentAccountId, true, user.Id, command.ExternalId);
+            var account = Account.Create(command.Name, command.CurrencyId, command.AccountGroupId, command.IsIncludedInTotal, command.Comment, command.Order, command.Type, command.ParentAccountId, true, user.Id, command.ExternalId.ToString());
             await accountRepository.AddAccountAsync(account);
 
             if (account.Id <= 0)
@@ -155,7 +155,7 @@ namespace BudgetUnderControl.Mobile.Services
             await accountRepository.UpdateAsync(account);
         }
 
-        public async Task DeactivateAccountAsync(Guid id)
+        public async Task DeactivateAccountAsync(string id)
         {
             var account = await accountRepository.GetAccountAsync(id);
             account.SetActive(false);
@@ -166,7 +166,7 @@ namespace BudgetUnderControl.Mobile.Services
         public async Task DeleteAccountAsync(DeleteAccount command)
         {
             //temporary no removing AccountAvailable
-            await this.DeactivateAccountAsync(command.Id);
+            await this.DeactivateAccountAsync(command.Id.ToString());
             /*
              var transactions = this.Context.Transactions.Where(x => x.AccountId == id).ToList();
 

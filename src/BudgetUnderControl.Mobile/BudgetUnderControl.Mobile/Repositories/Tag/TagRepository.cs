@@ -46,7 +46,7 @@ namespace BudgetUnderControl.Mobile.Repositories
             return list;
         }
 
-        public async Task<ICollection<Tag>> GetAsync(List<Guid> tagIds)
+        public async Task<ICollection<Tag>> GetAsync(List<string> tagIds)
         {
             var list = await this.Context.Tags
                 .Where(t => t.OwnerId == userIdentityContext.UserId
@@ -66,7 +66,7 @@ namespace BudgetUnderControl.Mobile.Repositories
             return tag;
         }
 
-        public async Task<Tag> GetAsync(Guid id)
+        public async Task<Tag> GetAsync(string id)
         {
             var tag = await this.Context.Tags.Where(t => t.OwnerId == userIdentityContext.UserId).FirstOrDefaultAsync(x => x.ExternalId == id);
 

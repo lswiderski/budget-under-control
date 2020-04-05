@@ -29,7 +29,7 @@ namespace BudgetUnderControl.Mobile.Repositories
             await this.Context.SaveChangesAsync();
         }
 
-        public async Task<Synchronization> GetSynchronizationAsync(SynchronizationComponent component, Guid componentId, int userId)
+        public async Task<Synchronization> GetSynchronizationAsync(SynchronizationComponent component, string componentId, int userId)
         {
             var currency = await this.Context.Synchronizations.FirstOrDefaultAsync(x => x.Component == component && x.ComponentId == componentId && x.UserId == userId);
 

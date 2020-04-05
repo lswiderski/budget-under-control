@@ -14,7 +14,7 @@ namespace BudgetUnderControl.MobileDomain.Repositiories
         Task<ICollection<Transaction>> GetTransactionsAsync(TransactionsFilter filter = null);
         Task<ICollection<Transfer>> GetTransfersAsync();
         Task<Transaction> GetTransactionAsync(int id);
-        Task<Transaction> GetTransactionAsync(Guid id);
+        Task<Transaction> GetTransactionAsync(string id);
         Task AddTransactionAsync(Transaction transaction);
         Task AddTransactionsAsync(IEnumerable<Transaction> transactions);
         Task UpdateAsync(Transaction transaction);
@@ -24,7 +24,7 @@ namespace BudgetUnderControl.MobileDomain.Repositiories
         Task RemoveTransactionAsync(Transaction transaction);
         Task RemoveTransferAsync(Transfer transfer);
         Task<Transfer> GetTransferAsync(int transactionId);
-        Task<Transfer> GetTransferAsync(Guid transactionId);
+        Task<Transfer> GetTransferAsync(string transactionId);
         Task HardRemoveTransactionsAsync(IEnumerable<Transaction> transactions);
         Task HardRemoveTransfersAsync(IEnumerable<Transfer> transfers);
         Task<ICollection<Transfer>> GetTransfersModifiedSinceAsync(DateTime changedSince);

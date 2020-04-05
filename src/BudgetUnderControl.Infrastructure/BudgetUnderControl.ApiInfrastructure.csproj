@@ -20,7 +20,7 @@
     <PackageReference Include="Xamarin.Forms" Version="4.5.0.530" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\BudgetUnderControl.Commands\BudgetUnderControl.CommonInfrastructure.csproj" />
+    <ProjectReference Include="..\BudgetUnderControl.Commands\BudgetUnderControl.CommonInfrastructure.csproj" />
     <ProjectReference Include="..\BudgetUnderControl.Common\BudgetUnderControl.Common.csproj" />
     <ProjectReference Include="..\BudgetUnderControl.Domain\BudgetUnderControl.Domain.csproj" />
   </ItemGroup>

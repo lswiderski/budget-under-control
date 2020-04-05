@@ -83,11 +83,11 @@ namespace BudgetUnderControl.Mobile.Repositories
             return acc;
         }
 
-        public async Task<Account> GetAccountAsync(Guid id)
+        public async Task<Account> GetAccountAsync(string externalId)
         {
             var acc = await (from account in this.Context.Accounts
                              join currency in this.Context.Currencies on account.CurrencyId equals currency.Id
-                             where account.ExternalId == id
+                             where account.ExternalId == externalId
                              select account
                        ).Include(p => p.Currency)
                        .FirstOrDefaultAsync();
@@ -189,7 +189,7 @@ namespace BudgetUnderControl.Mobile.Repositories
             return subAccounts;
         }
 
-        public async Task<List<Guid>> GetSubAccountsAsync(IEnumerable<Guid> accountsExternalIds, bool? active = null)
+        public async Task<List<string>> GetSubAccountsAsync(IEnumerable<string> accountsExternalIds, bool? active = null)
         {
             var accountsIds = await this.Context.Accounts.Where(x => accountsExternalIds.Contains(x.ExternalId)).Select(x => x.Id).ToListAsync();
             var query = this.Context.Accounts.AsQueryable();

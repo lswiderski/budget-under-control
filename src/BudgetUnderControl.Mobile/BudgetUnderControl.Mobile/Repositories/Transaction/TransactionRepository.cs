@@ -113,8 +113,8 @@ namespace BudgetUnderControl.Mobile.Repositories
             }
             else if (filter != null && filter.AccountsExternalIds != null && filter.AccountsExternalIds.Any())
             {
-                var accounts = await this.accountRepository.GetSubAccountsAsync(filter.AccountsExternalIds);
-                accounts.AddRange(filter.AccountsExternalIds);
+                var accounts = await this.accountRepository.GetSubAccountsAsync(filter.AccountsExternalIds.Select(x => x.ToString()).ToList());
+                accounts.AddRange(filter.AccountsExternalIds.Select(x => x.ToString()).ToList());
                 accounts = accounts.Distinct().ToList();
 
                 query = query.Where(q => accounts.Contains(q.Account.ExternalId)).AsQueryable();
@@ -189,7 +189,7 @@ namespace BudgetUnderControl.Mobile.Repositories
             return transaction;
         }
 
-        public async Task<Transaction> GetTransactionAsync(Guid id)
+        public async Task<Transaction> GetTransactionAsync(string id)
         {
             var transaction = await this.Context.Transactions.Where(t => t.ExternalId.ToString() == id.ToString()).SingleOrDefaultAsync();
             return transaction;
@@ -201,7 +201,7 @@ namespace BudgetUnderControl.Mobile.Repositories
             return transfer;
         }
 
-        public async Task<Transfer> GetTransferAsync(Guid transactionId)
+        public async Task<Transfer> GetTransferAsync(string transactionId)
         {
             var transfer = await this.Context.Transfers.Where(t => t.ExternalId == transactionId).SingleOrDefaultAsync();
             return transfer;

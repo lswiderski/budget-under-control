@@ -11,7 +11,7 @@ namespace BudgetUnderControl.Mobile.Services
     {
         Task<ICollection<TagDTO>> GetTagsAsync();
         Task<ICollection<TagDTO>> GetActiveTagsAsync();
-        Task<TagDTO> GetTagAsync(Guid tagId);
+        Task<TagDTO> GetTagAsync(string tagId);
         Task AddTagAsync(AddTag command);
         Task EditTagAsync(EditTag command);
     }

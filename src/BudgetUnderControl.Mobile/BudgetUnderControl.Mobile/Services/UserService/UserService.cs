@@ -1,5 +1,6 @@
 ﻿using BudgetUnderControl.CommonInfrastructure;
 using BudgetUnderControl.MobileDomain.Repositiories;
+using System;
 
 namespace BudgetUnderControl.Mobile.Services
 {
@@ -17,7 +18,7 @@ namespace BudgetUnderControl.Mobile.Services
             var context = new UserIdentityContext
             {
                 UserId = user.Id,
-                ExternalId = user.ExternalId,
+                ExternalId = Guid.Parse(user.ExternalId),
                 RoleName = user.Role
             };
             return context;

@@ -24,7 +24,7 @@ namespace BudgetUnderControl.Mobile.Repositories
             return list;
         }
 
-        public async Task<AccountGroup> GetAccountGroupAsync(Guid id)
+        public async Task<AccountGroup> GetAccountGroupAsync(string id)
         {
             var accountGroup = await (from ag in this.Context.AccountGroup
                                       select ag

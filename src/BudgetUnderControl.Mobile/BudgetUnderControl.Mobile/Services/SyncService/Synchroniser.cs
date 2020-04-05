@@ -29,7 +29,7 @@ namespace BudgetUnderControl.Mobile.Services
         private readonly ITagRepository tagRepository;
         private readonly ITransactionService transactionService;
         private readonly GeneralSettings settings;
-        private Dictionary<Guid, int> _tags;
+        private Dictionary<string, int> _tags;
 
         public Synchroniser(ITransactionRepository transactionRepository,
             IAccountRepository accountRepository,
@@ -74,7 +74,7 @@ namespace BudgetUnderControl.Mobile.Services
         private async Task UpdateLastSyncDateAsync(SyncRequest syncRequest)
         {
             var userId = (await this.userRepository.GetFirstUserAsync()).Id;
-            var syncObject = await this.synchronizationRepository.GetSynchronizationAsync(syncRequest.Component, syncRequest.ComponentId, userId);// syncRequest.UserId)
+            var syncObject = await this.synchronizationRepository.GetSynchronizationAsync(syncRequest.Component, syncRequest.ComponentId.ToString(), userId);// syncRequest.UserId)
 
             if (syncObject != null)
             {
@@ -87,7 +87,7 @@ namespace BudgetUnderControl.Mobile.Services
                 {
                     LastSyncAt = DateTime.UtcNow,
                     Component = syncRequest.Component,
-                    ComponentId = syncRequest.ComponentId,
+                    ComponentId = syncRequest.ComponentId.ToString(),
                     UserId = userId,
                 };
 
@@ -121,9 +121,9 @@ namespace BudgetUnderControl.Mobile.Services
 
                 foreach (var transaction in package)
                 {
-                    int? categoryId = transaction.CategoryExternalId.HasValue ? dictCategories.ContainsKey(transaction.CategoryExternalId.Value) ? dictCategories[transaction.CategoryExternalId.Value]: (int?)null : (int?)null;
-                    var accountId = dictAccounts[transaction.AccountExternalId.Value];
-                    var transactionToUpdate = await this.transactionRepository.GetTransactionAsync(transaction.ExternalId.Value);
+                    int? categoryId = transaction.CategoryExternalId.HasValue ? dictCategories.ContainsKey(transaction.CategoryExternalId.Value.ToString()) ? dictCategories[transaction.CategoryExternalId.Value.ToString()] : (int?)null : (int?)null;
+                    var accountId = dictAccounts[transaction.AccountExternalId.Value.ToString()];
+                    var transactionToUpdate = await this.transactionRepository.GetTransactionAsync(transaction.ExternalId.Value.ToString());
 
                     if (transactionToUpdate != null)
                     {
@@ -138,7 +138,7 @@ namespace BudgetUnderControl.Mobile.Services
                     }
                     else
                     {
-                        var transactionToAdd = MobileDomain.Transaction.Create(accountId, transaction.Type, transaction.Amount, transaction.Date, transaction.Name, transaction.Comment, this.userIdentityContext.UserId, false, categoryId, transaction.ExternalId, transaction.Latitude, transaction.Longitude);
+                        var transactionToAdd = MobileDomain.Transaction.Create(accountId, transaction.Type, transaction.Amount, transaction.Date, transaction.Name, transaction.Comment, this.userIdentityContext.UserId, false, categoryId, transaction.ExternalId.ToString(), transaction.Latitude, transaction.Longitude);
                         transactionToAdd.SetCreatedOn(transaction.CreatedOn);
                         transactionToAdd.SetModifiedOn(transaction.ModifiedOn);
                         transactionsToAdd.Add(transactionToAdd);
@@ -156,7 +156,7 @@ namespace BudgetUnderControl.Mobile.Services
                     await this.transactionRepository.AddTransactionsAsync(transactionsToAdd);
                     foreach (var item in transactionsToAdd)
                     {
-                        var tags = package.Where(x => x.ExternalId == item.ExternalId).Select(x => x.Tags).FirstOrDefault();
+                        var tags = package.Where(x => x.ExternalId?.ToString() == item.ExternalId).Select(x => x.Tags).FirstOrDefault();
                         await this.DealWithTransactionToTagsAsync(item.Id, tags);
                     }
                     transactionsToAdd.Clear();
@@ -167,7 +167,7 @@ namespace BudgetUnderControl.Mobile.Services
 
         private async Task DealWithTransactionToTagsAsync(int transactionId, List<TagSyncDTO> tagsToSync)
         {
-            var tagIds = tagsToSync.Select(x => _tags[x.ExternalId]).ToList(); 
+            var tagIds = tagsToSync.Select(x => _tags[x.ExternalId.ToString()]).ToList(); 
             var tags2Transactions = await this.tagRepository.GetTagToTransactionsAsync(transactionId);
             var tags2Add = tagIds.Except(tags2Transactions.Select(t => t.TagId));
             var tags2Remove = tags2Transactions.Select(t => t.TagId).Except(tagIds);
@@ -200,7 +200,7 @@ namespace BudgetUnderControl.Mobile.Services
 
             foreach (var transfer in transfers)
             {
-                var transferToUpdate = await this.transactionRepository.GetTransferAsync(transfer.ExternalId.Value);
+                var transferToUpdate = await this.transactionRepository.GetTransferAsync(transfer.ExternalId.Value.ToString());
                 if (transferToUpdate != null)
                 {
                     if(transferToUpdate.ModifiedOn < transfer.ModifiedOn)
@@ -213,11 +213,11 @@ namespace BudgetUnderControl.Mobile.Services
                 }
                 else
                 {
-                    var toTransferId = (await this.transactionRepository.GetTransactionAsync(transfer.ToTransactionExternalId))?.Id;
-                    var fromTransferId = (await this.transactionRepository.GetTransactionAsync(transfer.FromTransactionExternalId))?.Id;
+                    var toTransferId = (await this.transactionRepository.GetTransactionAsync(transfer.ToTransactionExternalId.ToString()))?.Id;
+                    var fromTransferId = (await this.transactionRepository.GetTransactionAsync(transfer.FromTransactionExternalId.ToString()))?.Id;
                     if(toTransferId != null && fromTransferId != null)
                     {
-                        var transferToAdd = Transfer.Create(fromTransferId.Value, toTransferId.Value, transfer.Rate, transfer.ExternalId);
+                        var transferToAdd = Transfer.Create(fromTransferId.Value, toTransferId.Value, transfer.Rate, transfer.ExternalId.ToString());
                         transferToAdd.Delete(transfer.IsDeleted);
                         transferToAdd.SetModifiedOn(transfer.ModifiedOn);
                         await this.transactionRepository.AddTransferAsync(transferToAdd);
@@ -250,7 +250,7 @@ namespace BudgetUnderControl.Mobile.Services
             foreach (var tag in tags)
             {
                
-                var tagToUpdate = await this.tagRepository.GetAsync(tag.ExternalId);
+                var tagToUpdate = await this.tagRepository.GetAsync(tag.ExternalId.ToString());
                 if (tagToUpdate != null)
                 {
                     if (tagToUpdate.ModifiedOn < tag.ModifiedOn)
@@ -264,7 +264,7 @@ namespace BudgetUnderControl.Mobile.Services
                 }
                 else
                 {
-                    var tagToAdd = Tag.Create(tag.Name, userId, tag.IsDeleted ,tag.ExternalId);
+                    var tagToAdd = Tag.Create(tag.Name, userId, tag.IsDeleted ,tag.ExternalId.ToString());
                     tagToAdd.Delete(tag.IsDeleted);
                     tagToAdd.SetModifiedOn(tag.ModifiedOn);
                     await this.tagRepository.AddAsync(tagToAdd);
@@ -284,7 +284,7 @@ namespace BudgetUnderControl.Mobile.Services
             foreach (var category in categories)
             {
                
-                var categoryToUpdate = await this.categoryRepository.GetCategoryAsync(category.Name);
+                var categoryToUpdate = await this.categoryRepository.GetCategoryByNameAsync(category.Name);
                 if (categoryToUpdate != null)
                 {
                     if(categoryToUpdate.ModifiedOn < category.ModifiedOn)
@@ -299,7 +299,7 @@ namespace BudgetUnderControl.Mobile.Services
                 }
                 else
                 {
-                    var categoryToAdd = Category.Create(category.Name, userId, category.ExternalId);
+                    var categoryToAdd = Category.Create(category.Name, userId, category.ExternalId.ToString());
                     categoryToAdd.Delete(category.IsDeleted);
                     categoryToAdd.SetModifiedOn(category.ModifiedOn);
                     await this.categoryRepository.AddCategoryAsync(categoryToAdd);
@@ -319,10 +319,10 @@ namespace BudgetUnderControl.Mobile.Services
 
             foreach (var account in accounts)
             {
-                var parentAccountId = account.ParentAccountExternalId.HasValue ? (await this.accountRepository.GetAccountAsync(account.ParentAccountExternalId.Value)).Id : (int?)null;
-                var accountGroupId = (await this.accountGroupRepository.GetAccountGroupAsync(account.AccountGroupExternalId)).Id;
+                var parentAccountId = account.ParentAccountExternalId.HasValue ? (await this.accountRepository.GetAccountAsync(account.ParentAccountExternalId.Value.ToString())).Id : (int?)null;
+                var accountGroupId = (await this.accountGroupRepository.GetAccountGroupAsync(account.AccountGroupExternalId.ToString())).Id;
                 var userId = this.userIdentityContext.UserId;
-                var accountToUpdate = await this.accountRepository.GetAccountAsync(account.ExternalId.Value);
+                var accountToUpdate = await this.accountRepository.GetAccountAsync(account.ExternalId.Value.ToString());
                 if (accountToUpdate != null)
                 {
                     if(accountToUpdate.ModifiedOn < account.ModifiedOn)
@@ -335,7 +335,7 @@ namespace BudgetUnderControl.Mobile.Services
                 }
                 else
                 {
-                    var accountToAdd = Account.Create(account.Name, account.CurrencyId, accountGroupId, account.IsIncludedToTotal, account.Comment, account.Order, account.Type, parentAccountId, !account.IsDeleted, userId, account.ExternalId);
+                    var accountToAdd = Account.Create(account.Name, account.CurrencyId, accountGroupId, account.IsIncludedToTotal, account.Comment, account.Order, account.Type, parentAccountId, !account.IsDeleted, userId, account.ExternalId.ToString());
                     accountToAdd.Delete(account.IsDeleted);
                     accountToAdd.SetModifiedOn(account.ModifiedOn);
                     await this.accountRepository.AddAccountAsync(accountToAdd);
@@ -353,7 +353,7 @@ namespace BudgetUnderControl.Mobile.Services
             foreach (var accountGroup in accountGroups)
             {
                 var userId = (await this.userRepository.GetFirstUserAsync()).Id;
-                var accountGroupToUpdate = await this.accountGroupRepository.GetAccountGroupAsync(accountGroup.ExternalId);
+                var accountGroupToUpdate = await this.accountGroupRepository.GetAccountGroupAsync(accountGroup.ExternalId.ToString());
                 if (accountGroupToUpdate != null )
                 {
                     if(accountGroupToUpdate.ModifiedOn < accountGroup.ModifiedOn)
@@ -366,7 +366,7 @@ namespace BudgetUnderControl.Mobile.Services
                 }
                 else
                 {
-                    var accounGroupToAdd = AccountGroup.Create(accountGroup.Name, userId, accountGroup.ExternalId);
+                    var accounGroupToAdd = AccountGroup.Create(accountGroup.Name, userId, accountGroup.ExternalId.ToString());
                     accounGroupToAdd.Delete(accountGroup.IsDeleted);
                     accounGroupToAdd.SetModifiedOn(accountGroup.ModifiedOn);
                     await this.accountGroupRepository.AddAccountGroupAsync(accounGroupToAdd);

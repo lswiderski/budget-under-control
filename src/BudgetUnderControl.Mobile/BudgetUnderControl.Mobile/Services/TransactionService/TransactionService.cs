@@ -20,19 +20,13 @@ namespace BudgetUnderControl.Mobile.Services
         private readonly ITransactionRepository transactionRepository;
         private readonly ITagRepository tagRepository;
         private readonly IUserRepository userRepository;
-        private readonly IValidator<AddTransaction> addTransactionValidator;
-        private readonly IValidator<EditTransaction> editTransactionValidator;
         public TransactionService(ITransactionRepository transactionRepository,
             IUserRepository userRepository,
-            ITagRepository tagRepository,
-            IValidator<AddTransaction> addTransactionValidator,
-            IValidator<EditTransaction> editTransactionValidator)
+            ITagRepository tagRepository)
         {
             this.transactionRepository = transactionRepository;
             this.userRepository = userRepository;
             this.tagRepository = tagRepository;
-            this.addTransactionValidator = addTransactionValidator;
-            this.editTransactionValidator = editTransactionValidator;
         }
 
         public async Task<ICollection<TransactionListItemDTO>> GetTransactionsAsync(TransactionsFilter filter = null)
@@ -65,12 +59,6 @@ namespace BudgetUnderControl.Mobile.Services
 
         public async Task AddTransactionAsync(AddTransaction command)
         {
-            var results = addTransactionValidator.Validate(command);
-            if(!results.IsValid)
-            {
-                throw new ArgumentException(results.ToString("~"));
-            }
-
             var user = await userRepository.GetFirstUserAsync();
 
             if(command.Type == ExtendedTransactionType.Transfer)
@@ -125,12 +113,6 @@ namespace BudgetUnderControl.Mobile.Services
 
         public async Task EditTransactionAsync(EditTransaction command)
         {
-            var results = editTransactionValidator.Validate(command);
-            if (!results.IsValid)
-            {
-                throw new ArgumentException(results.ToString("~"));
-            }
-
             var user = await userRepository.GetFirstUserAsync();
 
             var firstTransaction = await this.transactionRepository.GetTransactionAsync(command.Id);

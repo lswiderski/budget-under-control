@@ -2,7 +2,6 @@
 using BudgetUnderControl.CommonInfrastructure.Commands;
 using BudgetUnderControl.Mobile.Services;
 using BudgetUnderControl.Mobile.Keys;
-using BudgetUnderControl.Mobile.Services;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -49,12 +48,10 @@ namespace BudgetUnderControl.ViewModel
         }
 
         ISyncMobileService syncMobileService;
-        private readonly GeneralSettings settings;
 
         public SettingsViewModel(ISyncMobileService syncMobileService, GeneralSettings settings)
         {
             this.syncMobileService = syncMobileService;
-            this.settings = settings;
             var url = Preferences.Get(PreferencesKeys.APIURL, string.Empty);
             apiUrl = string.IsNullOrEmpty(url) || string.IsNullOrWhiteSpace(url) ? settings.ApiBaseUri : url;
 

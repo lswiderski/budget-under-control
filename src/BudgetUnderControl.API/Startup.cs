@@ -11,7 +11,6 @@ using BudgetUnderControl.Common;
 using BudgetUnderControl.Common.Enums;
 using BudgetUnderControl.Domain;
 using BudgetUnderControl.Domain.Repositiories;
-using BudgetUnderControl.Infrastructure.Commands;
 using BudgetUnderControl.Infrastructure.IoC;
 using BudgetUnderControl.Infrastructure.Repositories;
 using BudgetUnderControl.Infrastructure.Services;
@@ -34,9 +33,9 @@ using NLog.Extensions.Logging;
 using NLog.Web;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
-using BudgetUnderControl.Infrastructure.Settings;
 using BudgetUnderControl.API.Extensions;
 using System.Text;
+using BudgetUnderControl.CommonInfrastructure.Settings;
 
 namespace BudgetUnderControl.API
 {

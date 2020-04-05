@@ -59,7 +59,6 @@ namespace BudgetUnderControl.Infrastructure.Services
 
         public async Task SynchroniseAsync(SyncRequest syncRequest)
         {
-            await this.UpdateLastSyncDateAsync(syncRequest);
             await this.UpdateUsersAsync(syncRequest.Users);
             await this.UpdateTagsAsync(syncRequest.Tags);
             await this.UpdateCategoriesAsync(syncRequest.Categories);
@@ -68,6 +67,7 @@ namespace BudgetUnderControl.Infrastructure.Services
             _tags = (await this.tagRepository.GetAsync()).ToDictionary(x => x.ExternalId, x => x.Id);
             await this.UpdateTransactionsAsync(syncRequest.Transactions);
             await this.UpdateTransfersAsync(syncRequest.Transfers);
+            await this.UpdateLastSyncDateAsync(syncRequest);
         }
 
         private async Task UpdateLastSyncDateAsync(SyncRequest syncRequest)

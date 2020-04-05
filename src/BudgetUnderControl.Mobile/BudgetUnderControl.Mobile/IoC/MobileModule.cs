@@ -22,6 +22,7 @@ using System.Reflection;
 using BudgetUnderControl.CommonInfrastructure;
 using BudgetUnderControl.MobileDomain.Repositiories;
 using BudgetUnderControl.Mobile.Repositories;
+using FluentValidation;
 
 namespace BudgetUnderControl.Mobile.IoC
 {
@@ -42,6 +43,10 @@ namespace BudgetUnderControl.Mobile.IoC
 
             builder.RegisterAssemblyTypes(assembly)
                   .AsClosedTypesOf(typeof(ICommandHandler<>))
+                  .InstancePerLifetimeScope();
+
+            builder.RegisterAssemblyTypes(assembly)
+                  .AsClosedTypesOf(typeof(IValidator<>))
                   .InstancePerLifetimeScope();
 
             builder.RegisterType<CommandDispatcher>()

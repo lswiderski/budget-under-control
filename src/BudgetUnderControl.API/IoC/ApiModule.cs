@@ -2,8 +2,8 @@
 using BudgetUnderControl.API.Extensions;
 using BudgetUnderControl.Common;
 using BudgetUnderControl.Common.Enums;
+using BudgetUnderControl.CommonInfrastructure.Settings;
 using BudgetUnderControl.Domain;
-using BudgetUnderControl.Infrastructure.Settings;
 using Microsoft.Extensions.Configuration;
 using NLog;
 using System;

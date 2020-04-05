@@ -2,9 +2,8 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using BudgetUnderControl.Infrastructure.Commands;
-using BudgetUnderControl.Infrastructure.Services;
-using BudgetUnderControl.Infrastructure.Settings;
+using BudgetUnderControl.CommonInfrastructure.Commands;
+using BudgetUnderControl.CommonInfrastructure.Settings;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Caching.Memory;

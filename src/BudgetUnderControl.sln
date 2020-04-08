@@ -4,6 +4,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 VisualStudioVersion = 16.0.29926.136
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BudgetUnderControl.Android", "BudgetUnderControl.Mobile\BudgetUnderControl.Android\BudgetUnderControl.Android.csproj", "{9F216BA6-9BD4-4F35-AEC5-8C73A9501BC0}"
+	ProjectSection(ProjectDependencies) = postProject
+		{14534FAA-D724-472F-8C2E-7E7AFCB6241A} = {14534FAA-D724-472F-8C2E-7E7AFCB6241A}
+	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Targets", "Targets", "{43FFCFAA-62AC-4355-BDF0-97F7A093AA3D}"
 EndProject

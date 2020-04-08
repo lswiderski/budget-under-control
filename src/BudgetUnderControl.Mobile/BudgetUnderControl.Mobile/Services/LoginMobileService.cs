@@ -103,7 +103,7 @@ namespace BudgetUnderControl.Mobile.Services
                 var content = new StringContent(dataAsString);
                 content.Headers.ContentType = new MediaTypeHeaderValue("application/json");
                 content.Headers.Add("Api-Key", settings.ApiKey);
-                httpClient.Timeout = TimeSpan.FromMinutes(5);
+                
                 var response = await httpClient.PostAsync(url, content);
                 if(!response.IsSuccessStatusCode)
                 {

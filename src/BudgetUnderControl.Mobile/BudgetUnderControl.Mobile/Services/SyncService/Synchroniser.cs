@@ -66,7 +66,7 @@ namespace BudgetUnderControl.Mobile.Services
             await this.UpdateCategoriesAsync(syncRequest.Categories);
             await this.UpdateAccountGroupsAsync(syncRequest.AccountGroups);
             await this.UpdateAccountsAsync(syncRequest.Accounts);
-            _tags = (await this.tagRepository.GetAsync()).ToDictionary(x => x.ExternalId, x => x.Id);
+            _tags = (await this.tagRepository.GetAsync()).ToDictionary(x => x.ExternalId, x => x.Id, StringComparer.InvariantCultureIgnoreCase);
             await this.UpdateTransactionsAsync(syncRequest.Transactions);
             await this.UpdateTransfersAsync(syncRequest.Transfers);
             await this.UpdateLastSyncDateAsync(syncRequest);
@@ -109,11 +109,11 @@ namespace BudgetUnderControl.Mobile.Services
             const int packageSize = 200;
             var categories = (await this.categoryRepository.GetCategoriesAsync()).GroupBy(x => x.ExternalId).Select(x => x.FirstOrDefault()).ToList();
             var dictCategories = categories
-                .ToDictionary(c => c.ExternalId, c => c.Id);
+                .ToDictionary(c => c.ExternalId, c => c.Id, StringComparer.InvariantCultureIgnoreCase);
 
             var accounts = (await this.accountRepository.GetAccountsAsync()).Distinct().ToList();
             var dictAccounts = accounts
-                .ToDictionary(c => c.ExternalId, c => c.Id);
+                .ToDictionary(c => c.ExternalId, c => c.Id, StringComparer.InvariantCultureIgnoreCase);
 
             while (transactions.Any())
             {

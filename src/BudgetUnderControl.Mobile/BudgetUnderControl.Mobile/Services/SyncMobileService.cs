@@ -143,7 +143,6 @@ namespace BudgetUnderControl.Mobile.Services
                 var content = new StringContent(dataAsString);
                 content.Headers.ContentType = new MediaTypeHeaderValue("application/json");
                 content.Headers.Add("Api-Key", settings.ApiKey);
-                httpClient.Timeout = TimeSpan.FromMinutes(5);
                 var token = Preferences.Get(PreferencesKeys.JWTTOKEN, string.Empty);
                 if(string.IsNullOrEmpty(token))
                 {

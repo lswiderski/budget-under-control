@@ -210,7 +210,7 @@
                       <v-text-field v-model="editedItem.latitude" label="latitude"></v-text-field>
                     </v-col>
                     <v-col cols="12" md="6">
-                      <v-text-field v-model="editedItem.longtitude" label="Longtitude"></v-text-field>
+                      <v-text-field v-model="editedItem.longitude" label="Longitude"></v-text-field>
                     </v-col>
                     <v-col cols="12" md="12">
                       <v-select

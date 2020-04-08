@@ -1,7 +1,7 @@
 ﻿using BudgetUnderControl.CommonInfrastructure.Commands;
 using System.Threading.Tasks;
 
-namespace BudgetUnderControl.Infrastructure.Services
+namespace BudgetUnderControl.CommonInfrastructure
 {
     public interface ISynchroniser
     {

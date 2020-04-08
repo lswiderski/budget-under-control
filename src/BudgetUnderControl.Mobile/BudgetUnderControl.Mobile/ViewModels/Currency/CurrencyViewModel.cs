@@ -9,6 +9,7 @@ using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using BudgetUnderControl.CommonInfrastructure;
 
 namespace BudgetUnderControl.Mobile.ViewModels
 {

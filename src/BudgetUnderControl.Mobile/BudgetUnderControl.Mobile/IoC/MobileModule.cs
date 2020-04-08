@@ -41,12 +41,12 @@ namespace BudgetUnderControl.Mobile.IoC
             .GetTypeInfo()
             .Assembly;
 
-            builder.RegisterAssemblyTypes(assembly)
-                  .AsClosedTypesOf(typeof(ICommandHandler<>))
-                  .InstancePerLifetimeScope();
+            var commonInfrastructureAssembly = typeof(AddAccount)
+            .GetTypeInfo()
+            .Assembly;
 
-            builder.RegisterAssemblyTypes(assembly)
-                  .AsClosedTypesOf(typeof(IValidator<>))
+            builder.RegisterAssemblyTypes(commonInfrastructureAssembly)
+                  .AsClosedTypesOf(typeof(ICommandHandler<>))
                   .InstancePerLifetimeScope();
 
             builder.RegisterType<CommandDispatcher>()

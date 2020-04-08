@@ -4,10 +4,10 @@ using System.Collections.Generic;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace BudgetUnderControl.Mobile.Services
+namespace BudgetUnderControl.CommonInfrastructure
 {
-    public interface ISynchroniser
+    public interface ILoginService
     {
-        Task SynchroniseAsync(SyncRequest syncRequest);
+        Task ValidateLoginAsync(MobileLoginCommand command);
     }
 }

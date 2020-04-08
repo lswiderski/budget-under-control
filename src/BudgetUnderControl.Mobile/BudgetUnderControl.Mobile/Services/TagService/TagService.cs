@@ -52,9 +52,9 @@ namespace BudgetUnderControl.Mobile.Services
             return result;
         }
 
-        public async Task<TagDTO> GetTagAsync(string tagId)
+        public async Task<TagDTO> GetTagAsync(Guid tagId)
         {
-            var tag = await this.tagRepository.GetAsync(tagId);
+            var tag = await this.tagRepository.GetAsync(tagId.ToString());
 
             var result = new TagDTO
             {

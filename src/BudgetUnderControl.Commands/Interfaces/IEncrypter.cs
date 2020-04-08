@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace BudgetUnderControl.Infrastructure.Services
+namespace BudgetUnderControl.CommonInfrastructure
 {
     public interface IEncrypter
     {

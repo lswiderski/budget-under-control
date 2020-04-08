@@ -7,6 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using BudgetUnderControl.Common.Contracts;
+using BudgetUnderControl.CommonInfrastructure;
 
 namespace BudgetUnderControl.Mobile.Services
 {
@@ -35,9 +36,9 @@ namespace BudgetUnderControl.Mobile.Services
             return list;
         }
 
-        public async Task<AccountGroupItemDTO> GetAccountGroupAsync(string id)
+        public async Task<AccountGroupItemDTO> GetAccountGroupAsync(Guid id)
         {
-            var group = await this.accountGroupRepository.GetAccountGroupAsync(id);
+            var group = await this.accountGroupRepository.GetAccountGroupAsync(id.ToString());
             var dto = new AccountGroupItemDTO
             {
                 Id = group.Id,

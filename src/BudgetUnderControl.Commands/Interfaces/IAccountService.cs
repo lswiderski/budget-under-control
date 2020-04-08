@@ -6,7 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace BudgetUnderControl.Infrastructure.Services
+namespace BudgetUnderControl.CommonInfrastructure
 {
     public interface IAccountService
     {

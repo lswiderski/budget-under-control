@@ -1,4 +1,5 @@
-﻿using BudgetUnderControl.CommonInfrastructure.Commands;
+﻿using BudgetUnderControl.CommonInfrastructure;
+using BudgetUnderControl.CommonInfrastructure.Commands;
 using BudgetUnderControl.Infrastructure.Services;
 using FluentValidation;
 using System;

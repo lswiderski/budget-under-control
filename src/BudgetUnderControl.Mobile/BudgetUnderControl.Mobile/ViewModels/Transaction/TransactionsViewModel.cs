@@ -9,6 +9,7 @@ using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using BudgetUnderControl.CommonInfrastructure;
 
 namespace BudgetUnderControl.ViewModel
 {
@@ -115,6 +116,9 @@ namespace BudgetUnderControl.ViewModel
                 ExternalId = t.ExternalId,
                 ModifiedOn = t.ModifiedOn,
                 CreatedOn = t.CreatedOn,
+                Category = t.Category,
+                CategoryId = t.CategoryId,
+                Tags = t.Tags
             }).OrderByDescending(x => x.Date)
                                 .GroupBy(x => x.Date.ToString("d MMM yyyy"))
                                 .Select(x => new ObservableGroupCollection<string, TransactionListItemDTO>(x))

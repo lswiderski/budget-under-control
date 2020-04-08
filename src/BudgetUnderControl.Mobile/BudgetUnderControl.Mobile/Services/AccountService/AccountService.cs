@@ -11,6 +11,7 @@ using System.Threading.Tasks;
 using FluentValidation;
 using BudgetUnderControl.Common;
 using NLog;
+using BudgetUnderControl.CommonInfrastructure;
 
 namespace BudgetUnderControl.Mobile.Services
 {
@@ -27,9 +28,9 @@ namespace BudgetUnderControl.Mobile.Services
             this.logger = logger;
         }
 
-        public async Task<EditAccountDTO> GetAccountAsync(string id)
+        public async Task<EditAccountDTO> GetAccountAsync(Guid id)
         {
-            var account = await accountRepository.GetAccountAsync(id);
+            var account = await accountRepository.GetAccountAsync(id.ToString());
             var balance = await accountRepository.GetActualBalanceAsync(account.Id);
             var dto = new EditAccountDTO
             {

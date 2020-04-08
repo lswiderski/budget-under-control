@@ -11,6 +11,7 @@ using BudgetUnderControl.MobileDomain;
 using BudgetUnderControl.MobileDomain.Repositiories;
 using BudgetUnderControl.CommonInfrastructure.Commands;
 using BudgetUnderControl.Common.Extensions;
+using BudgetUnderControl.CommonInfrastructure;
 using FluentValidation;
 
 namespace BudgetUnderControl.Mobile.Services

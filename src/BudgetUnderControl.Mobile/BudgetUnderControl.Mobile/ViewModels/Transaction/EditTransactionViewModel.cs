@@ -11,6 +11,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Collections.ObjectModel;
 using System.Runtime.CompilerServices;
+using BudgetUnderControl.CommonInfrastructure;
 
 namespace BudgetUnderControl.ViewModel
 {
@@ -492,7 +493,7 @@ namespace BudgetUnderControl.ViewModel
 
         public async Task AddTagAsync(Guid tagId)
         {
-            var tag = await this.tagService.GetTagAsync(tagId.ToString());
+            var tag = await this.tagService.GetTagAsync(tagId);
             if(Tags.All(x => x.Id != tag.Id))
             {
                 this.Tags.Add(tag);

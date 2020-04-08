@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Text;
 using System.Threading.Tasks;
+using BudgetUnderControl.CommonInfrastructure;
 
 namespace BudgetUnderControl.Mobile.ViewModels
 {
@@ -104,7 +105,7 @@ namespace BudgetUnderControl.Mobile.ViewModels
         public async Task LoadTagAsync(Guid tagId)
         {
             externalId = tagId;
-            SelectedTag = await tagService.GetTagAsync(tagId.ToString());
+            SelectedTag = await tagService.GetTagAsync(tagId);
             Name = SelectedTag.Name;
             IsDeleted = SelectedTag.IsDeleted;
         }

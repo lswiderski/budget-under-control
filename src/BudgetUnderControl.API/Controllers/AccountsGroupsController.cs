@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authorization;
 using BudgetUnderControl.CommonInfrastructure.Commands;
 using BudgetUnderControl.Common.Contracts;
+using BudgetUnderControl.CommonInfrastructure;
 
 namespace BudgetUnderControl.API.Controllers
 {

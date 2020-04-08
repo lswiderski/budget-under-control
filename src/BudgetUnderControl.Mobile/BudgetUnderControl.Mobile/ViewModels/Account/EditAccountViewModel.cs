@@ -10,6 +10,7 @@ using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using BudgetUnderControl.CommonInfrastructure;
 
 namespace BudgetUnderControl.ViewModel
 {
@@ -199,7 +200,7 @@ namespace BudgetUnderControl.ViewModel
 
         public async void LoadAccount(Guid accountId)
         {
-            var account = await this.accountService.GetAccountAsync(accountId.ToString());
+            var account = await this.accountService.GetAccountAsync(accountId);
             Amount = account.Amount.ToString();
             Name = account.Name;
             Comment = account.Comment;

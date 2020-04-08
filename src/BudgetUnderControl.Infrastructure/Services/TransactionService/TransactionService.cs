@@ -11,6 +11,7 @@ using BudgetUnderControl.Domain;
 using BudgetUnderControl.Domain.Repositiories;
 using BudgetUnderControl.CommonInfrastructure.Commands;
 using BudgetUnderControl.Common.Extensions;
+using BudgetUnderControl.CommonInfrastructure;
 using FluentValidation;
 
 namespace BudgetUnderControl.Infrastructure.Services

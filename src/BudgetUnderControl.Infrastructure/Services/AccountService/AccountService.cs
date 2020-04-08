@@ -8,6 +8,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using BudgetUnderControl.CommonInfrastructure.Commands;
+using BudgetUnderControl.CommonInfrastructure;
 using FluentValidation;
 using BudgetUnderControl.Common;
 using NLog;

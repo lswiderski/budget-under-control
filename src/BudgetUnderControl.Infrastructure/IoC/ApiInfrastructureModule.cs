@@ -23,7 +23,12 @@ namespace BudgetUnderControl.Infrastructure.IoC
             .GetTypeInfo()
             .Assembly;
 
-            builder.RegisterAssemblyTypes(assembly)
+            var commonInfrastructureAssembly = typeof(AddAccount)
+            .GetTypeInfo()
+            .Assembly;
+
+
+            builder.RegisterAssemblyTypes(commonInfrastructureAssembly)
                     .AsClosedTypesOf(typeof(ICommandHandler<>))
                     .InstancePerLifetimeScope();
 

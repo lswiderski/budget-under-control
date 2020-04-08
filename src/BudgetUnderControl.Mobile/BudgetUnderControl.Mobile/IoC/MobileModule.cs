@@ -115,7 +115,8 @@ namespace BudgetUnderControl.Mobile.IoC
 
             var url = Preferences.Get(PreferencesKeys.APIURL, string.Empty);
             var apiUrl = string.IsNullOrEmpty(url) || string.IsNullOrWhiteSpace(url) ? settings.ApiBaseUri : url;
-            builder.Register(ctx => new HttpClient() { BaseAddress = new Uri(apiUrl) })
+            builder.Register(ctx => new HttpClient() { BaseAddress = new Uri(apiUrl), Timeout = TimeSpan.FromMinutes(5)
+        })
             .Named<HttpClient>("api")
             .SingleInstance();
 

@@ -281,24 +281,38 @@ namespace BudgetUnderControl.Mobile.Services
 
         private async Task ImportTransfersAsync(List<TransferSyncDTO> transfers)
         {
+            var newTransfers = new List<Transfer>();
             foreach (var item in transfers)
             {
                 if(transactionsMap.ContainsKey(item.FromTransactionId) && transactionsMap.ContainsKey(item.ToTransactionId))
                 {
                     var transfer = Transfer.Create(transactionsMap[item.FromTransactionId], transactionsMap[item.ToTransactionId], item.Rate, item.ExternalId?.ToString());
-                    await this.transactionRepository.AddTransferAsync(transfer);
+                    newTransfers.Add(transfer);
                 }
             }
+
+            if (newTransfers.Any())
+            {
+                await this.transactionRepository.AddTransfersAsync(newTransfers);
+            }
+            
         }
 
         private async Task ImportTagsAsync(List<TagSyncDTO> tags)
         {
             var user = await userRepository.GetFirstUserAsync();
+            var newTags = new List<Tag>();
+
             foreach (var item in tags)
             {
                 var tag = Tag.Create(item.Name, user.Id, item.IsDeleted, item.ExternalId.ToString());
                 tag.SetModifiedOn(item.ModifiedOn);
-                await this.tagRepository.AddAsync(tag);
+                newTags.Add(tag);
+            }
+
+            if (newTags.Any())
+            {
+                await this.tagRepository.AddAsync(newTags);
             }
         }
 
@@ -312,6 +326,8 @@ namespace BudgetUnderControl.Mobile.Services
                 .Where(x => transactionIds.Contains(x.ExternalId)).ToList()
                  .ToDictionary(x => x.ExternalId, x => x);
 
+            var newTags = new List<TagToTransaction>();
+
             foreach (var item in t2ts)
             {
                 var t2t = new TagToTransaction
@@ -320,8 +336,14 @@ namespace BudgetUnderControl.Mobile.Services
                     Transaction = transactions[item.TransactionId.ToString()],
                 };
 
-                await this.tagRepository.AddAsync(t2t);
+                newTags.Add(t2t);
             }
+
+            if(newTags.Any())
+            {
+                await this.tagRepository.AddAsync(newTags);
+            }
+                
         }
 
         private async Task ImportExchangeRatesAsync(List<ExchangeRateSyncDTO> exchangeRates)

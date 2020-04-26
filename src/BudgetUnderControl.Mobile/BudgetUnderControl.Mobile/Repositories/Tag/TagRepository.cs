@@ -25,6 +25,12 @@ namespace BudgetUnderControl.Mobile.Repositories
             await this.Context.SaveChangesAsync();
         }
 
+        public async Task AddAsync(List<Tag> tags)
+        {
+            await this.Context.Tags.AddRangeAsync(tags);
+            await this.Context.SaveChangesAsync();
+        }
+
         public async Task<ICollection<Tag>> GetAsync()
         {
             var list = await this.Context.Tags

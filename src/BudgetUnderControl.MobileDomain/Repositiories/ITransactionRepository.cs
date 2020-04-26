@@ -20,6 +20,7 @@ namespace BudgetUnderControl.MobileDomain.Repositiories
         Task UpdateAsync(Transaction transaction);
         Task UpdateAsync(IEnumerable<Transaction> transactions);
         Task AddTransferAsync(Transfer transfer);
+        Task AddTransfersAsync(IEnumerable<Transfer> transfers);
         Task UpdateTransferAsync(Transfer transfer);
         Task RemoveTransactionAsync(Transaction transaction);
         Task RemoveTransferAsync(Transfer transfer);

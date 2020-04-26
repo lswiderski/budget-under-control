@@ -8,6 +8,7 @@ namespace BudgetUnderControl.MobileDomain.Repositiories
     public interface ITagRepository
     {
         Task AddAsync(Tag tag);
+        Task AddAsync(List<Tag> tags);
         Task<ICollection<Tag>> GetAsync();
         Task<ICollection<Tag>> GetAsync(List<int> tagIds);
         Task<ICollection<Tag>> GetAsync(List<string> tagIds);

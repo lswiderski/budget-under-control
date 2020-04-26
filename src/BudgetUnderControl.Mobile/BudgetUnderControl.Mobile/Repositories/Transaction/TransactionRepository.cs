@@ -58,6 +58,12 @@ namespace BudgetUnderControl.Mobile.Repositories
             await this.Context.SaveChangesAsync();
         }
 
+        public async Task AddTransfersAsync(IEnumerable<Transfer> transfers)
+        {
+            this.Context.Transfers.AddRange(transfers);
+            await this.Context.SaveChangesAsync();
+        }
+
         public async Task UpdateTransferAsync(Transfer transfer)
         {
             transfer.UpdateModify();

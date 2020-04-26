@@ -22,5 +22,6 @@ namespace BudgetUnderControl.CommonInfrastructure.Commands
         public IEnumerable<UserSyncDTO> Users{ get; set; }
         public IEnumerable<CategorySyncDTO> Categories { get; set; }
         public IEnumerable<TagSyncDTO> Tags { get; set; }
+        public IEnumerable<ExchangeRateSyncDTO> ExchangeRates { get; set; }
     }
 }

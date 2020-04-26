@@ -35,13 +35,15 @@ namespace BudgetUnderControl.MobileDomain
         public static Context Create(IContextConfig contextConfig)
         {
             var context = new Context(contextConfig);
-           // context.Database.EnsureCreated();
+             //context.Database.EnsureDeleted();
+             //context.Database.EnsureCreated();
             return context;
         }
 
         public static Context CreateTest(DbContextOptions options, IContextConfig config)
         {
             var context = new Context(options, config);
+            
             context.Database.EnsureCreated();
             return context;
         }

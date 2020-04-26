@@ -93,7 +93,7 @@ namespace BudgetUnderControl.Mobile.Services
 
         public async Task AddExchangeRateAsync(AddExchangeRate command)
         {
-            var rate = ExchangeRate.Create(command.FromCurrencyId, command.ToCurrencyId, command.Rate, command.Date);
+            var rate = ExchangeRate.Create(command.FromCurrencyId, command.ToCurrencyId, command.Rate, command.ExternalId.ToString(), false, command.Date);
 
             await this.currencyRepository.AddExchangeRateAsync(rate);
         }

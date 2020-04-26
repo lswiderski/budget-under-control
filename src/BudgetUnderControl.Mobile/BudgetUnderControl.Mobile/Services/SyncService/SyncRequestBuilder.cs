@@ -82,6 +82,7 @@ namespace BudgetUnderControl.Mobile.Services
             syncRequest.Users = await this.GetUsersToSyncAsync(syncRequest.LastSync);
             syncRequest.Categories = await this.GetCategoriesToSyncAsync(syncRequest.LastSync);
             syncRequest.Tags = await this.GetTagsToSyncAsync(syncRequest.LastSync);
+            syncRequest.ExchangeRates = await this.GetExhangeRatesToSyncAsync();
 
             return syncRequest;
         }
@@ -267,6 +268,23 @@ namespace BudgetUnderControl.Mobile.Services
                 }).ToList();
 
             return tags;
+        }
+
+        private async Task<IEnumerable<ExchangeRateSyncDTO>> GetExhangeRatesToSyncAsync()
+        {
+            var rates = (await this.currencyRepository.GetExchangeRatesAsync())
+                .Select(x => new ExchangeRateSyncDTO
+                {
+                    Date = x.Date,
+                    Rate = x.Rate,
+                    FromCurrency = x.FromCurrency.Code,
+                    ToCurrency = x.ToCurrency.Code,
+                    IsDeleted = x.IsDeleted,
+                    ExternalId = Guid.Parse(x.ExternalId),
+                    ModifiedOn = x.ModifiedOn
+                }).ToList();
+
+            return rates;
         }
     }
 }

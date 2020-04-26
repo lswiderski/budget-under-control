@@ -89,7 +89,7 @@ namespace BudgetUnderControl.Mobile.IoC
             builder.RegisterType<TagService>().As<ITagService>().InstancePerLifetimeScope();
             builder.RegisterType<TestDataSeeder>().As<ITestDataSeeder>().InstancePerLifetimeScope();
             builder.RegisterType<SynchronizationRepository>().As<ISynchronizationRepository>().InstancePerLifetimeScope();
-            builder.RegisterType<Synchroniser>().As<ISynchroniser>().InstancePerLifetimeScope();
+            builder.RegisterType<MobileSynchroniser>().As<ISynchroniser>().InstancePerLifetimeScope();
             builder.RegisterType<SyncRequestBuilder>().As<ISyncRequestBuilder>().InstancePerLifetimeScope();
 
             builder.RegisterInstance<IFileHelper>(DependencyService.Get<IFileHelper>());

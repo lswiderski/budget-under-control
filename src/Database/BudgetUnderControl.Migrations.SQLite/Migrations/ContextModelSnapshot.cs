@@ -16,7 +16,7 @@ namespace Migrations.Migrations
             modelBuilder
                 .HasAnnotation("ProductVersion", "2.1.4-rtm-31024");
 
-            modelBuilder.Entity("BudgetUnderControl.Domain.Account", b =>
+            modelBuilder.Entity("BudgetUnderControl.MobileDomain.Account", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd();
@@ -27,7 +27,7 @@ namespace Migrations.Migrations
 
                     b.Property<int>("CurrencyId");
 
-                    b.Property<Guid>("ExternalId");
+                    b.Property<string>("ExternalId");
 
                     b.Property<bool>("IsActive");
 
@@ -59,12 +59,12 @@ namespace Migrations.Migrations
                     b.ToTable("Account");
                 });
 
-            modelBuilder.Entity("BudgetUnderControl.Domain.AccountGroup", b =>
+            modelBuilder.Entity("BudgetUnderControl.MobileDomain.AccountGroup", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd();
 
-                    b.Property<Guid>("ExternalId");
+                    b.Property<string>("ExternalId");
 
                     b.Property<bool>("IsDeleted");
 
@@ -82,7 +82,7 @@ namespace Migrations.Migrations
                     b.ToTable("AccountGroup");
                 });
 
-            modelBuilder.Entity("BudgetUnderControl.Domain.AccountSnapshot", b =>
+            modelBuilder.Entity("BudgetUnderControl.MobileDomain.AccountSnapshot", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd();
@@ -112,12 +112,12 @@ namespace Migrations.Migrations
                     b.ToTable("AccountSnapshot");
                 });
 
-            modelBuilder.Entity("BudgetUnderControl.Domain.Category", b =>
+            modelBuilder.Entity("BudgetUnderControl.MobileDomain.Category", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd();
 
-                    b.Property<Guid>("ExternalId");
+                    b.Property<string>("ExternalId");
 
                     b.Property<bool>("IsDefault");
 
@@ -137,7 +137,7 @@ namespace Migrations.Migrations
                     b.ToTable("Category");
                 });
 
-            modelBuilder.Entity("BudgetUnderControl.Domain.Currency", b =>
+            modelBuilder.Entity("BudgetUnderControl.MobileDomain.Currency", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd();
@@ -158,14 +158,20 @@ namespace Migrations.Migrations
                     b.ToTable("Currency");
                 });
 
-            modelBuilder.Entity("BudgetUnderControl.Domain.ExchangeRate", b =>
+            modelBuilder.Entity("BudgetUnderControl.MobileDomain.ExchangeRate", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd();
 
                     b.Property<DateTime>("Date");
 
+                    b.Property<string>("ExternalId");
+
                     b.Property<int>("FromCurrencyId");
+
+                    b.Property<bool>("IsDeleted");
+
+                    b.Property<DateTime?>("ModifiedOn");
 
                     b.Property<double>("Rate");
 
@@ -180,7 +186,7 @@ namespace Migrations.Migrations
                     b.ToTable("ExchangeRate");
                 });
 
-            modelBuilder.Entity("BudgetUnderControl.Domain.File", b =>
+            modelBuilder.Entity("BudgetUnderControl.MobileDomain.File", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd();
@@ -192,7 +198,7 @@ namespace Migrations.Migrations
                     b.ToTable("File");
                 });
 
-            modelBuilder.Entity("BudgetUnderControl.Domain.Icon", b =>
+            modelBuilder.Entity("BudgetUnderControl.MobileDomain.Icon", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd();
@@ -204,14 +210,14 @@ namespace Migrations.Migrations
                     b.ToTable("Icon");
                 });
 
-            modelBuilder.Entity("BudgetUnderControl.Domain.Synchronization", b =>
+            modelBuilder.Entity("BudgetUnderControl.MobileDomain.Synchronization", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd();
 
                     b.Property<byte>("Component");
 
-                    b.Property<Guid>("ComponentId");
+                    b.Property<string>("ComponentId");
 
                     b.Property<DateTime>("LastSyncAt");
 
@@ -224,12 +230,12 @@ namespace Migrations.Migrations
                     b.ToTable("Synchronization");
                 });
 
-            modelBuilder.Entity("BudgetUnderControl.Domain.Tag", b =>
+            modelBuilder.Entity("BudgetUnderControl.MobileDomain.Tag", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd();
 
-                    b.Property<Guid>("ExternalId");
+                    b.Property<string>("ExternalId");
 
                     b.Property<bool>("IsDeleted");
 
@@ -247,7 +253,7 @@ namespace Migrations.Migrations
                     b.ToTable("Tag");
                 });
 
-            modelBuilder.Entity("BudgetUnderControl.Domain.TagToTransaction", b =>
+            modelBuilder.Entity("BudgetUnderControl.MobileDomain.TagToTransaction", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd();
@@ -265,7 +271,7 @@ namespace Migrations.Migrations
                     b.ToTable("TagToTransaction");
                 });
 
-            modelBuilder.Entity("BudgetUnderControl.Domain.Transaction", b =>
+            modelBuilder.Entity("BudgetUnderControl.MobileDomain.Transaction", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd();
@@ -284,7 +290,7 @@ namespace Migrations.Migrations
 
                     b.Property<DateTime>("Date");
 
-                    b.Property<Guid>("ExternalId");
+                    b.Property<string>("ExternalId");
 
                     b.Property<bool>("IsDeleted");
 
@@ -309,12 +315,12 @@ namespace Migrations.Migrations
                     b.ToTable("Transaction");
                 });
 
-            modelBuilder.Entity("BudgetUnderControl.Domain.Transfer", b =>
+            modelBuilder.Entity("BudgetUnderControl.MobileDomain.Transfer", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd();
 
-                    b.Property<Guid>("ExternalId");
+                    b.Property<string>("ExternalId");
 
                     b.Property<int>("FromTransactionId");
 
@@ -335,7 +341,7 @@ namespace Migrations.Migrations
                     b.ToTable("Transfer");
                 });
 
-            modelBuilder.Entity("BudgetUnderControl.Domain.User", b =>
+            modelBuilder.Entity("BudgetUnderControl.MobileDomain.User", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd();
@@ -345,7 +351,7 @@ namespace Migrations.Migrations
                     b.Property<string>("Email")
                         .HasMaxLength(150);
 
-                    b.Property<Guid>("ExternalId");
+                    b.Property<string>("ExternalId");
 
                     b.Property<bool>("IsDeleted");
 
@@ -365,138 +371,138 @@ namespace Migrations.Migrations
                     b.ToTable("User");
                 });
 
-            modelBuilder.Entity("BudgetUnderControl.Domain.Account", b =>
+            modelBuilder.Entity("BudgetUnderControl.MobileDomain.Account", b =>
                 {
-                    b.HasOne("BudgetUnderControl.Domain.AccountGroup", "AccountGroup")
+                    b.HasOne("BudgetUnderControl.MobileDomain.AccountGroup", "AccountGroup")
                         .WithMany("Accounts")
                         .HasForeignKey("AccountGroupId")
                         .HasConstraintName("ForeignKey_Account_AccountGroup")
                         .OnDelete(DeleteBehavior.Cascade);
 
-                    b.HasOne("BudgetUnderControl.Domain.Currency", "Currency")
+                    b.HasOne("BudgetUnderControl.MobileDomain.Currency", "Currency")
                         .WithMany("Accounts")
                         .HasForeignKey("CurrencyId")
                         .HasConstraintName("ForeignKey_Account_Currency")
                         .OnDelete(DeleteBehavior.Cascade);
 
-                    b.HasOne("BudgetUnderControl.Domain.User", "Owner")
+                    b.HasOne("BudgetUnderControl.MobileDomain.User", "Owner")
                         .WithMany("Accounts")
                         .HasForeignKey("OwnerId")
                         .HasConstraintName("ForeignKey_Account_User")
                         .OnDelete(DeleteBehavior.Restrict);
                 });
 
-            modelBuilder.Entity("BudgetUnderControl.Domain.AccountGroup", b =>
+            modelBuilder.Entity("BudgetUnderControl.MobileDomain.AccountGroup", b =>
                 {
-                    b.HasOne("BudgetUnderControl.Domain.User", "Owner")
+                    b.HasOne("BudgetUnderControl.MobileDomain.User", "Owner")
                         .WithMany("AccountGroups")
                         .HasForeignKey("OwnerId")
                         .HasConstraintName("ForeignKey_AccountGroup_User")
                         .OnDelete(DeleteBehavior.Restrict);
                 });
 
-            modelBuilder.Entity("BudgetUnderControl.Domain.AccountSnapshot", b =>
+            modelBuilder.Entity("BudgetUnderControl.MobileDomain.AccountSnapshot", b =>
                 {
-                    b.HasOne("BudgetUnderControl.Domain.Account", "Account")
+                    b.HasOne("BudgetUnderControl.MobileDomain.Account", "Account")
                         .WithMany("AccountSnapshots")
                         .HasForeignKey("AccountId")
                         .HasConstraintName("ForeignKey_AccountSnapshot_Account")
                         .OnDelete(DeleteBehavior.Cascade);
 
-                    b.HasOne("BudgetUnderControl.Domain.Transaction", "LastTransaction")
+                    b.HasOne("BudgetUnderControl.MobileDomain.Transaction", "LastTransaction")
                         .WithMany("AccountSnapshots")
                         .HasForeignKey("LastTransactionId")
                         .HasConstraintName("ForeignKey_AccountSnapshot_LastTransaction")
                         .OnDelete(DeleteBehavior.Restrict);
 
-                    b.HasOne("BudgetUnderControl.Domain.AccountSnapshot", "PreviousAccountSnapshot")
+                    b.HasOne("BudgetUnderControl.MobileDomain.AccountSnapshot", "PreviousAccountSnapshot")
                         .WithMany()
                         .HasForeignKey("PreviousAccountSnapshotId");
                 });
 
-            modelBuilder.Entity("BudgetUnderControl.Domain.Category", b =>
+            modelBuilder.Entity("BudgetUnderControl.MobileDomain.Category", b =>
                 {
-                    b.HasOne("BudgetUnderControl.Domain.User", "Owner")
+                    b.HasOne("BudgetUnderControl.MobileDomain.User", "Owner")
                         .WithMany()
                         .HasForeignKey("OwnerId")
                         .OnDelete(DeleteBehavior.Cascade);
                 });
 
-            modelBuilder.Entity("BudgetUnderControl.Domain.ExchangeRate", b =>
+            modelBuilder.Entity("BudgetUnderControl.MobileDomain.ExchangeRate", b =>
                 {
-                    b.HasOne("BudgetUnderControl.Domain.Currency", "FromCurrency")
+                    b.HasOne("BudgetUnderControl.MobileDomain.Currency", "FromCurrency")
                         .WithMany("FromExchangeRates")
                         .HasForeignKey("FromCurrencyId")
                         .HasConstraintName("ForeignKey_ExchangeRate_FromCurrency")
                         .OnDelete(DeleteBehavior.Restrict);
 
-                    b.HasOne("BudgetUnderControl.Domain.Currency", "ToCurrency")
+                    b.HasOne("BudgetUnderControl.MobileDomain.Currency", "ToCurrency")
                         .WithMany("ToExchangeRates")
                         .HasForeignKey("ToCurrencyId")
                         .HasConstraintName("ForeignKey_ExchangeRate_ToCurrency")
                         .OnDelete(DeleteBehavior.Restrict);
                 });
 
-            modelBuilder.Entity("BudgetUnderControl.Domain.Synchronization", b =>
+            modelBuilder.Entity("BudgetUnderControl.MobileDomain.Synchronization", b =>
                 {
-                    b.HasOne("BudgetUnderControl.Domain.User", "User")
+                    b.HasOne("BudgetUnderControl.MobileDomain.User", "User")
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade);
                 });
 
-            modelBuilder.Entity("BudgetUnderControl.Domain.Tag", b =>
+            modelBuilder.Entity("BudgetUnderControl.MobileDomain.Tag", b =>
                 {
-                    b.HasOne("BudgetUnderControl.Domain.User", "Owner")
+                    b.HasOne("BudgetUnderControl.MobileDomain.User", "Owner")
                         .WithMany()
                         .HasForeignKey("OwnerId")
                         .OnDelete(DeleteBehavior.Cascade);
                 });
 
-            modelBuilder.Entity("BudgetUnderControl.Domain.TagToTransaction", b =>
+            modelBuilder.Entity("BudgetUnderControl.MobileDomain.TagToTransaction", b =>
                 {
-                    b.HasOne("BudgetUnderControl.Domain.Tag", "Tag")
+                    b.HasOne("BudgetUnderControl.MobileDomain.Tag", "Tag")
                         .WithMany("TagToTransactions")
                         .HasForeignKey("TagId")
                         .HasConstraintName("ForeignKey_TagToTransaction_Tag")
                         .OnDelete(DeleteBehavior.Cascade);
 
-                    b.HasOne("BudgetUnderControl.Domain.Transaction", "Transaction")
+                    b.HasOne("BudgetUnderControl.MobileDomain.Transaction", "Transaction")
                         .WithMany("TagsToTransaction")
                         .HasForeignKey("TransactionId")
                         .HasConstraintName("ForeignKey_TagToTransaction_Transaction")
                         .OnDelete(DeleteBehavior.Cascade);
                 });
 
-            modelBuilder.Entity("BudgetUnderControl.Domain.Transaction", b =>
+            modelBuilder.Entity("BudgetUnderControl.MobileDomain.Transaction", b =>
                 {
-                    b.HasOne("BudgetUnderControl.Domain.Account", "Account")
+                    b.HasOne("BudgetUnderControl.MobileDomain.Account", "Account")
                         .WithMany("Transactions")
                         .HasForeignKey("AccountId")
                         .HasConstraintName("ForeignKey_Transaction_Account")
                         .OnDelete(DeleteBehavior.Cascade);
 
-                    b.HasOne("BudgetUnderControl.Domain.User", "AddedBy")
+                    b.HasOne("BudgetUnderControl.MobileDomain.User", "AddedBy")
                         .WithMany("Transactions")
                         .HasForeignKey("AddedById")
                         .HasConstraintName("ForeignKey_Transaction_User")
                         .OnDelete(DeleteBehavior.Restrict);
 
-                    b.HasOne("BudgetUnderControl.Domain.Category", "Category")
+                    b.HasOne("BudgetUnderControl.MobileDomain.Category", "Category")
                         .WithMany("Transactions")
                         .HasForeignKey("CategoryId")
                         .HasConstraintName("ForeignKey_Transaction_Category");
                 });
 
-            modelBuilder.Entity("BudgetUnderControl.Domain.Transfer", b =>
+            modelBuilder.Entity("BudgetUnderControl.MobileDomain.Transfer", b =>
                 {
-                    b.HasOne("BudgetUnderControl.Domain.Transaction", "FromTransaction")
+                    b.HasOne("BudgetUnderControl.MobileDomain.Transaction", "FromTransaction")
                         .WithMany("FromTransfers")
                         .HasForeignKey("FromTransactionId")
                         .HasConstraintName("ForeignKey_Transfer_FromTransaction")
                         .OnDelete(DeleteBehavior.Restrict);
 
-                    b.HasOne("BudgetUnderControl.Domain.Transaction", "ToTransaction")
+                    b.HasOne("BudgetUnderControl.MobileDomain.Transaction", "ToTransaction")
                         .WithMany("ToTransfers")
                         .HasForeignKey("ToTransactionId")
                         .HasConstraintName("ForeignKey_Transfer_ToTransaction")

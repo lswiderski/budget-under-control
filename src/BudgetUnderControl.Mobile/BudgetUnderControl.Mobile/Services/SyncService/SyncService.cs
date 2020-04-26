@@ -9,6 +9,7 @@ using BudgetUnderControl.MobileDomain.Repositiories;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
 using System.Transactions;
@@ -70,6 +71,7 @@ namespace BudgetUnderControl.Mobile.Services
             await ImportTransfersAsync(backupDto.Transfers);
             await ImportTagsAsync(backupDto.Tags);
             await ImportTagsToTransactionsAsync(backupDto.TagsToTransactions);
+            await ImportExchangeRatesAsync(backupDto.ExchangeRates);
         }
 
         public async Task<BackUpDTO> GetBackUpAsync()
@@ -142,6 +144,18 @@ namespace BudgetUnderControl.Mobile.Services
                     TransactionId = Guid.Parse(x.Transaction.ExternalId),
                 }).ToList();
 
+            var exchangeRates = (await this.currencyRepository.GetExchangeRatesAsync())
+                .Select(x => new ExchangeRateSyncDTO
+                {
+                    Rate = x.Rate,
+                    Date = x.Date,
+                    FromCurrency = x.FromCurrency.Code,
+                    ToCurrency = x.ToCurrency.Code,
+                    ExternalId = Guid.Parse(x.ExternalId),
+                    IsDeleted = x.IsDeleted,
+                    ModifiedOn = x.ModifiedOn
+                }).ToList();
+
             var backUp = new BackUpDTO
             {
                 Currencies = currencies,
@@ -150,6 +164,7 @@ namespace BudgetUnderControl.Mobile.Services
                 Transactions = transactions,
                 Tags = tags,
                 TagsToTransactions = t2t,
+                ExchangeRates = exchangeRates,
             };
 
             return backUp;
@@ -208,8 +223,10 @@ namespace BudgetUnderControl.Mobile.Services
         private async Task ImportAccountsAsync(List<AccountSyncDTO> accounts)
         {
             var user = await userRepository.GetFirstUserAsync();
+            var currencies = await currencyRepository.GetCurriencesAsync();
+            var groups = await accountGroupRepository.GetAccountGroupsAsync();
             accountsMap = new Dictionary<int, int>();
-            
+
             foreach (var item in accounts)
             {
                 var account = Account.Create(item.Name, item.CurrencyId, item.AccountGroupId, item.IsIncludedToTotal, item.Comment, item.Order, item.Type, item.ParentAccountId, true, user.Id, item.ExternalId?.ToString());
@@ -304,6 +321,25 @@ namespace BudgetUnderControl.Mobile.Services
                 };
 
                 await this.tagRepository.AddAsync(t2t);
+            }
+        }
+
+        private async Task ImportExchangeRatesAsync(List<ExchangeRateSyncDTO> exchangeRates)
+        {
+            if(exchangeRates != null && exchangeRates.Any())
+            {
+                var currenciesDict = (await this.currencyRepository.GetCurriencesAsync())
+                              .ToDictionary(x => x.Code, x => x.Id);
+                foreach (var item in exchangeRates)
+                {
+                    var fromCurrencyId = currenciesDict.ContainsKey(item.FromCurrency) ? currenciesDict[item.FromCurrency] : (int?)null;
+                    var toCurrencyId = currenciesDict.ContainsKey(item.ToCurrency) ? currenciesDict[item.ToCurrency] : (int?)null;
+                    if (fromCurrencyId.HasValue && toCurrencyId.HasValue)
+                    {
+                        var exchangeRate = ExchangeRate.Create(fromCurrencyId.Value, toCurrencyId.Value, item.Rate, item.ExternalId.ToString(),item.IsDeleted, item.Date);
+                        await this.currencyRepository.AddExchangeRateAsync(exchangeRate);
+                    }
+                }
             }
         }
 

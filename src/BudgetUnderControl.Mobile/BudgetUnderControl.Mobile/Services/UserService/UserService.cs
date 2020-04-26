@@ -15,10 +15,16 @@ namespace BudgetUnderControl.Mobile.Services
         public IUserIdentityContext CreateUserIdentityContext()
         {
             var user =  this.userRepository.GetFirstUserAsync().Result;
+            var externalId = Guid.NewGuid();
+            if (!string.IsNullOrWhiteSpace(user.ExternalId))
+            {
+                externalId = Guid.Parse(user.ExternalId);
+            }
+
             var context = new UserIdentityContext
             {
                 UserId = user.Id,
-                ExternalId = Guid.Parse(user.ExternalId),
+                ExternalId = externalId,
                 RoleName = user.Role
             };
             return context;

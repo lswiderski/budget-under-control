@@ -72,7 +72,7 @@ namespace BudgetUnderControl.Mobile
             masterPageItems.Add(new MasterPageItem
             {
                 Title = "Tags",
-                IconSource = "Currencies.png",
+                IconSource = "Tags.png",
                 TargetType = typeof(Tags)
             });
             masterPageItems.Add(new MasterPageItem

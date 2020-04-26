@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace BudgetUnderControl.MobileDomain
 {
-    public class ExchangeRate
+    public class ExchangeRate : ISyncable
     {
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
@@ -18,6 +18,10 @@ namespace BudgetUnderControl.MobileDomain
         public double Rate { get; set; }
         public DateTime Date { get; set; }
 
+        public DateTime? ModifiedOn { get; set; }
+        public string ExternalId { get; set; }
+        public bool IsDeleted { get; set; }
+
         public Currency FromCurrency { get; set; }
         public Currency ToCurrency { get; set; }
 
@@ -26,23 +30,42 @@ namespace BudgetUnderControl.MobileDomain
 
         }
 
-        public static ExchangeRate Create(int fromCurrencyId, int toCurrencyId, double rate, DateTime? date = null)
+        public static ExchangeRate Create(int fromCurrencyId, int toCurrencyId, double rate, string externalId, bool isDeleted = false, DateTime? date = null)
         {
             return new ExchangeRate
             {
                 FromCurrencyId = fromCurrencyId,
                 ToCurrencyId = toCurrencyId,
                 Rate = rate,
-                Date = date ?? DateTime.UtcNow
+                Date = date ?? DateTime.UtcNow,
+                ExternalId = !string.IsNullOrEmpty(externalId) ? externalId : Guid.NewGuid().ToString(),
+                IsDeleted = isDeleted,
             };
         }
 
-        public void Edit(int fromCurrencyId, int toCurrencyId, double rate, DateTime date)
+        public void Edit(int fromCurrencyId, int toCurrencyId, double rate, DateTime date, bool isDeleted)
         {
             this.Rate = rate;
             this.Date = date;
             this.FromCurrencyId = fromCurrencyId;
             this.ToCurrencyId = toCurrencyId;
+            this.IsDeleted = isDeleted;
+        }
+
+        public void UpdateModify()
+        {
+            this.ModifiedOn = DateTime.UtcNow;
+        }
+
+        public void SetModifiedOn(DateTime? date)
+        {
+            this.ModifiedOn = date;
+        }
+
+        public void Delete(bool delete = true)
+        {
+            this.IsDeleted = delete;
+            this.UpdateModify();
         }
     }
 }

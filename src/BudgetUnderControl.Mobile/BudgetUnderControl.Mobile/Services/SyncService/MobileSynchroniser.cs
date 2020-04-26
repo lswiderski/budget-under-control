@@ -15,7 +15,7 @@ using System.Transactions;
 
 namespace BudgetUnderControl.Mobile.Services
 {
-    public class Synchroniser : ISynchroniser
+    public class MobileSynchroniser : ISynchroniser
     {
         private readonly ILogger logger;
         private readonly ITransactionRepository transactionRepository;
@@ -31,7 +31,7 @@ namespace BudgetUnderControl.Mobile.Services
         private readonly GeneralSettings settings;
         private Dictionary<string, int> _tags;
 
-        public Synchroniser(ITransactionRepository transactionRepository,
+        public MobileSynchroniser(ITransactionRepository transactionRepository,
             IAccountRepository accountRepository,
             ICurrencyRepository currencyRepository,
             ICategoryRepository categoryRepository,
@@ -70,6 +70,7 @@ namespace BudgetUnderControl.Mobile.Services
             await this.UpdateTransactionsAsync(syncRequest.Transactions);
             await this.UpdateTransfersAsync(syncRequest.Transfers);
             await this.UpdateLastSyncDateAsync(syncRequest);
+            await this.UpdateExchangeRatesAsync(syncRequest.ExchangeRates);
         }
 
         private async Task UpdateLastSyncDateAsync(SyncRequest syncRequest)
@@ -371,6 +372,40 @@ namespace BudgetUnderControl.Mobile.Services
                     accounGroupToAdd.Delete(accountGroup.IsDeleted);
                     accounGroupToAdd.SetModifiedOn(accountGroup.ModifiedOn);
                     await this.accountGroupRepository.AddAccountGroupAsync(accounGroupToAdd);
+                }
+            }
+        }
+
+        private async Task UpdateExchangeRatesAsync(IEnumerable<ExchangeRateSyncDTO> rates)
+        {
+            if (rates == null || !rates.Any())
+            {
+                return;
+            }
+
+            var localRates = (await this.currencyRepository.GetExchangeRatesAsync());
+
+            var userId = (await this.userRepository.GetFirstUserAsync()).Id;
+            var currenciesDict = (await this.currencyRepository.GetCurriencesAsync())
+                             .ToDictionary(x => x.Code, x => x.Id);
+          
+            foreach (var rate in rates)
+            {
+
+                var localRate = localRates.Where(x => x.ExternalId == rate.ExternalId.ToString()).FirstOrDefault();
+                var fromCurrencyId = currenciesDict.ContainsKey(rate.FromCurrency) ? currenciesDict[rate.FromCurrency] : (int?)null;
+                var toCurrencyId = currenciesDict.ContainsKey(rate.ToCurrency) ? currenciesDict[rate.ToCurrency] : (int?)null;
+                if (fromCurrencyId.HasValue && toCurrencyId.HasValue)
+                {
+                    if (localRate == null)
+                    {
+                        var exchangeRate = ExchangeRate.Create(fromCurrencyId.Value, toCurrencyId.Value, rate.Rate, rate.ExternalId.ToString(), rate.IsDeleted, rate.Date);
+                        await this.currencyRepository.AddExchangeRateAsync(exchangeRate);
+                    }
+                    else
+                    {
+                        localRate.Edit(fromCurrencyId.Value, toCurrencyId.Value, rate.Rate, rate.Date, rate.IsDeleted);
+                    }
                 }
             }
         }

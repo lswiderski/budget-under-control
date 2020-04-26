@@ -16,7 +16,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\BudgetUnderControl.Common\BudgetUnderControl.Common.csproj" />
-    <ProjectReference Include="..\..\BudgetUnderControl.Domain\BudgetUnderControl.Domain.csproj" />
+    <ProjectReference Include="..\..\BudgetUnderControl.MobileDomain\BudgetUnderControl.MobileDomain.csproj" />
     <ProjectReference Include="..\BudgetUnderControl.Migrations.SQLite\BudgetUnderControl.Migrations.SQLite.csproj" />
   </ItemGroup>
 

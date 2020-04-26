@@ -14,5 +14,7 @@ namespace BudgetUnderControl.Common.Contracts
 
         public string FromCurrencyCode { get; set; }
         public string ToCurrencyCode { get; set; }
+
+        public bool CanDelete { get; set; }
     }
 }

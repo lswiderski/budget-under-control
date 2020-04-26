@@ -15,10 +15,12 @@ namespace BudgetUnderControl.Infrastructure.Services
     public class CurrencyService : ICurrencyService
     {
         private readonly ICurrencyRepository currencyRepository;
-      
-        public CurrencyService(ICurrencyRepository currencyRepository)
+        private readonly IUserIdentityContext userIdentityContext;
+
+        public CurrencyService(ICurrencyRepository currencyRepository, IUserIdentityContext userIdentityContext)
         {
             this.currencyRepository = currencyRepository;
+            this.userIdentityContext = userIdentityContext;
         }
 
         public async Task<ICollection<CurrencyDTO>> GetCurriencesAsync()
@@ -85,7 +87,8 @@ namespace BudgetUnderControl.Infrastructure.Services
                     FromCurrencyId = x.FromCurrencyId,
                     ToCurrencyId = x.ToCurrencyId,
                     FromCurrencyCode = x.FromCurrency.Code,
-                    ToCurrencyCode = x.ToCurrency.Code
+                    ToCurrencyCode = x.ToCurrency.Code,
+                    CanDelete = x.UserId == this.userIdentityContext.UserId,
                 })
                 .ToList();
 
@@ -94,7 +97,7 @@ namespace BudgetUnderControl.Infrastructure.Services
 
         public async Task AddExchangeRateAsync(AddExchangeRate command)
         {
-            var rate = ExchangeRate.Create(command.FromCurrencyId, command.ToCurrencyId, command.Rate, command.Date);
+            var rate = ExchangeRate.Create(command.FromCurrencyId, command.ToCurrencyId, command.Rate, userIdentityContext.UserId, command.ExternalId, false, command.Date);
 
             await this.currencyRepository.AddExchangeRateAsync(rate);
         }

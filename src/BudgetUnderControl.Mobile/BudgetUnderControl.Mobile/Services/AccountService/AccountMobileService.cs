@@ -15,13 +15,13 @@ using BudgetUnderControl.CommonInfrastructure;
 
 namespace BudgetUnderControl.Mobile.Services
 {
-    public class AccountService : IAccountService
+    public class AccountMobileService : IAccountMobileService
     {
-        private readonly IAccountRepository accountRepository;
+        private readonly IAccountMobileRepository accountRepository;
         private readonly IUserRepository userRepository;
         private readonly ILogger logger;
 
-        public AccountService(IAccountRepository accountRepository, IUserRepository userRepository, ILogger logger)
+        public AccountMobileService(IAccountMobileRepository accountRepository, IUserRepository userRepository, ILogger logger)
         {
             this.accountRepository = accountRepository;
             this.userRepository = userRepository;
@@ -54,9 +54,36 @@ namespace BudgetUnderControl.Mobile.Services
 
         public async Task<ICollection<AccountListItemDTO>> GetAccountsWithBalanceAsync()
         {
-            var accounts = await accountRepository.GetAccountsAsync(true);
+            var accounts = await accountRepository.GetAccountsAsync();
 
             var accountsWithBalance = accounts.Select(y => new AccountListItemDTO
+            {
+                Id = y.Id,
+                ExternalId = Guid.Parse(y.ExternalId),
+                Currency = y.Currency.Code,
+                CurrencyId = y.CurrencyId,
+                CurrencySymbol = y.Currency.Symbol,
+                IsIncludedInTotal = y.IsIncludedToTotal,
+                Name = y.Name,
+                ParentAccountId = y.ParentAccountId,
+
+            }).ToList();
+            accountsWithBalance.ForEach(async x => { x.Balance = await accountRepository.GetActualBalanceAsync(x.Id); });
+            return accountsWithBalance;
+        }
+
+        public async Task<ICollection<AccountListItemDTO>> GetAccountsForSelect(int? includeId = null)
+        {
+            var accounts = (await accountRepository.GetAccountsAsync(true)).ToList();
+
+            if (includeId.HasValue && !accounts.Any(x => x.Id == includeId))
+            {
+                accounts.Add(await accountRepository.GetAccountAsync(includeId.Value));
+            }
+
+            var accountsWithBalance = accounts
+                .OrderBy(x => x.Order)
+                .Select(y => new AccountListItemDTO
             {
                 Id = y.Id,
                 ExternalId = Guid.Parse(y.ExternalId),

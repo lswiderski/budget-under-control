@@ -20,7 +20,7 @@ namespace BudgetUnderControl.Mobile.Services
     {
 
         private readonly ITransactionRepository transactionRepository;
-        private readonly IAccountRepository accountRepository;
+        private readonly IAccountMobileRepository accountRepository;
         private readonly ICurrencyRepository currencyRepository;
         private readonly ICategoryRepository categoryRepository;
         private readonly IAccountGroupRepository accountGroupRepository;
@@ -36,7 +36,7 @@ namespace BudgetUnderControl.Mobile.Services
         private Dictionary<int, int> transactionsMap; // key - old TransactionId, value - new TransactionId
 
         public SyncService(ITransactionRepository transactionRepository,
-            IAccountRepository accountRepository,
+            IAccountMobileRepository accountRepository,
             ICurrencyRepository currencyRepository,
             ICategoryRepository categoryRepository,
             IAccountGroupRepository accountGroupRepository,

@@ -109,12 +109,14 @@ namespace BudgetUnderControl.MobileDomain
         /// <param name="id"></param>
         public void SetActive(bool isActive)
         {
-            this.IsActive = IsActive;
+            this.IsActive = isActive;
+            this.IsDeleted = isActive;
+            this.UpdateModify();
         }
 
         public void Delete(bool delete = true)
         {
-            this.IsDeleted = delete;
+            this.SetActive(delete);
             this.UpdateModify();
         }
 

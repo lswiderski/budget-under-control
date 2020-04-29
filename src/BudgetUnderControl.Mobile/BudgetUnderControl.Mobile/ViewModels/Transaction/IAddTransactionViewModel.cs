@@ -14,9 +14,7 @@ namespace BudgetUnderControl.ViewModel
     public interface IAddTransactionViewModel
     {
         Task AddTransacionAsync();
-        
-        List<CategoryListItemDTO> Categories { get; }
-        List<AccountListItemDTO> Accounts { get; }
+
         ICollection<string> Types { get; }
         int SelectedTypeIndex { get; set; }
         TimeSpan TransferTime { get; set; }

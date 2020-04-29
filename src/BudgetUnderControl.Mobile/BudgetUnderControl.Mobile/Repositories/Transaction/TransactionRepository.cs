@@ -12,10 +12,10 @@ namespace BudgetUnderControl.Mobile.Repositories
 {
     public class TransactionRepository : BaseModel, ITransactionRepository
     {
-        private readonly IAccountRepository accountRepository;
+        private readonly IAccountMobileRepository accountRepository;
         private readonly IUserIdentityContext userIdentityContext;
 
-        public TransactionRepository(IContextFacade context, IAccountRepository accountRepository,
+        public TransactionRepository(IContextFacade context, IAccountMobileRepository accountRepository,
             IUserIdentityContext userIdentityContext) : base(context)
         {
             this.accountRepository = accountRepository;

@@ -17,7 +17,7 @@ namespace BudgetUnderControl.Mobile.Services
     {
         private readonly ILogger logger;
         private readonly ITransactionRepository transactionRepository;
-        private readonly IAccountRepository accountRepository;
+        private readonly IAccountMobileRepository accountRepository;
         private readonly ICurrencyRepository currencyRepository;
         private readonly ICategoryRepository categoryRepository;
         private readonly IAccountGroupRepository accountGroupRepository;
@@ -27,7 +27,7 @@ namespace BudgetUnderControl.Mobile.Services
         private readonly ITagRepository tagRepository;
         private readonly GeneralSettings settings;
         public SyncRequestBuilder(ITransactionRepository transactionRepository,
-            IAccountRepository accountRepository,
+            IAccountMobileRepository accountRepository,
             ICurrencyRepository currencyRepository,
             ICategoryRepository categoryRepository,
             IAccountGroupRepository accountGroupRepository,

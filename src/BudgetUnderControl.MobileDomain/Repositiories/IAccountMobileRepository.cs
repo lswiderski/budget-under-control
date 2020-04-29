@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace BudgetUnderControl.MobileDomain.Repositiories
 {
-    public interface IAccountRepository
+    public interface IAccountMobileRepository
     {
         Task<IEnumerable<Account>> GetAccountsAsync(bool? active = null);
         Task<IEnumerable<Account>> GetAllAccountsAsync(bool? active = null);

@@ -15,6 +15,7 @@ using System.Runtime.CompilerServices;
 using Xamarin.Forms.PlatformConfiguration;
 using Xamarin.Essentials;
 using BudgetUnderControl.CommonInfrastructure;
+using BudgetUnderControl.Mobile;
 
 namespace BudgetUnderControl.ViewModel
 {
@@ -426,8 +427,23 @@ namespace BudgetUnderControl.ViewModel
         }
 
 
-        List<AccountListItemDTO> accounts;
-        public List<AccountListItemDTO> Accounts => accounts;
+        ObservableCollection<AccountListItemDTO> accounts;
+        public ObservableCollection<AccountListItemDTO> Accounts
+        {
+            get
+            {
+                return accounts;
+            }
+            set
+            {
+                if (accounts != value)
+                {
+                    accounts = value;
+                    PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(Accounts)));
+                }
+
+            }
+        }
 
         List<CategoryListItemDTO> categories;
         public List<CategoryListItemDTO> Categories => categories;
@@ -435,11 +451,11 @@ namespace BudgetUnderControl.ViewModel
         void OnPropertyChanged([CallerMemberName]string propertyName = "") =>
         PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
 
-    IAccountService accountService;
+        IAccountMobileService accountService;
         ICategoryService categoryService;
         ICommandDispatcher commandDispatcher;
         ITagService tagService;
-        public AddTransactionViewModel(IAccountService accountRepository, ICategoryService categoryService, ICommandDispatcher commandDispatcher, ITagService tagService)
+        public AddTransactionViewModel(IAccountMobileService accountRepository, ICategoryService categoryService, ICommandDispatcher commandDispatcher, ITagService tagService)
         {
             this.accountService = accountRepository;
             this.categoryService = categoryService;
@@ -457,7 +473,7 @@ namespace BudgetUnderControl.ViewModel
 
         async void GetDropdowns()
         {
-            accounts = (await accountService.GetAccountsWithBalanceAsync()).ToList();
+            Accounts = new ObservableCollection<AccountListItemDTO>((await accountService.GetAccountsForSelect()));
             categories = (await categoryService.GetCategoriesAsync()).ToList();
         }
 

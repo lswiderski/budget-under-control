@@ -12,6 +12,7 @@ using System.Threading.Tasks;
 using System.Collections.ObjectModel;
 using System.Runtime.CompilerServices;
 using BudgetUnderControl.CommonInfrastructure;
+using BudgetUnderControl.Mobile;
 
 namespace BudgetUnderControl.ViewModel
 {
@@ -445,8 +446,23 @@ namespace BudgetUnderControl.ViewModel
             }
         }
 
-        List<AccountListItemDTO> accounts;
-        public List<AccountListItemDTO> Accounts => accounts;
+        ObservableCollection<AccountListItemDTO> accounts;
+        public ObservableCollection<AccountListItemDTO> Accounts
+        {
+            get
+            {
+                return accounts;
+            }
+            set
+            {
+                if (accounts != value)
+                {
+                    accounts = value;
+                    PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(Accounts)));
+                }
+
+            }
+        }
 
         List<CategoryListItemDTO> categories;
         public List<CategoryListItemDTO> Categories => categories;
@@ -455,12 +471,12 @@ namespace BudgetUnderControl.ViewModel
         PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
 
         ITransactionService transactionService;
-        IAccountService accountService;
+        IAccountMobileService accountService;
         ICategoryService categoryService;
         ICommandDispatcher commandDispatcher;
         ITagService tagService;
 
-        public EditTransactionViewModel(ITransactionService transactionService, IAccountService accountService, 
+        public EditTransactionViewModel(ITransactionService transactionService, IAccountMobileService accountService, 
             ICategoryService categoryService, ICommandDispatcher commandDispatcher, ITagService tagService)
         {
             this.transactionService = transactionService;
@@ -475,11 +491,11 @@ namespace BudgetUnderControl.ViewModel
             Date = DateTime.Now;
             Time = DateTime.Now.TimeOfDay;
 
-            GetDropdowns();
+           
         }
-        async void GetDropdowns()
+        async void GetDropdowns(int accountId)
         {
-            accounts = (await accountService.GetAccountsWithBalanceAsync()).ToList();
+            Accounts = new ObservableCollection<AccountListItemDTO>((await accountService.GetAccountsForSelect(accountId)));
             categories = (await categoryService.GetCategoriesAsync()).ToList();
         }
 
@@ -510,6 +526,8 @@ namespace BudgetUnderControl.ViewModel
         public async Task GetTransactionAsync(Guid transactionId)
         {
             var dto = await transactionService.GetTransactionAsync(transactionId);
+
+            GetDropdowns(dto.AccountId);
 
             Date = dto.Date.ToLocalTime();
             Time = Date.TimeOfDay;

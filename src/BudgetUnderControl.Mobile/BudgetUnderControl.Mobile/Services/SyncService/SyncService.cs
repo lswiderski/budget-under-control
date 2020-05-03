@@ -185,17 +185,18 @@ namespace BudgetUnderControl.Mobile.Services
                    Date = t.Date,
                    Type = t.Type,
                    Comment = t.Comment,
-                   Tags = string.Join(",",t.TagsToTransaction.Select(x => x.Tag.Name))
+                   Tags = string.Join(",",t.TagsToTransaction.Select(x => x.Tag.Name)),
+                   IsTransfer =  t.IsTransfer
                }).ToList();
 
             var lines = new List<string>();
-            var firstLine = "TransactionId;Date;Time;Name;Amount;CurrencyCode;Category;Type;AccountName;Comment;Tags";
+            var firstLine = "TransactionId;IsTransfer;Date;Time;Name;Amount;CurrencyCode;Category;Type;AccountName;Comment;Tags";
             var csv = firstLine + Environment.NewLine;
             lines.Add(firstLine);
             foreach (var item in transactions)
             {
-                var line = string.Format("{0};{1};{2};{3};{4};{5};{6};{7};{8};{9};{10}",
-                    item.TransactionId, item.Date.ToLocalTime().ToString("dd/MM/yyyy"), item.Date.ToLocalTime().ToString("HH:mm"), item.TransactionName, item.Amount, item.CurrencyCode, item.Category, item.Type.ToString(), item.AccountName, item.Comment, item.Tags);
+                var line = string.Format("{0};{1};{2};{3};{4};{5};{6};{7};{8};{9};{10};{11}",
+                    item.TransactionId, item.IsTransfer ? 1:0, item.Date.ToLocalTime().ToString("dd/MM/yyyy"), item.Date.ToLocalTime().ToString("HH:mm"), item.TransactionName, item.Amount, item.CurrencyCode, item.Category, item.Type.ToString(), item.AccountName, item.Comment, item.Tags);
                 lines.Add(line);
                 csv += line + Environment.NewLine;
             }

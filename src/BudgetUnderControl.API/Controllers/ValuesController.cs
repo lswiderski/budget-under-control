@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using BudgetUnderControl.CommonInfrastructure;
 using Microsoft.AspNetCore.Mvc;
 
 namespace BudgetUnderControl.API.Controllers
@@ -10,11 +11,17 @@ namespace BudgetUnderControl.API.Controllers
     [ApiController]
     public class ValuesController : ControllerBase
     {
+        private readonly IUserService userService;
+        public ValuesController(IUserService userService)
+        {
+            this.userService = userService;
+        }
         // GET api/values
         [HttpGet]
         public ActionResult<IEnumerable<string>> Get()
         {
-            return new string[] { "value1", "value2" };
+            var userId = userService.GetIdOf1stUser();
+            return new string[] { "UserId", userId.ToString() };
 
         }
 

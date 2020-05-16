@@ -97,11 +97,11 @@ namespace BudgetUnderControl.API
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory, IContextConfig contextConfig, ITestDataSeeder testDataSeeder)
+        public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory, IContextConfig contextConfig)//, ITestDataSeeder testDataSeeder)
         {
             if(contextConfig.Application == ApplicationType.Test)
             {
-                testDataSeeder.SeedAsync().Wait();
+                //testDataSeeder.SeedAsync().Wait();
             }
 
             if (env.IsDevelopment())

@@ -26,5 +26,16 @@ namespace BudgetUnderControl.Infrastructure.Services.UserService
             };
             return context;
         }
+
+        public long GetIdOf1stUser()
+        {
+            var user = this.userRepository.GetFirstUserAsync().Result;
+            if(user != null)
+            {
+                return user.Id;
+            }
+
+            return 0;
+        }
     }
 }

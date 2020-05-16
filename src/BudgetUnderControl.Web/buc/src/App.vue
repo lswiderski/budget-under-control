@@ -101,6 +101,7 @@ export default {
         }
     },
     watch:{
+        // eslint-disable-next-line no-unused-vars
         $route (to, from){
             // clear alert on location change
             this.$store.dispatch('alert/clear');

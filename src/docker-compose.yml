@@ -2,16 +2,30 @@ version: '3.4'
 
 services:
   budgetundercontrol.api:
-    image: ${DOCKER_REGISTRY}budgetundercontrolapi
-    build:
-      context: .
-      dockerfile: BudgetUnderControl.API/Dockerfile
+    image: lswiderski/repo:buc_api
+    ports:
+      - "8081:80"
     depends_on:
       - budgetundercontrol.db
   budgetundercontrol.db:
-    image: microsoft/mssql-server-linux
+    image: mcr.microsoft.com/mssql/server
     environment:
       ACCEPT_EULA: "Y"
-      SA_PASSWORD: Password1
+      SA_PASSWORD: NASsql123
     ports:
       - "1433:1433"
+    volumes:
+      - sqlvolume:/var/opt/mssql
+  budgetundercontrol.web:
+    image: lswiderski/repo:buc_web
+    container_name: web
+    build:
+      context: .
+      args:
+        VUE_APP_BACKEND_API_URL: http://trolotot:5000/api
+    ports:
+      - "8082:8080"
+    depends_on:
+      - budgetundercontrol.api
+volumes:
+   sqlvolume:

@@ -9,5 +9,7 @@ namespace BudgetUnderControl.CommonInfrastructure
     public interface IUserService
     {
         IUserIdentityContext CreateUserIdentityContext();
+
+        long GetIdOf1stUser();
     }
 }

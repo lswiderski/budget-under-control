@@ -22,7 +22,7 @@ export function catchError(e) {
     if (e.response.status === 400) {
         let errors = [];
         var obj = e.response.data;
-        Object.getOwnPropertyNames(obj).forEach(function (val, idx, array) {
+        Object.getOwnPropertyNames(obj).forEach(function (val) {
             errors.push(val + ' -> ' + obj[val].join("; "))
         });
 

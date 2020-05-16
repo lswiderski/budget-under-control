@@ -50,11 +50,6 @@
 </template>
 
 <script>
-import config from "config";
-import { authHeader } from "../../_helpers";
-import { handleResponse } from "../../_helpers";
-import { catchError } from "../../_helpers";
-import axios from "axios";
 import { tagsService } from "../../_services";
 
 export default {

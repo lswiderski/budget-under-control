@@ -343,7 +343,7 @@ export default {
       const index = this.transactions.items.indexOf(item);
       confirm("Are you sure you want to delete this transactions?") &&
         this.transactions.items.splice(index, 1) &&
-        transactionsService.remove(item.externalId).then(data => {
+        transactionsService.remove(item.externalId).then( () => {
           this.$store.dispatch("transactions/getAll");
         });
     },
@@ -405,7 +405,7 @@ export default {
             return -1;
     },
 
-    transferAmountChanged(e){
+    transferAmountChanged(){
       if(this.editedItem.transferAmount != 0 && this.editedItem.transferAmount != "0")
       {
         this.editedItem.rate = this.editedItem.amount / this.editedItem.transferAmount ; 
@@ -428,7 +428,7 @@ export default {
       if (this.editedIndex > -1) {
         transactionsService
           .edit(this.editedItem.externalId, dto)
-          .then(data => {
+          .then(() => {
             this.$store.dispatch("transactions/getAll");
             this.close();
           })
@@ -438,7 +438,7 @@ export default {
       } else {
         transactionsService
           .add(dto)
-          .then(data => {
+          .then(() => {
             this.transactions.items.push(_self.editedItem);
             this.$store.dispatch("transactions/getAll");
             this.close();

@@ -1,5 +1,4 @@
 import { transactionsService } from '../_services';
-import router from '../_helpers/router';
 
 export const transactions = {
     namespaced: true,

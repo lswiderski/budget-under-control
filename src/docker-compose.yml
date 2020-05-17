@@ -18,11 +18,6 @@ services:
       - sqlvolume:/var/opt/mssql
   budgetundercontrol.web:
     image: lswiderski/repo:buc_web
-    container_name: web
-    build:
-      context: .
-      args:
-        VUE_APP_BACKEND_API_URL: http://trolotot:5000/api
     ports:
       - "8082:8080"
     depends_on:

@@ -1,4 +1,4 @@
-import config from 'config';
+import Configuration from '../_helpers/configuration';
 import { authHeader } from '../_helpers';
 import { handleResponse } from '../_helpers';
 import { catchError } from '../_helpers';
@@ -10,7 +10,7 @@ export const categoriesService = {
 
 function getAll() {
 
-    return axios.get(`${config.apiUrl}/categories`, { params:{}, headers: authHeader()})
+    return axios.get(`${Configuration.value('backendHost')}/categories`, { params:{}, headers: authHeader()})
     .then(handleResponse)
     .then(data => {
         return data;

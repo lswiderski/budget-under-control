@@ -86,7 +86,7 @@ export default {
       const index = this.tags.items.indexOf(item);
       confirm("Are you sure you want to delete this tag?") &&
         this.tags.items.splice(index, 1) &&
-        tagsService.remove(item.externalId).then(data => {
+        tagsService.remove(item.externalId).then( () => {
           this.$store.dispatch("tags/getAll");
         });
     },
@@ -119,7 +119,7 @@ export default {
       if (this.editedIndex > -1) {
         tagsService
           .edit(this.editedItem.externalId, dto)
-          .then(data => {
+          .then(() => {
             this.$store.dispatch("tags/getAll");
             this.close();
           })
@@ -129,7 +129,7 @@ export default {
       } else {
         tagsService
           .add(dto)
-          .then(data => {
+          .then( () => {
             this.tags.items.push(_self.editedItem);
             this.$store.dispatch("tags/getAll");
             this.close();

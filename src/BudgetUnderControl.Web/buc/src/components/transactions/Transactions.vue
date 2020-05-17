@@ -9,7 +9,8 @@
       :items="transactions.items"
       :items-per-page="50"
     >
-      <template v-slot:item.id="{ item }">
+      // eslint-disable-next-line vue/no-unused-vars
+      <template v-slot:item.id="{ }">
         <div class="handle" style="max-width: 28px;">::</div>
       </template>
       <template v-slot:item.value="{ item }">

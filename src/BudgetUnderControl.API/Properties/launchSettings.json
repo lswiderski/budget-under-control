@@ -22,7 +22,11 @@
       "launchBrowser": true,
       "launchUrl": "api/values",
       "environmentVariables": {
-        "ASPNETCORE_ENVIRONMENT": "Development"
+        "BUC_DB_Address": "neufrin.ddns.net,1433",
+        "BUC_DB_Password": "NASsql123",
+        "BUC_DB_User": "sa",
+        "ASPNETCORE_ENVIRONMENT": "Development",
+        "BUC_DB_Name": "buc"
       },
       "applicationUrl": "http://localhost:5000"
     }

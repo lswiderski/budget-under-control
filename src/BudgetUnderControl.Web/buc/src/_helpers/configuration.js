@@ -16,7 +16,6 @@ export default class Configuration {
     }
 
     const value = this.CONFIG[name]
-    console.log(process.env);
     if (!value) {
       console.log(`Configuration: Value for "${name}" is not defined`)
       return

@@ -35,7 +35,7 @@ namespace BudgetUnderControl.Mobile.IoC
             builder.RegisterInstance(settings)
               .SingleInstance();
 
-            var dbPath = DependencyService.Get<IFileHelper>().GetLocalFilePath(settings.DbName);
+            var dbPath = DependencyService.Get<IFileHelper>().GetLocalFilePath(settings.BUC_DB_Name);
 
             var assembly = typeof(MobileModule)
             .GetTypeInfo()
@@ -69,7 +69,7 @@ namespace BudgetUnderControl.Mobile.IoC
                 return c.Resolve<Func<IUserIdentityContext>>()();
             });
 
-            builder.RegisterInstance(new ContextConfig() { DbName = settings.DbName, DbPath = dbPath, Application = ApplicationType.Mobile , ConnectionString = settings.ConnectionString }).As<IContextConfig>();
+            builder.RegisterInstance(new ContextConfig() { DbName = settings.BUC_DB_Name, DbPath = dbPath, Application = ApplicationType.Mobile , ConnectionString = settings.ConnectionString }).As<IContextConfig>();
 
             builder.RegisterType<BaseModel>().As<IBaseModel>().InstancePerLifetimeScope();
             builder.RegisterType<AccountMobileService>().As<IAccountMobileService>().InstancePerLifetimeScope();

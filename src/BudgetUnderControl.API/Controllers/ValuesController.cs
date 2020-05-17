@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using BudgetUnderControl.CommonInfrastructure;
+using BudgetUnderControl.CommonInfrastructure.Settings;
 using Microsoft.AspNetCore.Mvc;
 
 namespace BudgetUnderControl.API.Controllers
@@ -21,7 +22,7 @@ namespace BudgetUnderControl.API.Controllers
         public ActionResult<IEnumerable<string>> Get()
         {
             var userId = userService.GetIdOf1stUser();
-            return new string[] { "UserId", userId.ToString() };
+            return new string[] { "Has Connection with database:", (userId != 0).ToString() };
 
         }
 

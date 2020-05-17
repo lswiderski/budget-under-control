@@ -45,9 +45,15 @@ namespace BudgetUnderControl.API
 
         public IConfiguration Configuration { get; }
 
-        public Startup(IConfiguration configuration)
+        public Startup(IHostingEnvironment env)
         {
-            Configuration = configuration;
+            var configuration = new ConfigurationBuilder()
+            .SetBasePath(env.ContentRootPath)
+            .AddJsonFile("appsettings.json", optional: true, reloadOnChange: true)
+            .AddJsonFile($"appsettings.{env.EnvironmentName}.json", optional: true)
+            .AddJsonFile($"secrets.json", optional: true)
+            .AddEnvironmentVariables();
+            Configuration = configuration.Build();
         }
 
         // This method gets called by the runtime. Use this method to add services to the container.
@@ -65,6 +71,7 @@ namespace BudgetUnderControl.API
             services.AddCors();
 
             var settings = Configuration.GetSettings<GeneralSettings>();
+
             var key = Encoding.ASCII.GetBytes(settings.SecretKey);
             services.AddAuthentication(x =>
             {
@@ -88,7 +95,6 @@ namespace BudgetUnderControl.API
             var builder = new ContainerBuilder();          
 
             builder.RegisterModule<ApiInfrastructureModule>();
-            //builder.RegisterModule<ApiModule>();
             builder.RegisterModule(new ApiModule(Configuration));
             builder.Populate(services);
             ApplicationContainer = builder.Build();

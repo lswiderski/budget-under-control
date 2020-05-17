@@ -246,12 +246,12 @@
 <script>
 import Sortable from "sortablejs";
 import moment from "moment";
-import config from "config";
 import { authHeader } from "../../_helpers";
 import { handleResponse } from "../../_helpers";
 import { catchError } from "../../_helpers";
 import axios from "axios";
 import { transactionsService } from "../../_services";
+import Configuration from '../../_helpers/configuration';
 import TransactionFilters from "./TransactionFilters";
 export default {
    name: "Transactions",
@@ -463,7 +463,7 @@ export default {
     });
 
     axios
-      .get(`${config.apiUrl}/categories`, { params: {}, headers: authHeader() })
+      .get(`${Configuration.value('backendHost')}/categories`, { params: {}, headers: authHeader() })
       .then(handleResponse)
       .then(data => {
         _self.categories = data;
@@ -471,7 +471,7 @@ export default {
       .catch(catchError);
 
     axios
-      .get(`${config.apiUrl}/accounts`, { params: {}, headers: authHeader() })
+      .get(`${Configuration.value('backendHost')}/accounts`, { params: {}, headers: authHeader() })
       .then(handleResponse)
       .then(data => {
         _self.accounts = data;

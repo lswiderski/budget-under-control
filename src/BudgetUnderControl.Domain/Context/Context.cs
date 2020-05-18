@@ -72,7 +72,6 @@ namespace BudgetUnderControl.Domain
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-            Console.WriteLine("OnConfiguring Application: " + config.Application);
             if (config!= null)
             {
                 if (config.Application == ApplicationType.Mobile || config.Application == ApplicationType.SQLiteMigrations)
@@ -81,7 +80,6 @@ namespace BudgetUnderControl.Domain
                 }
                 else if (config.Application == ApplicationType.Web || config.Application == ApplicationType.SqlServerMigrations)
                 {
-                    Console.WriteLine("OnConfiguring connectionString: " + config.ConnectionString);
                     optionsBuilder.UseSqlServer(config.ConnectionString, options => options.MigrationsAssembly("BudgetUnderControl.Migrations.SqlServer"));
                 }
                 else if(config.Application == ApplicationType.Test)

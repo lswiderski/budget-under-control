@@ -1,5 +1,3 @@
-import Configuration from '../_helpers/configuration';
-
 export const loginService = {
     login,
     logout
@@ -12,7 +10,7 @@ function login(username, password) {
         body: JSON.stringify({ username, password })
     };
 
-    return fetch(`${Configuration.value('backendHost')}/Login/Authenticate`, requestOptions)
+    return fetch(`/Login/Authenticate`, requestOptions)
         .then(handleResponse)
         .then(token=> {
             // login successful if there's a jwt token in the response

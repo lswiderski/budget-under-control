@@ -1,4 +1,3 @@
-import Configuration from '../_helpers/configuration';
 import { authHeader } from '../_helpers';
 import { handleResponse } from '../_helpers';
 import { catchError } from '../_helpers';
@@ -10,7 +9,7 @@ export const accountsService = {
 
 function getAll() {
 
-    return axios.get(`${Configuration.value('backendHost')}/accounts`, { params:{}, headers: authHeader()})
+    return axios.get(`/accounts`, { params:{}, headers: authHeader()})
     .then(handleResponse)
     .then(data => {
         return data;

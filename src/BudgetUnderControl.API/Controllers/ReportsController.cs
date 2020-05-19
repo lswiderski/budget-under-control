@@ -1,0 +1,31 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+using BudgetUnderControl.Common.Contracts;
+using BudgetUnderControl.CommonInfrastructure;
+using BudgetUnderControl.CommonInfrastructure.Commands;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+
+namespace BudgetUnderControl.API.Controllers
+{
+    [Authorize]
+    [Route("api/[controller]")]
+    public class ReportsController : ApiControllerBase
+    {
+        private readonly IReportService reportService;
+        public ReportsController(IReportService reportService, ICommandDispatcher commandDispatcher) : base(commandDispatcher)
+        {
+            this.reportService = reportService;
+        }
+
+        [HttpGet("movingsum")]
+        // GET: /<controller>/
+        public async Task<IActionResult> Index([FromQuery] TransactionsFilter filter)
+        {
+            var days = await this.reportService.MovingSum(filter);
+            return Ok(days.ToList());
+        }
+    }
+}

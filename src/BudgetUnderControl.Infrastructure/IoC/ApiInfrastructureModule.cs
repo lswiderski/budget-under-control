@@ -46,6 +46,7 @@ namespace BudgetUnderControl.Infrastructure.IoC
             builder.RegisterType<CategoryService>().As<ICategoryService>().InstancePerLifetimeScope();
             builder.RegisterType<AccountGroupService>().As<IAccountGroupService>().InstancePerLifetimeScope();
             builder.RegisterType<TransactionService>().As<ITransactionService>().InstancePerLifetimeScope();
+            builder.RegisterType<ReportService>().As< IReportService>().InstancePerLifetimeScope();
             builder.RegisterType<CurrencyRepository>().As<ICurrencyRepository>().InstancePerLifetimeScope();
             builder.RegisterType<AccountRepository>().As<IAccountRepository>().InstancePerLifetimeScope();
             builder.RegisterType<AccountGroupRepository>().As<IAccountGroupRepository>().InstancePerLifetimeScope();

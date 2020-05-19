@@ -106,12 +106,19 @@ namespace BudgetUnderControl.Infrastructure.Services
         {
             var exchangeRate = await this.currencyRepository.GetLatestExchangeRateAsync(fromCurrencyId, toCurrencyId);
 
+            var result = await this.GetValueInDifferentCurrency(amount, fromCurrencyId, toCurrencyId, exchangeRate);
+
+            return result;
+        }
+
+        private async Task<decimal> GetValueInDifferentCurrency(decimal amount, int fromCurrencyId, int toCurrencyId, ExchangeRate exchangeRate)
+        {
             var result = amount;
-            if(exchangeRate == null)
+            if (exchangeRate == null)
             {
                 result = amount;
             }
-            else if(exchangeRate.FromCurrencyId == fromCurrencyId)
+            else if (exchangeRate.FromCurrencyId == fromCurrencyId)
             {
                 result = amount * (decimal)exchangeRate.Rate;
             }

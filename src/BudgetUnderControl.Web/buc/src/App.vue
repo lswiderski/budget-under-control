@@ -46,7 +46,15 @@
             <v-list-item-title>Categories</v-list-item-title>
           </v-list-item-content>
         </v-list-item>
-        <v-list-item to="/about">
+        <v-list-item to="/reports">
+          <v-list-item-action>
+            <v-icon>mdi-contact-mail</v-icon>
+          </v-list-item-action>
+          <v-list-item-content>
+            <v-list-item-title>Reports</v-list-item-title>
+          </v-list-item-content>
+        </v-list-item>
+         <v-list-item to="/about">
           <v-list-item-action>
             <v-icon>mdi-contact-mail</v-icon>
           </v-list-item-action>

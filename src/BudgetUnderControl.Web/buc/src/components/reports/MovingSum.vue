@@ -1,6 +1,6 @@
 <template>
 <div>
-  <apexchart width="500" type="bar" :options="options" :series="series"></apexchart>
+  <apexchart width="800" type="area" :options="options" :series="series"></apexchart>
 </div>
 </template>
 
@@ -15,18 +15,72 @@ export default {
   data: function() {
     return {
       options: {
-        chart: {
-          id: 'vuechart-example'
-        },
+        chart:{
+              type: 'area',
+              stacked: false,
+              zoom: {
+                type: 'x',
+                enabled: true,
+                autoScaleYaxis: true
+              },
+              toolbar: {
+                autoSelected: 'zoom'
+              },
+              id: 'movingSumChart',
+            },
+             maintainAspectRatio: false,
+           
+            dataLabels: {
+              enabled: false
+            },
+            markers: {
+              size: 0,
+            },
+            fill: {
+              type: 'gradient',
+              gradient: {
+                shadeIntensity: 1,
+                inverseColors: false,
+                opacityFrom: 0.5,
+                opacityTo: 0,
+                stops: [0, 90, 100]
+              },
+            },
+            yaxis: {
+              title: {
+                text: 'Budget'
+              },
+            },
         xaxis: {
-          categories: [1991, 1992, 1993, 1994, 1995, 1996, 1997, 1998]
+          type: 'datetime'
+        },
+        stroke: {
+          curve: 'straight',
         }
       },
       series: [{
-        name: 'series-1',
-        data: [30, 40, 45, 50, 49, 60, 70, 91]
+        name: 'PLN',
+        data: []
       }]
     }
+  },
+  computed: {
+    dataSource() {
+      return this.$store.state.reports.movingSumDataSource;
+    }
+  },
+  watch:{
+    dataSource(newValue) {
+      if(newValue.items)
+      {
+
+      const data = this.$store.state.reports.movingSumDataSource.items.map(serieValue => ({ x: serieValue.date, y: serieValue.value }));
+      this.series = [{
+        name: 'PLN',
+        data
+      }]
+      }
+  }
   }
 };
 </script>

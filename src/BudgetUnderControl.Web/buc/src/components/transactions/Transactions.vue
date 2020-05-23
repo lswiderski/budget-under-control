@@ -1,7 +1,7 @@
 <template>
   <div>
     <div>
-      <TransactionFilters></TransactionFilters>
+      <TransactionFilters v-on:filtersChanged="refreshGrid"></TransactionFilters>
     </div>
     <v-data-table
       id="transactionsTable"
@@ -87,7 +87,6 @@
                         :nudge-right="40"
                         transition="scale-transition"
                         offset-y
-                        full-width
                         min-width="290px"
                       >
                         <template v-slot:activator="{ on }">
@@ -111,7 +110,6 @@
                         :return-value.sync="editedItem.time"
                         transition="scale-transition"
                         offset-y
-                        full-width
                         max-width="290px"
                         min-width="290px"
                       >
@@ -127,7 +125,6 @@
                         <v-time-picker
                           v-if="menuTimePicker"
                           v-model="editedItem.time"
-                          full-width
                           @click:minute="$refs.menu.save(editedItem.time)"
                         ></v-time-picker>
                       </v-menu>
@@ -140,7 +137,6 @@
                         :nudge-right="40"
                         transition="scale-transition"
                         offset-y
-                        full-width
                         min-width="290px"
                       >
                         <template v-slot:activator="{ on }">
@@ -167,7 +163,6 @@
                         :return-value.sync="editedItem.transferTime"
                         transition="scale-transition"
                         offset-y
-                        full-width
                         max-width="290px"
                         min-width="290px"
                       >
@@ -183,7 +178,6 @@
                         <v-time-picker
                           v-if="menuTransferTimePicker"
                           v-model="editedItem.transferTime"
-                          full-width
                           @click:minute="$refs.menu2.save(editedItem.transferTime)"
                         ></v-time-picker>
                       </v-menu>
@@ -335,6 +329,9 @@ export default {
     this.editedItem = this.defaultItem;
   },
   methods: {
+     refreshGrid: function() {
+             this.$store.dispatch("transactions/getAll",this.$store.state.transactionFilters);
+        },
     getColor(value) {
       if (value < 0) return "red";
       else return "green";

@@ -7,7 +7,7 @@ import Categories from '../components/categories/Categories'
 import Accounts from '../components/accounts/Accounts'
 import Transactions from '../components/transactions/Transactions'
 import Tags from '../components/tags/Tags'
-import MovingSum from '../components/reports/MovingSum'
+import MovingSumReport from '../components/reports/MovingSumReport'
 Vue.use(Router);
 
 let router = new Router({
@@ -19,7 +19,7 @@ let router = new Router({
     { path: '/accounts', component: Accounts },
     { path: '/transactions', component: Transactions },
     { path: '/tags', component: Tags },
-    { path: '/reports', component: MovingSum },
+    { path: '/report/movingsum', component: MovingSumReport },
     {  path: '/about',
     name: 'about',
     // route level code-splitting

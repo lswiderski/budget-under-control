@@ -13,5 +13,3 @@ new Vue({
   devtool: 'source-map',
   render: h => h(App),
 }).$mount('#app')
-
-console.log(process.env.VUE_APP_BACKEND_API_URL);

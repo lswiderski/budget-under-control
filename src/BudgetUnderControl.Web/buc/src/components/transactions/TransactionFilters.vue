@@ -7,7 +7,6 @@
                         :nudge-right="40"
                         transition="scale-transition"
                         offset-y
-                        full-width
                         min-width="290px"
                       >
                         <template v-slot:activator="{ on }">
@@ -17,6 +16,8 @@
                             prepend-icon="mdi-calendar"
                             readonly
                             v-on="on"
+                            clearable
+                            @click:clear="dateFrom = null"
                           ></v-text-field>
                         </template>
                         <v-date-picker v-model="dateFrom" @input="dateFromMenu = false"></v-date-picker>
@@ -29,7 +30,6 @@
                         :nudge-right="40"
                         transition="scale-transition"
                         offset-y
-                        full-width
                         min-width="290px"
                       >
                         <template v-slot:activator="{ on }">
@@ -102,35 +102,35 @@ export default {
             get: function () {return this.$store.state.transactionFilters.fromDate },
             set: function (value){
                     this.$store.dispatch("transactionFilters/setFrom", value);
-                    this.$store.dispatch("transactions/getAll",this.$store.state.transactionFilters);
+                    this.$emit('filtersChanged');
             }
         },
         dateTo: {
             get: function () {return this.$store.state.transactionFilters.toDate },
             set: function (value){
                     this.$store.dispatch("transactionFilters/setTo", value);
-                    this.$store.dispatch("transactions/getAll",this.$store.state.transactionFilters);
+                    this.$emit('filtersChanged');
             },
         },
         accountsIds: {
             get: function () {return this.$store.state.transactionFilters.accountsIds },
             set: function (value){
                     this.$store.dispatch("transactionFilters/setAccountsIds", value);
-                    this.$store.dispatch("transactions/getAll",this.$store.state.transactionFilters);
+                    this.$emit('filtersChanged');
             }
         },
         categoryIds: {
             get: function () {return this.$store.state.transactionFilters.categoryIds },
             set: function (value){
                     this.$store.dispatch("transactionFilters/setCategoryIds", value);
-                    this.$store.dispatch("transactions/getAll",this.$store.state.transactionFilters);
+                    this.$emit('filtersChanged');
             }
         },
         tagIds: {
             get: function () {return this.$store.state.transactionFilters.tagIds },
             set: function (value){
                     this.$store.dispatch("transactionFilters/setTagIds", value);
-                    this.$store.dispatch("transactions/getAll",this.$store.state.transactionFilters);
+                    this.$emit('filtersChanged');
             }
         },
         accounts() {

@@ -1,5 +1,6 @@
 <template>
   <v-app id="inspire">
+    <Head />
     <v-navigation-drawer
       v-model="drawer"
       app
@@ -104,10 +105,13 @@
 </template>
 
 <script>
-
+import Head from "./Head";
 
 export default {
   name: 'App',
+  components:{
+    Head
+  },
   props: {
       source: String,
     },

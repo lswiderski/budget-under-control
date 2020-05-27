@@ -32,7 +32,7 @@
           <v-toolbar-title>Transactions</v-toolbar-title>
           <v-divider class="mx-6" inset vertical></v-divider>
           <div class="flex-grow-1"></div>
-          <v-dialog v-model="dialog" max-width="500px">
+          <v-dialog v-model="dialog" max-width="1000px">
             <template v-slot:activator="{ on }">
               <v-btn color="primary" dark class="mb-2" v-on="on">New transaction</v-btn>
             </template>
@@ -44,7 +44,9 @@
               <v-card-text>
                 <v-container>
                   <v-row>
-                    <v-col cols="12" md="12">
+                    <v-col  cols="12" md="6">
+                      <v-row>
+<v-col cols="12" md="12">
                       <div v-if="errors.length">
                         <b>Please correct the following error(s):</b>
                         <ul>
@@ -197,16 +199,6 @@
                     <v-col cols="12" md="6" v-if="editedItem.type === 2 && isTransferInOtherCurrency">
                       <v-text-field v-model="editedItem.rate" label="Rate"></v-text-field>
                     </v-col>
-
-                    <v-col cols="12" md="12">
-                      <v-textarea v-model="editedItem.comment" label="Comment"></v-textarea>
-                    </v-col>
-                    <v-col cols="12" md="6">
-                      <v-text-field v-model="editedItem.latitude" label="latitude"></v-text-field>
-                    </v-col>
-                    <v-col cols="12" md="6">
-                      <v-text-field v-model="editedItem.longitude" label="Longitude"></v-text-field>
-                    </v-col>
                     <v-col cols="12" md="12">
                       <v-select
                         v-model="editedItem.tags"
@@ -220,6 +212,29 @@
                         persistent-hint
                       ></v-select>
                     </v-col>
+                      </v-row>
+                    </v-col>
+                    <v-col  cols="12" md="6">
+                      <v-row>
+                        <v-col cols="12" md="6">
+                      <v-text-field v-model="editedItem.latitude" label="latitude"></v-text-field>
+                    </v-col>
+                    <v-col cols="12" md="6">
+                      <v-text-field v-model="editedItem.longitude" label="Longitude"></v-text-field>
+                    </v-col>
+                     <v-col cols="12" md="12">
+                     <OnePointMap 
+                     :latitude="editedItem.latitude" 
+                     :longitude="editedItem.longitude"  
+                     v-on:coordsChanged="onMapClick"
+                     ref="transacionMap" />
+                    </v-col>
+                     <v-col cols="12" md="12">
+                      <v-textarea v-model="editedItem.comment" label="Comment"></v-textarea>
+                    </v-col>
+                      </v-row>
+                    </v-col>
+                    
                   </v-row>
                 </v-container>
               </v-card-text>
@@ -246,6 +261,7 @@ import { catchError } from "../../_helpers";
 import axios from "axios";
 import { transactionsService } from "../../_services";
 import TransactionFilters from "./TransactionFilters";
+import OnePointMap from "../maps/OnePointMap";
 export default {
    name: "Transactions",
 
@@ -305,7 +321,8 @@ export default {
     ]
   }),
   components: {
-    TransactionFilters
+    TransactionFilters,
+    OnePointMap,
   },
   computed: {
     transactions() {
@@ -344,6 +361,11 @@ export default {
           this.$store.dispatch("transactions/getAll");
         });
     },
+    onMapClick(value)
+    {
+      this.editedItem.latitude = value.lat;
+      this.editedItem.longitude = value.lng;
+    },
     editItem(item) {
       const _self = this;
       transactionsService
@@ -353,6 +375,10 @@ export default {
           _self.editedIndex = _self.transactions.items.indexOf(item);
           _self.editedItem = Object.assign({}, dto);
           _self.dialog = true;
+          setTimeout(() => {
+              this.$refs.transacionMap.invalideSize();
+          }, 100);
+    
         })
         .catch(errors => {
           _self.errors = errors;

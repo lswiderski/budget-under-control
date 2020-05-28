@@ -9,5 +9,7 @@ namespace BudgetUnderControl.CommonInfrastructure
     public interface IReportService
     {
         Task<ICollection<MovingSumItemDTO>> MovingSum(TransactionsFilter filter = null);
+
+        Task<DashboardDTO> GetDashboard();
     }
 }

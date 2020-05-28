@@ -21,11 +21,17 @@ namespace BudgetUnderControl.API.Controllers
         }
 
         [HttpGet("movingsum")]
-        // GET: /<controller>/
-        public async Task<IActionResult> Index([FromQuery] TransactionsFilter filter)
+        public async Task<IActionResult> MovingSum([FromQuery] TransactionsFilter filter)
         {
             var days = await this.reportService.MovingSum(filter);
             return Ok(days.ToList());
+        }
+
+        [HttpGet("dashboard")]
+        public async Task<IActionResult> Dashboard()
+        {
+            var dashboard = await this.reportService.GetDashboard();
+            return Ok(dashboard);
         }
     }
 }

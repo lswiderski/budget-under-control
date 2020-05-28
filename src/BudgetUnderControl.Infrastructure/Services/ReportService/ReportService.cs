@@ -17,11 +17,18 @@ namespace BudgetUnderControl.Infrastructure.Services
     {
         private readonly ITransactionService transactionService;
         private readonly ICurrencyRepository currencyRepository;
+        private readonly IAccountService accountService;
+        private readonly ICurrencyService currencyService;
 
-        public ReportService(ITransactionService transactionService, ICurrencyRepository currencyRepository)
+        public ReportService(ITransactionService transactionService 
+            ,ICurrencyRepository currencyRepository
+            , IAccountService accountService
+            , ICurrencyService currencyService)
         {
             this.transactionService = transactionService;
             this.currencyRepository = currencyRepository;
+            this.accountService = accountService;
+            this.currencyService = currencyService;
         }
 
         public async Task<ICollection<MovingSumItemDTO>> MovingSum(TransactionsFilter filter = null)
@@ -61,6 +68,50 @@ namespace BudgetUnderControl.Infrastructure.Services
             });
 
             return movingSumCollection;
+        }
+
+        public async Task<DashboardDTO> GetDashboard()
+        {
+            var dashboard = new DashboardDTO();
+            var allTransactions = await this.transactionService.GetTransactionsAsync();
+
+            Dictionary<string, decimal> dict = new Dictionary<string, decimal>();
+            var accounts = await accountService.GetAccountsWithBalanceAsync();
+
+            foreach (var account in accounts)
+            {
+                if (!account.ParentAccountId.HasValue)
+                {
+                    if (!dict.ContainsKey(account.Currency))
+                    {
+                        dict.Add(account.Currency, account.Balance);
+                    }
+                    else
+                    {
+                        dict[account.Currency] += account.Balance;
+                    }
+                }
+
+            }
+
+            dashboard.ActualStatus = dict;
+
+            string userMainCurrency = "PLN";
+            decimal sum = 0;
+            dict.ForEach(async x =>
+            {
+                sum += (await this.CalculateValueAsync(x.Value, x.Key, userMainCurrency));
+            });
+
+            dashboard.Total = sum;
+
+            return dashboard;
+        }
+
+        private async Task<decimal> CalculateValueAsync(decimal amount, string fromCurrencyCode, string toCurrencyCode)
+        {
+            var value = await this.currencyService.TransformAmountAsync(amount, fromCurrencyCode, toCurrencyCode);
+            return value;
         }
 
         private decimal GetValueInCurrency(IList<ExchangeRate> rates, string currentCurrency, string targetCurrency, decimal value, DateTime date)

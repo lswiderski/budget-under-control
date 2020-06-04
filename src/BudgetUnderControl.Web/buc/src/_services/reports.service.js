@@ -4,7 +4,8 @@ import { catchError } from '../_helpers';
 import axios from 'axios';
 
 export const reportsService = {
-    getMovingSumData
+    getMovingSumData,
+    getDashboardData
 };
 
 function getMovingSumData(filters) {
@@ -12,6 +13,12 @@ function getMovingSumData(filters) {
     return axios.get(`/reports/movingsum`, { params:filters, headers: authHeader(),paramsSerializer: function(params) {
         return Qs.stringify(params, {arrayFormat: 'repeat'})
     }})
+    .then(handleResponse)
+    .catch(catchError);
+}
+
+function getDashboardData() {
+    return axios.get(`/reports/dashboard`, { headers: authHeader() })
     .then(handleResponse)
     .catch(catchError);
 }

@@ -68,7 +68,11 @@ namespace BudgetUnderControl.Infrastructure.Services
                 ParentAccountId = y.ParentAccountId,
 
             }).ToList();
-            accountsWithBalance.ForEach(async x => { x.Balance = await accountRepository.GetActualBalanceAsync(x.Id); });
+
+            foreach(var account in accountsWithBalance)
+            {
+                account.Balance = await accountRepository.GetActualBalanceAsync(account.Id);
+            }
             return accountsWithBalance;
         }
 

@@ -73,11 +73,53 @@ namespace BudgetUnderControl.Infrastructure.Services
         public async Task<DashboardDTO> GetDashboard()
         {
             var dashboard = new DashboardDTO();
-            var allTransactions = await this.transactionService.GetTransactionsAsync();
+            string userMainCurrency = "PLN";
+            var now = DateTime.UtcNow;
+            var previousMonth = now.AddMonths(-1);
+            var recalculateCurrencies = true;
+            List<ExchangeRate> exchangeRates = null;
 
-            Dictionary<string, decimal> dict = new Dictionary<string, decimal>();
+            var transactions = await this.transactionService.GetTransactionsAsync(new TransactionsFilter { FromDate = now.AddMonths(-6) });
             var accounts = await accountService.GetAccountsWithBalanceAsync();
 
+            if (recalculateCurrencies)
+            {
+                exchangeRates = (await this.currencyRepository.GetExchangeRatesAsync()).ToList();
+            }
+
+            var thisMonthStartDate = new DateTime(now.Year, now.Month, 1);
+            var thisMonthEndDate = new DateTime(now.Year, now.Month, DateTime.DaysInMonth(now.Year, now.Month));
+            for (int i = 4; i >= 0; i--)
+            {
+                var date = new DateTime(now.Year, now.Month, 1).AddMonths(-i);
+                var lastDayInMonth = new DateTime(date.Year, date.Month, DateTime.DaysInMonth(date.Year, date.Month));
+                dashboard.Incomes.Add(date, this.GetTotalExpsenseOrIncome(date, lastDayInMonth, transactions, userMainCurrency, exchangeRates, true));
+                dashboard.Expenses.Add(date, this.GetTotalExpsenseOrIncome(date, lastDayInMonth, transactions, userMainCurrency, exchangeRates));
+            }
+
+            dashboard.Transactions = transactions.ToList();
+            dashboard.ThisMonthCategoryChart = this.GetCategoriesShareInThePeriodOfTime(thisMonthStartDate, thisMonthEndDate, transactions, userMainCurrency, exchangeRates);
+            dashboard.LastMonthCategoryChart = this.GetCategoriesShareInThePeriodOfTime(new DateTime(previousMonth.Year, previousMonth.Month, 1), new DateTime(previousMonth.Year, previousMonth.Month,DateTime.DaysInMonth(previousMonth.Year, previousMonth.Month)), transactions, userMainCurrency, exchangeRates);
+            dashboard.ActualStatus = this.CalculateActualStatus(accounts);
+            dashboard.Total = this.CalculateTotalSum(dashboard.ActualStatus, exchangeRates, userMainCurrency);
+
+            return dashboard;
+        }
+
+        private decimal CalculateTotalSum(List<CurrencyStatusDTO> actualStatus, List<ExchangeRate> exchangeRates, string userMainCurrency)
+        {
+            decimal sum = 0;
+
+            foreach (var currency in actualStatus)
+            {
+                sum +=  this.GetValueInCurrency(exchangeRates, currency.Currency, userMainCurrency, currency.Balance, DateTime.Now);
+            }
+            return sum;
+        }
+
+        private List<CurrencyStatusDTO> CalculateActualStatus(ICollection<AccountListItemDTO> accounts)
+        {
+            Dictionary<string, decimal> dict = new Dictionary<string, decimal>();
             foreach (var account in accounts)
             {
                 if (!account.ParentAccountId.HasValue)
@@ -94,34 +136,58 @@ namespace BudgetUnderControl.Infrastructure.Services
 
             }
 
-            dashboard.ActualStatus = dict;
-
-            string userMainCurrency = "PLN";
-            decimal sum = 0;
-            dict.ForEach(async x =>
-            {
-                sum += (await this.CalculateValueAsync(x.Value, x.Key, userMainCurrency));
-            });
-
-            dashboard.Total = sum;
-
-            return dashboard;
+            return dict.Select(x => new CurrencyStatusDTO { Balance = x.Value, Currency = x.Key }).ToList() ;
         }
 
-        private async Task<decimal> CalculateValueAsync(decimal amount, string fromCurrencyCode, string toCurrencyCode)
+        private decimal GetTotalExpsenseOrIncome(DateTime from, DateTime to, ICollection<TransactionListItemDTO> transactions, string currencyCode, List<ExchangeRate> exchangeRates, bool isIncome = false)
         {
-            var value = await this.currencyService.TransformAmountAsync(amount, fromCurrencyCode, toCurrencyCode);
-            return value;
+            var selectedTransactions = transactions
+                .Where(x => x.JustDate >= from && x.JustDate <= to
+                     && !x.IsTransfer.Value);
+
+            decimal sum = 0;
+            selectedTransactions.ForEach(x =>
+            {
+                if (isIncome ? x.Value > 0 : x.Value < 0)
+                {
+                    sum += this.GetValueInCurrency(exchangeRates, x.CurrencyCode, currencyCode, x.Value, x.JustDate);
+                }
+
+            });
+
+            return sum;
+        }
+
+        private List<CategoryShareDTO> GetCategoriesShareInThePeriodOfTime(DateTime from, DateTime to,  ICollection<TransactionListItemDTO> transactions, string currencyCode, List<ExchangeRate> exchangeRates, bool isIncome = false)
+        {
+            var result = transactions
+                .Where(x => x.JustDate >= from && x.JustDate <= to 
+                && x.CurrencyCode == currencyCode
+                && !x.IsTransfer.Value
+                && (( isIncome && x.Value > 0 ) || (!isIncome && x.Value < 0)))
+                .GroupBy(x => x.Category)
+                .Select(x => new CategoryShareDTO
+                {
+                    Category = x.Key,
+                    Value = x.Sum(y => this.GetValueInCurrency(exchangeRates, y.CurrencyCode, currencyCode, y.Value, y.JustDate) )
+                }).ToList();
+
+            return result;
         }
 
         private decimal GetValueInCurrency(IList<ExchangeRate> rates, string currentCurrency, string targetCurrency, decimal value, DateTime date)
         {
-           var exchangeRate = rates.Where(x => x.ToCurrency.Code == currentCurrency || x.FromCurrency.Code == currentCurrency)
+            if (currentCurrency == targetCurrency)
+            {
+                return value;
+            }
+
+            var exchangeRate = rates.Where(x => x.ToCurrency.Code == currentCurrency || x.FromCurrency.Code == currentCurrency)
                                    .Where(x => x.ToCurrency.Code == targetCurrency || x.FromCurrency.Code == targetCurrency)
                                    .MinBy(x => Math.Abs((x.Date - date).Ticks))
                                     .FirstOrDefault();
-
             decimal result = 0;
+
             if (exchangeRate == null)
             {
                 result = 0;

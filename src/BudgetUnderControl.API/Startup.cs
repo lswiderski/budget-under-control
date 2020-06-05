@@ -36,6 +36,7 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using BudgetUnderControl.API.Extensions;
 using System.Text;
 using BudgetUnderControl.CommonInfrastructure.Settings;
+using Microsoft.Extensions.Hosting;
 
 namespace BudgetUnderControl.API
 {
@@ -45,7 +46,7 @@ namespace BudgetUnderControl.API
 
         public IConfiguration Configuration { get; }
 
-        public Startup(IHostingEnvironment env)
+        public Startup(IWebHostEnvironment env)
         {
             var configuration = new ConfigurationBuilder()
             .SetBasePath(env.ContentRootPath)
@@ -59,8 +60,8 @@ namespace BudgetUnderControl.API
         // This method gets called by the runtime. Use this method to add services to the container.
         public IServiceProvider ConfigureServices(IServiceCollection services)
         {
-            services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1)
-                .AddJsonOptions(x => x.SerializerSettings.Formatting = Formatting.Indented)
+            services.AddControllers().SetCompatibilityVersion(CompatibilityVersion.Latest)
+                .AddJsonOptions(x => x.JsonSerializerOptions.WriteIndented = true)
                 .AddFluentValidation();
 
             services.AddEntityFrameworkSqlServer()
@@ -69,6 +70,7 @@ namespace BudgetUnderControl.API
 
             services.AddMemoryCache();
             services.AddCors();
+            services.AddControllers();
 
             var settings = Configuration.GetSettings<GeneralSettings>();
 
@@ -103,7 +105,7 @@ namespace BudgetUnderControl.API
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory, IContextConfig contextConfig)//, ITestDataSeeder testDataSeeder)
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env, ILoggerFactory loggerFactory, IContextConfig contextConfig)//, ITestDataSeeder testDataSeeder)
         {
             if(contextConfig.Application == ApplicationType.Test)
             {
@@ -118,21 +120,24 @@ namespace BudgetUnderControl.API
             {
                 app.UseHsts();
             }
-
-            loggerFactory.AddNLog();
-            env.ConfigureNLog("nlog.config");
-
             //app.UseHttpsRedirection();
+
+            app.UseRouting();
+
             app.UseCustomExceptionHandler();
             app.UseAuthentication();
             app.UseCors(options =>
                     options
-                        .AllowAnyOrigin()
                         .AllowAnyMethod()
                         .AllowAnyHeader()
-                        .AllowCredentials());
-            app.UseMvc();
-            //;
+                        .SetIsOriginAllowed(origin => true)
+                        .AllowCredentials()
+                        );
+
+            app.UseAuthentication();
+            app.UseAuthorization();
+
+            app.UseEndpoints(x => x.MapControllers());
         }
     }
 }

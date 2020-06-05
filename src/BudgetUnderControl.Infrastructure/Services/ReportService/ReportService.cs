@@ -88,13 +88,13 @@ namespace BudgetUnderControl.Infrastructure.Services
             }
 
             var thisMonthStartDate = new DateTime(now.Year, now.Month, 1);
-            var thisMonthEndDate = new DateTime(now.Year, now.Month, DateTime.DaysInMonth(now.Year, now.Month));
+            var thisMonthEndDate = thisMonthStartDate.AddMonths(1);
             for (int i = 4; i >= 0; i--)
             {
                 var date = new DateTime(now.Year, now.Month, 1).AddMonths(-i);
-                var lastDayInMonth = new DateTime(date.Year, date.Month, DateTime.DaysInMonth(date.Year, date.Month));
-                dashboard.Incomes.Add(date, this.GetTotalExpsenseOrIncome(date, lastDayInMonth, transactions, userMainCurrency, exchangeRates, true));
-                dashboard.Expenses.Add(date, this.GetTotalExpsenseOrIncome(date, lastDayInMonth, transactions, userMainCurrency, exchangeRates));
+                var firstDayInNextMonth = date.AddMonths(1);
+                dashboard.Incomes.Add(new SummaryDTO { From = date, To = firstDayInNextMonth, Value = this.GetTotalExpsenseOrIncome(date, firstDayInNextMonth, transactions, userMainCurrency, exchangeRates, true) });
+                dashboard.Expenses.Add(new SummaryDTO { From = date, To = firstDayInNextMonth, Value = this.GetTotalExpsenseOrIncome(date, firstDayInNextMonth, transactions, userMainCurrency, exchangeRates) });
             }
 
             dashboard.Transactions = transactions.ToList();

@@ -68,8 +68,6 @@ export default {
     dataSource(newValue) {
 
       if (newValue.items) {
-        // eslint-disable-next-line no-debugger
-        debugger;
         this.thisMonthSeries =  this.$store.state.reports.dashboardData.items.thisMonthCategoryChart.map(
           serieValue => (Math.abs(serieValue.value))
         );
@@ -87,15 +85,19 @@ export default {
           [
             {
               name: "income",
-              data: Object.values(this.$store.state.reports.dashboardData.items.incomes)
+              data: this.$store.state.reports.dashboardData.items.incomes.map(
+                x => (x.value)
+              )
             },
             {
               name: "expense",
-              data: Object.values(this.$store.state.reports.dashboardData.items.expenses)
+              data: this.$store.state.reports.dashboardData.items.expenses.map(
+                x => (x.value)
+              )
             }
           ];
-          this.incomesExpensesLabels =  Object.keys(this.$store.state.reports.dashboardData.items.incomes).map(
-            x => (new Date(x).toLocaleString('default', { month: 'long', year: 'numeric' }))
+          this.incomesExpensesLabels =  this.$store.state.reports.dashboardData.items.incomes.map(
+            x => (new Date(x.From).toLocaleString('default', { month: 'long', year: 'numeric' }))
           );
       }
     }

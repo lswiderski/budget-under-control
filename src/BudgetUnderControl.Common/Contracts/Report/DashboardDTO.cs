@@ -16,15 +16,15 @@ namespace BudgetUnderControl.Common.Contracts
 
         public decimal Total { get; set; }
 
-        public Dictionary<DateTime, decimal> Incomes { get; set; }
+        public List<SummaryDTO> Incomes { get; set; }
 
-        public Dictionary<DateTime, decimal> Expenses { get; set; }
+        public List<SummaryDTO> Expenses { get; set; }
 
         public DashboardDTO()
         {
             this.Transactions = new List<TransactionListItemDTO>();
-            this.Incomes = new Dictionary<DateTime, decimal>();
-            this.Expenses = new Dictionary<DateTime, decimal>();
+            this.Incomes = new List<SummaryDTO>();
+            this.Expenses = new List<SummaryDTO>();
             this.ThisMonthCategoryChart = new List<CategoryShareDTO>();
             this.LastMonthCategoryChart = new List<CategoryShareDTO>();
             this.ActualStatus = new List<CurrencyStatusDTO>();

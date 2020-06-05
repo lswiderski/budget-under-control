@@ -29,5 +29,11 @@ namespace BudgetUnderControl.Mobile.Services
             };
             return context;
         }
+
+        public long GetIdOf1stUser()
+        {
+            var user = this.userRepository.GetFirstUserAsync().Result;
+            return user.Id;
+        }
     }
 }

@@ -62,6 +62,8 @@
                         </DataTemplate>
                     </ListView.ItemTemplate>
                 </ListView>
+                <Button x:Name="addImage" Text="Add Photo" Clicked="OnAddImageButtonClicked" />
+                <Image x:Name="image" Source="{Binding ImageSource}" Scale="0.5"/>
                 <Label Text="Comment"></Label>
                 <Editor x:Name="comment"  Text="{Binding Comment}" ></Editor>
                 <Button x:Name="addButton" Text="Save" Clicked="OnEditButtonClicked" IsEnabled="{Binding IsValid}" />

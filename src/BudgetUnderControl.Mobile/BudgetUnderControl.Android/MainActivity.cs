@@ -15,6 +15,7 @@ using BudgetUnderControl.Common;
 using NLog;
 using BudgetUnderControl.Mobile.PlatformSpecific;
 using BudgetUnderControl.Common.Enums;
+using Android.Content;
 
 namespace BudgetUnderControl.Droid
 {
@@ -22,10 +23,11 @@ namespace BudgetUnderControl.Droid
     public class MainActivity : global::Xamarin.Forms.Platform.Android.FormsAppCompatActivity
     {
         private static ILogger logger;
+        internal static MainActivity Instance { get; private set; }
 
         protected override void OnCreate(Bundle bundle)
         {
-           
+            Instance = this;
             TabLayoutResource = Resource.Layout.Tabbar;
             ToolbarResource = Resource.Layout.Toolbar;
             base.OnCreate(bundle);
@@ -43,6 +45,29 @@ namespace BudgetUnderControl.Droid
             CheckIfComeFromNotification();
         }
 
+        public static readonly int PickImageId = 1000;
+        public TaskCompletionSource<Stream> PickImageTaskCompletionSource { get; set; }
+
+        protected override void OnActivityResult(int requestCode, Result resultCode, Intent data)
+        {
+            base.OnActivityResult(requestCode, resultCode, data);
+
+            if(requestCode == PickImageId)
+            {
+                if((resultCode == Result.Ok) && (data != null))
+                {
+                    Android.Net.Uri uri = data.Data;
+                    Stream stream = ContentResolver.OpenInputStream(uri);
+                    PickImageTaskCompletionSource.SetResult(stream);
+                }
+                else
+                {
+                    PickImageTaskCompletionSource.SetResult(null);
+                }
+            }
+
+        }
+
         public override void OnRequestPermissionsResult(int requestCode, string[] permissions, [GeneratedEnum] Android.Content.PM.Permission[] grantResults)
         {
             Xamarin.Essentials.Platform.OnRequestPermissionsResult(requestCode, permissions, grantResults);
@@ -52,7 +77,7 @@ namespace BudgetUnderControl.Droid
 
         private void CheckIfComeFromNotification()
         {
-            var extras = Intent.Extras;
+            var extras = base.Intent.Extras;
             if (extras != null)
             {
                 var redirectTo = extras.GetInt(PropertyKeys.REDIRECT_TO);

@@ -71,6 +71,7 @@
     <Compile Include="PlatformSpecific\LocalNotificationService.cs" />
     <Compile Include="PlatformSpecific\NLogManager.cs" />
     <Compile Include="PlatformSpecific\NLService.cs" />
+    <Compile Include="PlatformSpecific\PhotoPickerService.cs" />
     <Compile Include="Resources\Resource.Designer.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

@@ -5,6 +5,7 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Xamarin.Forms;
 
 namespace BudgetUnderControl.ViewModel
 {
@@ -12,6 +13,8 @@ namespace BudgetUnderControl.ViewModel
     {
         double? Longitude { get; set; }
         double? Latitude { get; set; }
+
+        ImageSource ImageSource { get; set; }
 
         Task EditTransactionAsync();
         Task GetTransactionAsync(Guid transactionId);

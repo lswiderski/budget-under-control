@@ -1,5 +1,7 @@
 ﻿
+using System.IO;
 using System.Threading.Tasks;
+using Xamarin.Forms;
 
 namespace BudgetUnderControl.Mobile
 {
@@ -12,5 +14,8 @@ namespace BudgetUnderControl.Mobile
         void SaveText(string filename, string[] lines);
         bool CopyFile(string sourcePath, string destinationPath);
         string ReadFromAssetsAsString(string filename);
+        string SaveImageToFile(ImageSource imgSrc, string path, string filename);
+        ImageSource GetImageSourceFromFile(string path, string filename);
+        Task<bool> SaveImageSourceToFile(ImageSource img, string directory, string filename);
     }
 }

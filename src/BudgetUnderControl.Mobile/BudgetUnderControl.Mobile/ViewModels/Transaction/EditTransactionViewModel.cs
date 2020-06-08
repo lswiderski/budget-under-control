@@ -13,6 +13,7 @@ using System.Collections.ObjectModel;
 using System.Runtime.CompilerServices;
 using BudgetUnderControl.CommonInfrastructure;
 using BudgetUnderControl.Mobile;
+using Xamarin.Forms;
 
 namespace BudgetUnderControl.ViewModel
 {
@@ -467,6 +468,21 @@ namespace BudgetUnderControl.ViewModel
         List<CategoryListItemDTO> categories;
         public List<CategoryListItemDTO> Categories => categories;
 
+        
+        private ImageSource imageSource;
+        public ImageSource ImageSource
+        {
+            get => imageSource;
+            set
+            {
+                if (imageSource != value)
+                {
+                    imageSource = value;
+                    PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(ImageSource)));
+                }
+            }
+        }
+
         void OnPropertyChanged([CallerMemberName]string propertyName = "") =>
         PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
 
@@ -475,15 +491,17 @@ namespace BudgetUnderControl.ViewModel
         ICategoryService categoryService;
         ICommandDispatcher commandDispatcher;
         ITagService tagService;
+        IFileHelper fileHelper;
 
         public EditTransactionViewModel(ITransactionService transactionService, IAccountMobileService accountService, 
-            ICategoryService categoryService, ICommandDispatcher commandDispatcher, ITagService tagService)
+            ICategoryService categoryService, ICommandDispatcher commandDispatcher, ITagService tagService, IFileHelper fileHelper)
         {
             this.transactionService = transactionService;
             this.accountService = accountService;
             this.categoryService = categoryService;
             this.commandDispatcher = commandDispatcher;
             this.tagService = tagService;
+            this.fileHelper = fileHelper;
             SelectedTypeIndex = 0;
             SelectedCategoryIndex = -1;
             SelectedAccountIndex = -1;
@@ -561,6 +579,9 @@ namespace BudgetUnderControl.ViewModel
             Longitude = dto.Longitude;
             Latitude = dto.Latitude;
             Tags = new ObservableCollection<TagDTO>(dto.Tags);
+            var imageSource2 = fileHelper.GetImageSourceFromFile("UserImages", "test");
+            ImageSource = imageSource2;
+
         }
 
         private int getCategoryIndex(int? categoryId)
@@ -612,7 +633,8 @@ namespace BudgetUnderControl.ViewModel
             {
                 transferAmount *= (-1);
             }
-
+            //fileHelper.SaveImageToFile(this.ImageSource, "UserImages", "test");
+            var saveresult = await fileHelper.SaveImageSourceToFile(this.imageSource, "UserImages", "test.jpg");
             var transactionCommand = new EditTransaction
             {
                 Name = Name,
@@ -634,6 +656,7 @@ namespace BudgetUnderControl.ViewModel
                 Longitude = Longitude,
                 Latitude = Latitude,
             };
+            
 
             if(SelectedTransferAccountIndex>=0)
             {

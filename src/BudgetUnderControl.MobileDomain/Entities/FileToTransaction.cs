@@ -2,30 +2,26 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 
 namespace BudgetUnderControl.MobileDomain
 {
-    public class File : ISyncable
+    public class FileToTransaction : ISyncable
     {
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int Id { get; set; }
-        public string FileName { get; set; }
+        public int FileId { get; set; }
+        public int TransactionId { get; set; }
 
-        public DateTime CreatedOn { get; set; }
-
-        public string MimeType { get; set; }
+        public File File { get; set; }
+        public Transaction Transaction { get; set; }
 
         public DateTime? ModifiedOn { get; set; }
 
         public string ExternalId { get; set; }
 
         public bool IsDeleted { get; set; }
-
-        public ICollection<FileToTransaction> FileToTransactions { get; set; }
 
         public void Delete(bool delete = true)
         {
@@ -46,5 +42,6 @@ namespace BudgetUnderControl.MobileDomain
         {
             this.ModifiedOn = date;
         }
+
     }
 }

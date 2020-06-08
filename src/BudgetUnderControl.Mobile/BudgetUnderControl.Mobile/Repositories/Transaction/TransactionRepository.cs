@@ -197,7 +197,7 @@ namespace BudgetUnderControl.Mobile.Repositories
 
         public async Task<Transaction> GetTransactionAsync(string id)
         {
-            var transaction = await this.Context.Transactions.Where(t => t.ExternalId.ToString() == id.ToString()).SingleOrDefaultAsync();
+            var transaction = await this.Context.Transactions.Where(t => t.ExternalId == id).SingleOrDefaultAsync();
             return transaction;
         }
 

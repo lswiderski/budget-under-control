@@ -34,6 +34,7 @@ namespace BudgetUnderControl.MobileDomain
 
         public List<AccountSnapshot> AccountSnapshots { get; set; }
         public ICollection<TagToTransaction> TagsToTransaction { get; set; }
+        public ICollection<FileToTransaction> FilesToTransaction { get; set; }
         public Category Category { get; set; }
         public Account Account { get; set; }
         public ICollection<Transfer> ToTransfers { get; set; }

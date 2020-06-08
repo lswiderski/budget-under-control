@@ -1,8 +1,10 @@
 ﻿using Autofac;
 using BudgetUnderControl.Mobile.Markers;
+using BudgetUnderControl.Mobile.PlatformSpecific;
 using BudgetUnderControl.ViewModel;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -125,6 +127,20 @@ namespace BudgetUnderControl.Views
             catch (Exception ex)
             {
                 await DisplayAlert("Faild", ex.Message, "OK");
+            }
+        }
+
+        async void OnAddImageButtonClicked(object sender, EventArgs e)
+        {
+            (sender as Button).IsEnabled = false;
+
+            Stream stream = await DependencyService.Get<IPhotoPickerService>().GetImageStreamAsync();
+            if(stream != null)
+            {
+                vm.ImageSource = ImageSource.FromStream(() => stream);
+                //var source = ImageSource.FromStream(() => stream);
+                
+                (sender as Button).IsEnabled = true;
             }
         }
 

@@ -23,6 +23,7 @@ namespace BudgetUnderControl.MobileDomain
         public virtual DbSet<Currency> Currencies { get; set; }
         public virtual DbSet<ExchangeRate> ExchangeRates { get; set; }
         public virtual DbSet<File> Files { get; set; }
+        public virtual DbSet<FileToTransaction> FilesToTransactions { get; set; }
         public virtual DbSet<Icon> Icons { get; set; }
         public virtual DbSet<Tag> Tags { get; set; }
         public virtual DbSet<TagToTransaction> TagsToTransactions { get; set; }
@@ -96,6 +97,7 @@ namespace BudgetUnderControl.MobileDomain
             modelBuilder.Entity<Currency>().ToTable("Currency");
             modelBuilder.Entity<ExchangeRate>().ToTable("ExchangeRate");
             modelBuilder.Entity<File>().ToTable("File");
+            modelBuilder.Entity<FileToTransaction>().ToTable("FileToTransaction");
             modelBuilder.Entity<Icon>().ToTable("Icon");
             modelBuilder.Entity<Tag>().ToTable("Tag");
             modelBuilder.Entity<TagToTransaction>().ToTable("TagToTransaction");
@@ -207,6 +209,18 @@ namespace BudgetUnderControl.MobileDomain
                 .HasForeignKey(x => x.OwnerId)
                 .HasConstraintName("ForeignKey_AccountGroup_User")
                 .OnDelete(DeleteBehavior.Restrict);
+
+            modelBuilder.Entity<FileToTransaction>()
+              .HasOne(x => x.File)
+              .WithMany(y => y.FileToTransactions)
+              .HasForeignKey(x => x.FileId)
+              .HasConstraintName("ForeignKey_FileToTransaction_File");
+
+            modelBuilder.Entity<FileToTransaction>()
+               .HasOne(x => x.Transaction)
+               .WithMany(y => y.FilesToTransaction)
+               .HasForeignKey(x => x.TransactionId)
+               .HasConstraintName("ForeignKey_FileToTransaction_Transaction");
         }
 
         }

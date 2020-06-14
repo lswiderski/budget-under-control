@@ -64,10 +64,8 @@ namespace BudgetUnderControl.API
                 .AddJsonOptions(x => x.JsonSerializerOptions.WriteIndented = true)
                 .AddFluentValidation();
 
-            services.AddEntityFrameworkSqlServer()
-                    .AddEntityFrameworkInMemoryDatabase()
-                    .AddDbContext<Context>();
-
+            services.AddDbContext<Context>(ServiceLifetime.Transient);
+            services.AddTransient<IContextFacade, ContextFacade>();
             services.AddMemoryCache();
             services.AddCors();
             services.AddControllers();

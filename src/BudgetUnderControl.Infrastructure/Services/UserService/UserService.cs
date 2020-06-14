@@ -17,7 +17,9 @@ namespace BudgetUnderControl.Infrastructure.Services.UserService
 
         public IUserIdentityContext CreateUserIdentityContext()
         {
-            var user =  this.userRepository.GetFirstUserAsync().Result;
+            Task<Domain.User> task = Task.Run<Domain.User>(async () => await this.userRepository.GetFirstUserAsync());
+            var user =  task.Result;
+        
             var context = new UserIdentityContext
             {
                 UserId = user.Id,
@@ -29,10 +31,10 @@ namespace BudgetUnderControl.Infrastructure.Services.UserService
 
         public long GetIdOf1stUser()
         {
-            var user = this.userRepository.GetFirstUserAsync().Result;
-            if(user != null)
+            var user = this.CreateUserIdentityContext();
+            if (user != null)
             {
-                return user.Id;
+                return user.UserId;
             }
 
             return 0;

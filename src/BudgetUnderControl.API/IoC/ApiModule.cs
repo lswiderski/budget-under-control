@@ -36,7 +36,7 @@ namespace BudgetUnderControl.API.IoC
             var contextConfig = new ContextConfig() { DbName = settings.BUC_DB_Name, Application = settings.ApplicationType, ConnectionString = settings.ConnectionString };
 
             builder.RegisterInstance(contextConfig).As<IContextConfig>();
-            builder.RegisterType<ContextFacade>().As<IContextFacade>().SingleInstance();
+           
             var logManager = new NLogManager();
             builder.RegisterInstance(logManager).As<ILogManager>().SingleInstance();
             builder.RegisterInstance(logManager.GetLog()).As<ILogger>();

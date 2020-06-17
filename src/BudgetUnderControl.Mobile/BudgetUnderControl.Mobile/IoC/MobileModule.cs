@@ -84,6 +84,7 @@ namespace BudgetUnderControl.Mobile.IoC
             builder.RegisterType<TransactionRepository>().As<ITransactionRepository>().InstancePerLifetimeScope();
             builder.RegisterType<CategoryRepository>().As<ICategoryRepository>().InstancePerLifetimeScope();
             builder.RegisterType<TagRepository>().As<ITagRepository>().InstancePerLifetimeScope();
+            builder.RegisterType<FileRepository>().As<IFileRepository>().InstancePerLifetimeScope();
             builder.RegisterType<UserRepository>().As<IUserRepository>().InstancePerLifetimeScope();
             builder.RegisterType<SyncService>().As<ISyncService>().InstancePerLifetimeScope();
             builder.RegisterType<UserService>().As<IUserService>().InstancePerLifetimeScope();

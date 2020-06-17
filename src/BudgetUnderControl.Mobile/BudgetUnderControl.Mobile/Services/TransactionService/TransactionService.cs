@@ -20,14 +20,17 @@ namespace BudgetUnderControl.Mobile.Services
     {
         private readonly ITransactionRepository transactionRepository;
         private readonly ITagRepository tagRepository;
+        private readonly IFileRepository fileRepository;
         private readonly IUserRepository userRepository;
         public TransactionService(ITransactionRepository transactionRepository,
             IUserRepository userRepository,
-            ITagRepository tagRepository)
+            ITagRepository tagRepository,
+            IFileRepository fileRepository)
         {
             this.transactionRepository = transactionRepository;
             this.userRepository = userRepository;
             this.tagRepository = tagRepository;
+            this.fileRepository = fileRepository;
         }
 
         public async Task<ICollection<TransactionListItemDTO>> GetTransactionsAsync(TransactionsFilter filter = null)
@@ -50,7 +53,7 @@ namespace BudgetUnderControl.Mobile.Services
                 CreatedOn = t.CreatedOn,
                 CategoryId = t.CategoryId,
                 Category = t.Category?.Name,
-                Tags = t.TagsToTransaction.Where(x => !x.Tag.IsDeleted).Select(x => new TagDTO {ExternalId = Guid.Parse(x.Tag.ExternalId), Id = x.Tag.Id, IsDeleted = x.Tag.IsDeleted, Name = x.Tag.Name}).ToList()
+                Tags = t.TagsToTransaction.Where(x => !x.Tag.IsDeleted).Select(x => new TagDTO { ExternalId = Guid.Parse(x.Tag.ExternalId), Id = x.Tag.Id, IsDeleted = x.Tag.IsDeleted, Name = x.Tag.Name }).ToList()
 
             }).OrderByDescending(t => t.Date)
             .ToList();
@@ -62,7 +65,7 @@ namespace BudgetUnderControl.Mobile.Services
         {
             var user = await userRepository.GetFirstUserAsync();
 
-            if(command.Type == ExtendedTransactionType.Transfer)
+            if (command.Type == ExtendedTransactionType.Transfer)
             {
                 if (command.Amount > 0)
                 {
@@ -81,6 +84,7 @@ namespace BudgetUnderControl.Mobile.Services
                 var transfer = Transfer.Create(transactionExpense.Id, transactionIncome.Id, command.Rate);
                 await transactionRepository.AddTransferAsync(transfer);
                 await this.CreateTagsToTransaction(command.Tags, transactionExpense.Id);
+                await this.MergeFiles(command.FileGuid, transactionExpense);
             }
             else
             {
@@ -96,6 +100,7 @@ namespace BudgetUnderControl.Mobile.Services
                 var transaction = Transaction.Create(command.AccountId, type, command.Amount, command.Date, command.Name, command.Comment, user.Id, false, command.CategoryId, command.ExternalId.ToString(), command.Latitude, command.Longitude);
                 await this.transactionRepository.AddTransactionAsync(transaction);
                 await this.CreateTagsToTransaction(command.Tags, transaction.Id);
+                await this.MergeFiles(command.FileGuid, transaction);
             }
         }
 
@@ -111,11 +116,103 @@ namespace BudgetUnderControl.Mobile.Services
                 await this.tagRepository.AddAsync(tags2Transactions);
             }
         }
+        private async Task MergeFiles(string fileGuid, Transaction firstTransaction)
+        {
+            var now = DateTime.UtcNow;
+            var file = await this.fileRepository.GetAsync(fileGuid);
+            var currentFile = firstTransaction.FilesToTransaction?.Where(x => !x.IsDeleted).Select(x => x.File).FirstOrDefault();
+
+            if (file != null && currentFile != null)
+            {
+                if (file.ExternalId != currentFile.ExternalId)
+                {
+                    await this.fileRepository.RemoveAsync(currentFile);
+                    await this.fileRepository.AddAsync(new FileToTransaction
+                    {
+                        FileId = file.Id,
+                        TransactionId = firstTransaction.Id,
+                        ModifiedOn = now,
+                        IsDeleted = false,
+                        ExternalId = Guid.NewGuid().ToString()
+                    });
+
+                    //remove local physical file
+                }
+            }
+            else if (file != null && currentFile == null)
+            {
+                //assign to transaction
+                await this.fileRepository.AddAsync(new FileToTransaction
+                {
+                    FileId = file.Id,
+                    TransactionId = firstTransaction.Id,
+                    ModifiedOn = now,
+                    IsDeleted = false,
+                    ExternalId = Guid.NewGuid().ToString()
+                });
+            }
+            else if (file == null && currentFile != null)
+            {
+                //remove old
+                await this.fileRepository.RemoveAsync(currentFile);
+                //remove local physical file
+
+                if (!string.IsNullOrWhiteSpace(fileGuid))
+                {
+                    //create new
+
+                    file = new File
+                    {
+                        CreatedOn = now,
+                        ModifiedOn = now,
+                        IsDeleted = false,
+                        ExternalId = fileGuid,
+                        FileName = fileGuid,
+                        MimeType = "image/jpeg",
+                    };
+                    await this.fileRepository.AddAsync(file);
+
+                    await this.fileRepository.AddAsync(new FileToTransaction
+                    {
+                        FileId = file.Id,
+                        TransactionId = firstTransaction.Id,
+                        ModifiedOn = now,
+                        IsDeleted = false,
+                        ExternalId = Guid.NewGuid().ToString()
+                    });
+                }
+            }
+            else // both null
+            {
+                if (!string.IsNullOrWhiteSpace(fileGuid))
+                {
+                    //create new
+                    file = new File
+                    {
+                        CreatedOn = now,
+                        ModifiedOn = now,
+                        IsDeleted = false,
+                        ExternalId = fileGuid,
+                        FileName = fileGuid,
+                        MimeType = "image/jpeg",
+                    };
+                    await this.fileRepository.AddAsync(file);
+
+                    await this.fileRepository.AddAsync(new FileToTransaction
+                    {
+                        FileId = file.Id,
+                        TransactionId = firstTransaction.Id,
+                        ModifiedOn = now,
+                        IsDeleted = false,
+                        ExternalId = Guid.NewGuid().ToString()
+                    });
+                }
+            }
+        }
 
         public async Task EditTransactionAsync(EditTransaction command)
         {
             var user = await userRepository.GetFirstUserAsync();
-
             var firstTransaction = await this.transactionRepository.GetTransactionAsync(command.Id);
             Transaction secondTransaction = null;
 
@@ -131,7 +228,11 @@ namespace BudgetUnderControl.Mobile.Services
             //delete removed
             await this.tagRepository.RemoveAsync(tags2Transactions2Remove);
 
-            var transfer = await transactionRepository.GetTransferAsync(command.Id); 
+            //merge files
+            await this.MergeFiles(command.FileGuid, firstTransaction);
+
+
+            var transfer = await transactionRepository.GetTransferAsync(command.Id);
 
             if (transfer != null)
             {
@@ -207,7 +308,7 @@ namespace BudgetUnderControl.Mobile.Services
             {
                 firstTransaction = await this.transactionRepository.GetTransactionAsync(command.Id.Value);
             }
-            else if(command.ExternalId != null)
+            else if (command.ExternalId != null)
             {
                 firstTransaction = await this.transactionRepository.GetTransactionAsync(command.ExternalId.Value.ToString());
             }
@@ -215,7 +316,7 @@ namespace BudgetUnderControl.Mobile.Services
             {
                 throw new ArgumentException("No Transaction to remove");
             }
-
+            await this.fileRepository.RemoveAsync(firstTransaction.FilesToTransaction);
             Transaction secondTransaction = null;
             var transfer = await this.transactionRepository.GetTransferAsync(firstTransaction.Id);
             var tags2Transaction = await this.tagRepository.GetTagToTransactionsAsync(firstTransaction.Id);
@@ -261,7 +362,8 @@ namespace BudgetUnderControl.Mobile.Services
                 CreatedOn = entity.CreatedOn,
                 IsDeleted = entity.IsDeleted,
                 Longitude = entity.Longitude,
-                Latitude = entity.Latitude
+                Latitude = entity.Latitude,
+                FileGuid = entity.FilesToTransaction.Where(x => !x.IsDeleted).Select(x => x.File.ExternalId).FirstOrDefault()
             };
 
             transaction.ExtendedType = transaction.Type == TransactionType.Income ? ExtendedTransactionType.Income : ExtendedTransactionType.Expense;

@@ -14,12 +14,37 @@ using System.Runtime.CompilerServices;
 using BudgetUnderControl.CommonInfrastructure;
 using BudgetUnderControl.Mobile;
 using Xamarin.Forms;
+using System.IO;
 
 namespace BudgetUnderControl.ViewModel
 {
     public class EditTransactionViewModel : IEditTransactionViewModel, INotifyPropertyChanged
     {
         public event PropertyChangedEventHandler PropertyChanged;
+
+        public bool HasImage
+        {
+            get
+            {
+                return this.ImageByteArray != null;
+            }
+            set
+            {
+                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(HasImage)));
+            }
+        }
+
+        public bool HasNoImage
+        {
+            get
+            {
+                return !HasImage;
+            }
+            set
+            {
+                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(HasNoImage)));
+            }
+        }
 
         public bool IsValid
         {
@@ -468,7 +493,6 @@ namespace BudgetUnderControl.ViewModel
         List<CategoryListItemDTO> categories;
         public List<CategoryListItemDTO> Categories => categories;
 
-        
         private ImageSource imageSource;
         public ImageSource ImageSource
         {
@@ -478,10 +502,15 @@ namespace BudgetUnderControl.ViewModel
                 if (imageSource != value)
                 {
                     imageSource = value;
+                    SelectedNewImage = true;
                     PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(ImageSource)));
                 }
             }
         }
+
+        public byte[] ImageByteArray { get; set; }
+        private string currentFileGuid;
+        public bool SelectedNewImage;
 
         void OnPropertyChanged([CallerMemberName]string propertyName = "") =>
         PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
@@ -579,9 +608,17 @@ namespace BudgetUnderControl.ViewModel
             Longitude = dto.Longitude;
             Latitude = dto.Latitude;
             Tags = new ObservableCollection<TagDTO>(dto.Tags);
-            var imageSource2 = fileHelper.GetImageSourceFromFile("UserImages", "test");
-            ImageSource = imageSource2;
-
+            currentFileGuid = dto.FileGuid;
+            this.ImageByteArray = !string.IsNullOrWhiteSpace(dto.FileGuid) ? await fileHelper.LoadFileBytesAsync(dto.FileGuid) : null;
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(HasImage)));
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(HasNoImage)));
+            if (this.ImageByteArray != null)
+            {
+                Stream stream = new MemoryStream(this.ImageByteArray);
+                stream.Position = 0;
+                ImageSource = ImageSource.FromStream(() => stream);
+                SelectedNewImage = false;
+            }
         }
 
         private int getCategoryIndex(int? categoryId)
@@ -633,8 +670,12 @@ namespace BudgetUnderControl.ViewModel
             {
                 transferAmount *= (-1);
             }
-            //fileHelper.SaveImageToFile(this.ImageSource, "UserImages", "test");
-            var saveresult = await fileHelper.SaveImageSourceToFile(this.imageSource, "UserImages", "test.jpg");
+            var fileGuid = Guid.NewGuid().ToString();
+            if(SelectedNewImage && this.ImageByteArray != null)
+            {
+                var saveResult = await fileHelper.SaveToLocalFolderAsync(this.ImageByteArray, fileGuid);
+            }
+           
             var transactionCommand = new EditTransaction
             {
                 Name = Name,
@@ -655,6 +696,7 @@ namespace BudgetUnderControl.ViewModel
                 Tags = Tags.Select(x => x.Id).ToList(),
                 Longitude = Longitude,
                 Latitude = Latitude,
+                FileGuid = SelectedNewImage && this.ImageByteArray != null ? fileGuid : string.Empty
             };
             
 

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using BudgetUnderControl.Mobile.CommonDTOs;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
@@ -8,6 +9,6 @@ namespace BudgetUnderControl.Mobile.PlatformSpecific
 {
     public interface IPhotoPickerService
     {
-        Task<Stream> GetImageStreamAsync();
+        Task<ImagePickerResultDTO> GetImageStreamAsync();
     }
 }

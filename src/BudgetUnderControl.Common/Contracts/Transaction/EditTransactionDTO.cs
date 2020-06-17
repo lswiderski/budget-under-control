@@ -31,6 +31,7 @@ namespace BudgetUnderControl.Common.Contracts
         public double? Longitude { get; set; }
         public double? Latitude { get; set; }
         public List<TagDTO> Tags {get;set;}
+        public string FileGuid { get; set; }
 
         public EditTransactionDTO()
         {

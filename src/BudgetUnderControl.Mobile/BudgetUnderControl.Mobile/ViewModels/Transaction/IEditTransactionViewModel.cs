@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -14,7 +15,10 @@ namespace BudgetUnderControl.ViewModel
         double? Longitude { get; set; }
         double? Latitude { get; set; }
 
+        byte[] ImageByteArray { get; set; }
         ImageSource ImageSource { get; set; }
+        bool HasImage { get; set; }
+        bool HasNoImage { get; set; }
 
         Task EditTransactionAsync();
         Task GetTransactionAsync(Guid transactionId);

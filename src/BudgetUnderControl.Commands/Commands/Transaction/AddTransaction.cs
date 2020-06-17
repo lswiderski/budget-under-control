@@ -26,6 +26,7 @@ namespace BudgetUnderControl.CommonInfrastructure.Commands
         public List<int> Tags { get; set; }
         public double? Latitude { get; set; }
         public double? Longitude { get; set; }
+        public string FileGuid { get; set; }
 
         public AddTransaction()
         {

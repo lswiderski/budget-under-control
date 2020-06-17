@@ -14,8 +14,19 @@ namespace BudgetUnderControl.Droid
     public class FileHelper : IFileHelper
     {
         private string folderName = "BudgetUnderControl";
+        private readonly string LocalFolder;
 
         private Context _context = Android.App.Application.Context;
+
+        public FileHelper()
+        {
+            LocalFolder = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),"files");
+
+            if (!Directory.Exists(LocalFolder))
+            {
+                Directory.CreateDirectory(LocalFolder);
+            }
+        }
 
         public string ReadFromAssetsAsString(string filename)
         {
@@ -105,104 +116,84 @@ namespace BudgetUnderControl.Droid
             //return System.IO.File.ReadAllText(filePath);
         }
 
-        public string SaveImageToFile(ImageSource imgSrc, string path, string filename)
+        public async Task<string> SaveToLocalFolderAsync(byte[] dataBytes, string fileName)
         {
-            string localPath = Environment.GetFolderPath(Environment.SpecialFolder.MyPictures);
-
-            string fileDirectory = Path.Combine(localPath, path);
-            if(!Directory.Exists(fileDirectory))
+            return await Task.Run(() =>
             {
-                Directory.CreateDirectory(fileDirectory);
-            }
+                // Use Combine so that the correct file path slashes are used
+                var filePath = Path.Combine(LocalFolder, fileName);
 
-            string jpgFilename = Path.Combine(fileDirectory, filename);
-            if (File.Exists(jpgFilename))
-            {
-                File.Delete(jpgFilename);
-            }
+                if (File.Exists(filePath))
+                    File.Delete(filePath);
 
-            ImageToFileAsync(imgSrc, jpgFilename);
+                File.WriteAllBytes(filePath, dataBytes);
 
-            return jpgFilename;
+                return filePath;
+            });
         }
 
-        public ImageSource GetImageSourceFromFile(string path, string filename)
+        public async Task<byte[]> LoadFileBytesAsync(string fileName)
         {
-            string localPath = Environment.GetFolderPath(Environment.SpecialFolder.Personal);
-
-            string jpgFilename = Path.Combine(localPath, path, filename);
-
-            var imgSource = ImageSource.FromFile(jpgFilename);
-
-            return imgSource;
-
+            var filePath = Path.Combine(LocalFolder, fileName);
+            if (File.Exists(filePath))
+            {
+                return await Task.Run(() => File.ReadAllBytes(filePath));
+            }
+            else
+            {
+                return null;
+            }
         }
 
-        private async void ImageToFileAsync(ImageSource imgSrc, string jpgFilename)
+        public async Task<string> SaveToLocalFolderAsync(Stream dataStream, string fileName)
         {
-            var photo = await this.GetBitmapFromImageSourceAsync(imgSrc, _context);
+            // Use Combine so that the correct file path slashes are used
+            var filePath = Path.Combine(LocalFolder, fileName);
 
-            using (FileStream fs = new FileStream(jpgFilename, FileMode.OpenOrCreate))
+            if (File.Exists(filePath))
+                File.Delete(filePath);
+
+            using (var fileStream = File.OpenWrite(filePath))
             {
-                if(photo != null)
+                if (dataStream.CanSeek)
+                    dataStream.Position = 0;
+
+                await dataStream.CopyToAsync(fileStream);
+
+                return filePath;
+            }
+        }
+
+        public async Task<Stream> LoadFileStreamAsync(string fileName)
+        {
+            var filePath = Path.Combine(LocalFolder, fileName);
+
+            return await Task.Run(() =>
+            {
+                if (File.Exists(filePath))
                 {
-                    photo.Compress(Android.Graphics.Bitmap.CompressFormat.Jpeg, 100, fs);
+                    using (var fileStream = File.OpenRead(filePath))
+                    {
+                        return fileStream;
+                    }
                 }
-                
-            }
+                else
+                {
+                    return null;
+                }
+               
+            });
         }
 
-        public async Task<bool> SaveImageSourceToFile(ImageSource img, string directory, string filename)
+        public async Task TaskRemoveFileAsync(string fileName)
         {
-            System.IO.Stream outputStream = null;
+            var filePath = Path.Combine(LocalFolder, fileName);
 
-            var renderer = GetHandler(img);
-            Android.Graphics.Bitmap photo = await renderer.LoadImageAsync(img, Forms.Context);
-            string localPath = Environment.GetFolderPath(Environment.SpecialFolder.Personal);
-            var savedImageFilename = System.IO.Path.Combine(localPath, directory, filename);
-
-            System.IO.Directory.CreateDirectory(System.IO.Path.Combine(localPath, directory));
-
-            bool success = false;
-            using (outputStream = new System.IO.FileStream(savedImageFilename, System.IO.FileMode.Create))
+            if (File.Exists(filePath))
             {
-                //if (System.IO.Path.GetExtension(filename).ToLower() == ".png")
-                    //success = await photo.CompressAsync(Android.Graphics.Bitmap.CompressFormat.Png, 100, outputStream);
-               // else
-                    success = await photo.CompressAsync(Android.Graphics.Bitmap.CompressFormat.Jpeg, 100, outputStream);
+                 await Task.Run(() => File.Delete(filePath));
             }
 
-            return success;
-        }
-
-
-        public async Task<Android.Graphics.Bitmap> GetBitmapFromImageSourceAsync(ImageSource source, Context context)
-        {
-            var handler = GetHandler(source);
-            var returnValue = (Android.Graphics.Bitmap)null;
-            returnValue = await handler.LoadImageAsync(source, context);
-            return returnValue;
-        }
-
-
-        public IImageSourceHandler GetHandler(ImageSource source)
-        {
-            //Image source handler to return 
-            IImageSourceHandler returnValue = null;
-            //check the specific source type and return the correct image source handler 
-            if (source is UriImageSource)
-            {
-                returnValue = new ImageLoaderSourceHandler();
-            }
-            else if (source is FileImageSource)
-            {
-                returnValue = new FileImageSourceHandler();
-            }
-            else if (source is StreamImageSource)
-            {
-                returnValue = new StreamImagesourceHandler();
-            }
-            return returnValue;
         }
     }
 }

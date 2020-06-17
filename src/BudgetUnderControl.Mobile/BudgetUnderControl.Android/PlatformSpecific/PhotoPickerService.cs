@@ -11,6 +11,7 @@ using Android.Runtime;
 using Android.Views;
 using Android.Widget;
 using BudgetUnderControl.Droid.PlatformSpecific;
+using BudgetUnderControl.Mobile.CommonDTOs;
 using BudgetUnderControl.Mobile.PlatformSpecific;
 using Xamarin.Forms;
 
@@ -19,7 +20,7 @@ namespace BudgetUnderControl.Droid.PlatformSpecific
 {
     public class PhotoPickerService : IPhotoPickerService
     {
-        public Task<Stream> GetImageStreamAsync()
+        public Task<ImagePickerResultDTO> GetImageStreamAsync()
         {
             Intent intent = new Intent();
             intent.SetType("image/*");
@@ -29,7 +30,7 @@ namespace BudgetUnderControl.Droid.PlatformSpecific
                 Intent.CreateChooser(intent, "Select Picture"),
                 MainActivity.PickImageId);
 
-            MainActivity.Instance.PickImageTaskCompletionSource = new TaskCompletionSource<Stream>();
+            MainActivity.Instance.PickImageTaskCompletionSource = new TaskCompletionSource<ImagePickerResultDTO>();
 
             return MainActivity.Instance.PickImageTaskCompletionSource.Task;
         }

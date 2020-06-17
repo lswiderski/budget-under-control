@@ -8,6 +8,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Collections.ObjectModel;
+using Xamarin.Forms;
 
 namespace BudgetUnderControl.ViewModel
 {
@@ -42,5 +43,11 @@ namespace BudgetUnderControl.ViewModel
         bool IsTransferOptionsVisible { get; }
         bool IsTransferInOtherCurrency { get; }
         bool IsValid { get; }
+
+        byte[] ImageByteArray { get; set; }
+        ImageSource ImageSource { get; set; }
+        bool HasImage { get; set; }
+        bool HasNoImage { get; set; }
+
     }
 }

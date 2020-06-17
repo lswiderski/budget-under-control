@@ -16,6 +16,7 @@ using NLog;
 using BudgetUnderControl.Mobile.PlatformSpecific;
 using BudgetUnderControl.Common.Enums;
 using Android.Content;
+using BudgetUnderControl.Mobile.CommonDTOs;
 
 namespace BudgetUnderControl.Droid
 {
@@ -46,7 +47,7 @@ namespace BudgetUnderControl.Droid
         }
 
         public static readonly int PickImageId = 1000;
-        public TaskCompletionSource<Stream> PickImageTaskCompletionSource { get; set; }
+        public TaskCompletionSource<ImagePickerResultDTO> PickImageTaskCompletionSource { get; set; }
 
         protected override void OnActivityResult(int requestCode, Result resultCode, Intent data)
         {
@@ -58,7 +59,12 @@ namespace BudgetUnderControl.Droid
                 {
                     Android.Net.Uri uri = data.Data;
                     Stream stream = ContentResolver.OpenInputStream(uri);
-                    PickImageTaskCompletionSource.SetResult(stream);
+                    var result = new ImagePickerResultDTO
+                    {
+                        Stream = stream,
+                        Path = uri.Path,
+                    };
+                    PickImageTaskCompletionSource.SetResult(result);
                 }
                 else
                 {

@@ -16,12 +16,37 @@ using Xamarin.Forms.PlatformConfiguration;
 using Xamarin.Essentials;
 using BudgetUnderControl.CommonInfrastructure;
 using BudgetUnderControl.Mobile;
+using Xamarin.Forms;
 
 namespace BudgetUnderControl.ViewModel
 {
     public class AddTransactionViewModel : IAddTransactionViewModel, INotifyPropertyChanged
     {
         public event PropertyChangedEventHandler PropertyChanged;
+
+        public bool HasImage
+        {
+            get
+            {
+                return this.ImageByteArray != null;
+            }
+            set
+            {
+                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(HasImage)));
+            }
+        }
+
+        public bool HasNoImage
+        {
+            get
+            {
+                return !HasImage;
+            }
+            set
+            {
+                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(HasNoImage)));
+            }
+        }
 
         public bool IsValid
         {
@@ -448,6 +473,23 @@ namespace BudgetUnderControl.ViewModel
         List<CategoryListItemDTO> categories;
         public List<CategoryListItemDTO> Categories => categories;
 
+        private ImageSource imageSource;
+        public ImageSource ImageSource
+        {
+            get => imageSource;
+            set
+            {
+                if (imageSource != value)
+                {
+                    imageSource = value;
+                    PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(ImageSource)));
+                }
+            }
+        }
+
+        public byte[] ImageByteArray { get; set; }
+
+
         void OnPropertyChanged([CallerMemberName]string propertyName = "") =>
         PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
 
@@ -455,12 +497,15 @@ namespace BudgetUnderControl.ViewModel
         ICategoryService categoryService;
         ICommandDispatcher commandDispatcher;
         ITagService tagService;
-        public AddTransactionViewModel(IAccountMobileService accountRepository, ICategoryService categoryService, ICommandDispatcher commandDispatcher, ITagService tagService)
+        IFileHelper fileHelper;
+        public AddTransactionViewModel(IAccountMobileService accountRepository, ICategoryService categoryService,
+            ICommandDispatcher commandDispatcher, ITagService tagService, IFileHelper fileHelper)
         {
             this.accountService = accountRepository;
             this.categoryService = categoryService;
             this.commandDispatcher = commandDispatcher;
             this.tagService = tagService;
+            this.fileHelper = fileHelper;
             SelectedTypeIndex = 0;
             SelectedCategoryIndex = -1;
             SelectedAccountIndex = -1;
@@ -519,6 +564,13 @@ namespace BudgetUnderControl.ViewModel
                 {
                     amount *= (-1);
                 }
+
+                var fileGuid = Guid.NewGuid().ToString();
+                if (this.ImageByteArray != null)
+                {
+                    var saveResult = await fileHelper.SaveToLocalFolderAsync(this.ImageByteArray, fileGuid);
+                }
+
                 var transaction = new AddTransaction
                 {
                     Name = Name,
@@ -531,6 +583,7 @@ namespace BudgetUnderControl.ViewModel
                     Tags = Tags.Select(x => x.Id).ToList(),
                     Longitude = Longitude,
                     Latitude = Latitude,
+                    FileGuid = this.ImageByteArray != null ? fileGuid : string.Empty
                 };
 
                 using (var scope = App.Container.BeginLifetimeScope())
@@ -559,6 +612,12 @@ namespace BudgetUnderControl.ViewModel
                 transferAmount *= (-1);
             }
 
+            var fileGuid = Guid.NewGuid().ToString();
+            if (this.ImageByteArray != null)
+            {
+                var saveResult = await fileHelper.SaveToLocalFolderAsync(this.ImageByteArray, fileGuid);
+            }
+
             var addTransactionCommand = new AddTransaction
             {
                 Name = Name,
@@ -575,6 +634,7 @@ namespace BudgetUnderControl.ViewModel
                 Tags = Tags.Select(x => x.Id).ToList(),
                 Longitude = Longitude,
                 Latitude = Latitude,
+                FileGuid = this.ImageByteArray != null ? fileGuid : string.Empty
             };
 
             using (var scope = App.Container.BeginLifetimeScope())

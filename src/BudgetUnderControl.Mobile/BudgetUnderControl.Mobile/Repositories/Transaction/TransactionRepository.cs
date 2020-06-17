@@ -191,13 +191,19 @@ namespace BudgetUnderControl.Mobile.Repositories
 
         public async Task<Transaction> GetTransactionAsync(int id)
         {
-            var transaction = await this.Context.Transactions.Where(t => t.Id == id).SingleOrDefaultAsync();
+            var transaction = await this.Context.Transactions
+                            .Include(p => p.FilesToTransaction)
+                                .ThenInclude(p => p.File)
+                            .Where(t => t.Id == id).SingleOrDefaultAsync();
             return transaction;
         }
 
         public async Task<Transaction> GetTransactionAsync(string id)
         {
-            var transaction = await this.Context.Transactions.Where(t => t.ExternalId == id).SingleOrDefaultAsync();
+            var transaction = await this.Context.Transactions
+                .Include(p => p.FilesToTransaction)
+                                .ThenInclude(p => p.File)
+                                .Where(t => t.ExternalId == id).SingleOrDefaultAsync();
             return transaction;
         }
 
@@ -234,6 +240,5 @@ namespace BudgetUnderControl.Mobile.Repositories
 
             return transfers;
         }
-
     }
 }

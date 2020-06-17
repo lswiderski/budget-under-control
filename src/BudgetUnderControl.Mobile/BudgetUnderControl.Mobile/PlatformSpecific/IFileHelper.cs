@@ -14,8 +14,11 @@ namespace BudgetUnderControl.Mobile
         void SaveText(string filename, string[] lines);
         bool CopyFile(string sourcePath, string destinationPath);
         string ReadFromAssetsAsString(string filename);
-        string SaveImageToFile(ImageSource imgSrc, string path, string filename);
-        ImageSource GetImageSourceFromFile(string path, string filename);
-        Task<bool> SaveImageSourceToFile(ImageSource img, string directory, string filename);
+
+        Task<string> SaveToLocalFolderAsync(Stream dataStream, string fileName);
+        Task<string> SaveToLocalFolderAsync(byte[] dataBytes, string fileName);
+        Task<Stream> LoadFileStreamAsync(string fileName);
+        Task<byte[]> LoadFileBytesAsync(string fileName);
+        Task TaskRemoveFileAsync(string fileName);
     }
 }

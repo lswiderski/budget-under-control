@@ -62,12 +62,13 @@
                         </DataTemplate>
                     </ListView.ItemTemplate>
                 </ListView>
-                <Button x:Name="addImage" Text="Add Photo" Clicked="OnAddImageButtonClicked" />
-                <Image x:Name="image" Source="{Binding ImageSource}" Scale="0.5"/>
+                <Button x:Name="addImage" Text="Add Photo" Clicked="OnAddImageButtonClicked" IsEnabled="{Binding HasNoImage}" IsVisible="{Binding HasNoImage}" />
+                <Button x:Name="deleteImage" Text="Delete Photo" Clicked="OnDeleteImageButtonClicked" IsEnabled="{Binding HasImage}" IsVisible="{Binding HasImage}"/>
+                <Image x:Name="image" Source="{Binding ImageSource}" Scale="1"/>
                 <Label Text="Comment"></Label>
                 <Editor x:Name="comment"  Text="{Binding Comment}" ></Editor>
-                <Button x:Name="addButton" Text="Save" Clicked="OnEditButtonClicked" IsEnabled="{Binding IsValid}" />
-                <Button x:Name="deleteButton" Text="Delete" Clicked="OnDeleteButtonClicked" IsEnabled="{Binding IsValid}" />
+                <Button x:Name="addButton" Text="Save" Clicked="OnEditButtonClicked" IsEnabled="{Binding IsValid}"/>
+                <Button x:Name="deleteButton" Text="Delete" Clicked="OnDeleteButtonClicked" IsEnabled="{Binding IsValid}"/>
             </StackLayout>
         </ScrollView>
     </ContentPage.Content>

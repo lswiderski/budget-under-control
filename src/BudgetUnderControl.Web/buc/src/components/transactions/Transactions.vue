@@ -26,228 +26,6 @@
         <v-icon small class="mr-2" @click="editItem(item)">mdi-pencil</v-icon>
         <v-icon small @click="deleteItem(item)">mdi-delete</v-icon>
       </template>
-
-      <template v-slot:top>
-        <v-toolbar flat color="white">
-          <v-toolbar-title>Transactions</v-toolbar-title>
-          <v-divider class="mx-6" inset vertical></v-divider>
-          <div class="flex-grow-1"></div>
-          <v-dialog v-model="dialog" max-width="1000px">
-            <template v-slot:activator="{ on }">
-              <v-btn color="primary" dark class="mb-2" v-on="on">New transaction</v-btn>
-            </template>
-            <v-card>
-              <v-card-title>
-                <span class="headline">{{ formTitle }}</span>
-              </v-card-title>
-
-              <v-card-text>
-                <v-container>
-                  <v-row>
-                    <v-col  cols="12" md="6">
-                      <v-row>
-<v-col cols="12" md="12">
-                      <div v-if="errors.length">
-                        <b>Please correct the following error(s):</b>
-                        <ul>
-                          <li v-for="(error, i) in errors" :key="i">{{ error }}</li>
-                        </ul>
-                      </div>
-                    </v-col>
-                    <v-col cols="12" md="12">
-                      <v-select :items="types" :value="1" v-model="editedItem.type" label="Type"></v-select>
-                    </v-col>
-                    <v-col cols="12" md="6">
-                      <v-text-field v-model="editedItem.amount" label="Amount"></v-text-field>
-                    </v-col>
-                    <v-col cols="12" md="6">
-                      <v-text-field v-model="editedItem.name" label="name"></v-text-field>
-                    </v-col>
-
-                    <v-col cols="12" md="6">
-                      <v-select
-                        v-model="editedItem.accountId"
-                        :items="accounts"
-                        item-text="name"
-                        item-value="id"
-                        label="Account"
-                      ></v-select>
-                    </v-col>
-                    <v-col cols="12" md="6">
-                      <v-select
-                        :items="categories"
-                        v-model="editedItem.categoryId"
-                        item-text="name"
-                        item-value="id"
-                        label="Category"
-                      ></v-select>
-                    </v-col>
-                    <v-col cols="12" md="6">
-                      <v-menu
-                        v-model="dateMenu"
-                        :close-on-content-click="false"
-                        :nudge-right="40"
-                        transition="scale-transition"
-                        offset-y
-                        min-width="290px"
-                      >
-                        <template v-slot:activator="{ on }">
-                          <v-text-field
-                            v-model="editedItem.date"
-                            label="Date"
-                            prepend-icon="mdi-calendar"
-                            readonly
-                            v-on="on"
-                          ></v-text-field>
-                        </template>
-                        <v-date-picker v-model="editedItem.date" @input="dateMenu = false"></v-date-picker>
-                      </v-menu>
-                    </v-col>
-                    <v-col cols="12" md="6">
-                      <v-menu
-                        ref="menu"
-                        v-model="menuTimePicker"
-                        :close-on-content-click="false"
-                        :nudge-right="40"
-                        :return-value.sync="editedItem.time"
-                        transition="scale-transition"
-                        offset-y
-                        max-width="290px"
-                        min-width="290px"
-                      >
-                        <template v-slot:activator="{ on }">
-                          <v-text-field
-                            v-model="editedItem.time"
-                            label="Time"
-                            prepend-icon="mdi-clock-outline"
-                            readonly
-                            v-on="on"
-                          ></v-text-field>
-                        </template>
-                        <v-time-picker
-                          v-if="menuTimePicker"
-                          v-model="editedItem.time"
-                          @click:minute="$refs.menu.save(editedItem.time)"
-                        ></v-time-picker>
-                      </v-menu>
-                    </v-col>
-
-                    <v-col cols="12" md="6" v-if="editedItem.type === 2">
-                      <v-menu
-                        v-model="dateTransferMenu"
-                        :close-on-content-click="false"
-                        :nudge-right="40"
-                        transition="scale-transition"
-                        offset-y
-                        min-width="290px"
-                      >
-                        <template v-slot:activator="{ on }">
-                          <v-text-field
-                            v-model="editedItem.transferDate"
-                            label="Transfer Date"
-                            prepend-icon="mdi-calendar"
-                            readonly
-                            v-on="on"
-                          ></v-text-field>
-                        </template>
-                        <v-date-picker
-                          v-model="editedItem.transferDate"
-                          @input="dateTransferMenu = false"
-                        ></v-date-picker>
-                      </v-menu>
-                    </v-col>
-                    <v-col cols="12" md="6" v-if="editedItem.type === 2">
-                      <v-menu
-                        ref="menu2"
-                        v-model="menuTransferTimePicker"
-                        :close-on-content-click="false"
-                        :nudge-right="40"
-                        :return-value.sync="editedItem.transferTime"
-                        transition="scale-transition"
-                        offset-y
-                        max-width="290px"
-                        min-width="290px"
-                      >
-                        <template v-slot:activator="{ on }">
-                          <v-text-field
-                            v-model="editedItem.transferTime"
-                            label="Transfer Time"
-                            prepend-icon="mdi-clock-outline"
-                            readonly
-                            v-on="on"
-                          ></v-text-field>
-                        </template>
-                        <v-time-picker
-                          v-if="menuTransferTimePicker"
-                          v-model="editedItem.transferTime"
-                          @click:minute="$refs.menu2.save(editedItem.transferTime)"
-                        ></v-time-picker>
-                      </v-menu>
-                    </v-col>
-                    <v-col cols="12" md="6" v-if="editedItem.type === 2">
-                      <v-select
-                        v-model="editedItem.transferAccountId"
-                        :items="accounts"
-                        item-text="name"
-                        item-value="id"
-                        label="Transfer Account"
-                      ></v-select>
-                    </v-col>
-                    <v-col cols="12" md="6" v-if="editedItem.type === 2">
-                      <v-text-field v-model="editedItem.transferAmount" label="Transfer Amount" @change="transferAmountChanged"></v-text-field>
-                    </v-col>
-                    <v-col cols="12" md="6" v-if="editedItem.type === 2 && isTransferInOtherCurrency">
-                      <v-text-field v-model="editedItem.rate" label="Rate"></v-text-field>
-                    </v-col>
-                    <v-col cols="12" md="12">
-                      <v-select
-                        v-model="editedItem.tags"
-                        :items="tags"
-                        item-text="name"
-                        item-value="id"
-                        label="Tags"
-                        multiple
-                        chips
-                        hint="multiple selects"
-                        persistent-hint
-                      ></v-select>
-                    </v-col>
-                      </v-row>
-                    </v-col>
-                    <v-col  cols="12" md="6">
-                      <v-row>
-                        <v-col cols="12" md="6">
-                      <v-text-field v-model="editedItem.latitude" label="latitude"></v-text-field>
-                    </v-col>
-                    <v-col cols="12" md="6">
-                      <v-text-field v-model="editedItem.longitude" label="Longitude"></v-text-field>
-                    </v-col>
-                     <v-col cols="12" md="12">
-                     <OnePointMap 
-                     :latitude="editedItem.latitude" 
-                     :longitude="editedItem.longitude"  
-                     v-on:coordsChanged="onMapClick"
-                     ref="transacionMap" />
-                    </v-col>
-                     <v-col cols="12" md="12">
-                      <v-textarea v-model="editedItem.comment" label="Comment"></v-textarea>
-                    </v-col>
-                      </v-row>
-                    </v-col>
-                    
-                  </v-row>
-                </v-container>
-              </v-card-text>
-
-              <v-card-actions>
-                <div class="flex-grow-1"></div>
-                <v-btn color="blue darken-1" text @click="close">Cancel</v-btn>
-                <v-btn color="blue darken-1" text @click="save">Save</v-btn>
-              </v-card-actions>
-            </v-card>
-          </v-dialog>
-        </v-toolbar>
-      </template>
     </v-data-table>
   </div>
 </template>
@@ -262,8 +40,13 @@ import axios from "axios";
 import { transactionsService } from "../../_services";
 import TransactionFilters from "./TransactionFilters";
 import OnePointMap from "../maps/OnePointMap";
+import { UploaderComponent, UploaderPlugin } from "@syncfusion/ej2-vue-inputs";
+import Vue from "vue";
+
+Vue.component(UploaderPlugin.name, UploaderComponent);
+
 export default {
-   name: "Transactions",
+  name: "Transactions",
 
   data: () => ({
     dialog: false,
@@ -318,11 +101,12 @@ export default {
       { text: "Category", value: "category" },
       { text: "Tags", value: "tags" },
       { text: "Actions", sortable: false, value: "action" }
-    ]
+    ],
+    tab: "tab-general"
   }),
   components: {
     TransactionFilters,
-    OnePointMap,
+    OnePointMap
   },
   computed: {
     transactions() {
@@ -334,21 +118,29 @@ export default {
     formTitle() {
       return this.editedIndex === -1 ? "New Transaction" : "Edit Transaction";
     },
-    isTransferInOtherCurrency(){
+    isTransferInOtherCurrency() {
       let accountIndex = this.getAccountIndex(this.editedItem.accountId);
-      let transferAccountIndex = this.getAccountIndex(this.editedItem.transferAccountId);
-      return transferAccountIndex > -1 && this.accounts[accountIndex].currencyId != this.accounts[transferAccountIndex].currencyId;
+      let transferAccountIndex = this.getAccountIndex(
+        this.editedItem.transferAccountId
+      );
+      return (
+        transferAccountIndex > -1 &&
+        this.accounts[accountIndex].currencyId !=
+          this.accounts[transferAccountIndex].currencyId
+      );
     }
   },
   created() {
-
     this.$store.dispatch("tags/getAll");
     this.editedItem = this.defaultItem;
   },
   methods: {
-     refreshGrid: function() {
-             this.$store.dispatch("transactions/getAll",this.$store.state.transactionFilters);
-        },
+    refreshGrid: function() {
+      this.$store.dispatch(
+        "transactions/getAll",
+        this.$store.state.transactionFilters
+      );
+    },
     getColor(value) {
       if (value < 0) return "red";
       else return "green";
@@ -357,12 +149,11 @@ export default {
       const index = this.transactions.items.indexOf(item);
       confirm("Are you sure you want to delete this transactions?") &&
         this.transactions.items.splice(index, 1) &&
-        transactionsService.remove(item.externalId).then( () => {
+        transactionsService.remove(item.externalId).then(() => {
           this.$store.dispatch("transactions/getAll");
         });
     },
-    onMapClick(value)
-    {
+    onMapClick(value) {
       this.editedItem.latitude = value.lat;
       this.editedItem.longitude = value.lng;
     },
@@ -376,9 +167,8 @@ export default {
           _self.editedItem = Object.assign({}, dto);
           _self.dialog = true;
           setTimeout(() => {
-              this.$refs.transacionMap.invalideSize();
+            this.$refs.transacionMap.invalideSize();
           }, 100);
-    
         })
         .catch(errors => {
           _self.errors = errors;
@@ -388,12 +178,12 @@ export default {
       let dto = Object.assign({}, data);
       dto.date = new Date(dto.date + " " + dto.time);
       dto.transferDate = new Date(dto.transferDate + " " + dto.transferTime);
-      if(dto.amount > 0){
-          dto.amount *= (-1);
+      if (dto.amount > 0) {
+        dto.amount *= -1;
       }
 
-      if(dto.transferAmount < 0){
-          dto.transferAmount *= (-1);
+      if (dto.transferAmount < 0) {
+        dto.transferAmount *= -1;
       }
       return dto;
     },
@@ -401,11 +191,10 @@ export default {
       let dto = Object.assign({}, data);
       dto.type = dto.extendedType;
       dto.amount = Math.abs(dto.amount);
-      if(dto.transferAmount != null)
-      {
-         dto.transferAmount = Math.abs(dto.transferAmount);
+      if (dto.transferAmount != null) {
+        dto.transferAmount = Math.abs(dto.transferAmount);
       }
-      
+
       dto.time =
         new Date(dto.date).getHours() + ":" + new Date(dto.date).getMinutes();
       dto.date = new Date(dto.date).toISOString().substr(0, 10);
@@ -416,24 +205,24 @@ export default {
       dto.transferDate = new Date(dto.transferDate).toISOString().substr(0, 10);
       return dto;
     },
-    getAccountIndex(accountId){
-          for (let i = 0; i < this.accounts.length; i++)
-            {
-                if (this.accounts[i].id == accountId)
-                {
-                    return i;
-                }
-            }
+    getAccountIndex(accountId) {
+      for (let i = 0; i < this.accounts.length; i++) {
+        if (this.accounts[i].id == accountId) {
+          return i;
+        }
+      }
 
-            return -1;
+      return -1;
     },
 
-    transferAmountChanged(){
-      if(this.editedItem.transferAmount != 0 && this.editedItem.transferAmount != "0")
-      {
-        this.editedItem.rate = this.editedItem.amount / this.editedItem.transferAmount ; 
+    transferAmountChanged() {
+      if (
+        this.editedItem.transferAmount != 0 &&
+        this.editedItem.transferAmount != "0"
+      ) {
+        this.editedItem.rate =
+          this.editedItem.amount / this.editedItem.transferAmount;
       }
-     
     },
     close() {
       this.dialog = false;
@@ -474,7 +263,10 @@ export default {
   },
   mounted() {
     let table = document.querySelector("#transactionsTable tbody");
-        this.$store.dispatch("transactions/getAll",this.$store.state.transactionFilters);
+    this.$store.dispatch(
+      "transactions/getAll",
+      this.$store.state.transactionFilters
+    );
     const _self = this;
     Sortable.create(table, {
       handle: ".handle",
@@ -516,6 +308,9 @@ export default {
 </script>
 
 <style scoped>
+@import "../../../node_modules/@syncfusion/ej2-base/styles/material.css";
+@import "../../../node_modules/@syncfusion/ej2-buttons/styles/material.css";
+@import "../../../node_modules/@syncfusion/ej2-vue-inputs/styles/material.css";
 .handle {
   cursor: move !important;
   cursor: -webkit-grabbing !important;

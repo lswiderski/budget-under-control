@@ -9,6 +9,7 @@
     "start": "webpack-dev-server --open"
   },
   "dependencies": {
+    "@syncfusion/ej2-vue-inputs": "^18.1.56",
     "apexcharts": "^3.19.0",
     "axios": "^0.19.2",
     "core-js": "^3.6.4",

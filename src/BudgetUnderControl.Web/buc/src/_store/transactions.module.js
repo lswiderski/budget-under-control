@@ -3,16 +3,25 @@ import { transactionsService } from '../_services';
 export const transactions = {
     namespaced: true,
     state: {
-        transactions: {}
+        transactions: {},
+        transaction: {},
+        editTransaction: {},
     },
     actions: {
-        getAll({ commit },filters) {
+        getAll({ commit }, filters) {
             commit('getAllRequest');
 
             transactionsService.getAll(filters)
                 .then(
                     data => commit('getAllSuccess', data),
                     error => commit('getAllFailure', error)
+                );
+        },
+        getTransaction({ commit }, id) {
+            transactionsService.get(id)
+                .then(
+                    data => commit('getSuccess', data),
+                    error => commit('getFailure', error)
                 );
         }
     },
@@ -25,6 +34,12 @@ export const transactions = {
         },
         getAllFailure(state, error) {
             state.transactions = { error };
+        },
+        getSuccess(state, data) {
+            state.transaction = { data };
+        },
+        getFailure(state, error) {
+            state.transaction = { error };
         }
     }
 }

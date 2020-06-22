@@ -3,12 +3,21 @@
     <div>
       <TransactionFilters v-on:filtersChanged="refreshGrid"></TransactionFilters>
     </div>
+    <EditTransaction ref="editDialog"  />
     <v-data-table
       id="transactionsTable"
       :headers="headers"
       :items="transactions.items"
       :items-per-page="50"
     >
+
+    <template v-slot:top>
+       <v-toolbar flat color="white">
+        <v-toolbar-title>Transactions</v-toolbar-title>
+        <v-divider class="mx-6" inset vertical></v-divider>
+        <div class="flex-grow-1"></div>
+       </v-toolbar>
+    </template>
       // eslint-disable-next-line vue/no-unused-vars
       <template v-slot:item.id="{ }">
         <div class="handle" style="max-width: 28px;">::</div>
@@ -39,44 +48,16 @@ import { catchError } from "../../_helpers";
 import axios from "axios";
 import { transactionsService } from "../../_services";
 import TransactionFilters from "./TransactionFilters";
-import OnePointMap from "../maps/OnePointMap";
-import { UploaderComponent, UploaderPlugin } from "@syncfusion/ej2-vue-inputs";
-import Vue from "vue";
-
-Vue.component(UploaderPlugin.name, UploaderComponent);
+import EditTransaction from "./EditTransaction";
 
 export default {
   name: "Transactions",
 
   data: () => ({
-    dialog: false,
-    dateMenu: false,
-    menuTimePicker: false,
-    dateTransferMenu: false,
-    menuTransferTimePicker: false,
     categories: [],
     accounts: [],
     errors: [],
     editedIndex: -1,
-    editedItem: null,
-    defaultItem: {
-      name: "",
-      accountId: 3,
-      categoryId: 0,
-      amount: 0,
-      date: new Date(Date.now()).toISOString().substr(0, 10),
-      time: new Date().getHours() + ":" + new Date().getMinutes(),
-      comment: "",
-      type: 1,
-      transferAccountId: 4,
-      transferDate: new Date(Date.now()).toISOString().substr(0, 10),
-      transferTime: new Date().getHours() + ":" + new Date().getMinutes(),
-      transferAmount: 0,
-      rate: 1,
-      tags: null,
-      latitude: null,
-      longitude: null
-    },
     types: [
       {
         text: "Income",
@@ -101,14 +82,16 @@ export default {
       { text: "Category", value: "category" },
       { text: "Tags", value: "tags" },
       { text: "Actions", sortable: false, value: "action" }
-    ],
-    tab: "tab-general"
+    ]
   }),
   components: {
     TransactionFilters,
-    OnePointMap
+    EditTransaction,
   },
   computed: {
+     transaction() {
+      return this.$store.state.transactions.transaction;
+    },
     transactions() {
       return this.$store.state.transactions.transactions;
     },
@@ -118,21 +101,9 @@ export default {
     formTitle() {
       return this.editedIndex === -1 ? "New Transaction" : "Edit Transaction";
     },
-    isTransferInOtherCurrency() {
-      let accountIndex = this.getAccountIndex(this.editedItem.accountId);
-      let transferAccountIndex = this.getAccountIndex(
-        this.editedItem.transferAccountId
-      );
-      return (
-        transferAccountIndex > -1 &&
-        this.accounts[accountIndex].currencyId !=
-          this.accounts[transferAccountIndex].currencyId
-      );
-    }
   },
   created() {
     this.$store.dispatch("tags/getAll");
-    this.editedItem = this.defaultItem;
   },
   methods: {
     refreshGrid: function() {
@@ -150,60 +121,11 @@ export default {
       confirm("Are you sure you want to delete this transactions?") &&
         this.transactions.items.splice(index, 1) &&
         transactionsService.remove(item.externalId).then(() => {
-          this.$store.dispatch("transactions/getAll");
+          this.$store.dispatch("transactions/getAll", this.$store.state.transactionFilters);
         });
-    },
-    onMapClick(value) {
-      this.editedItem.latitude = value.lat;
-      this.editedItem.longitude = value.lng;
     },
     editItem(item) {
-      const _self = this;
-      transactionsService
-        .get(item.externalId)
-        .then(data => {
-          let dto = _self.mapAPIDTOToEditDTO(data);
-          _self.editedIndex = _self.transactions.items.indexOf(item);
-          _self.editedItem = Object.assign({}, dto);
-          _self.dialog = true;
-          setTimeout(() => {
-            this.$refs.transacionMap.invalideSize();
-          }, 100);
-        })
-        .catch(errors => {
-          _self.errors = errors;
-        });
-    },
-    mapEditDTOToAPIDTO(data) {
-      let dto = Object.assign({}, data);
-      dto.date = new Date(dto.date + " " + dto.time);
-      dto.transferDate = new Date(dto.transferDate + " " + dto.transferTime);
-      if (dto.amount > 0) {
-        dto.amount *= -1;
-      }
-
-      if (dto.transferAmount < 0) {
-        dto.transferAmount *= -1;
-      }
-      return dto;
-    },
-    mapAPIDTOToEditDTO(data) {
-      let dto = Object.assign({}, data);
-      dto.type = dto.extendedType;
-      dto.amount = Math.abs(dto.amount);
-      if (dto.transferAmount != null) {
-        dto.transferAmount = Math.abs(dto.transferAmount);
-      }
-
-      dto.time =
-        new Date(dto.date).getHours() + ":" + new Date(dto.date).getMinutes();
-      dto.date = new Date(dto.date).toISOString().substr(0, 10);
-      dto.transferTime =
-        new Date(dto.transferDate).getHours() +
-        ":" +
-        new Date(dto.transferDate).getMinutes();
-      dto.transferDate = new Date(dto.transferDate).toISOString().substr(0, 10);
-      return dto;
+      this.$refs.editDialog.openDialog(item);
     },
     getAccountIndex(accountId) {
       for (let i = 0; i < this.accounts.length; i++) {
@@ -214,52 +136,6 @@ export default {
 
       return -1;
     },
-
-    transferAmountChanged() {
-      if (
-        this.editedItem.transferAmount != 0 &&
-        this.editedItem.transferAmount != "0"
-      ) {
-        this.editedItem.rate =
-          this.editedItem.amount / this.editedItem.transferAmount;
-      }
-    },
-    close() {
-      this.dialog = false;
-      this.errors = [];
-      setTimeout(() => {
-        this.editedItem = Object.assign({}, this.defaultItem);
-        this.editedIndex = -1;
-      }, 300);
-    },
-
-    save() {
-      const _self = this;
-      let dto = _self.mapEditDTOToAPIDTO(this.editedItem);
-
-      if (this.editedIndex > -1) {
-        transactionsService
-          .edit(this.editedItem.externalId, dto)
-          .then(() => {
-            this.$store.dispatch("transactions/getAll");
-            this.close();
-          })
-          .catch(data => {
-            _self.errors = data;
-          });
-      } else {
-        transactionsService
-          .add(dto)
-          .then(() => {
-            this.transactions.items.push(_self.editedItem);
-            this.$store.dispatch("transactions/getAll");
-            this.close();
-          })
-          .catch(errors => {
-            _self.errors = errors;
-          });
-      }
-    }
   },
   mounted() {
     let table = document.querySelector("#transactionsTable tbody");
@@ -275,7 +151,6 @@ export default {
         _self.transactions.items.splice(newIndex, 0, rowSelected);
       }
     });
-
     axios
       .get(`/categories`, { params: {}, headers: authHeader() })
       .then(handleResponse)
@@ -292,11 +167,7 @@ export default {
       })
       .catch(catchError);
   },
-  watch: {
-    dialog(val) {
-      val || this.close();
-    }
-  },
+ 
   filters: {
     formatDate: function(value) {
       if (value) {
@@ -308,9 +179,7 @@ export default {
 </script>
 
 <style scoped>
-@import "../../../node_modules/@syncfusion/ej2-base/styles/material.css";
-@import "../../../node_modules/@syncfusion/ej2-buttons/styles/material.css";
-@import "../../../node_modules/@syncfusion/ej2-vue-inputs/styles/material.css";
+
 .handle {
   cursor: move !important;
   cursor: -webkit-grabbing !important;

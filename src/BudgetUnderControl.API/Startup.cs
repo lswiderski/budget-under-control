@@ -61,7 +61,9 @@ namespace BudgetUnderControl.API
         public IServiceProvider ConfigureServices(IServiceCollection services)
         {
             services.AddControllers().SetCompatibilityVersion(CompatibilityVersion.Latest)
-                .AddJsonOptions(x => x.JsonSerializerOptions.WriteIndented = true)
+                .AddJsonOptions(x => {
+                    x.JsonSerializerOptions.WriteIndented = true;
+                    })
                 .AddFluentValidation();
 
             services.AddDbContext<Context>(ServiceLifetime.Transient);

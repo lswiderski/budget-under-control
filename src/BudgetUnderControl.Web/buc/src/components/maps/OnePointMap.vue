@@ -1,26 +1,20 @@
 <template>
-        <div style="height: 200px; width: 100%">
+  <div style="height: 200px; width: 100%">
     <l-map
-        ref="transactionMap"
+      ref="transactionMap"
       :zoom="zoom"
       :center="center"
       :options="mapOptions"
       @click="innerClick"
     >
-      <l-tile-layer
-        :url="url"
-        :attribution="attribution"
-      />
-      <l-marker :lat-lng="markerLocation">
+      <l-tile-layer :url="url" :attribution="attribution" />
+      <l-marker :lat-lng="markerLocation" :visible="markerVisible">
         <l-popup>
-          <div>
-            Location
-          </div>
+          <div>Location</div>
         </l-popup>
       </l-marker>
     </l-map>
   </div>
-
 </template>
 
 <script>
@@ -36,42 +30,51 @@ export default {
     LPopup
   },
   props: {
-      latitude: Number,
-      longitude: Number,
+    latitude: Number,
+    longitude: Number,
+    centerLatitude: Number,
+    centerLongitude: Number,
   },
 
   data() {
     return {
       zoom: 13,
-      lat: this.latitude,
-      lng: this.longitude,
-      url: 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
+      lat: null,
+      lng: null,
+      url: "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
       attribution:
         '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors',
       mapOptions: {
         zoomSnap: 0.5
-      },
+      }
     };
   },
-  computed:{
-        markerLocation(){
-            return latLng(this.lat, this.lng)
+  computed: {
+    markerVisible() {
+      return this.lat !== null;
     },
-        center(){
-         return latLng(this.lat, this.lng)
+    markerLocation() {
+      return latLng(this.lat, this.lng);
+    },
+    center() {
+      return latLng(this.centerLatitude, this.centerLongitude);
     }
   },
   methods: {
     innerClick(e) {
-        this.lat = e.latlng.lat;
-        this.lng = e.latlng.lng;
-        this.$emit('coordsChanged', {lat: this.lat, lng: this.lng})
+      // eslint-disable-next-line no-debugger
+      debugger;
+      this.lat = e.latlng.lat;
+      this.lng = e.latlng.lng;
+      this.$emit("coordsChanged", { lat: this.lat, lng: this.lng });
     },
 
     invalideSize() {
-        this.$refs.transactionMap.mapObject.invalidateSize(); 
-        this.lat = this.latitude;
-      this.lng =  this.longitude;
+      // eslint-disable-next-line no-debugger
+      debugger;
+      this.$refs.transactionMap.mapObject.invalidateSize();
+      this.lat = this.latitude;
+      this.lng = this.longitude;
     }
   }
 };

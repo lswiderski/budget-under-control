@@ -8,10 +8,7 @@
       @click="innerClick"
     >
       <l-tile-layer :url="url" :attribution="attribution" />
-      <l-marker :lat-lng="markerLocation" :visible="markerVisible">
-        <l-popup>
-          <div>Location</div>
-        </l-popup>
+      <l-marker :lat-lng="markerLocation">
       </l-marker>
     </l-map>
   </div>
@@ -19,7 +16,7 @@
 
 <script>
 import { latLng } from "leaflet";
-import { LMap, LTileLayer, LMarker, LPopup } from "vue2-leaflet";
+import { LMap, LTileLayer, LMarker } from "vue2-leaflet";
 
 export default {
   name: "OnePointMap",
@@ -27,7 +24,6 @@ export default {
     LMap,
     LTileLayer,
     LMarker,
-    LPopup
   },
   props: {
     latitude: Number,
@@ -39,8 +35,8 @@ export default {
   data() {
     return {
       zoom: 13,
-      lat: null,
-      lng: null,
+      lat: 52,
+      lng: 21,
       url: "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
       attribution:
         '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors',
@@ -62,19 +58,15 @@ export default {
   },
   methods: {
     innerClick(e) {
-      // eslint-disable-next-line no-debugger
-      debugger;
       this.lat = e.latlng.lat;
       this.lng = e.latlng.lng;
       this.$emit("coordsChanged", { lat: this.lat, lng: this.lng });
     },
 
-    invalideSize() {
-      // eslint-disable-next-line no-debugger
-      debugger;
-      this.$refs.transactionMap.mapObject.invalidateSize();
+    invalideSize() {  
       this.lat = this.latitude;
       this.lng = this.longitude;
+      this.$refs.transactionMap.mapObject.invalidateSize();
     }
   }
 };

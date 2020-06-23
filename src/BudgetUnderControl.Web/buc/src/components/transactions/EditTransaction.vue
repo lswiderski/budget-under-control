@@ -223,7 +223,9 @@
           </v-card-text>
         </v-tab-item>
         <v-tab-item :value="'tab-files'">
-          <div></div>
+          <div>
+             <FileUploader />
+          </div>
         </v-tab-item>
       </v-tabs-items>
       <v-card-actions>
@@ -240,15 +242,15 @@ import { handleResponse } from "../../_helpers";
 import { catchError } from "../../_helpers";
 import axios from "axios";
 import OnePointMap from "../maps/OnePointMap";
+import FileUploader from "./FileUploader";
 import { transactionsService } from "../../_services";
-import { UploaderComponent, UploaderPlugin } from "@syncfusion/ej2-vue-inputs";
-import Vue from "vue";
-Vue.component(UploaderPlugin.name, UploaderComponent);
+
 
 export default {
   name: "EditTransaction",
   components: {
-    OnePointMap
+    OnePointMap,
+    FileUploader
   },
   data: () => ({
     dialog: false,
@@ -276,8 +278,8 @@ export default {
       transferAmount: 0,
       rate: 1,
       tags: null,
-      latitude: null,
-      longitude: null
+      latitude:null,
+      longitude: null,
     },
     types: [
       {
@@ -423,8 +425,6 @@ export default {
     save() {
       const _self = this;
       let dto = _self.mapEditDTOToAPIDTO(this.editedItem);
-      // eslint-disable-next-line no-debugger
-      debugger;
       if (this.isExist) {
         transactionsService
           .edit(this.editedItem.externalId, dto)
@@ -481,7 +481,5 @@ export default {
 };
 </script>
 <style scoped>
-@import "../../../node_modules/@syncfusion/ej2-base/styles/material.css";
-@import "../../../node_modules/@syncfusion/ej2-buttons/styles/material.css";
-@import "../../../node_modules/@syncfusion/ej2-vue-inputs/styles/material.css";
+
 </style>

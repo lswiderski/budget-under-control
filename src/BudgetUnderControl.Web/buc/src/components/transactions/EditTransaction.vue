@@ -1,7 +1,7 @@
 <template>
   <v-dialog v-model="dialog" max-width="1000px">
     <template v-slot:activator="{ on }">
-      <v-btn color="primary" dark class="mb-2" v-on="on" @click="openEmptyDialog" >New transaction</v-btn>
+      <v-btn color="primary" dark class="mb-2" v-on="on" @click="openEmptyDialog">New transaction</v-btn>
     </template>
     <v-card>
       <v-card-title>
@@ -223,9 +223,37 @@
           </v-card-text>
         </v-tab-item>
         <v-tab-item :value="'tab-files'">
-          <div>
-             <FileUploader />
-          </div>
+          <v-card-text>
+            <v-container>
+              <v-row>
+                <v-col cols="12" md="10">
+                  <v-file-input
+                    v-model="files"
+                    v-if="!hasImage"
+                    accept="image/png, image/jpeg, image/bmp"
+                    placeholder="Pick an Photo"
+                    prepend-icon="mdi-camera"
+                    label="Image"
+                    name="Image"
+                    ref="image"
+                  ></v-file-input>
+                </v-col>
+                <v-col cols="12" md="2">
+                  <v-btn v-if="!hasImage" color="blue darken-1" text @click="uploadFile">upload</v-btn>
+                </v-col>
+              </v-row>
+              <v-row>
+                <v-col>
+                  <v-btn v-if="hasImage" color="blue darken-1" text @click="removeFile">remove</v-btn>
+                </v-col>
+              </v-row>
+              <v-row>
+                <v-col>
+                  <v-img :src="imageUrl" v-if="hasImage"></v-img>
+                </v-col>
+              </v-row>
+            </v-container>
+          </v-card-text>
         </v-tab-item>
       </v-tabs-items>
       <v-card-actions>
@@ -242,15 +270,14 @@ import { handleResponse } from "../../_helpers";
 import { catchError } from "../../_helpers";
 import axios from "axios";
 import OnePointMap from "../maps/OnePointMap";
-import FileUploader from "./FileUploader";
 import { transactionsService } from "../../_services";
-
+import { filesService } from "../../_services";
+import Configuration from "../../_helpers/configuration";
 
 export default {
   name: "EditTransaction",
   components: {
-    OnePointMap,
-    FileUploader
+    OnePointMap
   },
   data: () => ({
     dialog: false,
@@ -263,6 +290,7 @@ export default {
     errors: [],
     editedItem: {},
     isExist: false,
+    hasImage: false,
     defaultItem: {
       name: "",
       accountId: 3,
@@ -278,8 +306,8 @@ export default {
       transferAmount: 0,
       rate: 1,
       tags: null,
-      latitude:null,
-      longitude: null,
+      latitude: null,
+      longitude: null
     },
     types: [
       {
@@ -295,14 +323,15 @@ export default {
         value: 2
       }
     ],
-    tab: "tab-general"
+    tab: "tab-general",
+    files: {},
   }),
   computed: {
     centerLatitude() {
       return this.editedItem.latitude ?? 52.183411;
     },
     centerLongitude() {
-      return this.editedItem.longitude ?? 21.018550;
+      return this.editedItem.longitude ?? 21.01855;
     },
     transaction() {
       return this.$store.state.transactions.transaction;
@@ -326,6 +355,11 @@ export default {
         this.accounts[accountIndex].currencyId !=
           this.accounts[transferAccountIndex].currencyId
       );
+    },
+    imageUrl() {
+      return `${Configuration.value("backendHost")}/files/${
+        this.editedItem.fileGuid
+      }?token=SECUREDTOKEN`;
     }
   },
   created() {
@@ -345,7 +379,7 @@ export default {
       if (dto.amount > 0) {
         dto.amount *= -1;
       }
-        dto.transferAmount = +dto.transferAmount;
+      dto.transferAmount = +dto.transferAmount;
       if (dto.transferAmount < 0) {
         dto.transferAmount *= -1;
       }
@@ -373,9 +407,10 @@ export default {
       this.editedItem = Object.assign({}, this.defaultItem);
       this.errors = [];
       this.dialog = true;
-       setTimeout(() => {
-            this.$refs.transacionMap.invalideSize();
-          }, 100);
+      this.hasImage = this.editedItem.fileGuid !== null && this.editedItem.fileGuid !== undefined;
+      setTimeout(() => {
+        this.$refs.transacionMap.invalideSize();
+      }, 100);
     },
 
     openDialog(item) {
@@ -388,6 +423,7 @@ export default {
           _self.editedIndex = _self.transactions.items.indexOf(item);
           this.editedItem = Object.assign({}, dto);
           this.dialog = true;
+          this.hasImage = this.editedItem.fileGuid !== null && this.editedItem.fileGuid !== undefined;
           setTimeout(() => {
             this.$refs.transacionMap.invalideSize();
           }, 100);
@@ -419,6 +455,7 @@ export default {
       this.dialog = false;
       this.errors = [];
       setTimeout(() => {
+        this.hasImage = false;
         this.editedItem = Object.assign({}, this.defaultItem);
       }, 300);
     },
@@ -452,6 +489,32 @@ export default {
             _self.errors = errors;
           });
       }
+    },
+    uploadFile() {
+      const _self = this;
+      filesService
+        .add(this.files)
+        .then(result => {
+           _self.hasImage = true;
+          _self.editedItem.fileGuid = result;
+         
+        })
+        .catch(data => {
+          _self.errors = data;
+        });
+    },
+    removeFile() {
+       const _self = this;
+      filesService
+        .remove(this.editedItem.fileGuid)
+        .then(() => {
+           _self.hasImage = false;
+          _self.editedItem.fileGuid = null;
+          
+        })
+        .catch(data => {
+          _self.errors = data;
+        });
     }
   },
   mounted() {
@@ -481,5 +544,4 @@ export default {
 };
 </script>
 <style scoped>
-
 </style>

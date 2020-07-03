@@ -4,10 +4,12 @@ using BudgetUnderControl.Common;
 using BudgetUnderControl.Common.Enums;
 using BudgetUnderControl.CommonInfrastructure.Settings;
 using BudgetUnderControl.Domain;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using NLog;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -16,10 +18,11 @@ namespace BudgetUnderControl.API.IoC
     public class ApiModule : Module
     {
         private readonly IConfiguration configuration;
-
-        public ApiModule(IConfiguration configuration)
+        private readonly IWebHostEnvironment environment;
+        public ApiModule(IConfiguration configuration, IWebHostEnvironment environment)
         {
             this.configuration = configuration;
+            this.environment = environment;
         }
 
         protected override void Load(ContainerBuilder builder)
@@ -28,7 +31,11 @@ namespace BudgetUnderControl.API.IoC
             Console.WriteLine("Connection string: " + settings.ConnectionString);
             Console.WriteLine("Application Type:  " + settings.ApplicationType.ToString());
             Console.WriteLine("DB Name:  " + settings.BUC_DB_Name);
-
+            if (string.IsNullOrWhiteSpace(environment.WebRootPath))
+            {
+                environment.WebRootPath = System.IO.Path.Combine(Directory.GetCurrentDirectory(), "wwwroot");
+            }
+            settings.FileRootPath = environment.WebRootPath;
             builder.RegisterInstance(settings)
                 .SingleInstance();
 

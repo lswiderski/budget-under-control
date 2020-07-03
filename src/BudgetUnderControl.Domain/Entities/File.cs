@@ -2,17 +2,41 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 
 namespace BudgetUnderControl.Domain
 {
-    public class File
+    public class File : ISyncable
     {
         [Key]
-        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-        public int Id { get; set; }
+        public Guid Id { get; set; }
         public string FileName { get; set; }
+        public Guid UserId { get; set; }
+        public DateTime CreatedOn { get; set; }
+        public string ContentType { get; set; }
+
+        public ICollection<FileToTransaction> FileToTransactions { get; set; }
+
+        public DateTime? ModifiedOn { get; set; }
+
+        public Guid ExternalId { get; set; }
+
+        public bool IsDeleted { get; set; }
+
+        public void UpdateModify()
+        {
+            this.ModifiedOn = DateTime.UtcNow;
+        }
+
+        public void SetModifiedOn(DateTime? date)
+        {
+            this.ModifiedOn = date;
+        }
+
+        public void Delete(bool delete = true)
+        {
+            this.IsDeleted = delete;
+            this.UpdateModify();
+        }
     }
 }

@@ -94,6 +94,11 @@ namespace BudgetUnderControl.Domain
             get => _context.Files;
             set => _context.Files = value;
         }
+        public DbSet<FileToTransaction> FilesToTransactions
+        {
+            get => _context.FilesToTransactions;
+            set => _context.FilesToTransactions = value;
+        }
         public DbSet<Icon> Icons
         {
             get => _context.Icons;

@@ -27,6 +27,8 @@ namespace BudgetUnderControl.CommonInfrastructure.Settings
         public string BUC_DB_User { get; set; }
         public string BUC_DB_Password { get; set; }
 
+        public string FileRootPath { get; set; }
+
         public GeneralSettings InjectEnvVariables()
         {
             this.BUC_DB_Address = Environment.GetEnvironmentVariable(nameof(this.BUC_DB_Address)) ?? this.BUC_DB_Address;

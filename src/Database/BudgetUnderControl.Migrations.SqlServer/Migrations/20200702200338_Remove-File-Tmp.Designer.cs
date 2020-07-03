@@ -4,14 +4,16 @@ using BudgetUnderControl.Domain;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace BudgetUnderControl.Migrations.SqlServer.Migrations
 {
     [DbContext(typeof(Context))]
-    partial class ContextModelSnapshot : ModelSnapshot
+    [Migration("20200702200338_Remove-File-Tmp")]
+    partial class RemoveFileTmp
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -244,68 +246,6 @@ namespace BudgetUnderControl.Migrations.SqlServer.Migrations
                     b.HasIndex("ToCurrencyId");
 
                     b.ToTable("ExchangeRate");
-                });
-
-            modelBuilder.Entity("BudgetUnderControl.Domain.File", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<string>("ContentType")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateTime>("CreatedOn")
-                        .HasColumnType("datetime2");
-
-                    b.Property<Guid>("ExternalId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<string>("FileName")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<bool>("IsDeleted")
-                        .HasColumnType("bit");
-
-                    b.Property<DateTime?>("ModifiedOn")
-                        .HasColumnType("datetime2");
-
-                    b.Property<Guid>("UserId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("File");
-                });
-
-            modelBuilder.Entity("BudgetUnderControl.Domain.FileToTransaction", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<Guid>("ExternalId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<Guid>("FileId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<bool>("IsDeleted")
-                        .HasColumnType("bit");
-
-                    b.Property<DateTime?>("ModifiedOn")
-                        .HasColumnType("datetime2");
-
-                    b.Property<int>("TransactionId")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("FileId");
-
-                    b.HasIndex("TransactionId");
-
-                    b.ToTable("FileToTransaction");
                 });
 
             modelBuilder.Entity("BudgetUnderControl.Domain.Icon", b =>
@@ -613,23 +553,6 @@ namespace BudgetUnderControl.Migrations.SqlServer.Migrations
                         .HasForeignKey("ToCurrencyId")
                         .HasConstraintName("ForeignKey_ExchangeRate_ToCurrency")
                         .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-                });
-
-            modelBuilder.Entity("BudgetUnderControl.Domain.FileToTransaction", b =>
-                {
-                    b.HasOne("BudgetUnderControl.Domain.File", "File")
-                        .WithMany("FileToTransactions")
-                        .HasForeignKey("FileId")
-                        .HasConstraintName("ForeignKey_FileToTransaction_File")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("BudgetUnderControl.Domain.Transaction", "Transaction")
-                        .WithMany("FilesToTransaction")
-                        .HasForeignKey("TransactionId")
-                        .HasConstraintName("ForeignKey_FileToTransaction_Transaction")
-                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
 

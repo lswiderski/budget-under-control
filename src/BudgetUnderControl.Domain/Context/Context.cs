@@ -14,7 +14,7 @@ namespace BudgetUnderControl.Domain
     public class Context : DbContext, IDisposable
     {
         private readonly IContextConfig config;
-        
+
         private string databasePath { get; set; }
 
         public virtual DbSet<Account> Accounts { get; set; }
@@ -24,6 +24,7 @@ namespace BudgetUnderControl.Domain
         public virtual DbSet<Currency> Currencies { get; set; }
         public virtual DbSet<ExchangeRate> ExchangeRates { get; set; }
         public virtual DbSet<File> Files { get; set; }
+        public virtual DbSet<FileToTransaction> FilesToTransactions { get; set; }
         public virtual DbSet<Icon> Icons { get; set; }
         public virtual DbSet<Tag> Tags { get; set; }
         public virtual DbSet<TagToTransaction> TagsToTransactions { get; set; }
@@ -31,12 +32,12 @@ namespace BudgetUnderControl.Domain
         public virtual DbSet<Transfer> Transfers { get; set; }
         public virtual DbSet<User> Users { get; set; }
         public virtual DbSet<Synchronization> Synchronizations { get; set; }
-        
+
 
         public static Context Create(IContextConfig contextConfig)
         {
             var context = new Context(contextConfig);
-           // context.Database.EnsureCreated();
+            // context.Database.EnsureCreated();
             return context;
         }
 
@@ -49,7 +50,7 @@ namespace BudgetUnderControl.Domain
 
         protected Context()
         {
-            
+
         }
 
         public Context(DbContextOptions options, IContextConfig config) : base(options)
@@ -72,7 +73,7 @@ namespace BudgetUnderControl.Domain
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-            if (config!= null)
+            if (config != null)
             {
                 if (config.Application == ApplicationType.Mobile || config.Application == ApplicationType.SQLiteMigrations)
                 {
@@ -82,12 +83,12 @@ namespace BudgetUnderControl.Domain
                 {
                     optionsBuilder.UseSqlServer(config.ConnectionString, options => options.MigrationsAssembly("BudgetUnderControl.Migrations.SqlServer"));
                 }
-                else if(config.Application == ApplicationType.Test)
+                else if (config.Application == ApplicationType.Test)
                 {
-                    
+
                 }
             }
-            
+
         }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -99,6 +100,7 @@ namespace BudgetUnderControl.Domain
             modelBuilder.Entity<Currency>().ToTable("Currency");
             modelBuilder.Entity<ExchangeRate>().ToTable("ExchangeRate");
             modelBuilder.Entity<File>().ToTable("File");
+            modelBuilder.Entity<FileToTransaction>().ToTable("FileToTransaction");
             modelBuilder.Entity<Icon>().ToTable("Icon");
             modelBuilder.Entity<Tag>().ToTable("Tag");
             modelBuilder.Entity<TagToTransaction>().ToTable("TagToTransaction");
@@ -210,7 +212,19 @@ namespace BudgetUnderControl.Domain
                 .HasForeignKey(x => x.OwnerId)
                 .HasConstraintName("ForeignKey_AccountGroup_User")
                 .OnDelete(DeleteBehavior.Restrict);
+
+            modelBuilder.Entity<FileToTransaction>()
+              .HasOne(x => x.File)
+              .WithMany(y => y.FileToTransactions)
+              .HasForeignKey(x => x.FileId)
+              .HasConstraintName("ForeignKey_FileToTransaction_File");
+
+            modelBuilder.Entity<FileToTransaction>()
+               .HasOne(x => x.Transaction)
+               .WithMany(y => y.FilesToTransaction)
+               .HasForeignKey(x => x.TransactionId)
+               .HasConstraintName("ForeignKey_FileToTransaction_Transaction");
         }
 
-        }
     }
+}

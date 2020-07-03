@@ -11,6 +11,7 @@ using System.Collections.Generic;
 using System.Reflection;
 using System.Text;
 using BudgetUnderControl.CommonInfrastructure;
+using BudgetUnderControl.ApiInfrastructure.Services;
 
 namespace BudgetUnderControl.Infrastructure.IoC
 {
@@ -64,7 +65,7 @@ namespace BudgetUnderControl.Infrastructure.IoC
             builder.RegisterType<LoginService>().As<ILoginService>().InstancePerLifetimeScope();
             builder.RegisterType<Encrypter>().As<IEncrypter>().InstancePerLifetimeScope();
             builder.RegisterType<JwtHandlerService>().As<IJwtHandlerService>().InstancePerLifetimeScope();
-            
+            builder.RegisterType<FileService>().As<IFileService>().InstancePerLifetimeScope();
 
 
 

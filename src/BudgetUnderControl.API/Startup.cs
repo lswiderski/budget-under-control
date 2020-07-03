@@ -46,6 +46,8 @@ namespace BudgetUnderControl.API
 
         public IConfiguration Configuration { get; }
 
+        private IWebHostEnvironment environment { get; }
+
         public Startup(IWebHostEnvironment env)
         {
             var configuration = new ConfigurationBuilder()
@@ -55,6 +57,7 @@ namespace BudgetUnderControl.API
             .AddJsonFile($"secrets.json", optional: true)
             .AddEnvironmentVariables();
             Configuration = configuration.Build();
+            environment = env;
         }
 
         // This method gets called by the runtime. Use this method to add services to the container.
@@ -97,7 +100,7 @@ namespace BudgetUnderControl.API
             var builder = new ContainerBuilder();          
 
             builder.RegisterModule<ApiInfrastructureModule>();
-            builder.RegisterModule(new ApiModule(Configuration));
+            builder.RegisterModule(new ApiModule(Configuration, environment));
             builder.Populate(services);
             ApplicationContainer = builder.Build();
 

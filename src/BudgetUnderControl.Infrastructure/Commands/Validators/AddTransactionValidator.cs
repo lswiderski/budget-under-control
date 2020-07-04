@@ -51,7 +51,7 @@ namespace BudgetUnderControl.ApiInfrastructure.Commands.Validators
             {
                 if ((context.InstanceToValidate as AddTransaction).Type == ExtendedTransactionType.Transfer)
                 {
-                    var isValid = await accountService.IsValidAsync(id);
+                    var isValid = await accountService.IsValidAsync(id.Value);
                     if (!isValid)
                     {
                         context.AddFailure("This user do not own that Account");

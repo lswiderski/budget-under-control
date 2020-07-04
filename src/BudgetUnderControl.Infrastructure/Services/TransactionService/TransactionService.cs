@@ -93,7 +93,7 @@ namespace BudgetUnderControl.Infrastructure.Services
                 var transactionExpense = Transaction.Create(command.AccountId, TransactionType.Expense, command.Amount, command.Date, command.Name, command.Comment, user.Id, false, command.CategoryId, command.ExternalId, command.Latitude, command.Longitude);
                 await transactionRepository.AddTransactionAsync(transactionExpense);
 
-                var transactionIncome = Transaction.Create(command.TransferAccountId, TransactionType.Income, command.TransferAmount, command.TransferDate, command.Name, command.Comment, user.Id, false, command.CategoryId, command.TransferExternalId, command.Latitude, command.Longitude);
+                var transactionIncome = Transaction.Create(command.TransferAccountId.Value, TransactionType.Income, command.TransferAmount, command.TransferDate, command.Name, command.Comment, user.Id, false, command.CategoryId, command.TransferExternalId, command.Latitude, command.Longitude);
                 await transactionRepository.AddTransactionAsync(transactionIncome);
 
                 var transfer = Transfer.Create(transactionExpense.Id, transactionIncome.Id, command.Rate);

@@ -696,7 +696,7 @@ namespace BudgetUnderControl.ViewModel
                 Tags = Tags.Select(x => x.Id).ToList(),
                 Longitude = Longitude,
                 Latitude = Latitude,
-                FileGuid = SelectedNewImage && this.ImageByteArray != null ? fileGuid : string.Empty
+                FileGuid = SelectedNewImage || this.ImageByteArray != null ? fileGuid : string.Empty
             };
             
 

@@ -17,6 +17,8 @@ namespace BudgetUnderControl.MobileDomain
         EntityEntry<TEntity> Remove<TEntity>(TEntity entity) where TEntity : class;
         void RemoveRange(IEnumerable<object> entities);
 
+        void SetEntityState(object entity, EntityState state);
+
         DbSet<Account> Accounts { get; set; }
         DbSet<AccountGroup> AccountGroup { get; set; }
         DbSet<AccountSnapshot> AccountSnapshot { get; set; }

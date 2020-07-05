@@ -49,6 +49,11 @@ namespace BudgetUnderControl.MobileDomain
             }
         }
 
+        public void SetEntityState(object entity, EntityState state)
+        {
+            this._context.Entry(entity).State = state;
+        }
+
         public void Dispose()
         {
             if (_connection != null)
@@ -127,7 +132,7 @@ namespace BudgetUnderControl.MobileDomain
         public DbSet<User> Users
         {
             get => _context.Users;
-            set => _context.Users = value;
+            set => _context.Users = value; 
         }
         public DbSet<Synchronization> Synchronizations
         {

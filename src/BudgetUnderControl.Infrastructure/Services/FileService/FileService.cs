@@ -4,6 +4,7 @@ using BudgetUnderControl.CommonInfrastructure.Settings;
 using BudgetUnderControl.Domain;
 using BudgetUnderControl.Infrastructure;
 using Microsoft.AspNetCore.Http;
+using NLog;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -19,12 +20,15 @@ namespace BudgetUnderControl.ApiInfrastructure.Services
 
         private readonly IUserIdentityContext userIdentityContext;
         private readonly GeneralSettings settings;
+        private readonly ILogger logger;
 
-        public FileService(IContextFacade context, IUserIdentityContext userIdentityContext, GeneralSettings settings) : base(context)
+        public FileService(IContextFacade context, IUserIdentityContext userIdentityContext, GeneralSettings settings, ILogger logger) : base(context)
         {
             this.userIdentityContext = userIdentityContext;
             this.settings = settings;
+            this.logger = logger;
         }
+
         public async Task<string> SaveFileAsync(IFormFile file)
         {
             var createdOn = DateTime.UtcNow;
@@ -45,6 +49,8 @@ namespace BudgetUnderControl.ApiInfrastructure.Services
                 CreatedOn = createdOn,
                 ExternalId = id,
                 Id = id,
+                ModifiedOn = createdOn,
+                IsDeleted = false,
             };
 
             this.Context.Files.Add(fileEntity);
@@ -61,6 +67,26 @@ namespace BudgetUnderControl.ApiInfrastructure.Services
             return fileEntity.Id.ToString();
         }
 
+        public async Task<string> SaveFileAsync(byte[] content, Guid id, DateTime? date = null)
+        {
+            var createdOn = date ?? DateTime.UtcNow;
+            var rootPath = settings.FileRootPath;
+            var uploadsRootFolder = Path.Combine(rootPath, _uploadCatalog, userIdentityContext.ExternalId.ToString(), createdOn.Year.ToString(), createdOn.Month.ToString());
+            if (!Directory.Exists(uploadsRootFolder))
+            {
+                Directory.CreateDirectory(uploadsRootFolder);
+            }
+
+            var filePath = Path.Combine(uploadsRootFolder, id.ToString());
+            using (var fileStream = new FileStream(filePath, FileMode.Create))
+            {
+                await fileStream.WriteAsync(content, 0, content.Length).ConfigureAwait(false);
+            }
+
+            return id.ToString();
+        }
+
+
         public async Task<FileDto> GetFileAsync(Guid id, string token)
         {
             if (string.IsNullOrWhiteSpace(token))
@@ -70,7 +96,7 @@ namespace BudgetUnderControl.ApiInfrastructure.Services
             var rootPath = settings.FileRootPath;
             var fileEntity = this.Context.Files.Where(x => x.Id == id).FirstOrDefault();
 
-            if(fileEntity != null)
+            if (fileEntity != null)
             {
                 var filePath = Path.Combine(rootPath, _uploadCatalog, userIdentityContext.ExternalId.ToString(), fileEntity.CreatedOn.Year.ToString(), fileEntity.CreatedOn.Month.ToString(), id.ToString());
 
@@ -85,7 +111,35 @@ namespace BudgetUnderControl.ApiInfrastructure.Services
             }
 
             return null;
-          
+
+        }
+
+        public async Task<byte[]> GetFileBytesAsync(Guid id)
+        {
+            var fileEntity = this.Context.Files.Where(x => x.Id == id).FirstOrDefault();
+            if (fileEntity == null)
+            {
+                return null;
+            }
+
+            try
+            {
+                var rootPath = settings.FileRootPath;
+                var filePath = Path.Combine(rootPath, _uploadCatalog, userIdentityContext.ExternalId.ToString(), fileEntity.CreatedOn.Year.ToString(), fileEntity.CreatedOn.Month.ToString(), id.ToString());
+                using (var stream = new FileStream(filePath, FileMode.Open))
+                {
+                    using (MemoryStream memStream = new MemoryStream())
+                    {
+                        await stream.CopyToAsync(memStream);
+                        return memStream.ToArray();
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                logger.Log(LogLevel.Error, ex, "Exception of file access");
+                return null;
+            }
         }
 
         public async Task RemoveFileAsync(Guid id)
@@ -95,12 +149,12 @@ namespace BudgetUnderControl.ApiInfrastructure.Services
             //remove connections with other objects like transactions
             var fileEntity = this.Context.Files.Where(x => x.Id == id).FirstOrDefault();
 
-            if(fileEntity == null)
+            if (fileEntity == null)
             {
                 return;
             }
 
-            if(fileEntity.UserId != userIdentityContext.ExternalId)
+            if (fileEntity.UserId != userIdentityContext.ExternalId)
             {
                 throw new UnauthorizedAccessException();
             }
@@ -108,10 +162,24 @@ namespace BudgetUnderControl.ApiInfrastructure.Services
             f2t.ForEach(x => x.Delete());
             fileEntity.Delete();
             await this.Context.SaveChangesAsync();
+            this.RemoveFileContent(id, userIdentityContext.ExternalId, fileEntity.CreatedOn);
 
-            var rootPath = settings.FileRootPath;
-            var filePath = Path.Combine(rootPath, _uploadCatalog, userIdentityContext.ExternalId.ToString(), fileEntity.CreatedOn.Year.ToString(), fileEntity.CreatedOn.Month.ToString(), id.ToString());
-            System.IO.File.Delete(filePath);
+        }
+
+        public void RemoveFileContent(Guid id, Guid userId, DateTime createdOn)
+        {
+            try
+            {
+                var rootPath = settings.FileRootPath;
+                var filePath = Path.Combine(rootPath, _uploadCatalog, userId.ToString(), createdOn.Year.ToString(), createdOn.Month.ToString(), id.ToString());
+                System.IO.File.Delete(filePath);
+            }
+            catch (Exception ex)
+            {
+                logger.Log(LogLevel.Error, ex, "Exception of file removing");
+                throw;
+            }
+
         }
     }
 }

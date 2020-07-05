@@ -13,7 +13,7 @@ using System.Threading.Tasks;
 
 namespace BudgetUnderControl.Mobile.Services
 {
-    public class SyncRequestBuilder : ISyncRequestBuilder
+    public class SyncRequestMobileBuilder : ISyncRequestBuilder
     {
         private readonly ILogger logger;
         private readonly ITransactionRepository transactionRepository;
@@ -25,8 +25,10 @@ namespace BudgetUnderControl.Mobile.Services
         private readonly ISynchronizationRepository synchronizationRepository;
         private readonly IUserIdentityContext userIdentityContext;
         private readonly ITagRepository tagRepository;
+        private readonly IFileRepository fileRepository;
+        private readonly IFileHelper fileHelper;
         private readonly GeneralSettings settings;
-        public SyncRequestBuilder(ITransactionRepository transactionRepository,
+        public SyncRequestMobileBuilder(ITransactionRepository transactionRepository,
             IAccountMobileRepository accountRepository,
             ICurrencyRepository currencyRepository,
             ICategoryRepository categoryRepository,
@@ -36,6 +38,8 @@ namespace BudgetUnderControl.Mobile.Services
             IUserIdentityContext userIdentityContext,
             ITagRepository tagRepository,
             ILogger logger,
+            IFileRepository fileRepository,
+            IFileHelper fileHelper,
             GeneralSettings settings)
         {
             this.transactionRepository = transactionRepository;
@@ -49,6 +53,8 @@ namespace BudgetUnderControl.Mobile.Services
             this.settings = settings;
             this.tagRepository = tagRepository;
             this.logger = logger;
+            this.fileRepository = fileRepository;
+            this.fileHelper = fileHelper;
         }
 
         public async Task<SyncRequest> CreateSyncRequestAsync(SynchronizationComponent source, SynchronizationComponent target)
@@ -83,13 +89,15 @@ namespace BudgetUnderControl.Mobile.Services
             syncRequest.Categories = await this.GetCategoriesToSyncAsync(syncRequest.LastSync);
             syncRequest.Tags = await this.GetTagsToSyncAsync(syncRequest.LastSync);
             syncRequest.ExchangeRates = await this.GetExhangeRatesToSyncAsync();
+            syncRequest.Files = await this.GetFilesToSyncAsync(syncRequest.LastSync);
 
             return syncRequest;
         }
 
         private async Task<IEnumerable<TransactionSyncDTO>> GetTransactionsToSyncAsync(DateTime changedSince)
         {
-            var transactions = (await transactionRepository.GetTransactionsAsync(new TransactionsFilter { ChangedSince = changedSince, IncludeDeleted = true }))
+            var transactionsQuery = (await transactionRepository.GetTransactionsAsync(new TransactionsFilter { ChangedSince = changedSince, IncludeDeleted = true }));
+            var transactions = transactionsQuery
                 .Select(x => new TransactionSyncDTO
                 {
                     Name = x.Name,
@@ -113,7 +121,15 @@ namespace BudgetUnderControl.Mobile.Services
                         IsDeleted = y.Tag.IsDeleted,
                         ModifiedOn = y.Tag.ModifiedOn,
                         Name = y.Tag.Name
-                    }).ToList()
+                    }).ToList(),
+                    Files = x.FilesToTransaction.Select(y => new FileToTransactionSyncDTO
+                    {
+                        ExternalId = Guid.Parse(y.ExternalId),
+                        FileId = Guid.Parse(y.File.ExternalId),
+                        IsDeleted = y.IsDeleted,
+                        ModifiedOn = y.ModifiedOn,
+                        TransactionId = y.TransactionId,
+                    }).ToList(),
                 }).ToList();
 
             var accounts = (await this.accountRepository.GetAccountsAsync()).ToDictionary(x => x.Id, x => x.ExternalId);
@@ -285,6 +301,31 @@ namespace BudgetUnderControl.Mobile.Services
                 }).ToList();
 
             return rates;
+        }
+
+        private async Task<IEnumerable<FileSyncDTO>> GetFilesToSyncAsync(DateTime changedSince)
+        {
+            var files = (await this.fileRepository.GetAsync())
+                .Where(x => x.ModifiedOn >= changedSince)
+                .ToList()
+                .Select(x => new FileSyncDTO
+                {
+                    Id = Guid.Parse(x.ExternalId),
+                    ExternalId = Guid.Parse(x.ExternalId),
+                    FileName = x.FileName,
+                    ContentType = x.MimeType,
+                    UserId = userIdentityContext.ExternalId,
+                    CreatedOn = x.CreatedOn,
+                    ModifiedOn = x.ModifiedOn,
+                    IsDeleted = x.IsDeleted,
+                }).ToList();
+
+            for (int i = 0; i < files.Count; i++)
+            {
+                files[i].Content = await fileHelper.LoadFileBytesAsync(files[i].Id.ToString());
+            }
+
+            return files;
         }
     }
 }

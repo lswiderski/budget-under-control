@@ -28,6 +28,8 @@ namespace BudgetUnderControl.Mobile.Services
         private readonly IUserIdentityContext userIdentityContext;
         private readonly ITagRepository tagRepository;
         private readonly ITransactionService transactionService;
+        private readonly IFileRepository fileRepository;
+        private readonly IFileHelper fileHelper;
         private readonly GeneralSettings settings;
         private Dictionary<string, int> _tags;
 
@@ -42,6 +44,8 @@ namespace BudgetUnderControl.Mobile.Services
             ITagRepository tagRepository,
             ITransactionService transactionService,
             ILogger logger,
+            IFileRepository fileRepository,
+            IFileHelper fileHelper,
             GeneralSettings settings)
         {
             this.transactionRepository = transactionRepository;
@@ -56,6 +60,8 @@ namespace BudgetUnderControl.Mobile.Services
             this.tagRepository = tagRepository;
             this.transactionService = transactionService;
             this.logger = logger;
+            this.fileRepository = fileRepository;
+            this.fileHelper = fileHelper;
         }
 
         public async Task SynchroniseAsync(SyncRequest syncRequest)
@@ -66,17 +72,18 @@ namespace BudgetUnderControl.Mobile.Services
             await this.UpdateCategoriesAsync(syncRequest.Categories);
             await this.UpdateAccountGroupsAsync(syncRequest.AccountGroups);
             await this.UpdateAccountsAsync(syncRequest.Accounts);
+            await this.UpdateFilesAsync(syncRequest.Files);
             _tags = (await this.tagRepository.GetAsync()).ToDictionary(x => x.ExternalId, x => x.Id, StringComparer.InvariantCultureIgnoreCase);
             await this.UpdateTransactionsAsync(syncRequest.Transactions);
             await this.UpdateTransfersAsync(syncRequest.Transfers);
-            await this.UpdateLastSyncDateAsync(syncRequest);
             await this.UpdateExchangeRatesAsync(syncRequest.ExchangeRates);
+            await this.UpdateLastSyncDateAsync(syncRequest);
         }
 
         private async Task UpdateLastSyncDateAsync(SyncRequest syncRequest)
         {
-            var userId = (await this.userRepository.GetFirstUserAsync()).Id;
-            var syncObject = await this.synchronizationRepository.GetSynchronizationAsync(syncRequest.Component, syncRequest.ComponentId.ToString(), userId);// syncRequest.UserId)
+            var userId =this.userIdentityContext.UserId;
+            var syncObject = await this.synchronizationRepository.GetSynchronizationAsync(syncRequest.Component, syncRequest.ComponentId.ToString(), userId);
 
             if (syncObject != null)
             {
@@ -136,6 +143,7 @@ namespace BudgetUnderControl.Mobile.Services
                             transactionToUpdate.SetModifiedOn(transaction.ModifiedOn);
                             transactionsToUpdate.Add(transactionToUpdate);
                             await this.DealWithTransactionToTagsAsync(transactionToUpdate.Id, transaction.Tags);
+                            await this.DealWithTransactionToFilesAsync(transactionToUpdate.Id, transaction.Files);
                         }
                     }
                     else
@@ -160,6 +168,8 @@ namespace BudgetUnderControl.Mobile.Services
                     {
                         var tags = package.Where(x => x.ExternalId?.ToString() == item.ExternalId).Select(x => x.Tags).FirstOrDefault();
                         await this.DealWithTransactionToTagsAsync(item.Id, tags);
+                        var f2t = package.Where(x => x.ExternalId?.ToString() == item.ExternalId).Select(x => x.Files).FirstOrDefault();
+                        await this.DealWithTransactionToFilesAsync(item.Id, f2t);
                     }
                     transactionsToAdd.Clear();
                 }
@@ -405,7 +415,98 @@ namespace BudgetUnderControl.Mobile.Services
                     else
                     {
                         localRate.Edit(fromCurrencyId.Value, toCurrencyId.Value, rate.Rate, rate.Date, rate.IsDeleted);
+                        await this.currencyRepository.UpdateExchangeRateAsync(localRate);
                     }
+                }
+            }
+        }
+        private async Task UpdateFilesAsync(IEnumerable<FileSyncDTO> files)
+        {
+            if (files == null || !files.Any())
+            {
+                return;
+            }
+
+            foreach (var file in files)
+            {
+
+                var fileToUpdate = await this.fileRepository.GetAsync(file.ExternalId.ToString());
+                if (fileToUpdate != null)
+                {
+                    if (fileToUpdate.ModifiedOn < file.ModifiedOn)
+                    {
+                        if (file.IsDeleted)
+                        {
+                            await this.fileHelper.TaskRemoveFileAsync(file.Id.ToString());
+                        }
+                        fileToUpdate.FileName = file.FileName;
+                        fileToUpdate.MimeType = file.ContentType;
+                        fileToUpdate.Delete(file.IsDeleted);
+                        fileToUpdate.SetModifiedOn(file.ModifiedOn);
+                        await this.fileRepository.UpdateAsync(fileToUpdate);
+                    }
+                }
+                else
+                {
+                    var fileToAdd = new File
+                    {
+                        MimeType = file.ContentType,
+                        IsDeleted = file.IsDeleted,
+                        CreatedOn = file.CreatedOn,
+                        ExternalId = file.ExternalId.ToString(),
+                        FileName = file.FileName,
+                        ModifiedOn = file.ModifiedOn,
+                        
+                    };
+                    fileToAdd.Delete(file.IsDeleted);
+                    fileToAdd.SetModifiedOn(file.ModifiedOn);
+                    await this.fileRepository.AddAsync(fileToAdd);
+                    if (!file.IsDeleted)
+                    {
+                        await fileHelper.SaveToLocalFolderAsync(file.Content, fileToAdd.ExternalId);
+                    }
+
+                }
+            }
+        }
+
+        private async Task DealWithTransactionToFilesAsync(int transactionId, List<FileToTransactionSyncDTO> filesToSync)
+        {
+            if (filesToSync == null || !filesToSync.Any())
+            {
+                return;
+            }
+
+            var currentFiles2Transactions = await this.fileRepository.GetFileToTransactionsAsync(transactionId); 
+
+            foreach (var f2t in filesToSync)
+            {
+                var entity = currentFiles2Transactions.Where(x => x.ExternalId == f2t.ExternalId.ToString()).FirstOrDefault();
+                if (entity != null)
+                {
+                    if (f2t.IsDeleted)
+                    {
+                        entity.Delete(f2t.IsDeleted);
+                    }
+                    entity.SetModifiedOn(f2t.ModifiedOn);
+                    await this.fileRepository.UpdateAsync(entity);
+                }
+                else
+                {
+                    var file = await this.fileRepository.GetAsync(f2t.FileId.ToString());
+                    if(file!= null)
+                    {
+                        entity = new FileToTransaction
+                        {
+                            TransactionId = transactionId,
+                            ExternalId = f2t.ExternalId.ToString(),
+                            ModifiedOn = f2t.ModifiedOn,
+                            IsDeleted = f2t.IsDeleted,
+                            FileId = file.Id,
+                        };
+                        await this.fileRepository.AddAsync(entity);
+                    }
+                    
                 }
             }
         }

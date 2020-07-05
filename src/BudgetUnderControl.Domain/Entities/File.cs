@@ -35,8 +35,11 @@ namespace BudgetUnderControl.Domain
 
         public void Delete(bool delete = true)
         {
-            this.IsDeleted = delete;
-            this.UpdateModify();
+            if(delete != this.IsDeleted)
+            {
+                this.IsDeleted = delete;
+                this.UpdateModify();
+            }
         }
     }
 }

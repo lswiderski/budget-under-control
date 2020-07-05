@@ -39,7 +39,15 @@ namespace BudgetUnderControl.Mobile.Repositories
         public async Task UpdateAsync(Synchronization synchronization)
         {
             this.Context.Synchronizations.Update(synchronization);
+            this.Context.SetEntityState(synchronization, EntityState.Modified);
             await this.Context.SaveChangesAsync();
+        }
+
+        public void Update(Synchronization synchronization)
+        {
+            this.Context.Synchronizations.Update(synchronization);
+            this.Context.SetEntityState(synchronization, EntityState.Modified);
+            this.Context.SaveChanges();
         }
 
         public async Task ClearSynchronizationAsync()

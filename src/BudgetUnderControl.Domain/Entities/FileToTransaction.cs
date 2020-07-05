@@ -9,7 +9,6 @@ namespace BudgetUnderControl.Domain
     public class FileToTransaction : ISyncable
     {
         [Key]
-        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public Guid Id { get; set; }
         public Guid FileId { get; set; }
         public int TransactionId { get; set; }

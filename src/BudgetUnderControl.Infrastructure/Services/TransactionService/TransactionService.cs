@@ -243,14 +243,15 @@ namespace BudgetUnderControl.Infrastructure.Services
                     currentFile.Delete();
                     var f2ts = this.Context.FilesToTransactions.Where(x => x.FileId == currentFile.Id || x.TransactionId == firstTransaction.Id).ToList();
                     f2ts.ForEach(x => x.Delete());
-
+                    var guid = Guid.NewGuid();
                     this.Context.FilesToTransactions.Add(new FileToTransaction
                     {
                         FileId = file.Id,
                         TransactionId = firstTransaction.Id,
                         ModifiedOn = now,
                         IsDeleted = false,
-                        ExternalId = Guid.NewGuid(),
+                        ExternalId = guid,
+                        Id = guid,
                     });
 
                     //remove local physical file
@@ -258,6 +259,7 @@ namespace BudgetUnderControl.Infrastructure.Services
             }
             else if (file != null && currentFile == null)
             {
+                var guid = Guid.NewGuid();
                 //assign to transaction
                 this.Context.FilesToTransactions.Add(new FileToTransaction
                 {
@@ -265,7 +267,8 @@ namespace BudgetUnderControl.Infrastructure.Services
                     TransactionId = firstTransaction.Id,
                     ModifiedOn = now,
                     IsDeleted = false,
-                    ExternalId = Guid.NewGuid(),
+                    ExternalId = guid,
+                    Id = guid,
                 });
             }
             else if (file == null && currentFile != null)

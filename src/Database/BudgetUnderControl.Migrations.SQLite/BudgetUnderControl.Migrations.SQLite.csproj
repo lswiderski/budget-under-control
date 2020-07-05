@@ -5,6 +5,13 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Migrations\20200705135434_Sync-Id.cs" />
+    <Compile Remove="Migrations\20200705135434_Sync-Id.Designer.cs" />
+    <Compile Remove="Migrations\20200705140024_Sync-drop.cs" />
+    <Compile Remove="Migrations\20200705140024_Sync-drop.Designer.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="Microsoft.EntityFrameworkCore" Version="3.1.4" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="3.1.4" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="3.1.4">

@@ -3,14 +3,16 @@ using System;
 using BudgetUnderControl.MobileDomain;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace Migrations.Migrations
 {
     [DbContext(typeof(Context))]
-    partial class ContextModelSnapshot : ModelSnapshot
+    [Migration("20200705140144_Sync-drop")]
+    partial class Syncdrop
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -307,32 +309,6 @@ namespace Migrations.Migrations
                     b.ToTable("Icon");
                 });
 
-            modelBuilder.Entity("BudgetUnderControl.MobileDomain.Synchronization", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("INTEGER");
-
-                    b.Property<byte>("Component")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<string>("ComponentId")
-                        .HasColumnType("TEXT");
-
-                    b.Property<DateTime>("LastSyncAt")
-                        .IsConcurrencyToken()
-                        .HasColumnType("TEXT");
-
-                    b.Property<int>("UserId")
-                        .HasColumnType("INTEGER");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("UserId");
-
-                    b.ToTable("Synchronization");
-                });
-
             modelBuilder.Entity("BudgetUnderControl.MobileDomain.Tag", b =>
                 {
                     b.Property<int>("Id")
@@ -609,15 +585,6 @@ namespace Migrations.Migrations
                         .WithMany("FilesToTransaction")
                         .HasForeignKey("TransactionId")
                         .HasConstraintName("ForeignKey_FileToTransaction_Transaction")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-                });
-
-            modelBuilder.Entity("BudgetUnderControl.MobileDomain.Synchronization", b =>
-                {
-                    b.HasOne("BudgetUnderControl.MobileDomain.User", "User")
-                        .WithMany()
-                        .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });

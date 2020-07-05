@@ -174,7 +174,6 @@ namespace BudgetUnderControl.Mobile.Services
             {
                 //just for development purpose
                 logger.Error(e);
-                throw e;
             }
             
 

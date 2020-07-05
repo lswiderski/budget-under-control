@@ -20,6 +20,7 @@ namespace BudgetUnderControl.API
 
         public static IWebHostBuilder CreateWebHostBuilder(string[] args) =>
             WebHost.CreateDefaultBuilder(args)
+            .UseUrls("http://*:5000", "http://*:45455")
                 .UseStartup<Startup>()
              .ConfigureLogging(logging =>
              {

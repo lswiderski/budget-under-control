@@ -11,8 +11,14 @@ namespace BudgetUnderControl.ApiInfrastructure.Services
     {
         Task<string> SaveFileAsync(IFormFile file);
 
+        Task<string> SaveFileAsync(byte[] content, Guid id, DateTime? date = null);
+
         Task<FileDto> GetFileAsync(Guid id, string token);
 
+        Task<byte[]> GetFileBytesAsync(Guid id);
+
         Task RemoveFileAsync(Guid id);
+
+        void RemoveFileContent(Guid id, Guid userId, DateTime createdOn);
     }
 }

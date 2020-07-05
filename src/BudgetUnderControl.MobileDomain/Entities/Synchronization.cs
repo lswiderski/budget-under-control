@@ -11,8 +11,8 @@ namespace BudgetUnderControl.MobileDomain
     {
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-        public Guid Id { get; set; }
-
+        public int Id { get; set; }
+        [ConcurrencyCheck]
         public DateTime LastSyncAt { get; set; }
         public int UserId { get; set; }
         public SynchronizationComponent Component { get; set; }

@@ -11,10 +11,12 @@ using System.Transactions;
 using BudgetUnderControl.CommonInfrastructure;
 using BudgetUnderControl.CommonInfrastructure.Settings;
 using BudgetUnderControl.CommonInfrastructure.Commands;
+using Microsoft.EntityFrameworkCore;
+using BudgetUnderControl.ApiInfrastructure.Services;
 
 namespace BudgetUnderControl.Infrastructure.Services
 {
-    public class Synchroniser : ISynchroniser
+    public class Synchroniser : BaseModel, ISynchroniser
     {
         private readonly ILogger logger;
         private readonly ITransactionRepository transactionRepository;
@@ -27,10 +29,11 @@ namespace BudgetUnderControl.Infrastructure.Services
         private readonly IUserIdentityContext userIdentityContext;
         private readonly ITagRepository tagRepository;
         private readonly ITransactionService transactionService;
+        private readonly IFileService fileService;
         private readonly GeneralSettings settings;
         private Dictionary<Guid, int> _tags;
 
-        public Synchroniser(ITransactionRepository transactionRepository,
+        public Synchroniser(IContextFacade context, ITransactionRepository transactionRepository,
             IAccountRepository accountRepository,
             ICurrencyRepository currencyRepository,
             ICategoryRepository categoryRepository,
@@ -41,7 +44,8 @@ namespace BudgetUnderControl.Infrastructure.Services
             ITagRepository tagRepository,
             ITransactionService transactionService,
             ILogger logger,
-            GeneralSettings settings)
+            IFileService fileService,
+            GeneralSettings settings) : base(context)
         {
             this.transactionRepository = transactionRepository;
             this.accountRepository = accountRepository;
@@ -55,6 +59,7 @@ namespace BudgetUnderControl.Infrastructure.Services
             this.tagRepository = tagRepository;
             this.transactionService = transactionService;
             this.logger = logger;
+            this.fileService = fileService;
         }
 
         public async Task SynchroniseAsync(SyncRequest syncRequest)
@@ -64,11 +69,13 @@ namespace BudgetUnderControl.Infrastructure.Services
             await this.UpdateCategoriesAsync(syncRequest.Categories);
             await this.UpdateAccountGroupsAsync(syncRequest.AccountGroups);
             await this.UpdateAccountsAsync(syncRequest.Accounts);
+            await this.UpdateFilesAsync(syncRequest.Files);
             _tags = (await this.tagRepository.GetAsync()).ToDictionary(x => x.ExternalId, x => x.Id);
             await this.UpdateTransactionsAsync(syncRequest.Transactions);
             await this.UpdateTransfersAsync(syncRequest.Transfers);
-            await this.UpdateLastSyncDateAsync(syncRequest);
+           
             await this.UpdateExchangeRatesAsync(syncRequest.ExchangeRates);
+            await this.UpdateLastSyncDateAsync(syncRequest);
         }
 
         private async Task UpdateLastSyncDateAsync(SyncRequest syncRequest)
@@ -134,6 +141,7 @@ namespace BudgetUnderControl.Infrastructure.Services
                             transactionToUpdate.SetModifiedOn(transaction.ModifiedOn);
                             transactionsToUpdate.Add(transactionToUpdate);
                             await this.DealWithTransactionToTagsAsync(transactionToUpdate.Id, transaction.Tags);
+                            await this.DealWithTransactionToFilesAsync(transactionToUpdate.Id, transaction.Files);
                         }
                     }
                     else
@@ -158,6 +166,8 @@ namespace BudgetUnderControl.Infrastructure.Services
                     {
                         var tags = package.Where(x => x.ExternalId == item.ExternalId).Select(x => x.Tags).FirstOrDefault();
                         await this.DealWithTransactionToTagsAsync(item.Id, tags);
+                        var f2t = package.Where(x => x.ExternalId == item.ExternalId).Select(x => x.Files).FirstOrDefault();
+                        await this.DealWithTransactionToFilesAsync(item.Id, f2t);
                     }
                     transactionsToAdd.Clear();
                 }
@@ -406,6 +416,101 @@ namespace BudgetUnderControl.Infrastructure.Services
                     }
                 }
             }
+        }
+
+        private async Task UpdateFilesAsync(IEnumerable<FileSyncDTO> files)
+        {
+            if (files == null || !files.Any())
+            {
+                return;
+            }
+
+            var userId = (await this.userRepository.GetFirstUserAsync()).Id;
+            foreach (var file in files)
+            {
+
+                var fileToUpdate = await this.Context.Files.Where(x => x.Id == file.ExternalId).FirstOrDefaultAsync();
+                if (fileToUpdate != null)
+                {
+                    if (fileToUpdate.ModifiedOn < file.ModifiedOn)
+                    {
+                        if (file.IsDeleted)
+                        {
+                            this.fileService.RemoveFileContent(file.Id, userIdentityContext.ExternalId, file.CreatedOn);
+                        }
+                        fileToUpdate.FileName = file.FileName;
+                        fileToUpdate.ContentType = file.ContentType;
+                        fileToUpdate.Delete(file.IsDeleted);
+                        fileToUpdate.SetModifiedOn(file.ModifiedOn);
+                        this.Context.Files.Update(fileToUpdate);
+                    }
+                }
+                else
+                {
+                    var fileToAdd = new File
+                    {
+                        ContentType = file.ContentType,
+                        IsDeleted = file.IsDeleted,
+                        CreatedOn = file.CreatedOn,
+                        ExternalId = file.ExternalId,
+                        FileName = file.FileName,
+                        ModifiedOn = file.ModifiedOn,
+                        UserId = userIdentityContext.ExternalId,
+                        Id = file.Id,
+                    };
+                    fileToAdd.Delete(file.IsDeleted);
+                    fileToAdd.SetModifiedOn(file.ModifiedOn);
+                    await this.Context.Files.AddAsync(fileToAdd);
+
+                    if(!file.IsDeleted)
+                    {
+                        await fileService.SaveFileAsync(file.Content, fileToAdd.Id, fileToAdd.CreatedOn);
+                    }
+                   
+                }
+            }
+
+            this.Context.SaveChanges();
+        }
+
+        private async Task DealWithTransactionToFilesAsync(int transactionId, List<FileToTransactionSyncDTO> filesToSync)
+        {
+            if (filesToSync == null || !filesToSync.Any())
+            {
+                return;
+            }
+
+            var f2tIds = filesToSync.Select(x => x.Id).ToList();
+            var currentFiles2Transactions = await this.Context.FilesToTransactions.Where(x => x.TransactionId == transactionId).ToListAsync();
+
+            foreach (var f2t in filesToSync)
+            {
+                var entity = currentFiles2Transactions.Where(x => x.Id == f2t.Id).FirstOrDefault();
+                if(entity != null)
+                {
+                    if(f2t.IsDeleted)
+                    {
+                        entity.Delete(f2t.IsDeleted);
+                    }
+                    entity.SetModifiedOn(f2t.ModifiedOn);
+                    this.Context.FilesToTransactions.Update(entity);
+                }
+                else
+                {
+                    entity = new FileToTransaction
+                    {
+                        TransactionId = transactionId,
+                        ExternalId = f2t.ExternalId,
+                        Id = f2t.ExternalId,
+                        ModifiedOn = f2t.ModifiedOn,
+                        IsDeleted = f2t.IsDeleted,
+                        FileId = f2t.FileId,
+                    };
+                    this.Context.FilesToTransactions.Add(entity);
+                }
+            }
+
+            this.Context.SaveChanges();
         }
     }
 }

@@ -106,6 +106,8 @@ namespace BudgetUnderControl.Mobile.Repositories
                             .ThenInclude(p => p.Tag)
                         .Include(p => p.ToTransfers)
                         .Include(p => p.FromTransfers)
+                         .Include(p => p.FilesToTransaction)
+                            .ThenInclude(p => p.File)
                         .AsQueryable();
 
 

@@ -12,6 +12,7 @@ namespace BudgetUnderControl.MobileDomain.Repositiories
         Task AddSynchronizationAsync(Synchronization synchronization);
         Task<Synchronization> GetSynchronizationAsync(SynchronizationComponent component, string componentId, int userId);
         Task UpdateAsync(Synchronization synchronization);
+        void Update(Synchronization synchronization);
         Task ClearSynchronizationAsync();
     }
 }

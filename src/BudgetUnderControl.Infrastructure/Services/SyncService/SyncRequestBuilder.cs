@@ -10,10 +10,13 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using BudgetUnderControl.CommonInfrastructure;
+using BudgetUnderControl.Domain;
+using Microsoft.EntityFrameworkCore;
+using BudgetUnderControl.ApiInfrastructure.Services;
 
 namespace BudgetUnderControl.Infrastructure.Services
 {
-    public class SyncRequestBuilder : ISyncRequestBuilder
+    public class SyncRequestBuilder : BaseModel, ISyncRequestBuilder
     {
         private readonly ILogger logger;
         private readonly ITransactionRepository transactionRepository;
@@ -26,7 +29,8 @@ namespace BudgetUnderControl.Infrastructure.Services
         private readonly IUserIdentityContext userIdentityContext;
         private readonly ITagRepository tagRepository;
         private readonly GeneralSettings settings;
-        public SyncRequestBuilder(ITransactionRepository transactionRepository,
+        private readonly IFileService fileService;
+        public SyncRequestBuilder(IContextFacade context, ITransactionRepository transactionRepository,
             IAccountRepository accountRepository,
             ICurrencyRepository currencyRepository,
             ICategoryRepository categoryRepository,
@@ -36,7 +40,8 @@ namespace BudgetUnderControl.Infrastructure.Services
             IUserIdentityContext userIdentityContext,
             ITagRepository tagRepository,
             ILogger logger,
-            GeneralSettings settings)
+            GeneralSettings settings,
+            IFileService fileService) : base(context)
         {
             this.transactionRepository = transactionRepository;
             this.accountRepository = accountRepository;
@@ -49,6 +54,7 @@ namespace BudgetUnderControl.Infrastructure.Services
             this.settings = settings;
             this.tagRepository = tagRepository;
             this.logger = logger;
+            this.fileService = fileService;
         }
 
         public async Task<SyncRequest> CreateSyncRequestAsync(SynchronizationComponent source, SynchronizationComponent target)
@@ -83,6 +89,7 @@ namespace BudgetUnderControl.Infrastructure.Services
             syncRequest.Categories = await this.GetCategoriesToSyncAsync(syncRequest.LastSync);
             syncRequest.Tags = await this.GetTagsToSyncAsync(syncRequest.LastSync);
             syncRequest.ExchangeRates = await this.GetExhangeRatesToSyncAsync();
+            syncRequest.Files = await this.GetFilesToSyncAsync(syncRequest.LastSync);
 
             return syncRequest;
         }
@@ -113,7 +120,16 @@ namespace BudgetUnderControl.Infrastructure.Services
                         IsDeleted = y.Tag.IsDeleted,
                         ModifiedOn = y.Tag.ModifiedOn,
                         Name = y.Tag.Name
-                    }).ToList()
+                    }).ToList(),
+                    Files = x.FilesToTransaction.Select(y => new FileToTransactionSyncDTO
+                    {
+                        ExternalId = y.ExternalId,
+                        FileId = y.FileId,
+                        IsDeleted = y.IsDeleted,
+                        ModifiedOn = y.ModifiedOn,
+                        TransactionId = y.TransactionId,
+                        Id = y.Id,
+                    }).ToList(),
                 }).ToList();
 
             var accounts = (await this.accountRepository.GetAccountsAsync()).ToDictionary(x => x.Id, x => x.ExternalId);
@@ -145,7 +161,7 @@ namespace BudgetUnderControl.Infrastructure.Services
                 ModifiedOn = x.ModifiedOn,
                 ToTransactionExternalId = x.ToTransaction.ExternalId,
                 FromTransactionExternalId = x.FromTransaction.ExternalId,
-                 
+
             }).ToList();
 
             return transfers;
@@ -156,20 +172,20 @@ namespace BudgetUnderControl.Infrastructure.Services
             var accounts = (await this.accountRepository.GetAccountsAsync())
                 .Where(x => x.ModifiedOn >= changedSince)
                 .Select(x => new AccountSyncDTO
-            {
-                Id = x.Id,
-                ExternalId = x.ExternalId,
-                AccountGroupId = x.AccountGroupId,
-                Comment = x.Comment,
-                CurrencyId = x.CurrencyId,
-                IsIncludedToTotal = x.IsIncludedToTotal,
-                Name = x.Name,
-                Order = x.Order,
-                ParentAccountId = x.ParentAccountId,
-                Type = x.Type,
-                ModifiedOn = x.ModifiedOn,
-                IsDeleted = x.IsDeleted
-            }).ToList();
+                {
+                    Id = x.Id,
+                    ExternalId = x.ExternalId,
+                    AccountGroupId = x.AccountGroupId,
+                    Comment = x.Comment,
+                    CurrencyId = x.CurrencyId,
+                    IsIncludedToTotal = x.IsIncludedToTotal,
+                    Name = x.Name,
+                    Order = x.Order,
+                    ParentAccountId = x.ParentAccountId,
+                    Type = x.Type,
+                    ModifiedOn = x.ModifiedOn,
+                    IsDeleted = x.IsDeleted
+                }).ToList();
 
             var allAccounts = (await this.accountRepository.GetAccountsAsync()).ToDictionary(x => x.Id, x => x.ExternalId);
             var accountGroups = (await this.accountGroupRepository.GetAccountGroupsAsync()).ToDictionary(x => x.Id, x => x.ExternalId);
@@ -226,7 +242,7 @@ namespace BudgetUnderControl.Infrastructure.Services
                 Role = user.Role,
                 Username = user.Username
             });
-            
+
 
             return result;
         }
@@ -271,9 +287,37 @@ namespace BudgetUnderControl.Infrastructure.Services
             return tags;
         }
 
+        private async Task<IEnumerable<FileSyncDTO>> GetFilesToSyncAsync(DateTime changedSince)
+        {
+            var files = await this.Context.Files
+                .Where(x => x.ModifiedOn >= changedSince && x.UserId == userIdentityContext.ExternalId)
+                .Select(x => new FileSyncDTO
+                {
+                    Id = x.Id,
+                    ExternalId = x.ExternalId,
+                    FileName = x.FileName,
+                    ContentType = x.ContentType,
+                    UserId = x.UserId,
+                    CreatedOn = x.CreatedOn,
+                    ModifiedOn = x.ModifiedOn,
+                    IsDeleted = x.IsDeleted,
+                }).ToListAsync();
+
+            for (int i = 0; i < files.Count; i++)
+            {
+                if(!files[i].IsDeleted)
+                {
+                    files[i].Content = await fileService.GetFileBytesAsync(files[i].Id);
+                }
+                
+            }
+
+            return files;
+        }
+
         private async Task<IEnumerable<ExchangeRateSyncDTO>> GetExhangeRatesToSyncAsync()
         {
-            var rates= (await this.currencyRepository.GetExchangeRatesAsync())
+            var rates = (await this.currencyRepository.GetExchangeRatesAsync())
                 .Select(x => new ExchangeRateSyncDTO
                 {
                     Date = x.Date,
@@ -285,7 +329,7 @@ namespace BudgetUnderControl.Infrastructure.Services
                     ModifiedOn = x.ModifiedOn,
                 }).ToList();
 
-            return rates ;
+            return rates;
         }
     }
 }

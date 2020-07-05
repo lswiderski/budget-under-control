@@ -675,6 +675,10 @@ namespace BudgetUnderControl.ViewModel
             {
                 var saveResult = await fileHelper.SaveToLocalFolderAsync(this.ImageByteArray, fileGuid);
             }
+            else if(this.ImageByteArray != null)
+            {
+                fileGuid = currentFileGuid;
+            }
            
             var transactionCommand = new EditTransaction
             {

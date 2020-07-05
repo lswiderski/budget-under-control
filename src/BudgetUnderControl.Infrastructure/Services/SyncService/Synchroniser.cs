@@ -462,7 +462,7 @@ namespace BudgetUnderControl.Infrastructure.Services
                     fileToAdd.SetModifiedOn(file.ModifiedOn);
                     await this.Context.Files.AddAsync(fileToAdd);
 
-                    if(!file.IsDeleted)
+                    if(!file.IsDeleted && file.Content != null)
                     {
                         await fileService.SaveFileAsync(file.Content, fileToAdd.Id, fileToAdd.CreatedOn);
                     }
@@ -485,7 +485,7 @@ namespace BudgetUnderControl.Infrastructure.Services
 
             foreach (var f2t in filesToSync)
             {
-                var entity = currentFiles2Transactions.Where(x => x.Id == f2t.Id).FirstOrDefault();
+                var entity = currentFiles2Transactions.Where(x => x.Id == f2t.ExternalId).FirstOrDefault();
                 if(entity != null)
                 {
                     if(f2t.IsDeleted)

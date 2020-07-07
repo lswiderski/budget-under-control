@@ -15,47 +15,17 @@ using Xamarin.Forms.Xaml;
 namespace BudgetUnderControl.Views
 {
     [XamlCompilation(XamlCompilationOptions.Compile)]
-    public partial class AddTransaction : ContentPage, ITagSelectablePage
+    public partial class EditTransactionExtra : ContentPage, ITagSelectablePage
     {
-        IAddTransactionViewModel vm;
-        public AddTransaction()
+        IEditTransactionViewModel vm;
+        public EditTransactionExtra()
         {
-            using (var scope = App.Container.BeginLifetimeScope())
-            {
-                this.BindingContext = vm = scope.Resolve<IAddTransactionViewModel>();
-            }
             InitializeComponent();
-            
-            amount.Completed += (object sender, EventArgs e) => { name.Focus(); };
-            name.Completed += (object sender, EventArgs e) => { type.Focus(); };
-            type.Unfocused += (object sender, FocusEventArgs e) => { account.Focus(); };
-            account.Unfocused += (object sender, FocusEventArgs e) => { categories.Focus(); };
         }
 
-        public AddTransaction(string amount, string title) : this()
+        public void SetContext(IEditTransactionViewModel model)
         {
-            vm.Amount = amount;
-            vm.Name = title;
-        }
-
-        async void OnAddButtonClicked(object sender, EventArgs args)
-        {
-            await vm.AddTransacionAsync();
-
-            if(Navigation.ModalStack.Any())
-            {
-                await Navigation.PopModalAsync();
-            }
-            else
-            {
-                App.MasterPage.NavigateTo(typeof(Transactions));
-            }
-        }
-
-        protected override void OnAppearing()
-        {
-            base.OnAppearing();
-            amount.Focus();
+            this.BindingContext = vm = model;
         }
 
         async void OnSelectTagsButtonClicked(object sender, EventArgs args)
@@ -76,6 +46,11 @@ namespace BudgetUnderControl.Views
         }
 
         async void OnGetLocationButtonClicked(object sender, System.EventArgs e)
+        {
+            await GetLocationAsync();
+        }
+
+        async Task GetLocationAsync()
         {
             try
             {
@@ -134,38 +109,6 @@ namespace BudgetUnderControl.Views
             }
         }
 
-        async void OnAddImageButtonClicked(object sender, EventArgs e)
-        {
-            (sender as Button).IsEnabled = false;
-
-            var pickerResult = await DependencyService.Get<IPhotoPickerService>().GetImageStreamAsync();
-            Stream stream = pickerResult?.Stream;
-            if (stream != null)
-            {
-                using (MemoryStream ms = new MemoryStream())
-                {
-                    stream.CopyTo(ms);
-                    vm.ImageByteArray = ms.ToArray();
-                }
-
-                Stream stream2 = new MemoryStream(vm.ImageByteArray);
-                vm.HasImage = true;
-                vm.HasNoImage = false;
-                stream2.Position = 0;
-                vm.ImageSource = ImageSource.FromStream(() => stream2);
-            }
-             (sender as Button).IsEnabled = true;
-        }
-        async void OnDeleteImageButtonClicked(object sender, EventArgs e)
-        {
-            (sender as Button).IsEnabled = false;
-
-            vm.ImageSource = null;
-            vm.ImageByteArray = null;
-            vm.HasImage = false;
-            vm.HasNoImage = true;
-            (sender as Button).IsEnabled = true;
-        }
-
+       
     }
 }

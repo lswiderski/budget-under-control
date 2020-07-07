@@ -1,0 +1,19 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:d="http://xamarin.com/schemas/2014/forms/design"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             mc:Ignorable="d"
+              xmlns:local="clr-namespace:BudgetUnderControl.Views;assembly=BudgetUnderControl.Mobile"
+             xmlns:behaviors="clr-namespace:BudgetUnderControl.Behaviors;assembly=BudgetUnderControl.Mobile"
+             x:Class="BudgetUnderControl.Views.AddTransactionFile">
+    <ContentPage.Content>
+        <ScrollView>
+            <StackLayout VerticalOptions="Start" Padding="5,0">
+                <Button x:Name="addImage" Text="Add Photo" Clicked="OnAddImageButtonClicked" IsEnabled="{Binding HasNoImage}" IsVisible="{Binding HasNoImage}" />
+                <Image x:Name="image" Source="{Binding ImageSource}" Scale="1"/>
+                <Button x:Name="deleteImage" Text="Delete Photo" Clicked="OnDeleteImageButtonClicked" IsEnabled="{Binding HasImage}" IsVisible="{Binding HasImage}"/>
+            </StackLayout>
+        </ScrollView>
+    </ContentPage.Content>
+</ContentPage>

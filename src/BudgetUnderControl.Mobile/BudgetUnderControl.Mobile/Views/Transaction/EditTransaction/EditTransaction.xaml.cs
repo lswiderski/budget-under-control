@@ -15,9 +15,9 @@ using Xamarin.Forms.Xaml;
 namespace BudgetUnderControl.Views
 {
     [XamlCompilation(XamlCompilationOptions.Compile)]
-    public partial class EditTransaction : ContentPage, ITagSelectablePage
+    public partial class EditTransaction : TabbedPage, ITagSelectablePage
     {
-        IEditTransactionViewModel vm;
+        public IEditTransactionViewModel vm;
         Guid transactionId;
         bool isLoaded = false;
         public EditTransaction(Guid transactionId)
@@ -43,6 +43,9 @@ namespace BudgetUnderControl.Views
             {
                 await vm.GetTransactionAsync(transactionId);
                 isLoaded = true;
+                editTransactionOverview.SetContext(vm);
+                editTransactionExtra.SetContext(vm);
+                editTransactionFile.SetContext(vm);
             }
         }
 

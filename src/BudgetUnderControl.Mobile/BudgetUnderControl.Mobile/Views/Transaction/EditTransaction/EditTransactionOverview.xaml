@@ -1,7 +1,10 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-             x:Class="BudgetUnderControl.Views.EditTransaction"
+             xmlns:d="http://xamarin.com/schemas/2014/forms/design"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             mc:Ignorable="d"
+             x:Class="BudgetUnderControl.Views.EditTransactionOverview"
              xmlns:local="clr-namespace:BudgetUnderControl.Views;assembly=BudgetUnderControl.Mobile"
              xmlns:behaviors="clr-namespace:BudgetUnderControl.Behaviors;assembly=BudgetUnderControl.Mobile"
              >
@@ -22,17 +25,13 @@
                 <Picker x:Name="account" ItemsSource="{Binding Accounts}" ItemDisplayBinding="{Binding Name}"  SelectedIndex="{Binding  SelectedAccountIndex, Mode=TwoWay}" Title="Account" />
                 <Label Text="Category"></Label>
                 <Picker x:Name="categories" ItemsSource="{Binding Categories}" ItemDisplayBinding="{Binding Name}"  SelectedIndex="{Binding  SelectedCategoryIndex, Mode=TwoWay}" Title="Category" />
-                
+
                 <Label Text="Date"></Label>
                 <StackLayout Orientation="Horizontal">
                     <DatePicker Date="{Binding Date, Mode=TwoWay}" Format="d"></DatePicker>
                     <TimePicker Time="{Binding Time, Mode=TwoWay}"></TimePicker>
                 </StackLayout>
-                <Label Text="Latitude"></Label>
-                <Entry x:Name="latitude" Text="{Binding Latitude}" Placeholder="Latitude"></Entry>
-                <Label Text="Longitude"></Label>
-                <Entry x:Name="longitude" Text="{Binding Longitude}" Placeholder="Longitude"></Entry>
-                <Button x:Name="getLocation" Text="Get Location" Clicked="OnGetLocationButtonClicked" />
+               
                 <StackLayout Orientation="Vertical" IsVisible="{Binding IsTransferOptionsVisible, Mode=TwoWay}">
                     <Label Text="Transfer" />
                     <Label Text="Account transfer to"></Label>
@@ -54,19 +53,8 @@
                         <TimePicker Time="{Binding TransferTime, Mode=TwoWay}"></TimePicker>
                     </StackLayout>
                 </StackLayout>
-                <Button x:Name="selectTags" Text="Add Tags" Clicked="OnSelectTagsButtonClicked" />
-                <ListView x:Name="tags" ItemSelected="OnDeleteTagButtonClicked" ItemsSource="{Binding Tags}" SelectedItem="{Binding SelectedTag}" HasUnevenRows="True"  HeightRequest="{Binding TagListHeight}">
-                    <ListView.ItemTemplate>
-                        <DataTemplate>
-                            <local:TagListItem Name="{Binding Name}" />
-                        </DataTemplate>
-                    </ListView.ItemTemplate>
-                </ListView>
-                <Button x:Name="addImage" Text="Add Photo" Clicked="OnAddImageButtonClicked" IsEnabled="{Binding HasNoImage}" IsVisible="{Binding HasNoImage}" />
-                <Button x:Name="deleteImage" Text="Delete Photo" Clicked="OnDeleteImageButtonClicked" IsEnabled="{Binding HasImage}" IsVisible="{Binding HasImage}"/>
-                <Image x:Name="image" Source="{Binding ImageSource}" Scale="1"/>
-                <Label Text="Comment"></Label>
-                <Editor x:Name="comment"  Text="{Binding Comment}" ></Editor>
+               
+                
                 <Button x:Name="addButton" Text="Save" Clicked="OnEditButtonClicked" IsEnabled="{Binding IsValid}"/>
                 <Button x:Name="deleteButton" Text="Delete" Clicked="OnDeleteButtonClicked" IsEnabled="{Binding IsValid}"/>
             </StackLayout>

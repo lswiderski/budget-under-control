@@ -1,0 +1,35 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:d="http://xamarin.com/schemas/2014/forms/design"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             mc:Ignorable="d"
+             xmlns:local="clr-namespace:BudgetUnderControl.Views;assembly=BudgetUnderControl.Mobile"
+             xmlns:behaviors="clr-namespace:BudgetUnderControl.Behaviors;assembly=BudgetUnderControl.Mobile"
+             x:Class="BudgetUnderControl.Views.AddTransactionExtra">
+    <ContentPage.Content>
+        <ScrollView>
+            <StackLayout VerticalOptions="Start" Padding="5,0">
+                <Button x:Name="getLocation" Text="Get Location" Clicked="OnGetLocationButtonClicked" />
+                <Label Text="Latitude"></Label>
+                <Entry x:Name="latitude" Text="{Binding Latitude}" Placeholder="Latitude"></Entry>
+                <Label Text="Longitude"></Label>
+                <Entry x:Name="longitude" Text="{Binding Longitude}" Placeholder="Longitude"></Entry>
+                
+                <Label Text="Comment"></Label>
+                <Editor x:Name="comment"  Text="{Binding Comment}" ></Editor>
+                <Button x:Name="selectTags" Text="Add Tags" Clicked="OnSelectTagsButtonClicked" />
+                <ListView x:Name="tags" ItemSelected="OnDeleteTagButtonClicked" ItemsSource="{Binding Tags}" SelectedItem="{Binding SelectedTag}" HasUnevenRows="True" HeightRequest="{Binding TagListHeight}">
+                    <ListView.ItemTemplate>
+                        <DataTemplate>
+                            <local:TagListItem Name="{Binding Name}" />
+                        </DataTemplate>
+                    </ListView.ItemTemplate>
+                </ListView>
+               
+               
+                
+            </StackLayout>
+        </ScrollView>
+    </ContentPage.Content>
+</ContentPage>

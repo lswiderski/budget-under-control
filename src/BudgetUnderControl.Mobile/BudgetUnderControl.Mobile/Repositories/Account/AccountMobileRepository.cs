@@ -133,7 +133,7 @@ namespace BudgetUnderControl.Mobile.Repositories
             accounts.Add(accountId);
             accounts = accounts.Distinct().ToList();
 
-            var balance = this.Context.Transactions.Where(x => accounts.Contains(x.AccountId) && x.Amount > 0 && x.Date >= fromDate && x.Date <= toDate && !x.IsDeleted).Select(x => (decimal)x.Amount).ToList().Sum(x => (decimal)x);
+            var balance = this.Context.Transactions.Where(x => accounts.Contains(x.AccountId)  && !x.IsDeleted).ToList().Where(x => x.Date >= fromDate && x.Date <= toDate && x.Amount > 0).Select(x => (decimal)x.Amount).ToList().Sum(x => (decimal)x);
             return balance;
         }
 
@@ -150,7 +150,7 @@ namespace BudgetUnderControl.Mobile.Repositories
             accounts.Add(accountId);
             accounts = accounts.Distinct().ToList();
 
-            var balance = this.Context.Transactions.Where(x => accounts.Contains(x.AccountId) && x.Amount < 0 && x.Date >= fromDate && x.Date <= toDate && !x.IsDeleted).Select(x => (decimal)x.Amount).ToList().Sum(x => (decimal)x);
+            var balance = this.Context.Transactions.Where(x => accounts.Contains(x.AccountId) && !x.IsDeleted).ToList().Where(x => x.Date >= fromDate && x.Date <= toDate && x.Amount < 0).Select(x => (decimal)x.Amount).ToList().Sum(x => (decimal)x);
             return balance;
         }
 

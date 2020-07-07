@@ -37,6 +37,7 @@ namespace BudgetUnderControl.Droid
            
 
             global::Xamarin.Forms.Forms.Init(this, bundle);
+            global::Xamarin.Forms.FormsMaterial.Init(this, bundle);
             Xamarin.Essentials.Platform.Init(this, bundle);
             DisplayCrashReport();
             var app = new App();

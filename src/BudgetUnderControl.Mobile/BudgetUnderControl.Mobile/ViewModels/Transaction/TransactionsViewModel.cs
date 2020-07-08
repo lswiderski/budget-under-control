@@ -59,7 +59,7 @@ namespace BudgetUnderControl.ViewModel
             {
                 if (toDate != value)
                 {
-                    toDate = value;
+                    toDate = new DateTime(value.Year, value.Month, DateTime.DaysInMonth(value.Year, value.Month), 23, 59, 59);
                     PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(ToDate)));
                 }
             }

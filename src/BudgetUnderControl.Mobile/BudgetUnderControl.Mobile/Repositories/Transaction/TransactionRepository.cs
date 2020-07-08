@@ -191,11 +191,11 @@ namespace BudgetUnderControl.Mobile.Repositories
             if (filter != null && !string.IsNullOrWhiteSpace(filter.SearchQuery))
             {
                 transactions = transactions
-                    .Where(x => (x.Name != null && x.Name.Contains(filter.SearchQuery))
-                || x.Amount.ToString().Contains(filter.SearchQuery)
-                || (x.Comment != null && x.Comment.Contains(filter.SearchQuery))
-                || (x.Category != null && x.Category.Name.Contains(filter.SearchQuery))
-                || (x.Account != null && x.Account.Name.Contains(filter.SearchQuery))
+                    .Where(x => (x.Name != null && x.Name.Contains(filter.SearchQuery, StringComparison.InvariantCultureIgnoreCase))
+                || x.Amount.ToString().Contains(filter.SearchQuery, StringComparison.InvariantCultureIgnoreCase)
+                || (x.Comment != null && x.Comment.Contains(filter.SearchQuery, StringComparison.InvariantCultureIgnoreCase))
+                || (x.Category != null && x.Category.Name.Contains(filter.SearchQuery, StringComparison.InvariantCultureIgnoreCase))
+                || (x.Account != null && x.Account.Name.Contains(filter.SearchQuery, StringComparison.InvariantCultureIgnoreCase))
                 ).ToList();
             }
             return transactions;

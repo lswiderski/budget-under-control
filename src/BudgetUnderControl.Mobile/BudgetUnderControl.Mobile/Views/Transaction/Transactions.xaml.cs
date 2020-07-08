@@ -74,5 +74,10 @@ namespace BudgetUnderControl.Views
         {
             await vm.SetPreviousMonth();
         }
+
+        protected async void OnSearchButtonClicked(object sender, EventArgs args)
+        {
+            await vm.LoadTransactionsAsync();
+        }
     }
 }

@@ -174,7 +174,8 @@ namespace BudgetUnderControl.Mobile.Repositories
                 query = query.Where(q => q.IsDeleted == false).AsQueryable();
             }
 
-            var temporary = await query.ToListAsync();
+           // var temporary = await query.ToListAsync();
+
             var transactionsWithExtraProperty = (await (from t in query
                                                         orderby t.Date descending
                                                         select new
@@ -183,8 +184,20 @@ namespace BudgetUnderControl.Mobile.Repositories
                                                             IsTransfer = t.ToTransfers.Any() || t.FromTransfers.Any(),
                                                         })
                                                    .ToListAsync());
+
             transactionsWithExtraProperty.ForEach(x => x.t.IsTransfer = x.IsTransfer);
             var transactions = transactionsWithExtraProperty.Select(x => x.t).ToList();
+
+            if (filter != null && !string.IsNullOrWhiteSpace(filter.SearchQuery))
+            {
+                transactions = transactions
+                    .Where(x => (x.Name != null && x.Name.Contains(filter.SearchQuery))
+                || x.Amount.ToString().Contains(filter.SearchQuery)
+                || (x.Comment != null && x.Comment.Contains(filter.SearchQuery))
+                || (x.Category != null && x.Category.Name.Contains(filter.SearchQuery))
+                || (x.Account != null && x.Account.Name.Contains(filter.SearchQuery))
+                ).ToList();
+            }
             return transactions;
 
 

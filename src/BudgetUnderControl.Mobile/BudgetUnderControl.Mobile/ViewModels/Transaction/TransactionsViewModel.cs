@@ -37,13 +37,41 @@ namespace BudgetUnderControl.ViewModel
             }
         }
 
-        public DateTime FromDate { get; set; }
-        public DateTime ToDate { get; set; }
+        private DateTime fromDate;
+        public DateTime FromDate
+    {
+            get => fromDate;
+            set
+            {
+                if (fromDate != value)
+                {
+                    fromDate = value;
+                    PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(FromDate)));
+                }
+            }
+        }
+
+        private DateTime toDate;
+        public DateTime ToDate
+        {
+            get => toDate;
+            set
+            {
+                if (toDate != value)
+                {
+                    toDate = value;
+                    PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(ToDate)));
+                }
+            }
+        }
+
+        public string Search { get; set; }
+
         public string ActualRange
         {
             get
             {
-                return string.Format("{0}, {1}", FromDate.ToString("MMMM"), FromDate.Year);
+                return string.Format("{0}-{1}", FromDate.ToString("dd.MM.yyyy"), ToDate.ToString("dd.MM.yyyy"));
             }
         }
 
@@ -99,7 +127,7 @@ namespace BudgetUnderControl.ViewModel
 
         public async Task LoadTransactionsAsync()
         {
-            var transactions = await transactionService.GetTransactionsAsync(new TransactionsFilter { FromDate = FromDate, ToDate= ToDate } );
+            var transactions = await transactionService.GetTransactionsAsync(new TransactionsFilter { FromDate = FromDate, ToDate= ToDate, SearchQuery = Search} );
 
             var dtos = transactions.Select(t => new TransactionListItemDTO
             {

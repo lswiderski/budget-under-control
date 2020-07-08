@@ -14,6 +14,7 @@ namespace BudgetUnderControl.Common.Contracts
         public DateTime? ToDate { get; set; }
         public bool IncludeDeleted { get; set; }
         public DateTime? ChangedSince { get; set; }
+        public string SearchQuery { get; set; }
 
         public TransactionsFilter()
         {

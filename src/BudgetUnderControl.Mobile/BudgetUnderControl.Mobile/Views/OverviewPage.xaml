@@ -16,6 +16,7 @@
                 <Label Text="Total:" />
                 <Label x:Name="total" />
             </StackLayout>
+            <local:AdMobView HeightRequest="100"  AdUnitId="{Binding AdUnitId}" AbsoluteLayout.LayoutFlags="All" AbsoluteLayout.LayoutBounds="0,1,1,.1"/>
         </AbsoluteLayout>
     </ContentPage.Content>
 </ContentPage>

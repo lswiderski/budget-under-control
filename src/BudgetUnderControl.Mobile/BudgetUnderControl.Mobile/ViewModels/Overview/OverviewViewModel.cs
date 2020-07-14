@@ -6,6 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using BudgetUnderControl.CommonInfrastructure;
+using BudgetUnderControl.CommonInfrastructure.Settings;
 
 namespace BudgetUnderControl.ViewModel
 {
@@ -13,12 +14,16 @@ namespace BudgetUnderControl.ViewModel
     {
         IAccountService accountService;
         ICurrencyService currencyService;
-        public OverviewViewModel(IAccountService accountModel, ICurrencyService currencyService)
+        private readonly GeneralSettings settings;
+        public OverviewViewModel(IAccountService accountModel, ICurrencyService currencyService, GeneralSettings settings)
         {
             this.accountService = accountModel;
             this.currencyService = currencyService;
+            this.settings = settings;
+            this.AdUnitId = settings.AdMobAdId;
         }
 
+        public string AdUnitId { get; set; }
 
         public async Task<Dictionary<string, decimal>> GetTotalsAsync()
         {

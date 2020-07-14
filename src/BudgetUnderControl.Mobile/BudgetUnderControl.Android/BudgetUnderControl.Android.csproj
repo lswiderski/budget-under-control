@@ -1,5 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="..\..\packages\Xamarin.Build.Download.0.7.0\build\Xamarin.Build.Download.props" Condition="Exists('..\..\packages\Xamarin.Build.Download.0.7.0\build\Xamarin.Build.Download.props')" />
   <Import Project="..\..\packages\Xamarin.Forms.4.6.0.847\build\Xamarin.Forms.props" Condition="Exists('..\..\packages\Xamarin.Forms.4.6.0.847\build\Xamarin.Forms.props')" />
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
@@ -65,8 +66,9 @@
     <DebugSymbols>true</DebugSymbols>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="CustomRenderers\AdMobViewRenderer.cs" />
+    <Compile Include="CustomRenderers\FloatingActionButtonViewRenderer.cs" />
     <Compile Include="PlatformSpecific\FileHelper.cs" />
-    <Compile Include="FloatingActionButtonViewRenderer.cs" />
     <Compile Include="MainActivity.cs" />
     <Compile Include="PlatformSpecific\LocalNotificationService.cs" />
     <Compile Include="PlatformSpecific\NLogManager.cs" />
@@ -462,6 +464,30 @@
     <Reference Include="Xamarin.Forms.Xaml, Version=2.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\..\packages\Xamarin.Forms.4.6.0.847\lib\MonoAndroid90\Xamarin.Forms.Xaml.dll</HintPath>
     </Reference>
+    <Reference Include="Xamarin.GooglePlayServices.Ads, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Xamarin.GooglePlayServices.Ads.71.1720.3\lib\monoandroid90\Xamarin.GooglePlayServices.Ads.dll</HintPath>
+    </Reference>
+    <Reference Include="Xamarin.GooglePlayServices.Ads.Base, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Xamarin.GooglePlayServices.Ads.Base.71.1720.1\lib\monoandroid90\Xamarin.GooglePlayServices.Ads.Base.dll</HintPath>
+    </Reference>
+    <Reference Include="Xamarin.GooglePlayServices.Ads.Identifier, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Xamarin.GooglePlayServices.Ads.Identifier.71.1600.1\lib\monoandroid90\Xamarin.GooglePlayServices.Ads.Identifier.dll</HintPath>
+    </Reference>
+    <Reference Include="Xamarin.GooglePlayServices.Ads.Lite, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Xamarin.GooglePlayServices.Ads.Lite.71.1720.2\lib\monoandroid90\Xamarin.GooglePlayServices.Ads.Lite.dll</HintPath>
+    </Reference>
+    <Reference Include="Xamarin.GooglePlayServices.Basement, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Xamarin.GooglePlayServices.Basement.71.1620.2\lib\monoandroid90\Xamarin.GooglePlayServices.Basement.dll</HintPath>
+    </Reference>
+    <Reference Include="Xamarin.GooglePlayServices.Gass, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Xamarin.GooglePlayServices.Gass.71.1720.1\lib\monoandroid90\Xamarin.GooglePlayServices.Gass.dll</HintPath>
+    </Reference>
+    <Reference Include="Xamarin.GooglePlayServices.Measurement.Base, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Xamarin.GooglePlayServices.Measurement.Base.71.1630.1\lib\monoandroid90\Xamarin.GooglePlayServices.Measurement.Base.dll</HintPath>
+    </Reference>
+    <Reference Include="Xamarin.GooglePlayServices.Measurement.Sdk.Api, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Xamarin.GooglePlayServices.Measurement.Sdk.Api.71.1630.1\lib\monoandroid90\Xamarin.GooglePlayServices.Measurement.Sdk.Api.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <AndroidResource Include="Resources\drawable\Transactions.png">
@@ -522,6 +548,16 @@
     <Error Condition="!Exists('..\..\packages\Xamarin.Forms.4.6.0.847\build\Xamarin.Forms.props')" Text="$([System.String]::Format('$(ErrorText)', '..\..\packages\Xamarin.Forms.4.6.0.847\build\Xamarin.Forms.props'))" />
     <Error Condition="!Exists('..\..\packages\Xamarin.Forms.4.6.0.847\build\Xamarin.Forms.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\..\packages\Xamarin.Forms.4.6.0.847\build\Xamarin.Forms.targets'))" />
     <Error Condition="!Exists('..\..\packages\Xamarin.Forms.Visual.Material.4.7.0.1080\build\MonoAndroid10\Xamarin.Forms.Visual.Material.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\..\packages\Xamarin.Forms.Visual.Material.4.7.0.1080\build\MonoAndroid10\Xamarin.Forms.Visual.Material.targets'))" />
+    <Error Condition="!Exists('..\..\packages\Xamarin.Build.Download.0.7.0\build\Xamarin.Build.Download.props')" Text="$([System.String]::Format('$(ErrorText)', '..\..\packages\Xamarin.Build.Download.0.7.0\build\Xamarin.Build.Download.props'))" />
+    <Error Condition="!Exists('..\..\packages\Xamarin.Build.Download.0.7.0\build\Xamarin.Build.Download.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\..\packages\Xamarin.Build.Download.0.7.0\build\Xamarin.Build.Download.targets'))" />
+    <Error Condition="!Exists('..\..\packages\Xamarin.GooglePlayServices.Ads.Base.71.1720.1\build\MonoAndroid90\Xamarin.GooglePlayServices.Ads.Base.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\..\packages\Xamarin.GooglePlayServices.Ads.Base.71.1720.1\build\MonoAndroid90\Xamarin.GooglePlayServices.Ads.Base.targets'))" />
+    <Error Condition="!Exists('..\..\packages\Xamarin.GooglePlayServices.Basement.71.1620.2\build\MonoAndroid90\Xamarin.GooglePlayServices.Basement.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\..\packages\Xamarin.GooglePlayServices.Basement.71.1620.2\build\MonoAndroid90\Xamarin.GooglePlayServices.Basement.targets'))" />
+    <Error Condition="!Exists('..\..\packages\Xamarin.GooglePlayServices.Ads.Identifier.71.1600.1\build\MonoAndroid90\Xamarin.GooglePlayServices.Ads.Identifier.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\..\packages\Xamarin.GooglePlayServices.Ads.Identifier.71.1600.1\build\MonoAndroid90\Xamarin.GooglePlayServices.Ads.Identifier.targets'))" />
+    <Error Condition="!Exists('..\..\packages\Xamarin.GooglePlayServices.Gass.71.1720.1\build\MonoAndroid90\Xamarin.GooglePlayServices.Gass.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\..\packages\Xamarin.GooglePlayServices.Gass.71.1720.1\build\MonoAndroid90\Xamarin.GooglePlayServices.Gass.targets'))" />
+    <Error Condition="!Exists('..\..\packages\Xamarin.GooglePlayServices.Measurement.Base.71.1630.1\build\MonoAndroid90\Xamarin.GooglePlayServices.Measurement.Base.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\..\packages\Xamarin.GooglePlayServices.Measurement.Base.71.1630.1\build\MonoAndroid90\Xamarin.GooglePlayServices.Measurement.Base.targets'))" />
+    <Error Condition="!Exists('..\..\packages\Xamarin.GooglePlayServices.Measurement.Sdk.Api.71.1630.1\build\MonoAndroid90\Xamarin.GooglePlayServices.Measurement.Sdk.Api.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\..\packages\Xamarin.GooglePlayServices.Measurement.Sdk.Api.71.1630.1\build\MonoAndroid90\Xamarin.GooglePlayServices.Measurement.Sdk.Api.targets'))" />
+    <Error Condition="!Exists('..\..\packages\Xamarin.GooglePlayServices.Ads.Lite.71.1720.2\build\MonoAndroid90\Xamarin.GooglePlayServices.Ads.Lite.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\..\packages\Xamarin.GooglePlayServices.Ads.Lite.71.1720.2\build\MonoAndroid90\Xamarin.GooglePlayServices.Ads.Lite.targets'))" />
+    <Error Condition="!Exists('..\..\packages\Xamarin.GooglePlayServices.Ads.71.1720.3\build\MonoAndroid90\Xamarin.GooglePlayServices.Ads.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\..\packages\Xamarin.GooglePlayServices.Ads.71.1720.3\build\MonoAndroid90\Xamarin.GooglePlayServices.Ads.targets'))" />
   </Target>
   <Import Project="..\..\packages\NETStandard.Library.2.0.3\build\netstandard2.0\NETStandard.Library.targets" Condition="Exists('..\..\packages\NETStandard.Library.2.0.3\build\netstandard2.0\NETStandard.Library.targets')" />
   <Import Project="..\..\packages\Xamarin.Android.Support.Annotations.28.0.0.3\build\monoandroid90\Xamarin.Android.Support.Annotations.targets" Condition="Exists('..\..\packages\Xamarin.Android.Support.Annotations.28.0.0.3\build\monoandroid90\Xamarin.Android.Support.Annotations.targets')" />
@@ -565,4 +601,13 @@
   <Import Project="..\..\packages\Xamarin.Android.Support.v7.MediaRouter.28.0.0.3\build\monoandroid90\Xamarin.Android.Support.v7.MediaRouter.targets" Condition="Exists('..\..\packages\Xamarin.Android.Support.v7.MediaRouter.28.0.0.3\build\monoandroid90\Xamarin.Android.Support.v7.MediaRouter.targets')" />
   <Import Project="..\..\packages\Xamarin.Forms.4.6.0.847\build\Xamarin.Forms.targets" Condition="Exists('..\..\packages\Xamarin.Forms.4.6.0.847\build\Xamarin.Forms.targets')" />
   <Import Project="..\..\packages\Xamarin.Forms.Visual.Material.4.7.0.1080\build\MonoAndroid10\Xamarin.Forms.Visual.Material.targets" Condition="Exists('..\..\packages\Xamarin.Forms.Visual.Material.4.7.0.1080\build\MonoAndroid10\Xamarin.Forms.Visual.Material.targets')" />
+  <Import Project="..\..\packages\Xamarin.Build.Download.0.7.0\build\Xamarin.Build.Download.targets" Condition="Exists('..\..\packages\Xamarin.Build.Download.0.7.0\build\Xamarin.Build.Download.targets')" />
+  <Import Project="..\..\packages\Xamarin.GooglePlayServices.Ads.Base.71.1720.1\build\MonoAndroid90\Xamarin.GooglePlayServices.Ads.Base.targets" Condition="Exists('..\..\packages\Xamarin.GooglePlayServices.Ads.Base.71.1720.1\build\MonoAndroid90\Xamarin.GooglePlayServices.Ads.Base.targets')" />
+  <Import Project="..\..\packages\Xamarin.GooglePlayServices.Basement.71.1620.2\build\MonoAndroid90\Xamarin.GooglePlayServices.Basement.targets" Condition="Exists('..\..\packages\Xamarin.GooglePlayServices.Basement.71.1620.2\build\MonoAndroid90\Xamarin.GooglePlayServices.Basement.targets')" />
+  <Import Project="..\..\packages\Xamarin.GooglePlayServices.Ads.Identifier.71.1600.1\build\MonoAndroid90\Xamarin.GooglePlayServices.Ads.Identifier.targets" Condition="Exists('..\..\packages\Xamarin.GooglePlayServices.Ads.Identifier.71.1600.1\build\MonoAndroid90\Xamarin.GooglePlayServices.Ads.Identifier.targets')" />
+  <Import Project="..\..\packages\Xamarin.GooglePlayServices.Gass.71.1720.1\build\MonoAndroid90\Xamarin.GooglePlayServices.Gass.targets" Condition="Exists('..\..\packages\Xamarin.GooglePlayServices.Gass.71.1720.1\build\MonoAndroid90\Xamarin.GooglePlayServices.Gass.targets')" />
+  <Import Project="..\..\packages\Xamarin.GooglePlayServices.Measurement.Base.71.1630.1\build\MonoAndroid90\Xamarin.GooglePlayServices.Measurement.Base.targets" Condition="Exists('..\..\packages\Xamarin.GooglePlayServices.Measurement.Base.71.1630.1\build\MonoAndroid90\Xamarin.GooglePlayServices.Measurement.Base.targets')" />
+  <Import Project="..\..\packages\Xamarin.GooglePlayServices.Measurement.Sdk.Api.71.1630.1\build\MonoAndroid90\Xamarin.GooglePlayServices.Measurement.Sdk.Api.targets" Condition="Exists('..\..\packages\Xamarin.GooglePlayServices.Measurement.Sdk.Api.71.1630.1\build\MonoAndroid90\Xamarin.GooglePlayServices.Measurement.Sdk.Api.targets')" />
+  <Import Project="..\..\packages\Xamarin.GooglePlayServices.Ads.Lite.71.1720.2\build\MonoAndroid90\Xamarin.GooglePlayServices.Ads.Lite.targets" Condition="Exists('..\..\packages\Xamarin.GooglePlayServices.Ads.Lite.71.1720.2\build\MonoAndroid90\Xamarin.GooglePlayServices.Ads.Lite.targets')" />
+  <Import Project="..\..\packages\Xamarin.GooglePlayServices.Ads.71.1720.3\build\MonoAndroid90\Xamarin.GooglePlayServices.Ads.targets" Condition="Exists('..\..\packages\Xamarin.GooglePlayServices.Ads.71.1720.3\build\MonoAndroid90\Xamarin.GooglePlayServices.Ads.targets')" />
 </Project>

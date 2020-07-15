@@ -23,6 +23,7 @@ namespace BudgetUnderControl.Views
 
         public GroupedTransactionListItem()
         {
+            var frame = new Frame { Margin = new Thickness(10)};
             var grid = new Grid { Padding = new Thickness(10), VerticalOptions = LayoutOptions.FillAndExpand };
             grid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(0.4, GridUnitType.Star) });
             grid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(0.4, GridUnitType.Star) });
@@ -42,8 +43,8 @@ namespace BudgetUnderControl.Views
             grid.Children.Add(categoryLabel, 1, 0);
             grid.Children.Add(tagsLabel, 1, 1);
             grid.Children.Add(valueLabel, 2, 0);
-
-            View = grid;
+            frame.Content = grid;
+            View = frame;
         }
 
         protected override void OnBindingContextChanged()

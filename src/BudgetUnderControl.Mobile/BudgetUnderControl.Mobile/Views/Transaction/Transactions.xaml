@@ -63,18 +63,19 @@
                         </Grid>
                     </StackLayout>
                 </Expander>
-                
-                <ListView x:Name="transactions" ItemsSource="{Binding Transactions}"  IsGroupingEnabled="True" GroupDisplayBinding="{Binding Key}" SelectedItem="{Binding SelectedTransaction}"   ItemSelected="OnItemSelected" VerticalOptions="FillAndExpand" HorizontalOptions="FillAndExpand" HasUnevenRows="True"  >
+
+                <ListView x:Name="transactions" ItemsSource="{Binding Transactions}"  IsGroupingEnabled="True" GroupDisplayBinding="{Binding Key}" SelectedItem="{Binding SelectedTransaction}"   ItemSelected="OnItemSelected" VerticalOptions="FillAndExpand" HorizontalOptions="FillAndExpand" HasUnevenRows="True" SeparatorVisibility="None" >
                     <ListView.GroupHeaderTemplate>
                         <DataTemplate>
                             <ViewCell>
                                 <StackLayout VerticalOptions="FillAndExpand" HorizontalOptions="FillAndExpand"
                     >
                                     <Grid VerticalOptions="FillAndExpand" HorizontalOptions="FillAndExpand">
-                                        <Label Text="{Binding Key}" FontSize="Small"  VerticalOptions="CenterAndExpand" HorizontalOptions="CenterAndExpand"/>
+                                        <Label Text="{Binding Key}" FontSize="Small"  VerticalOptions="CenterAndExpand" HorizontalOptions="StartAndExpand" Margin="10,20,0,0" FontAttributes="Bold"/>
                                     </Grid>
                                 </StackLayout>
                             </ViewCell>
+                           
                         </DataTemplate>
                     </ListView.GroupHeaderTemplate>
                     <ListView.ItemTemplate>

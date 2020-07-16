@@ -19,6 +19,38 @@ namespace BudgetUnderControl.ViewModel
 
         public event PropertyChangedEventHandler PropertyChanged;
 
+        public bool IsLogged
+        {
+            get => Preferences.Get(PreferencesKeys.IsUserLogged, false);
+            set
+            {
+                if (Preferences.Get(PreferencesKeys.IsUserLogged, false) != value)
+                {
+                    Preferences.Set(PreferencesKeys.IsUserLogged, value);
+                    PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(IsLogged)));
+                    PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(IsNotLogged)));
+                }
+            }
+        }
+
+        public void RefreshUserButtons()
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(IsLogged)));
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(IsNotLogged)));
+        }
+
+        public bool IsNotLogged
+        {
+            get => !IsLogged;
+            set
+            {
+                if (IsLogged != value)
+                {
+                    IsLogged = !value;
+                }
+            }
+        }
+
         private string apiUrl;
         public string ApiUrl
         {
@@ -111,21 +143,5 @@ namespace BudgetUnderControl.ViewModel
             var httpClient =  App.Container.ResolveNamed<HttpClient>("api");
             httpClient.BaseAddress = new Uri(ApiUrl);
         }
-
-        public bool IsLogged
-        {
-            get => Preferences.Get(PreferencesKeys.IsUserLogged, false);
-            set
-            {
-                if (Preferences.Get(PreferencesKeys.IsUserLogged, false) != value)
-                {
-                    Preferences.Set(PreferencesKeys.IsUserLogged, value);
-                    PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(IsLogged)));
-                }
-            }
-        }
-
-       
-
     }
 }

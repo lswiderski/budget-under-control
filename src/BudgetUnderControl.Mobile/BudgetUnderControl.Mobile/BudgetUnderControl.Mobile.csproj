@@ -110,5 +110,13 @@
       <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
     </EmbeddedResource>
   </ItemGroup>
+  <ItemGroup>
+    <Folder Include="ViewModels\Navigation\" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Update="Views\AppShell.xaml.cs">
+      <DependentUpon>AppShell.xaml</DependentUpon>
+    </Compile>
+  </ItemGroup>
 
 </Project>

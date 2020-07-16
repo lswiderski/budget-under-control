@@ -29,5 +29,9 @@ namespace BudgetUnderControl.ViewModel
         bool IsLogged { get; set; }
 
         bool IsLoading { get; set; }
+
+        bool IsNotLogged { get; set; }
+
+        void RefreshUserButtons();
     }
 }

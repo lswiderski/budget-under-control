@@ -44,7 +44,7 @@ namespace BudgetUnderControl.Views
             }
             else
             {
-                App.MasterPage.NavigateTo(typeof(Transactions));
+                App.MasterPage.NavigateTo("Transactions");
             }
         }
 

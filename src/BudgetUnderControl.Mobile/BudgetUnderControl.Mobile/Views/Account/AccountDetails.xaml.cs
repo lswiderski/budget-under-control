@@ -12,19 +12,27 @@ using Xamarin.Forms.Xaml;
 namespace BudgetUnderControl.Views
 {
     [XamlCompilation(XamlCompilationOptions.Compile)]
+    [QueryProperty(nameof(AccountId), nameof(AccountId))]
     public partial class AccountDetails : ContentPage
     {
         private FloatingActionButtonView fab;
         IAccountDetailsViewModel vm;
         Guid accountId;
-
-        public AccountDetails(Guid accountId)
+        public string AccountId
+        {
+            get => accountId.ToString();
+            set
+            {
+                accountId = Guid.Parse(Uri.UnescapeDataString(value));
+                OnPropertyChanged();
+            }
+        }
+        public AccountDetails()
         {
             using (var scope = App.Container.BeginLifetimeScope())
             {
                 this.BindingContext = vm = scope.Resolve<IAccountDetailsViewModel>();
             }
-            this.accountId = accountId;
 
             InitializeComponent();
 
@@ -66,7 +74,7 @@ namespace BudgetUnderControl.Views
             if (!remove) return;
 
             await vm.RemoveAccount();
-            App.MasterPage.NavigateTo(typeof(Accounts));
+            App.MasterPage.NavigateTo("Accounts");
         }
 
         protected override async void OnAppearing()

@@ -146,7 +146,7 @@ namespace BudgetUnderControl.Mobile.Services
                 var token = Preferences.Get(PreferencesKeys.JWTTOKEN, string.Empty);
                 if(string.IsNullOrEmpty(token))
                 {
-                    App.MasterPage.NavigateTo(typeof(Login));
+                    App.MasterPage.NavigateTo("Login");
                     return;
                 }
                 httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
@@ -154,7 +154,7 @@ namespace BudgetUnderControl.Mobile.Services
 
                 if(response.StatusCode == System.Net.HttpStatusCode.Unauthorized)
                 {
-                    App.MasterPage.NavigateTo(typeof(Login));
+                    App.MasterPage.NavigateTo("Login");
                     return;
                 }
                 response.EnsureSuccessStatusCode();

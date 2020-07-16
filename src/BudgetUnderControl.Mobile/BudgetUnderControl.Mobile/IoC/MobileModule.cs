@@ -99,7 +99,6 @@ namespace BudgetUnderControl.Mobile.IoC
             builder.RegisterInstance<ILogger>(DependencyService.Get<ILogManager>().GetLog());
             builder.RegisterInstance<ILocalNotificationService>(DependencyService.Get<ILocalNotificationService>());
             builder.RegisterType<ContextFacade>().As<IContextFacade>().SingleInstance();
-            builder.RegisterType<NavigationViewModel>().As<INavigationViewModel>().SingleInstance();
             builder.RegisterType<EditAccountViewModel>().As<IEditAccountViewModel>().InstancePerLifetimeScope();
             builder.RegisterType<AddAccountViewModel>().As<IAddAccountViewModel>().InstancePerLifetimeScope();
             builder.RegisterType<AccountsViewModel>().As<IAccountsViewModel>().InstancePerLifetimeScope();

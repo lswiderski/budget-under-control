@@ -46,7 +46,7 @@ namespace BudgetUnderControl.Views
         void OnItemSelected(object sender, SelectedItemChangedEventArgs e)
         {
             Guid accountId = vm.SelectedAccount.ExternalId;
-            App.MasterPage.NavigateTo(typeof(AccountDetails), accountId);
+            App.MasterPage.NavigateTo($"accountDetails?AccountId={accountId}");
         }
 
     }

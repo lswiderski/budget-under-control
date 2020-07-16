@@ -43,7 +43,7 @@ namespace BudgetUnderControl.Views
 
         private void OnExchangeRatesButtonClicked(object sender, EventArgs e)
         {
-            App.MasterPage.NavigateTo(typeof(ExchangeRates));
+            App.MasterPage.NavigateTo("exchangeRates");
         }
     }
 }

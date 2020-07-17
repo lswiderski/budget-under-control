@@ -2,11 +2,13 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using BudgetUnderControl.Infrastructure.Commands;
 using BudgetUnderControl.Infrastructure;
 using BudgetUnderControl.Infrastructure.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authorization;
+using BudgetUnderControl.CommonInfrastructure.Commands;
+using BudgetUnderControl.Common.Contracts;
+using BudgetUnderControl.CommonInfrastructure;
 
 namespace BudgetUnderControl.API.Controllers
 {

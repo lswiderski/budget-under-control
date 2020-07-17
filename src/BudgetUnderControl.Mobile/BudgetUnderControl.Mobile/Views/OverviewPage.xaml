@@ -6,7 +6,13 @@
              Title="Overview Page">
     <ContentPage.Content>
         <AbsoluteLayout x:Name="absoluteLayout" VerticalOptions="FillAndExpand" HorizontalOptions="FillAndExpand">
-            <StackLayout Padding="20,20,0,0" AbsoluteLayout.LayoutFlags="All" AbsoluteLayout.LayoutBounds="0,0,1,1">
+            <Frame AbsoluteLayout.LayoutFlags="All" AbsoluteLayout.LayoutBounds="0,0,1,.9" HorizontalOptions="FillAndExpand" VerticalOptions="Fill" Margin="10">
+
+
+                <StackLayout HorizontalOptions="FillAndExpand" >
+                
+                        
+                    
                 <Label Text="PLN:" />
                 <Label x:Name="pln" />
                 <Label Text="USD:" />
@@ -15,7 +21,11 @@
                 <Label x:Name="eur" />
                 <Label Text="Total:" />
                 <Label x:Name="total" />
+           
+             
             </StackLayout>
+            </Frame>
+            <local:AdMobView HeightRequest="100" AbsoluteLayout.LayoutFlags="All" AbsoluteLayout.LayoutBounds="0,1,1,.1"/>
         </AbsoluteLayout>
     </ContentPage.Content>
 </ContentPage>

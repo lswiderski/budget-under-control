@@ -1,4 +1,5 @@
-﻿using BudgetUnderControl.Domain.Repositiories;
+﻿using BudgetUnderControl.CommonInfrastructure;
+using BudgetUnderControl.Domain.Repositiories;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -16,7 +17,9 @@ namespace BudgetUnderControl.Infrastructure.Services.UserService
 
         public IUserIdentityContext CreateUserIdentityContext()
         {
-            var user =  this.userRepository.GetFirstUserAsync().Result;
+            Task<Domain.User> task = Task.Run<Domain.User>(async () => await this.userRepository.GetFirstUserAsync());
+            var user =  task.Result;
+        
             var context = new UserIdentityContext
             {
                 UserId = user.Id,
@@ -24,6 +27,17 @@ namespace BudgetUnderControl.Infrastructure.Services.UserService
                 RoleName = user.Role
             };
             return context;
+        }
+
+        public long GetIdOf1stUser()
+        {
+            var user = this.CreateUserIdentityContext();
+            if (user != null)
+            {
+                return user.UserId;
+            }
+
+            return 0;
         }
     }
 }

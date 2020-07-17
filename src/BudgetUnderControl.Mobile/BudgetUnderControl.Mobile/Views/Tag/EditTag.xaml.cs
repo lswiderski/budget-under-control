@@ -12,18 +12,28 @@ using Xamarin.Forms.Xaml;
 namespace BudgetUnderControl.Views
 {
 	[XamlCompilation(XamlCompilationOptions.Compile)]
-	public partial class EditTag : ContentPage
+    [QueryProperty(nameof(TagId), nameof(TagId))]
+    public partial class EditTag : ContentPage
 	{
         ITagViewModel vm;
-        Guid tagId;
-        public EditTag(Guid tagId)
+        Guid tagId; 
+        public string TagId
+        {
+            get => tagId.ToString();
+            set
+            {
+                tagId = Guid.Parse(Uri.UnescapeDataString(value));
+                OnPropertyChanged();
+            }
+        }
+
+        public EditTag()
         {
             InitializeComponent();
             using (var scope = App.Container.BeginLifetimeScope())
             {
                 this.BindingContext = vm = scope.Resolve<ITagViewModel>();
             }
-            this.tagId = tagId;
         }
 
         protected override void OnAppearing()
@@ -35,7 +45,7 @@ namespace BudgetUnderControl.Views
         protected async void OnEditButtonClicked(object sender, EventArgs args)
         {
             await vm.EditTagAsync();
-            App.MasterPage.NavigateTo(typeof(Tags));
+            App.MasterPage.NavigateTo("Tags");
         }
     }
 }

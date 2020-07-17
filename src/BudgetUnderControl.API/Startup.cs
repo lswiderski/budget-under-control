@@ -11,7 +11,6 @@ using BudgetUnderControl.Common;
 using BudgetUnderControl.Common.Enums;
 using BudgetUnderControl.Domain;
 using BudgetUnderControl.Domain.Repositiories;
-using BudgetUnderControl.Infrastructure.Commands;
 using BudgetUnderControl.Infrastructure.IoC;
 using BudgetUnderControl.Infrastructure.Repositories;
 using BudgetUnderControl.Infrastructure.Services;
@@ -34,9 +33,10 @@ using NLog.Extensions.Logging;
 using NLog.Web;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
-using BudgetUnderControl.Infrastructure.Settings;
 using BudgetUnderControl.API.Extensions;
 using System.Text;
+using BudgetUnderControl.CommonInfrastructure.Settings;
+using Microsoft.Extensions.Hosting;
 
 namespace BudgetUnderControl.API
 {
@@ -46,26 +46,37 @@ namespace BudgetUnderControl.API
 
         public IConfiguration Configuration { get; }
 
-        public Startup(IConfiguration configuration)
+        private IWebHostEnvironment environment { get; }
+
+        public Startup(IWebHostEnvironment env)
         {
-            Configuration = configuration;
+            var configuration = new ConfigurationBuilder()
+            .SetBasePath(env.ContentRootPath)
+            .AddJsonFile("appsettings.json", optional: true, reloadOnChange: true)
+            .AddJsonFile($"appsettings.{env.EnvironmentName}.json", optional: true)
+            .AddJsonFile($"secrets.json", optional: true)
+            .AddEnvironmentVariables();
+            Configuration = configuration.Build();
+            environment = env;
         }
 
         // This method gets called by the runtime. Use this method to add services to the container.
         public IServiceProvider ConfigureServices(IServiceCollection services)
         {
-            services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1)
-                .AddJsonOptions(x => x.SerializerSettings.Formatting = Formatting.Indented)
+            services.AddControllers().SetCompatibilityVersion(CompatibilityVersion.Latest)
+                .AddJsonOptions(x => {
+                    x.JsonSerializerOptions.WriteIndented = true;
+                    })
                 .AddFluentValidation();
 
-            services.AddEntityFrameworkSqlServer()
-                    .AddEntityFrameworkInMemoryDatabase()
-                    .AddDbContext<Context>();
-
+            services.AddDbContext<Context>(ServiceLifetime.Transient);
+            services.AddTransient<IContextFacade, ContextFacade>();
             services.AddMemoryCache();
             services.AddCors();
+            services.AddControllers();
 
             var settings = Configuration.GetSettings<GeneralSettings>();
+
             var key = Encoding.ASCII.GetBytes(settings.SecretKey);
             services.AddAuthentication(x =>
             {
@@ -88,9 +99,8 @@ namespace BudgetUnderControl.API
             // Initialize Autofac builder
             var builder = new ContainerBuilder();          
 
-            builder.RegisterModule<InfrastructureModule>();
-            //builder.RegisterModule<ApiModule>();
-            builder.RegisterModule(new ApiModule(Configuration));
+            builder.RegisterModule<ApiInfrastructureModule>();
+            builder.RegisterModule(new ApiModule(Configuration, environment));
             builder.Populate(services);
             ApplicationContainer = builder.Build();
 
@@ -98,11 +108,11 @@ namespace BudgetUnderControl.API
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory, IContextConfig contextConfig, ITestDataSeeder testDataSeeder)
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env, ILoggerFactory loggerFactory, IContextConfig contextConfig)//, ITestDataSeeder testDataSeeder)
         {
             if(contextConfig.Application == ApplicationType.Test)
             {
-                testDataSeeder.SeedAsync().Wait();
+                //testDataSeeder.SeedAsync().Wait();
             }
 
             if (env.IsDevelopment())
@@ -113,21 +123,24 @@ namespace BudgetUnderControl.API
             {
                 app.UseHsts();
             }
-
-            loggerFactory.AddNLog();
-            env.ConfigureNLog("nlog.config");
-
             //app.UseHttpsRedirection();
+
+            app.UseRouting();
+
             app.UseCustomExceptionHandler();
             app.UseAuthentication();
             app.UseCors(options =>
                     options
-                        .AllowAnyOrigin()
                         .AllowAnyMethod()
                         .AllowAnyHeader()
-                        .AllowCredentials());
-            app.UseMvc();
-            //;
+                        .SetIsOriginAllowed(origin => true)
+                        .AllowCredentials()
+                        );
+
+            app.UseAuthentication();
+            app.UseAuthorization();
+
+            app.UseEndpoints(x => x.MapControllers());
         }
     }
 }

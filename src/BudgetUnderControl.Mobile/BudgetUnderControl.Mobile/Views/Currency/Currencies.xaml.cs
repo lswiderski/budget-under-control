@@ -1,14 +1,12 @@
 ﻿using Autofac;
-using BudgetUnderControl.Domain.Repositiories;
-using BudgetUnderControl.Infrastructure;
-using BudgetUnderControl.Infrastructure.Services;
+using BudgetUnderControl.Mobile.Services;
 using BudgetUnderControl.Mobile.Views;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-
+using BudgetUnderControl.CommonInfrastructure;
 using Xamarin.Forms;
 using Xamarin.Forms.Xaml;
 
@@ -45,7 +43,7 @@ namespace BudgetUnderControl.Views
 
         private void OnExchangeRatesButtonClicked(object sender, EventArgs e)
         {
-            App.MasterPage.NavigateTo(typeof(ExchangeRates));
+            App.MasterPage.NavigateTo("exchangeRates");
         }
     }
 }

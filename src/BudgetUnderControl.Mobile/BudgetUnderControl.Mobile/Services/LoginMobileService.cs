@@ -1,13 +1,10 @@
 ﻿using Autofac;
-using BudgetUnderControl.Domain.Repositiories;
-using BudgetUnderControl.Infrastructure.Settings;
+using BudgetUnderControl.MobileDomain.Repositiories;
 using BudgetUnderControl.Mobile.Keys;
 using BudgetUnderControl.Views;
-using Microsoft.IdentityModel.Tokens;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
-using System.IdentityModel.Tokens.Jwt;
 using System.IO;
 using System.Linq;
 using System.Net.Http;
@@ -15,6 +12,10 @@ using System.Net.Http.Headers;
 using System.Text;
 using System.Threading.Tasks;
 using Xamarin.Essentials;
+using BudgetUnderControl.CommonInfrastructure.Settings;
+using System.IdentityModel.Tokens.Jwt;
+using Microsoft.IdentityModel.Tokens;
+using BudgetUnderControl.ViewModel;
 
 namespace BudgetUnderControl.Mobile.Services
 {
@@ -24,16 +25,16 @@ namespace BudgetUnderControl.Mobile.Services
         private readonly HttpClient httpClient;
         private readonly GeneralSettings settings;
 
-        private readonly INavigationViewModel navigationViewModel;
+        private readonly ISettingsViewModel settingsViewModel;
         private readonly ISyncMobileService syncMobileService;
         private readonly IUserRepository userRepository;
 
-        public LoginMobileService(GeneralSettings settings, INavigationViewModel navigationViewModel, ISyncMobileService syncMobileService,
+        public LoginMobileService(GeneralSettings settings, ISettingsViewModel settingsViewModel, ISyncMobileService syncMobileService,
             IUserRepository userRepository)
         {
             this.httpClient = App.Container.ResolveNamed<HttpClient>("api");
             this.settings = settings;
-            this.navigationViewModel = navigationViewModel;
+            this.settingsViewModel = settingsViewModel;
             this.syncMobileService = syncMobileService;
             this.userRepository = userRepository;
         }
@@ -55,7 +56,7 @@ namespace BudgetUnderControl.Mobile.Services
                 Preferences.Set(PreferencesKeys.JWTTOKEN, token);
                 Preferences.Set(PreferencesKeys.IsUserLogged, true);
                 Preferences.Set(PreferencesKeys.UserExternalId, userId.ToString());
-                navigationViewModel.RefreshUserButtons();
+                settingsViewModel.RefreshUserButtons();
 
                 if (clearLocalData)
                 {
@@ -65,7 +66,7 @@ namespace BudgetUnderControl.Mobile.Services
 
                 //set externalId
                 var user = await this.userRepository.GetFirstUserAsync();
-                user.EditExternalId(userId);
+                user.EditExternalId(userId.ToString());
                 await userRepository.UpdateUserAsync(user);
 
                 //sync
@@ -80,17 +81,17 @@ namespace BudgetUnderControl.Mobile.Services
 
         }
 
-        public async Task LogoutAsync(Type redirectToPage)
+        public async Task LogoutAndRedirectAsync()
         {
             await this.LogoutAsync();
-            App.MasterPage.NavigateTo(redirectToPage);
+            App.MasterPage.NavigateTo("Overview");
         }
         public async Task LogoutAsync()
         {
             Preferences.Set(PreferencesKeys.IsUserLogged, false);
             Preferences.Remove(PreferencesKeys.UserExternalId);
             Preferences.Remove(PreferencesKeys.JWTTOKEN);
-            navigationViewModel.RefreshUserButtons();
+            settingsViewModel.RefreshUserButtons();
         }
 
         private async Task<string> RemoteLoginAsync(string username, string password)
@@ -103,7 +104,7 @@ namespace BudgetUnderControl.Mobile.Services
                 var content = new StringContent(dataAsString);
                 content.Headers.ContentType = new MediaTypeHeaderValue("application/json");
                 content.Headers.Add("Api-Key", settings.ApiKey);
-                httpClient.Timeout = TimeSpan.FromMinutes(5);
+                
                 var response = await httpClient.PostAsync(url, content);
                 if(!response.IsSuccessStatusCode)
                 {

@@ -1,21 +1,21 @@
 ﻿using BudgetUnderControl.Common.Enums;
 using BudgetUnderControl.Common.Contracts;
-using BudgetUnderControl.Infrastructure;
+using BudgetUnderControl.CommonInfrastructure.Commands;
+using BudgetUnderControl.Mobile.Services;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Collections.ObjectModel;
+using Xamarin.Forms;
 
 namespace BudgetUnderControl.ViewModel
 {
     public interface IAddTransactionViewModel
     {
         Task AddTransacionAsync();
-        
-        List<CategoryListItemDTO> Categories { get; }
-        List<AccountListItemDTO> Accounts { get; }
+
         ICollection<string> Types { get; }
         int SelectedTypeIndex { get; set; }
         TimeSpan TransferTime { get; set; }
@@ -43,5 +43,11 @@ namespace BudgetUnderControl.ViewModel
         bool IsTransferOptionsVisible { get; }
         bool IsTransferInOtherCurrency { get; }
         bool IsValid { get; }
+
+        byte[] ImageByteArray { get; set; }
+        ImageSource ImageSource { get; set; }
+        bool HasImage { get; set; }
+        bool HasNoImage { get; set; }
+
     }
 }

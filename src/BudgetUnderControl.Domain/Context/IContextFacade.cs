@@ -24,6 +24,7 @@ namespace BudgetUnderControl.Domain
         DbSet<Currency> Currencies { get; set; }
         DbSet<ExchangeRate> ExchangeRates { get; set; }
         DbSet<File> Files { get; set; }
+        DbSet<FileToTransaction> FilesToTransactions { get; set; }
         DbSet<Icon> Icons { get; set; }
         DbSet<Tag> Tags { get; set; }
         DbSet<TagToTransaction> TagsToTransactions { get; set; }

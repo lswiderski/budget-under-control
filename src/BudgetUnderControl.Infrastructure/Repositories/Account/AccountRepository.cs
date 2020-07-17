@@ -9,6 +9,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using BudgetUnderControl.Infrastructure.Services;
+using BudgetUnderControl.CommonInfrastructure;
 
 namespace BudgetUnderControl.Infrastructure
 {
@@ -25,9 +26,10 @@ namespace BudgetUnderControl.Infrastructure
         {
             var query = this.Context.Accounts.AsQueryable();
 
-            if(active.HasValue)
+            if (active.HasValue)
             {
                 query = query.Where(a => a.IsActive == active).AsQueryable();
+
             }
 
             var accounts = await (from account in query
@@ -50,8 +52,6 @@ namespace BudgetUnderControl.Infrastructure
             }
             var accounts = await (from account in query
                                   join currency in this.Context.Currencies on account.CurrencyId equals currency.Id
-                                  where account.IsActive == true
-                                  && account.OwnerId == userIdentityContext.UserId
                                   select account)
                                  .Include(p => p.Currency)
                                  .OrderBy(a => a.Order)

@@ -1,5 +1,5 @@
 <template>
-  <v-data-table :headers="headers" :items="tags.items" :items-per-page="5">
+  <v-data-table :headers="headers" :items="tags.items" :items-per-page="15">
     <template v-slot:item.action="{ item }">
       <v-icon small class="mr-2" @click="editItem(item)">mdi-pencil</v-icon>
       <!--<v-icon small @click="deleteItem(item)">mdi-delete</v-icon>-->
@@ -50,11 +50,6 @@
 </template>
 
 <script>
-import config from "config";
-import { authHeader } from "../../_helpers";
-import { handleResponse } from "../../_helpers";
-import { catchError } from "../../_helpers";
-import axios from "axios";
 import { tagsService } from "../../_services";
 
 export default {
@@ -91,7 +86,7 @@ export default {
       const index = this.tags.items.indexOf(item);
       confirm("Are you sure you want to delete this tag?") &&
         this.tags.items.splice(index, 1) &&
-        tagsService.remove(item.externalId).then(data => {
+        tagsService.remove(item.externalId).then( () => {
           this.$store.dispatch("tags/getAll");
         });
     },
@@ -124,7 +119,7 @@ export default {
       if (this.editedIndex > -1) {
         tagsService
           .edit(this.editedItem.externalId, dto)
-          .then(data => {
+          .then(() => {
             this.$store.dispatch("tags/getAll");
             this.close();
           })
@@ -134,7 +129,7 @@ export default {
       } else {
         tagsService
           .add(dto)
-          .then(data => {
+          .then( () => {
             this.tags.items.push(_self.editedItem);
             this.$store.dispatch("tags/getAll");
             this.close();

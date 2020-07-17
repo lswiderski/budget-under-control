@@ -7,11 +7,11 @@ namespace Migrations.Migrations
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.AddColumn<Guid>(
+            migrationBuilder.AddColumn<string>(
                 name: "ExternalId",
                 table: "Transfer",
                 nullable: false,
-                defaultValue: new Guid("00000000-0000-0000-0000-000000000000"));
+                defaultValue: "00000000-0000-0000-0000-000000000000");
 
             migrationBuilder.AddColumn<bool>(
                 name: "IsDeleted",

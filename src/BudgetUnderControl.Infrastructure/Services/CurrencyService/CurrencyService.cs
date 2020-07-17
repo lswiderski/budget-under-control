@@ -1,23 +1,26 @@
 ﻿using BudgetUnderControl.Common.Contracts;
 using BudgetUnderControl.Domain;
 using BudgetUnderControl.Domain.Repositiories;
-using BudgetUnderControl.Infrastructure.Commands;
+using BudgetUnderControl.CommonInfrastructure.Commands;
 using BudgetUnderControl.Infrastructure.Services;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using BudgetUnderControl.CommonInfrastructure;
 
 namespace BudgetUnderControl.Infrastructure.Services
 {
     public class CurrencyService : ICurrencyService
     {
         private readonly ICurrencyRepository currencyRepository;
-      
-        public CurrencyService(ICurrencyRepository currencyRepository)
+        private readonly IUserIdentityContext userIdentityContext;
+
+        public CurrencyService(ICurrencyRepository currencyRepository, IUserIdentityContext userIdentityContext)
         {
             this.currencyRepository = currencyRepository;
+            this.userIdentityContext = userIdentityContext;
         }
 
         public async Task<ICollection<CurrencyDTO>> GetCurriencesAsync()
@@ -84,7 +87,8 @@ namespace BudgetUnderControl.Infrastructure.Services
                     FromCurrencyId = x.FromCurrencyId,
                     ToCurrencyId = x.ToCurrencyId,
                     FromCurrencyCode = x.FromCurrency.Code,
-                    ToCurrencyCode = x.ToCurrency.Code
+                    ToCurrencyCode = x.ToCurrency.Code,
+                    CanDelete = x.UserId == this.userIdentityContext.UserId,
                 })
                 .ToList();
 
@@ -93,7 +97,7 @@ namespace BudgetUnderControl.Infrastructure.Services
 
         public async Task AddExchangeRateAsync(AddExchangeRate command)
         {
-            var rate = ExchangeRate.Create(command.FromCurrencyId, command.ToCurrencyId, command.Rate, command.Date);
+            var rate = ExchangeRate.Create(command.FromCurrencyId, command.ToCurrencyId, command.Rate, userIdentityContext.UserId, command.ExternalId, false, command.Date);
 
             await this.currencyRepository.AddExchangeRateAsync(rate);
         }
@@ -102,12 +106,19 @@ namespace BudgetUnderControl.Infrastructure.Services
         {
             var exchangeRate = await this.currencyRepository.GetLatestExchangeRateAsync(fromCurrencyId, toCurrencyId);
 
+            var result = await this.GetValueInDifferentCurrency(amount, fromCurrencyId, toCurrencyId, exchangeRate);
+
+            return result;
+        }
+
+        private async Task<decimal> GetValueInDifferentCurrency(decimal amount, int fromCurrencyId, int toCurrencyId, ExchangeRate exchangeRate)
+        {
             var result = amount;
-            if(exchangeRate == null)
+            if (exchangeRate == null)
             {
                 result = amount;
             }
-            else if(exchangeRate.FromCurrencyId == fromCurrencyId)
+            else if (exchangeRate.FromCurrencyId == fromCurrencyId)
             {
                 result = amount * (decimal)exchangeRate.Rate;
             }

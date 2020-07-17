@@ -10,5 +10,7 @@ namespace BudgetUnderControl.ViewModel
     {
         Task<Dictionary<string, decimal>> GetTotalsAsync();
         Task<decimal> CalculateValueAsync(decimal amount, string fromCurrencyCode, string toCurrencyCode);
+
+        string AdUnitId { get; set; }
     }
 }

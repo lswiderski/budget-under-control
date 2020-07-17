@@ -7,7 +7,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using BudgetUnderControl.Infrastructure.Commands;
+using BudgetUnderControl.CommonInfrastructure.Commands;
+using BudgetUnderControl.CommonInfrastructure;
 using FluentValidation;
 using BudgetUnderControl.Common;
 using NLog;
@@ -67,7 +68,11 @@ namespace BudgetUnderControl.Infrastructure.Services
                 ParentAccountId = y.ParentAccountId,
 
             }).ToList();
-            accountsWithBalance.ForEach(async x => { x.Balance = await accountRepository.GetActualBalanceAsync(x.Id); });
+
+            foreach(var account in accountsWithBalance)
+            {
+                account.Balance = await accountRepository.GetActualBalanceAsync(account.Id);
+            }
             return accountsWithBalance;
         }
 

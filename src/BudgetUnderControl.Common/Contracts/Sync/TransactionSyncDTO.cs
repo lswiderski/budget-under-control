@@ -26,11 +26,13 @@ namespace BudgetUnderControl.Common.Contracts
         public double? Latitude { get; set; }
         public double? Longitude { get; set; }
 
-        public List<TagSyncDTO> Tags {get;set;}
+        public List<TagSyncDTO> Tags { get; set; }
+        public List<FileToTransactionSyncDTO> Files { get; set; }
 
         public TransactionSyncDTO()
         {
             this.Tags = new List<TagSyncDTO>();
+            this.Files = new List<FileToTransactionSyncDTO>();
         }
     }
 }

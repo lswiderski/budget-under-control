@@ -1,4 +1,4 @@
-﻿using BudgetUnderControl.Infrastructure.Commands;
+﻿using BudgetUnderControl.CommonInfrastructure.Commands;
 using BudgetUnderControl.Mobile.Services;
 using BudgetUnderControl.Views;
 using System;
@@ -83,7 +83,7 @@ namespace BudgetUnderControl.Mobile.ViewModels
             var result = await loginMobileService.LoginAsync(Username, Password, ClearLocalData);
             if(result)
             {
-                App.MasterPage.NavigateTo(typeof(OverviewPage));
+                App.MasterPage.NavigateTo("Overview");
             }
             else
             {
@@ -91,9 +91,9 @@ namespace BudgetUnderControl.Mobile.ViewModels
             }
         }
 
-        public async Task LogoutAsync(Type redirectToPage)
+        public async Task LogoutAndRedirectAsync()
         {
-            await loginMobileService.LogoutAsync(typeof(OverviewPage));
+            await loginMobileService.LogoutAndRedirectAsync();
         }
         public async Task LogoutAsync()
         {

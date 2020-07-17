@@ -1,4 +1,5 @@
-﻿using BudgetUnderControl.Domain;
+﻿using BudgetUnderControl.CommonInfrastructure;
+using BudgetUnderControl.Domain;
 using BudgetUnderControl.Domain.Repositiories;
 using BudgetUnderControl.Infrastructure.Services;
 using Microsoft.EntityFrameworkCore;

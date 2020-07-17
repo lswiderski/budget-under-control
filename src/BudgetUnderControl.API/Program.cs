@@ -20,7 +20,12 @@ namespace BudgetUnderControl.API
 
         public static IWebHostBuilder CreateWebHostBuilder(string[] args) =>
             WebHost.CreateDefaultBuilder(args)
+            .UseUrls("http://*:5000", "http://*:45455")
                 .UseStartup<Startup>()
-                .UseNLog();
+             .ConfigureLogging(logging =>
+             {
+                 logging.ClearProviders();
+                 logging.SetMinimumLevel(Microsoft.Extensions.Logging.LogLevel.Trace);
+             }).UseNLog();
     }
 }

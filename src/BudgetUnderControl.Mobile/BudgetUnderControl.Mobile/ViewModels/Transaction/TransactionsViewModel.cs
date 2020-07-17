@@ -1,7 +1,7 @@
 ﻿using BudgetUnderControl.Common;
 using BudgetUnderControl.Common.Contracts;
-using BudgetUnderControl.Infrastructure.Services;
-using BudgetUnderControl.Infrastructure.Settings;
+using BudgetUnderControl.CommonInfrastructure.Commands;
+using BudgetUnderControl.Mobile.Services;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -9,6 +9,7 @@ using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using BudgetUnderControl.CommonInfrastructure;
 
 namespace BudgetUnderControl.ViewModel
 {
@@ -36,13 +37,41 @@ namespace BudgetUnderControl.ViewModel
             }
         }
 
-        public DateTime FromDate { get; set; }
-        public DateTime ToDate { get; set; }
+        private DateTime fromDate;
+        public DateTime FromDate
+    {
+            get => fromDate;
+            set
+            {
+                if (fromDate != value)
+                {
+                    fromDate = value;
+                    PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(FromDate)));
+                }
+            }
+        }
+
+        private DateTime toDate;
+        public DateTime ToDate
+        {
+            get => toDate;
+            set
+            {
+                if (toDate != value)
+                {
+                    toDate = new DateTime(value.Year, value.Month, DateTime.DaysInMonth(value.Year, value.Month), 23, 59, 59);
+                    PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(ToDate)));
+                }
+            }
+        }
+
+        public string Search { get; set; }
+
         public string ActualRange
         {
             get
             {
-                return string.Format("{0}, {1}", FromDate.ToString("MMMM"), FromDate.Year);
+                return string.Format("{0}-{1}", FromDate.ToString("dd.MM.yyyy"), ToDate.ToString("dd.MM.yyyy"));
             }
         }
 
@@ -98,7 +127,7 @@ namespace BudgetUnderControl.ViewModel
 
         public async Task LoadTransactionsAsync()
         {
-            var transactions = await transactionService.GetTransactionsAsync(new TransactionsFilter { FromDate = FromDate, ToDate= ToDate } );
+            var transactions = await transactionService.GetTransactionsAsync(new TransactionsFilter { FromDate = FromDate, ToDate= ToDate, SearchQuery = Search} );
 
             var dtos = transactions.Select(t => new TransactionListItemDTO
             {
@@ -115,6 +144,9 @@ namespace BudgetUnderControl.ViewModel
                 ExternalId = t.ExternalId,
                 ModifiedOn = t.ModifiedOn,
                 CreatedOn = t.CreatedOn,
+                Category = t.Category,
+                CategoryId = t.CategoryId,
+                Tags = t.Tags
             }).OrderByDescending(x => x.Date)
                                 .GroupBy(x => x.Date.ToString("d MMM yyyy"))
                                 .Select(x => new ObservableGroupCollection<string, TransactionListItemDTO>(x))

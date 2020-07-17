@@ -1,4 +1,3 @@
-import config from 'config';
 import { authHeader } from '../_helpers';
 import { handleResponse } from '../_helpers';
 import { catchError } from '../_helpers';
@@ -10,7 +9,7 @@ export const accountsService = {
 
 function getAll() {
 
-    return axios.get(`${config.apiUrl}/accounts`, { params:{}, headers: authHeader()})
+    return axios.get(`/accounts`, { params:{}, headers: authHeader()})
     .then(handleResponse)
     .then(data => {
         return data;

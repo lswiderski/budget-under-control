@@ -1,6 +1,6 @@
 ﻿using BudgetUnderControl.Common;
 using BudgetUnderControl.Common.Enums;
-using BudgetUnderControl.Domain;
+using BudgetUnderControl.MobileDomain;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Design;
 using System;

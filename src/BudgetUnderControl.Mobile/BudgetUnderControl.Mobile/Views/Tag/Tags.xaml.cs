@@ -45,7 +45,7 @@ namespace BudgetUnderControl.Views
         void OnItemSelected(object sender, SelectedItemChangedEventArgs e)
         {
             Guid tagId = vm.SelectedTag.ExternalId;
-            App.MasterPage.NavigateTo(typeof(EditTag), tagId);
+            App.MasterPage.NavigateTo($"editTag?TagId={tagId}");
         }
 
     }

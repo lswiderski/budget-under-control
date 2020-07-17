@@ -1,5 +1,4 @@
 ﻿using BudgetUnderControl.Common.Contracts;
-using BudgetUnderControl.Infrastructure;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -14,7 +13,7 @@ namespace BudgetUnderControl.Views
 
         public static readonly BindableProperty TransactionProperty = BindableProperty.Create("GroupedTransaction", typeof(TransactionListItemDTO), typeof(GroupedTransactionListItem));
 
-        Label nameLabel, accountLabel, valueLabel;
+        Label nameLabel, accountLabel, valueLabel, tagsLabel, categoryLabel;
 
         public TransactionListItemDTO Transaction
         {
@@ -24,21 +23,28 @@ namespace BudgetUnderControl.Views
 
         public GroupedTransactionListItem()
         {
+            var frame = new Frame { Margin = new Thickness(10)};
             var grid = new Grid { Padding = new Thickness(10), VerticalOptions = LayoutOptions.FillAndExpand };
             grid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(0.4, GridUnitType.Star) });
             grid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(0.4, GridUnitType.Star) });
             grid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(0.2, GridUnitType.Star) });
-
+            grid.RowDefinitions.Add(new RowDefinition { Height = new GridLength(0.5, GridUnitType.Star) });
+            grid.RowDefinitions.Add(new RowDefinition { Height = new GridLength(0.5, GridUnitType.Star) });
 
             nameLabel = new Label { FontAttributes = FontAttributes.Bold, VerticalOptions = LayoutOptions.CenterAndExpand };
             accountLabel = new Label { VerticalOptions = LayoutOptions.CenterAndExpand, FontSize = 10 };
             valueLabel = new Label();
+            tagsLabel = new Label { VerticalOptions = LayoutOptions.CenterAndExpand, FontSize = 10 };
+            categoryLabel = new Label { VerticalOptions = LayoutOptions.CenterAndExpand, FontSize = 10 };
 
-            grid.Children.Add(accountLabel,0 ,0);
-            grid.Children.Add(nameLabel, 1, 0);
+            Grid.SetRowSpan(valueLabel, 2);
+            grid.Children.Add(accountLabel,0 ,1);
+            grid.Children.Add(nameLabel, 0, 0);
+            grid.Children.Add(categoryLabel, 1, 0);
+            grid.Children.Add(tagsLabel, 1, 1);
             grid.Children.Add(valueLabel, 2, 0);
-
-            View = grid;
+            frame.Content = grid;
+            View = frame;
         }
 
         protected override void OnBindingContextChanged()
@@ -57,6 +63,8 @@ namespace BudgetUnderControl.Views
                 accountLabel.Text = Transaction.Account;
                 valueLabel.Text = value;
                 valueLabel.TextColor = Transaction.Type == Common.Enums.TransactionType.Income ? Color.Green : Color.Red;
+                categoryLabel.Text = Transaction.Category;
+                tagsLabel.Text = string.Join(", ", Transaction.Tags.Select(x => x.Name));
             }
         }
     }

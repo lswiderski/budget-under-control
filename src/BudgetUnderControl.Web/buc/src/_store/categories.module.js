@@ -1,5 +1,4 @@
 import { categoriesService } from '../_services';
-import router from '../_helpers/router';
 
 export const categories = {
     namespaced: true,

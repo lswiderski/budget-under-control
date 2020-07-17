@@ -13,17 +13,17 @@ namespace Migrations.Migrations
                 nullable: false,
                 defaultValue: 0);
 
-            migrationBuilder.AddColumn<Guid>(
+            migrationBuilder.AddColumn<string>(
                 name: "ExternalId",
                 table: "Transaction",
                 nullable: false,
-                defaultValue: new Guid("00000000-0000-0000-0000-000000000000"));
+                defaultValue: "00000000-0000-0000-0000-000000000000");
 
-            migrationBuilder.AddColumn<Guid>(
+            migrationBuilder.AddColumn<string>(
                 name: "ExternalId",
                 table: "Tag",
                 nullable: false,
-                defaultValue: new Guid("00000000-0000-0000-0000-000000000000"));
+                defaultValue: "00000000-0000-0000-0000-000000000000");
 
             migrationBuilder.AddColumn<DateTime>(
                 name: "ModifiedOn",
@@ -36,11 +36,11 @@ namespace Migrations.Migrations
                 nullable: false,
                 defaultValue: 0);
 
-            migrationBuilder.AddColumn<Guid>(
+            migrationBuilder.AddColumn<string>(
                 name: "ExternalId",
                 table: "Category",
                 nullable: false,
-                defaultValue: new Guid("00000000-0000-0000-0000-000000000000"));
+                defaultValue: "00000000-0000-0000-0000-000000000000");
 
             migrationBuilder.AddColumn<DateTime>(
                 name: "ModifiedOn",
@@ -53,11 +53,11 @@ namespace Migrations.Migrations
                 nullable: false,
                 defaultValue: 0);
 
-            migrationBuilder.AddColumn<Guid>(
+            migrationBuilder.AddColumn<string>(
                 name: "ExternalId",
                 table: "AccountGroup",
                 nullable: false,
-                defaultValue: new Guid("00000000-0000-0000-0000-000000000000"));
+                defaultValue: "00000000-0000-0000-0000-000000000000");
 
             migrationBuilder.AddColumn<DateTime>(
                 name: "ModifiedOn",
@@ -70,11 +70,11 @@ namespace Migrations.Migrations
                 nullable: false,
                 defaultValue: 0);
 
-            migrationBuilder.AddColumn<Guid>(
+            migrationBuilder.AddColumn<string>(
                 name: "ExternalId",
                 table: "Account",
                 nullable: false,
-                defaultValue: new Guid("00000000-0000-0000-0000-000000000000"));
+                defaultValue: "00000000-0000-0000-0000-000000000000");
 
             migrationBuilder.AddColumn<DateTime>(
                 name: "ModifiedOn",
@@ -100,7 +100,7 @@ namespace Migrations.Migrations
                     Salt = table.Column<string>(nullable: true),
                     CreatedAt = table.Column<DateTime>(nullable: false),
                     ModifiedOn = table.Column<DateTime>(nullable: true),
-                    ExternalId = table.Column<Guid>(nullable: false)
+                    ExternalId = table.Column<string>(nullable: false)
                 },
                 constraints: table =>
                 {

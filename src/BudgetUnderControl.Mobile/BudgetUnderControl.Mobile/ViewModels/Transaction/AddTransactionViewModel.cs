@@ -1,7 +1,7 @@
 ﻿using BudgetUnderControl.Common.Enums;
 using BudgetUnderControl.Common.Contracts;
-
-using BudgetUnderControl.Infrastructure.Services;
+using BudgetUnderControl.CommonInfrastructure.Commands;
+using BudgetUnderControl.Mobile.Services;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -9,18 +9,44 @@ using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using BudgetUnderControl.Infrastructure.Commands;
 using BudgetUnderControl.Common.Extensions;
 using System.Collections.ObjectModel;
 using System.Runtime.CompilerServices;
 using Xamarin.Forms.PlatformConfiguration;
 using Xamarin.Essentials;
+using BudgetUnderControl.CommonInfrastructure;
+using BudgetUnderControl.Mobile;
+using Xamarin.Forms;
 
 namespace BudgetUnderControl.ViewModel
 {
     public class AddTransactionViewModel : IAddTransactionViewModel, INotifyPropertyChanged
     {
         public event PropertyChangedEventHandler PropertyChanged;
+
+        public bool HasImage
+        {
+            get
+            {
+                return this.ImageByteArray != null;
+            }
+            set
+            {
+                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(HasImage)));
+            }
+        }
+
+        public bool HasNoImage
+        {
+            get
+            {
+                return !HasImage;
+            }
+            set
+            {
+                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(HasNoImage)));
+            }
+        }
 
         public bool IsValid
         {
@@ -426,25 +452,60 @@ namespace BudgetUnderControl.ViewModel
         }
 
 
-        List<AccountListItemDTO> accounts;
-        public List<AccountListItemDTO> Accounts => accounts;
+        ObservableCollection<AccountListItemDTO> accounts;
+        public ObservableCollection<AccountListItemDTO> Accounts
+        {
+            get
+            {
+                return accounts;
+            }
+            set
+            {
+                if (accounts != value)
+                {
+                    accounts = value;
+                    PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(Accounts)));
+                }
+
+            }
+        }
 
         List<CategoryListItemDTO> categories;
         public List<CategoryListItemDTO> Categories => categories;
 
+        private ImageSource imageSource;
+        public ImageSource ImageSource
+        {
+            get => imageSource;
+            set
+            {
+                if (imageSource != value)
+                {
+                    imageSource = value;
+                    PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(ImageSource)));
+                }
+            }
+        }
+
+        public byte[] ImageByteArray { get; set; }
+
+
         void OnPropertyChanged([CallerMemberName]string propertyName = "") =>
         PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
 
-    IAccountService accountService;
+        IAccountMobileService accountService;
         ICategoryService categoryService;
         ICommandDispatcher commandDispatcher;
         ITagService tagService;
-        public AddTransactionViewModel(IAccountService accountRepository, ICategoryService categoryService, ICommandDispatcher commandDispatcher, ITagService tagService)
+        IFileHelper fileHelper;
+        public AddTransactionViewModel(IAccountMobileService accountRepository, ICategoryService categoryService,
+            ICommandDispatcher commandDispatcher, ITagService tagService, IFileHelper fileHelper)
         {
             this.accountService = accountRepository;
             this.categoryService = categoryService;
             this.commandDispatcher = commandDispatcher;
             this.tagService = tagService;
+            this.fileHelper = fileHelper;
             SelectedTypeIndex = 0;
             SelectedCategoryIndex = -1;
             SelectedAccountIndex = -1;
@@ -457,7 +518,7 @@ namespace BudgetUnderControl.ViewModel
 
         async void GetDropdowns()
         {
-            accounts = (await accountService.GetAccountsWithBalanceAsync()).ToList();
+            Accounts = new ObservableCollection<AccountListItemDTO>((await accountService.GetAccountsForSelect()));
             categories = (await categoryService.GetCategoriesAsync()).ToList();
         }
 
@@ -503,6 +564,13 @@ namespace BudgetUnderControl.ViewModel
                 {
                     amount *= (-1);
                 }
+
+                var fileGuid = Guid.NewGuid().ToString();
+                if (this.ImageByteArray != null)
+                {
+                    var saveResult = await fileHelper.SaveToLocalFolderAsync(this.ImageByteArray, fileGuid);
+                }
+
                 var transaction = new AddTransaction
                 {
                     Name = Name,
@@ -515,6 +583,7 @@ namespace BudgetUnderControl.ViewModel
                     Tags = Tags.Select(x => x.Id).ToList(),
                     Longitude = Longitude,
                     Latitude = Latitude,
+                    FileGuid = this.ImageByteArray != null ? fileGuid : string.Empty
                 };
 
                 using (var scope = App.Container.BeginLifetimeScope())
@@ -543,6 +612,12 @@ namespace BudgetUnderControl.ViewModel
                 transferAmount *= (-1);
             }
 
+            var fileGuid = Guid.NewGuid().ToString();
+            if (this.ImageByteArray != null)
+            {
+                var saveResult = await fileHelper.SaveToLocalFolderAsync(this.ImageByteArray, fileGuid);
+            }
+
             var addTransactionCommand = new AddTransaction
             {
                 Name = Name,
@@ -559,6 +634,7 @@ namespace BudgetUnderControl.ViewModel
                 Tags = Tags.Select(x => x.Id).ToList(),
                 Longitude = Longitude,
                 Latitude = Latitude,
+                FileGuid = this.ImageByteArray != null ? fileGuid : string.Empty
             };
 
             using (var scope = App.Container.BeginLifetimeScope())

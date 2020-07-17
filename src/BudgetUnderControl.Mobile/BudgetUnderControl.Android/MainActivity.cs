@@ -15,6 +15,8 @@ using BudgetUnderControl.Common;
 using NLog;
 using BudgetUnderControl.Mobile.PlatformSpecific;
 using BudgetUnderControl.Common.Enums;
+using Android.Content;
+using BudgetUnderControl.Mobile.CommonDTOs;
 
 namespace BudgetUnderControl.Droid
 {
@@ -22,18 +24,21 @@ namespace BudgetUnderControl.Droid
     public class MainActivity : global::Xamarin.Forms.Platform.Android.FormsAppCompatActivity
     {
         private static ILogger logger;
+        internal static MainActivity Instance { get; private set; }
 
         protected override void OnCreate(Bundle bundle)
         {
-           
+            Instance = this;
             TabLayoutResource = Resource.Layout.Tabbar;
             ToolbarResource = Resource.Layout.Toolbar;
             base.OnCreate(bundle);
             AppDomain.CurrentDomain.UnhandledException += CurrentDomainOnUnhandledException;
             TaskScheduler.UnobservedTaskException += TaskSchedulerOnUnobservedTaskException;
-           
 
-            global::Xamarin.Forms.Forms.Init(this, bundle);
+            Android.Gms.Ads.MobileAds.Initialize(this, "ca-app-pub-1938975042085430~4938848442");
+            global::Xamarin.Forms.Forms.SetFlags("Expander_Experimental");
+           global::Xamarin.Forms.Forms.Init(this, bundle);
+            global::Xamarin.Forms.FormsMaterial.Init(this, bundle);
             Xamarin.Essentials.Platform.Init(this, bundle);
             DisplayCrashReport();
             var app = new App();
@@ -41,6 +46,34 @@ namespace BudgetUnderControl.Droid
 
             LoadApplication(app);
             CheckIfComeFromNotification();
+        }
+
+        public static readonly int PickImageId = 1000;
+        public TaskCompletionSource<ImagePickerResultDTO> PickImageTaskCompletionSource { get; set; }
+
+        protected override void OnActivityResult(int requestCode, Result resultCode, Intent data)
+        {
+            base.OnActivityResult(requestCode, resultCode, data);
+
+            if(requestCode == PickImageId)
+            {
+                if((resultCode == Result.Ok) && (data != null))
+                {
+                    Android.Net.Uri uri = data.Data;
+                    Stream stream = ContentResolver.OpenInputStream(uri);
+                    var result = new ImagePickerResultDTO
+                    {
+                        Stream = stream,
+                        Path = uri.Path,
+                    };
+                    PickImageTaskCompletionSource.SetResult(result);
+                }
+                else
+                {
+                    PickImageTaskCompletionSource.SetResult(null);
+                }
+            }
+
         }
 
         public override void OnRequestPermissionsResult(int requestCode, string[] permissions, [GeneratedEnum] Android.Content.PM.Permission[] grantResults)
@@ -52,7 +85,7 @@ namespace BudgetUnderControl.Droid
 
         private void CheckIfComeFromNotification()
         {
-            var extras = Intent.Extras;
+            var extras = base.Intent.Extras;
             if (extras != null)
             {
                 var redirectTo = extras.GetInt(PropertyKeys.REDIRECT_TO);

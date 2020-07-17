@@ -39,7 +39,7 @@ namespace BudgetUnderControl.Views
         private async void ImportButton_Clicked(object sender, EventArgs e)
         {
             vm.IsLoading = true;
-           
+
             vm.ImportBackupAsync().Wait();
             vm.IsLoading = false;
         }
@@ -68,6 +68,17 @@ namespace BudgetUnderControl.Views
         {
             await vm.ClearLocalData();
         }
+
+        async void OnLoginButtonClicked(object sender, EventArgs args)
+        {
+            App.MasterPage.NavigateTo("login");
+        }
+
+        async void OnLogoutButtonClicked(object sender, EventArgs args)
+        {
+            App.MasterPage.NavigateTo("logout");
+        }
+
 
     }
 }

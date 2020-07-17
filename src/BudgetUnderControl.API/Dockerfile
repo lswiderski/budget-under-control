@@ -7,8 +7,9 @@ WORKDIR /src
 COPY BudgetUnderControl.API/BudgetUnderControl.API.csproj BudgetUnderControl.API/
 COPY Database/BudgetUnderControl.Migrations.SqlServer/BudgetUnderControl.Migrations.SqlServer.csproj Database/BudgetUnderControl.Migrations.SqlServer/
 COPY BudgetUnderControl.Common/BudgetUnderControl.Common.csproj BudgetUnderControl.Common/
+COPY BudgetUnderControl.Commands/BudgetUnderControl.CommonInfrastructure.csproj BudgetUnderControl.Commands/
 COPY BudgetUnderControl.Domain/BudgetUnderControl.Domain.csproj BudgetUnderControl.Domain/
-COPY BudgetUnderControl.Infrastructure/BudgetUnderControl.Infrastructure.csproj BudgetUnderControl.Infrastructure/
+COPY BudgetUnderControl.Infrastructure/BudgetUnderControl.ApiInfrastructure.csproj BudgetUnderControl.Infrastructure/
 RUN dotnet restore BudgetUnderControl.API/BudgetUnderControl.API.csproj
 COPY . .
 WORKDIR /src/BudgetUnderControl.API

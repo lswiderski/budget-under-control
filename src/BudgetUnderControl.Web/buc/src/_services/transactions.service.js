@@ -1,4 +1,3 @@
-import config from 'config';
 import { authHeader } from '../_helpers';
 import { handleResponse } from '../_helpers';
 import { catchError } from '../_helpers';
@@ -12,9 +11,11 @@ export const transactionsService = {
     remove
 };
 
-function getAll() {
-
-    return axios.get(`${config.apiUrl}/transactions`, { params:{}, headers: authHeader()})
+function getAll(filters) {
+    const Qs = require('qs');
+    return axios.get(`/transactions`, { params:filters, headers: authHeader(),paramsSerializer: function(params) {
+        return Qs.stringify(params, {arrayFormat: 'repeat'})
+    }})
     .then(handleResponse)
     .then(data => {
         return data;
@@ -23,28 +24,28 @@ function getAll() {
 
 function add(transaction) {
 
-    return axios.post(`${config.apiUrl}/transactions`, transaction, { headers: authHeader()})
+    return axios.post(`/transactions`, transaction, { headers: authHeader()})
     .then(handleResponse)
     .catch(catchError);
 }
 
 function get(guid) {
 
-    return axios.get(`${config.apiUrl}/transactions/${guid}`, { params:{}, headers: authHeader()})
+    return axios.get(`/transactions/${guid}`, { params:{}, headers: authHeader()})
     .then(handleResponse)
     .catch(catchError);
 }
 
 function edit(guid, transaction) {
 
-    return axios.put(`${config.apiUrl}/transactions/${guid}`,transaction, { params:{}, headers: authHeader()})
+    return axios.put(`/transactions/${guid}`,transaction, { params:{}, headers: authHeader()})
     .then(handleResponse)
     .catch(catchError);
 }
 
 function remove(guid) {
 
-    return axios.delete(`${config.apiUrl}/transactions/${guid}`, { params:{}, headers: authHeader()})
+    return axios.delete(`/transactions/${guid}`, { params:{}, headers: authHeader()})
     .then(handleResponse)
     .catch(catchError);
 }

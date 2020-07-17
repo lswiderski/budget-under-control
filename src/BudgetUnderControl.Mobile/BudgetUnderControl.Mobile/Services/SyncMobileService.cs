@@ -2,11 +2,11 @@
 using BudgetUnderControl.Common;
 using BudgetUnderControl.Common.Contracts;
 using BudgetUnderControl.Common.Enums;
-using BudgetUnderControl.Domain;
-using BudgetUnderControl.Domain.Repositiories;
-using BudgetUnderControl.Infrastructure.Commands;
-using BudgetUnderControl.Infrastructure.Services;
-using BudgetUnderControl.Infrastructure.Settings;
+using BudgetUnderControl.MobileDomain;
+using BudgetUnderControl.MobileDomain.Repositiories;
+using BudgetUnderControl.CommonInfrastructure.Commands;
+using BudgetUnderControl.CommonInfrastructure;
+using BudgetUnderControl.CommonInfrastructure.Settings;
 using BudgetUnderControl.Mobile.Keys;
 using BudgetUnderControl.Views;
 using Newtonsoft.Json;
@@ -143,11 +143,10 @@ namespace BudgetUnderControl.Mobile.Services
                 var content = new StringContent(dataAsString);
                 content.Headers.ContentType = new MediaTypeHeaderValue("application/json");
                 content.Headers.Add("Api-Key", settings.ApiKey);
-                httpClient.Timeout = TimeSpan.FromMinutes(5);
                 var token = Preferences.Get(PreferencesKeys.JWTTOKEN, string.Empty);
                 if(string.IsNullOrEmpty(token))
                 {
-                    App.MasterPage.NavigateTo(typeof(Login));
+                    App.MasterPage.NavigateTo("Login");
                     return;
                 }
                 httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
@@ -155,7 +154,7 @@ namespace BudgetUnderControl.Mobile.Services
 
                 if(response.StatusCode == System.Net.HttpStatusCode.Unauthorized)
                 {
-                    App.MasterPage.NavigateTo(typeof(Login));
+                    App.MasterPage.NavigateTo("Login");
                     return;
                 }
                 response.EnsureSuccessStatusCode();
@@ -175,7 +174,6 @@ namespace BudgetUnderControl.Mobile.Services
             {
                 //just for development purpose
                 logger.Error(e);
-                throw e;
             }
             
 

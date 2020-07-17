@@ -1,5 +1,6 @@
 <template>
   <v-app id="inspire">
+    <Head />
     <v-navigation-drawer
       v-model="drawer"
       app
@@ -46,7 +47,23 @@
             <v-list-item-title>Categories</v-list-item-title>
           </v-list-item-content>
         </v-list-item>
-        <v-list-item to="/about">
+        <v-list-group no-action>
+           <template v-slot:activator>
+              <v-list-item-action>
+            <v-icon>mdi-contact-mail</v-icon>
+          </v-list-item-action>
+            <v-list-item-content>
+              <v-list-item-title>Reports</v-list-item-title>
+            </v-list-item-content>
+          </template>
+        <v-list-item to="/report/movingsum">
+         
+          <v-list-item-content>
+            <v-list-item-title>Moving Sum</v-list-item-title>
+          </v-list-item-content>
+        </v-list-item>
+        </v-list-group>
+         <v-list-item to="/about">
           <v-list-item-action>
             <v-icon>mdi-contact-mail</v-icon>
           </v-list-item-action>
@@ -88,10 +105,13 @@
 </template>
 
 <script>
-
+import Head from "./Head";
 
 export default {
   name: 'App',
+  components:{
+    Head
+  },
   props: {
       source: String,
     },
@@ -101,6 +121,7 @@ export default {
         }
     },
     watch:{
+        // eslint-disable-next-line no-unused-vars
         $route (to, from){
             // clear alert on location change
             this.$store.dispatch('alert/clear');

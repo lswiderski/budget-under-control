@@ -2,31 +2,45 @@ version: '3.4'
 
 services:
   budgetundercontrol.api:
-    image: lswiderski/repo:buc_api
+    image: buc-api #neufrin.jfrog.io/default-docker-virtual/buc-api:latest
+    container_name: api
     environment:
-      BUC_DB_Name: buc
-      BUC_DB_Address: "172.29.0.2,1433"
-      BUC_DB_User: sa
-      BUC_DB_Password: NASsql123
+      ASPNETCORE_ENVIRONMENT: Docker
+      "emailModule:SmtpClient:User": username
+      "emailModule:SmtpClient:Password": password
+    networks:
+      - buc
     ports:
       - "8081:80"
+      - "5000:5000"
     depends_on:
       - budgetundercontrol.db
   budgetundercontrol.db:
     image: mcr.microsoft.com/mssql/server
+    container_name: db
     environment:
       ACCEPT_EULA: "Y"
-      SA_PASSWORD: NASsql123
+      SA_PASSWORD: SuperStrongSqlPassword123
+    networks:
+      - buc
     ports:
       - "1433:1433"
       - "1431:1431"
     volumes:
       - sqlvolume:/var/opt/mssql
   budgetundercontrol.web:
-    image: lswiderski/repo:buc_web
+    image: buc-web #neufrin.jfrog.io/default-docker-virtual/buc-web:latest
+    container_name: web
+    networks:
+      - buc
     ports:
       - "8082:8080"
     depends_on:
       - budgetundercontrol.api
+
+networks:
+  buc:
+    name: buc-network
+
 volumes:
    sqlvolume:

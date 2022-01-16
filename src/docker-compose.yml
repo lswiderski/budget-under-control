@@ -37,6 +37,15 @@ services:
       - "8082:8080"
     depends_on:
       - budgetundercontrol.api
+  budgetundercontrol.admin:
+    image: buc-admin-client #neufrin.jfrog.io/default-docker-virtual/buc-admin-client:latest
+    container_name: admin
+    networks:
+      - buc
+    ports:
+      - "8085:80"
+    depends_on:
+      - budgetundercontrol.api  
 
 networks:
   buc:
